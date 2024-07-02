@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/fragments/head :: head"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+    <div>
+        <header th:replace="/admin/fragments/header :: header">
+
+        </header>
+    </div>
+
+    <!-- Left side column. contains the sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+
+        </section>
+        <!-- Main content -->
+        <section class="content">
+
+        </section>
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <div>
+        <footer th:replace="/admin/fragments/footer :: footer"></footer>
+    </div>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<div>
+    <script th:replace="/admin/fragments/script :: script">
+
+    </script>
+</div>
+
+</body>
+</html>
