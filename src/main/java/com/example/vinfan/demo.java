@@ -9,6 +9,10 @@ public class demo {
         System.out.println("ss");
         System.out.println("ss");
         System.out.println("DCM thg khoi");
+        System.out.println("DCM thg khoi");
+        System.out.println("DCM thg tien lon");
+        System.out.println("DCM thg khoi");
+        System.out.println("DCM thg khoi");
 
     }
 }
