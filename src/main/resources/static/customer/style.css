@@ -4761,7 +4761,7 @@ Version:1.0
 	font-size: 30px;
 }
 .mail-success .mail-inner p {
-	font-size: 14;
+	/*font-size: 14;*/
 	color: #333;
 	margin-bottom: 30px;
 	line-height: 22px;
