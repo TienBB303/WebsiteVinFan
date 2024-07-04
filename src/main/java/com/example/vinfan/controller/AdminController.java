@@ -1,5 +1,7 @@
 package com.example.vinfan.controller;
 
+
+import com.example.vinfan.repository.PhieuGiamRepo;
 import com.example.vinfan.entity.SanPham;
 import com.example.vinfan.repository.SPCTRepo;
 import com.example.vinfan.repository.SanPhamRepo;
@@ -21,6 +23,8 @@ public class AdminController {
     SanPhamRepo sanPhamRepo;
     @Autowired
     SPCTRepo spctRepo;
+    @Autowired
+    PhieuGiamRepo pggRepo;
     @Autowired
     SanPhamService sanPhamService;
 
@@ -54,10 +58,17 @@ public class AdminController {
         sanPhamRepo.save(sanPham);
         return "redirect:/admin/san-pham";
     }
-
+  
     @GetMapping("/san-pham-chi-tiet")
     public String sanPhamChiTietHienThi(Model model) {
         // model.addAttribute("list", spctRepo.findAll());
         return "/admin/san_pham/san_pham_chi_tiet";
+    }
+
+    //phieu giam gia
+    @GetMapping("/phieu-giam")
+    public String phieuGiam(Model model) {
+        model.addAttribute("ListPGG", pggRepo.findAll());
+        return "/admin/phieu_giam/index";
     }
 }
