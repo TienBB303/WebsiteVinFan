@@ -1,5 +1,6 @@
 package com.example.vinfan.controller;
 
+import com.example.vinfan.repository.PhieuGiamRepo;
 import com.example.vinfan.repository.SPCTRepo;
 import com.example.vinfan.repository.SanPhamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class AdminController {
     SanPhamRepo sanPhamRepo;
     @Autowired
     SPCTRepo spctRepo;
+    @Autowired
+    PhieuGiamRepo pggRepo;
 
 
     //  Mapping Admin
@@ -31,9 +34,17 @@ public class AdminController {
         model.addAttribute("list", sanPhamRepo.findAll());
         return "/admin/san_pham/index";
     }
+
     @GetMapping("/san-pham-chi-tiet")
     public String sanPhamChiTietHienThi(Model model) {
 //        model.addAttribute("list", spctRepo.findAll());
         return "/admin/san_pham/san_pham_chi_tiet";
+    }
+
+    //phieu giam gia
+    @GetMapping("/phieu-giam")
+    public String phieuGiam(Model model) {
+        model.addAttribute("ListPGG", pggRepo.findAll());
+        return "/admin/phieu_giam/index";
     }
 }
