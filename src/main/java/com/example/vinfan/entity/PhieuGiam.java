@@ -4,11 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "phieu_giam_gia")
@@ -25,11 +24,13 @@ public class PhieuGiam {
     @Column(name = "ten")
     private String ten;
     @Column(name = "ngay_bat_dau")
-    private LocalDate ngayBD;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date ngayBD;
     @Column(name = "ngay_ket_thuc")
-    private LocalDate ngayKT;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date ngayKT;
     @Column(name = "so_luong")
-    private int soLuong;
+    private Integer soLuong;
     @Column(name = "loai_phieu_giam_gia")
     private boolean loaiPhieuGiam;
     @Column(name = "gia_tri_toi_thieu_ap_dung")
@@ -37,14 +38,15 @@ public class PhieuGiam {
     @Column(name = "gia_tri_toi_da_giam")
     private BigDecimal giaTriMax;
     @Column(name = "ngay_tao")
-    private LocalDate ngayTao;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date ngayTao;
     @Column(name = "ngay_sua")
-    private LocalDate ngaySua;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date ngaySua;
     @Column(name = "nguoi_tao")
     private String nguoiTao;
     @Column(name = "nguoi_sua")
     private String nguoiSua;
     @Column(name = "trang_thai")
     private boolean trangThai;
-
 }
