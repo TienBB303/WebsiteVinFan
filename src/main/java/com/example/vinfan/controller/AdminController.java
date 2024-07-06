@@ -20,11 +20,4 @@ public class AdminController {
     public String admin() {
         return "/admin/index";
     }
-
-    //phieu giam gia
-    @GetMapping("/phieu-giam")
-    public String phieuGiam(Model model) {
-        model.addAttribute("ListPGG", pggRepo.findAll());
-        return "/admin/phieu_giam/index";
-    }
 }
