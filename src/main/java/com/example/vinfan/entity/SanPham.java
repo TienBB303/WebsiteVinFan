@@ -15,16 +15,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SanPham {
-//    CREATE TABLE san_pham (
-//    id BIGINT PRIMARY KEY IDENTITY(1, 1),
-//    id_kieu_quat INT FOREIGN KEY REFERENCES kieu_quat(id),
-//    ma NVARCHAR(255),
-//    ten NVARCHAR(255),
-//    mo_ta NVARCHAR(255),
-//    ngay_tao DATETIME,
-//    ngay_sua DATETIME,
-//    trang_thai BIT
-//);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
