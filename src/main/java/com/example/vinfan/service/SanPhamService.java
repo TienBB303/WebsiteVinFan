@@ -23,4 +23,6 @@ public class SanPhamService {
         // Trả về mã mới dưới dạng "SP" cộng với số đã tăng, định dạng thành 3 chữ số
         return String.format("SP%03d", nextCode);
     }
+
+
 }
