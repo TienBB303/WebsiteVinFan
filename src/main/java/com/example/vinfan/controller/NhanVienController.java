@@ -10,7 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.LocalDate;
+
+
 import java.util.List;
 
 @Controller
@@ -41,6 +44,9 @@ public class NhanVienController {
 
     @PostMapping("/add")
     public String addNhanVien(NhanVien nhanVien) {
+        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
+        Date sqlDate = Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
+        nhanVien.setNgayTao(sqlDate); // Lưu ngày hiện tại vào đối tượng NhanVien
         nhanVienRepository.save(nhanVien);
         return "redirect:/admin/nhan-vien/hien-thi";
     }
@@ -57,7 +63,9 @@ public class NhanVienController {
 
     @PostMapping("/update")
     public String suaNhanVien(NhanVien nhanVien) {
-
+        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
+        Date sqlDate = Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
+        nhanVien.setNgaySua(sqlDate);
         nhanVienRepository.save(nhanVien);
         return "redirect:/admin/nhan-vien/hien-thi";
     }
