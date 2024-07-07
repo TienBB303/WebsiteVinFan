@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -40,6 +41,7 @@ public class NhanVien {
     @Column(name = "gioi_tinh")
     private Boolean gioiTinh;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "ngay_sinh")
     private Date ngaySinh;
 
@@ -58,9 +60,11 @@ public class NhanVien {
     @Column(name = "dia_chi")
     private String diaChi;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "ngay_tao")
     private Date ngayTao;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "ngay_sua")
     private Date ngaySua;
 

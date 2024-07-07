@@ -38,14 +38,29 @@
             <input type="email" class="form-control" id="email" th:field="*{email}">
         </div>
         <div class="mb-3">
+            <label for="matKhau" class="form-label">Mật khẩu</label>
+            <input type="password" class="form-control" id="matKhau" name="matKhau">
+        </div>
+        <div class="mb-3">
             <label for="chucVu" class="form-label">Chức Vụ</label>
             <select class="form-control" id="chucVu" th:field="*{chucVu.id}">
                 <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}" th:text="${chucVu.viTri}"></option>
             </select>
         </div>
+<!--        <div class="mb-3">-->
+<!--            <label for="ngaySinh" class="form-label">Ngày sửa </label>-->
+<!--            <input type="date" class="form-control" id="ngaySua" th:field="*{ngaySua}">-->
+<!--        </div>-->
+<!--        <div class="mb-3">-->
+<!--            <label for="ngaySinh" class="form-label">Ngày ngày Thêm </label>-->
+<!--            <input type="date" class="form-control" id="ngayThem" th:field="*{ngayThem}">-->
+<!--        </div>-->
         <div class="mb-3">
-            <label for="ngaySua" class="form-label">Ngày Sửa</label>
-            <input type="date" class="form-control" id="ngaySua" th:field="*{ngaySua}" th:value="${nowday}" disabled/>
+            <label class="form-label">Trạng Thái</label>
+            <select class="form-select" id="trangThai" th:field="*{trangThai}">
+                <option value="0" th:selected="*{trangThai == 0}">Ngừng Hoạt Động</option>
+                <option value="1" th:selected="*{trangThai == 1}">Đang Hoạt Động</option>
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Cập Nhật</button>
     </form>

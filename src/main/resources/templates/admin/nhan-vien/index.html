@@ -18,10 +18,16 @@
             <th>Giới Tính</th>
             <th>Ngày Sinh</th>
             <th>Số Điện Thoại</th>
+            <th>Căn cước công dân</th>
+            <th>Địa chỉ</th>
             <th>Email</th>
+            <th>Mật Khẩu</th>
             <th>Chức Vụ</th>
             <th>Ngày Tạo</th>
             <th>Ngày Sửa</th>
+            <th>Người Tạo</th>
+            <th>Người Sửa</th>
+            <th>Trạng Thái</th>
             <th>Thao Tác</th>
         </tr>
         </thead>
@@ -33,10 +39,17 @@
             <td th:text="${nhanVien.gioiTinh ? 'Nam' : 'Nữ'}"></td>
             <td th:text="${#dates.format(nhanVien.ngaySinh, 'dd/MM/yyyy')}"></td>
             <td th:text="${nhanVien.soDienThoai}"></td>
+            <td th:text="${nhanVien.canCuocCongDan}"></td>
+            <td th:text="${nhanVien.diaChi}"></td>
             <td th:text="${nhanVien.email}"></td>
+            <td th:text="${nhanVien.matKhau}"></td>
             <td th:text="${nhanVien.chucVu.viTri}"></td>
             <td th:text="${#dates.format(nhanVien.ngayTao, 'dd/MM/yyyy')}"></td>
             <td th:text="${#dates.format(nhanVien.ngaySua, 'dd/MM/yyyy')}"></td>
+            <td th:text="${nhanVien.nguoiTao}"></td>
+            <td th:text="${nhanVien.nguoiSua}"></td>
+            <td th:text="${nhanVien.trangThai != null ? (nhanVien.trangThai ? 'đang hoạt động' : 'ngừng hoạt động') : 'chưa xác định'}"></td>
+
             <td>
                 <a th:href="@{/admin/nhan-vien/from-sua/{id}(id=${nhanVien.id})}" class="btn btn-secondary">Sửa</a>
             </td>
