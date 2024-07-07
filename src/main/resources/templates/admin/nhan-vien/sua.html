@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/admin/fragments/head :: head}"></head>
+<body class="hold-transition skin-yellow-light sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+    <div>
+        <header th:replace="~{/admin/fragments/header :: header}"></header>
+    </div>
+
+    <!-- Left side column. contains the sidebar -->
+    <div>
+        <aside th:replace="~{/admin/fragments/sidebar :: sidebar}"></aside>
+    </div>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>trang nhan vien</h1>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+            <h1>Sửa Nhân Viên</h1>
+            <form th:action="@{/admin/nhan-vien/update}" th:object="${nhanVien}" method="post">
+                <input type="hidden" th:field="*{id}" />
+                <div class="mb-3">
+                    <label for="ma" class="form-label">Mã</label>
+                    <input type="text" class="form-control" id="ma" th:field="*{ma}">
+                </div>
+                <div class="mb-3">
+                    <label for="ten" class="form-label">Tên</label>
+                    <input type="text" class="form-control" id="ten" th:field="*{ten}">
+                </div>
+                <div class="mb-3">
+                    <label for="gioiTinh" class="form-label">Giới Tính</label>
+                    <select class="form-control" id="gioiTinh" th:field="*{gioiTinh}">
+                        <option value="true" th:selected="*{gioiTinh == true}">Nam</option>
+                        <option value="false" th:selected="*{gioiTinh == false}">Nữ</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="canCuocCongDan" class="form-label">Căn cước công dân</label>
+                    <input type="text" class="form-control" id="canCuocCongDan" th:field="*{canCuocCongDan}">
+                </div>
+                <div class="mb-3">
+                    <label for="ngaySinh" class="form-label">Ngày Sinh</label>
+                    <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}">
+                </div>
+                <div class="mb-3">
+                    <label for="soDienThoai" class="form-label">Số Điện Thoại</label>
+                    <input type="text" class="form-control" id="soDienThoai" th:field="*{soDienThoai}">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mật khẩu</label>
+                    <input type="text" class="form-control"   th:field="*{matKhau}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">người sửa </label>
+                    <input type="text" class="form-control" th:field="*{nguoiSua}">
+                </div>
+                <div class="mb-3">
+                    <label for="chucVu" class="form-label">Chức Vụ</label>
+                    <select class="form-control" id="chucVu" th:field="*{chucVu.id}">
+                        <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}" th:text="${chucVu.viTri}"></option>
+                    </select>
+                </div>
+                <!--        <div class="mb-3">-->
+                <!--            <label for="ngaySinh" class="form-label">Ngày sửa </label>-->
+                <!--            <input type="date" class="form-control" id="ngaySua" th:field="*{ngaySua}">-->
+                <!--        </div>-->
+                        <div class="mb-3">
+                            <label class="form-label">ngày Thêm </label>
+                            <input type="date" class="form-control" id="ngayThem" th:field="*{ngayTao}">
+                        </div>
+                <div class="mb-3">
+                    <label class="form-label">Trạng Thái</label>
+                    <select class="form-select" id="trangThai" th:field="*{trangThai}">
+                        <option value="0" th:selected="*{trangThai == 0}">Ngừng Hoạt Động</option>
+                        <option value="1" th:selected="*{trangThai == 1}">Đang Hoạt Động</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Cập Nhật</button>
+            </form>
+        </section>
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <div>
+        <footer th:replace="~{/admin/fragments/footer :: footer}"></footer>
+    </div>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<div>
+    <script th:replace="~{/admin/fragments/script :: script}"></script>
+</div>
+
+</body>
+</html>
+
