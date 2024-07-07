@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SanPhamChiTiet {
-//    CREATE TABLE san_pham_chi_tiet (
+    //    CREATE TABLE san_pham_chi_tiet (
 //    id BIGINT PRIMARY KEY IDENTITY(1, 1),
 //    id_mau_sac INT FOREIGN KEY REFERENCES mau_sac(id),
 //    id_san_pham BIGINT FOREIGN KEY REFERENCES san_pham(id),
@@ -30,6 +30,8 @@ public class SanPhamChiTiet {
 //    id_de_quat INT FOREIGN KEY REFERENCES de_quat(id),
 //    id_che_do_gio INT FOREIGN KEY REFERENCES che_do_gio(id),
 //    gia MONEY,
+//    gia_nhap MONEY,
+//    hinh_anh NVARCHAR(255),
 //    so_luong INT,
 //	  ngay_tao DATETIME,
 //	  nguoi_tao NVARCHAR(255),
@@ -90,6 +92,10 @@ public class SanPhamChiTiet {
     CheDoGio cheDoGio;
 
     BigDecimal gia;
+
+    BigDecimal gia_nhap;
+
+    String hinh_anh;
 
     Integer so_luong;
 
