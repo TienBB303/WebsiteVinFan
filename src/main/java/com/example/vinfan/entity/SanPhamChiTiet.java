@@ -6,14 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 @Entity
-@Table(name = "san_pham")
+@Table(name = "san_pham_chi_tiet")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SanPhamChiTiet {
     //    CREATE TABLE san_pham_chi_tiet (
-//            id BIGINT PRIMARY KEY IDENTITY(1, 1),
+//    id BIGINT PRIMARY KEY IDENTITY(1, 1),
 //    id_mau_sac INT FOREIGN KEY REFERENCES mau_sac(id),
 //    id_san_pham BIGINT FOREIGN KEY REFERENCES san_pham(id),
 //    id_chat_lieu_canh INT FOREIGN KEY REFERENCES chat_lieu_canh(id),
@@ -26,7 +29,14 @@ public class SanPhamChiTiet {
 //    id_chieu_cao INT FOREIGN KEY REFERENCES chieu_cao(id),
 //    id_de_quat INT FOREIGN KEY REFERENCES de_quat(id),
 //    id_che_do_gio INT FOREIGN KEY REFERENCES che_do_gio(id),
+//    gia MONEY,
+//    gia_nhap MONEY,
+//    hinh_anh NVARCHAR(255),
 //    so_luong INT,
+//	  ngay_tao DATETIME,
+//	  nguoi_tao NVARCHAR(255),
+//	  ngay_sua DATETIME,
+//    nguoi_sua NVARCHAR(255),
 //    trang_thai BIT
 //);
     @Id
@@ -81,7 +91,21 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_che_do_gio")
     CheDoGio cheDoGio;
 
+    BigDecimal gia;
+
+    BigDecimal gia_nhap;
+
+    String hinh_anh;
+
     Integer so_luong;
+
+    Date ngay_tao;
+
+    String nguoi_tao;
+
+    Date ngay_sua;
+
+    String nguoi_sua;
 
     Boolean trang_thai;
 

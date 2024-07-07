@@ -29,5 +29,9 @@ public class HomeController {
         return "/login/reset";
     }
 
-
+    //    ===================Home======================
+    @GetMapping("/home")
+    public String trangchu(){
+        return "/customer/index";
+    }
 }

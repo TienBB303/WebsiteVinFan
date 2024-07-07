@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="/admin/fragments/head :: head"></head>
-<body class="hold-transition sidebar-mini skin-yellow-light">
+<head th:replace="~{/admin/fragments/head :: head}"></head>
+<body class="hold-transition skin-yellow-light sidebar-mini">
 <!-- Site wrapper -->
 <div class="wrapper">
     <div>
-        <header th:replace="/admin/fragments/header :: header">
-
-        </header>
+        <header th:replace="~{/admin/fragments/header :: header}"></header>
     </div>
 
     <!-- Left side column. contains the sidebar -->
     <div>
-        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+        <aside th:replace="~{/admin/fragments/sidebar :: sidebar}"></aside>
     </div>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-
+            <h1>trang hoa don</h1>
         </section>
         <!-- Main content -->
         <section class="content">
@@ -30,7 +28,7 @@
     <!-- /.content-wrapper -->
 
     <div>
-        <footer th:replace="/admin/fragments/footer :: footer"></footer>
+        <footer th:replace="~{/admin/fragments/footer :: footer}"></footer>
     </div>
 
 </div>
@@ -38,9 +36,7 @@
 
 <!-- jQuery 3 -->
 <div>
-    <script th:replace="/admin/fragments/script :: script">
-
-    </script>
+    <script th:replace="~{/admin/fragments/script :: script}"></script>
 </div>
 
 </body>
