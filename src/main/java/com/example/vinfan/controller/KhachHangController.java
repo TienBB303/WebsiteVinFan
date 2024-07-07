@@ -23,37 +23,41 @@ public class KhachHangController {
     @Autowired
     private KhachHangRepo khachHangRepo;
 
-    @GetMapping("hien-thi")
+    @GetMapping("index")
     public String loadTable(Model model) {
         model.addAttribute("listsKhachhang", khachHangRepo.findAll());
-        return "/khach-hang/index";
+        return "/admin/khach-hang/index";
     }
     @GetMapping("from-them")
     public String fromThem(Model model) {
-        LocalDate nowday = LocalDate.now();
-        model.addAttribute("nowday",nowday);
-        return "/khach-hang/add";
+//        LocalDate now = LocalDate.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        String formattedDate = now.format(formatter);
+//        model.addAttribute("nowday", formattedDate);
+        return "/admin/khach-hang/add";
     }
 
     @PostMapping("add")
     public String add(KhachHang khachHang){
         khachHangRepo.save(khachHang);
-        return "redirect:/admin/khach-hang/hien-thi";
+        return "redirect:/admin/khach-hang/index";
     }
 
     @GetMapping("from-sua/{id}")
     public String fromSua(Model model, @PathVariable("id") Integer id) {
-        LocalDate nowday = LocalDate.now();
+//        LocalDate now = LocalDate.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        String formattedDate = now.format(formatter);
+//        model.addAttribute("nowday", formattedDate);
         model.addAttribute("khachHang",khachHangRepo.findById(id).orElse(null));
-        model.addAttribute("nowday",nowday);
-        return "/khach-hang/sua";
+        return "/admin/khach-hang/sua";
     }
 
     @PostMapping("update")
     public String sua(KhachHang khachHang,Integer id){
         khachHang.setId(id);
         khachHangRepo.save(khachHang);
-        return "redirect:/admin/khach-hang/hien-thi";
+        return "redirect:/admin/khach-hang/index";
     }
 
 }

@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Ngày tạo</label>
-                    <input type="date" class="form-control" th:value="${nowday}" name="ngayTao" disabled>
+                    <input type="date" class="form-control"  name="ngayTao" >
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Người Tạo</label>
@@ -73,7 +73,7 @@
                 </div>
             </div>
             <button type="submit" class="btn btn-outline-primary">Thêm</button>
-            <a th:href="@{/admin/khach-hang/hien-thi}" class="btn btn-secondary">Quay lại trang danh sách</a>
+            <a th:href="@{/admin/khach-hang/index}" class="btn btn-secondary">Quay lại trang danh sách</a>
         </form>
     </div>
 </div>
