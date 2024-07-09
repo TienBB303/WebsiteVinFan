@@ -1,0 +1,94 @@
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/admin/fragments/head :: head}"></head>
+<body class="hold-transition skin-yellow-light sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+    <div>
+        <header th:replace="~{/admin/fragments/header :: header}"></header>
+    </div>
+
+    <!-- Left side column. contains the sidebar -->
+    <div>
+        <aside th:replace="~{/admin/fragments/sidebar :: sidebar}"></aside>
+    </div>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>trang hoa don</h1>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+            <h1>Sửa Khách Hàng</h1>
+            <form th:action="@{/admin/khach-hang/update}" th:object="${khachHang}" method="post">
+                <input type="hidden" th:field="*{id}" />
+                <div class="mb-3">
+                    <label for="ma" class="form-label">Mã</label>
+                    <input type="text" class="form-control" id="ma" th:field="*{ma}" />
+                </div>
+                <div class="mb-3">
+                    <label for="ten" class="form-label">Tên</label>
+                    <input type="text" class="form-control" id="ten" th:field="*{ten}" />
+                </div>
+                <div class="mb-3">
+                    <label for="gioiTinh" class="form-label">Giới Tính</label>
+                    <input type="text" class="form-control" id="gioiTinh" th:field="*{gioiTinh}" />
+                </div>
+                <div class="mb-3">
+                    <label for="soDienThoai" class="form-label">Số Điện Thoại</label>
+                    <input type="text" class="form-control" id="soDienThoai" th:field="*{soDienThoai}" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="email" th:field="*{email}" />
+                </div>
+                <div class="mb-3">
+                    <label for="matKhau" class="form-label">Mật Khẩu</label>
+                    <input type="text" class="form-control" id="matKhau" th:field="*{matKhau}" />
+                </div>
+                <div class="mb-3">
+                    <label for="ngaySinh" class="form-label">Ngày Sinh</label>
+                    <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}" />
+                </div>
+                <div class="mb-3">
+                    <label for="ngayTao" class="form-label">Ngày Tạo</label>
+                    <input type="date" class="form-control" id="ngayTao" th:field="*{ngayTao}" />
+                </div>
+                <div class="mb-3">
+                    <label for="nguoiTao" class="form-label">Người Tạo</label>
+                    <input type="text" class="form-control" id="nguoiTao" th:field="*{nguoiTao}" />
+                </div>
+<!--                <div class="mb-3">-->
+<!--                    <label for="ngaySua" class="form-label">Ngày Sửa</label>-->
+<!--                    <input type="date" class="form-control" id="ngaySua"  name="ngaySua" />-->
+<!--                </div>-->
+                <div class="mb-3">
+                    <label for="trangThai" class="form-label">Trạng Thái</label>
+                    <input type="checkbox" class="form-check-input" id="trangThai" th:field="*{trangThai}" />
+                </div>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </form>
+        </section>
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <div>
+        <footer th:replace="~{/admin/fragments/footer :: footer}"></footer>
+    </div>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<div>
+    <script th:replace="~{/admin/fragments/script :: script}"></script>
+</div>
+
+</body>
+</html>

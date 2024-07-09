@@ -10,11 +10,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.LocalDate;
+
+
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/nhan-vien")
+@RequestMapping("/admin/nhan-vien/")
 public class NhanVienController {
 
     @Autowired
@@ -27,22 +30,23 @@ public class NhanVienController {
     public String hienThiNhanVien(Model model) {
         List<NhanVien> nhanVienList = nhanVienRepository.findAll();
         model.addAttribute("listsNhanVien", nhanVienList);
-        return "nhan-vien/index";
+        return "admin/nhan-vien/index";
     }
 
     @GetMapping("/from-them")
     public String formThemNhanVien(Model model) {
         NhanVien nhanVien = new NhanVien();
-//        LocalDate nowday = LocalDate.now();
-//        model.addAttribute("nowday",nowday);
         List<ChucVu> chucVuList = chucVuRepository.findAll();
         model.addAttribute("nhanVien", nhanVien);
         model.addAttribute("chucVuList", chucVuList);
-        return "nhan-vien/add";
+        return "admin/nhan-vien/add";
     }
 
     @PostMapping("/add")
     public String addNhanVien(NhanVien nhanVien) {
+        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
+        Date sqlDate = Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
+        nhanVien.setNgayTao(sqlDate); // Lưu ngày hiện tại vào đối tượng NhanVien
         nhanVienRepository.save(nhanVien);
         return "redirect:/admin/nhan-vien/hien-thi";
     }
@@ -54,13 +58,15 @@ public class NhanVienController {
         model.addAttribute("nhanVien", nhanVien);
         model.addAttribute("chucVuList", chucVuList);
         model.addAttribute("nowday", LocalDate.now());
-        return "nhan-vien/sua";
+        return "admin/nhan-vien/sua";
     }
 
-//    @PostMapping("/update")
-//    public String suaNhanVien(NhanVien nhanVien) {
-//        nhanVien.setNgaySua(LocalDate.now());
-//        nhanVienRepository.save(nhanVien);
-//        return "redirect:/admin/nhan-vien/hien-thi";
-//    }
+    @PostMapping("/update")
+    public String suaNhanVien(NhanVien nhanVien) {
+        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
+        Date sqlDate = Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
+        nhanVien.setNgaySua(sqlDate);
+        nhanVienRepository.save(nhanVien);
+        return "redirect:/admin/nhan-vien/hien-thi";
+    }
 }
