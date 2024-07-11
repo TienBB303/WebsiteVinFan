@@ -1,59 +1,145 @@
 package com.example.vinfan.controller;
 
+import com.example.vinfan.entity.SanPhamChiTiet;
 import com.example.vinfan.entity.SanPham;
-import com.example.vinfan.repository.PhieuGiamRepo;
-import com.example.vinfan.repository.SPCTRepo;
-import com.example.vinfan.repository.SanPhamRepo;
+import com.example.vinfan.entity.thuoc_tinh.*;
+import com.example.vinfan.repository.*;
+import com.example.vinfan.repository.ThuocTinhRepo.*;
 import com.example.vinfan.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class SanPhamController {
     @Autowired
-    SanPhamRepo sanPhamRepo;
+    SanPhamService sanPhamService;
+
+    @Autowired
+    ChatLieuCanhRepo chatLieuCanhRepo;
+    @Autowired
+    ChatLieuKhungRepo chatLieuKhungRepo;
+    @Autowired
+    CheDoGioRepo cheDoGioRepo;
+    @Autowired
+    ChieuCaoRepo chieuCaoRepo;
+    @Autowired
+    CongSuatRepo congSuatRepo;
+    @Autowired
+    DeQuatRepo deQuatRepo;
+    @Autowired
+    DieuKhienTuXaRepo dieuKhienTuXaRepo;
+    @Autowired
+    DuongKinhCanhRepo duongKinhCanhRepo;
+    @Autowired
+    HangRepo hangRepo;
+    @Autowired
+    KieuQuatRepo kieuQuatRepo;
+    @Autowired
+    MauSacRepo mauSacRepo;
+    @Autowired
+    NutBamRepo nutBamRepo;
     @Autowired
     SPCTRepo spctRepo;
     @Autowired
-    SanPhamService sanPhamService;
+    SanPhamRepo sanPhamRepo;
+
+    @ModelAttribute("listMau")
+    public List<MauSac> listMau() {
+        return mauSacRepo.findAll();
+    }
+
+    @ModelAttribute("listChatLieuCanh")
+    public List<ChatLieuCanh> listChatLieuCanh() {
+        return chatLieuCanhRepo.findAll();
+    }
+
+    @ModelAttribute("listKieuQuat")
+    public List<KieuQuat> listKieuQuat() {
+        return kieuQuatRepo.findAll();
+    }
+
+    @ModelAttribute("listCongSuat")
+    public List<CongSuat> listCongSuat() {
+        return congSuatRepo.findAll();
+    }
+
+    @ModelAttribute("listDeQuat")
+    public List<DeQuat> listDeQuat() {
+        return deQuatRepo.findAll();
+    }
+
+    @ModelAttribute("listHang")
+    public List<Hang> listHang() {
+        return hangRepo.findAll();
+    }
+
+    @ModelAttribute("listCheDoGio")
+    public List<CheDoGio> listCheDoGio() {
+        return cheDoGioRepo.findAll();
+    }
+
+    @ModelAttribute("listDieuKhienTuXa")
+    public List<DieuKhienTuXa> listDieuKhienTuXa() {
+        return dieuKhienTuXaRepo.findAll();
+    }
+
+    @ModelAttribute("listDuongKinhCanh")
+    public List<DuongKinhCanh> listDuongKinhCanh() {
+        return duongKinhCanhRepo.findAll();
+    }
+
+    @ModelAttribute("listNutBam")
+    public List<NutBam> listNutBam() {
+        return nutBamRepo.findAll();
+    }
+
+    @ModelAttribute("listChieuCao")
+    public List<ChieuCao> listChieuCao() {
+        return chieuCaoRepo.findAll();
+    }
+
+    @ModelAttribute("listChatLieuKhung")
+    public List<ChatLieuKhung> listChatLieuKhung() {
+        return chatLieuKhungRepo.findAll();
+    }
 
     @GetMapping("/san-pham")
-    public String sanPhamHienThi(Model model) {
-        model.addAttribute("list", sanPhamRepo.findAll());
+    public String sanPhamChiTietHienThi(Model model) {
+        List<SanPhamChiTiet> listSP = sanPhamService.getAll();
+        model.addAttribute("listSP", listSP);
         return "/admin/san_pham/index";
     }
 
     @PostMapping("/san-pham/add")
-    public String addSanPham(
-            @RequestParam("ten") String ten,
-            @RequestParam("mo_ta") String moTa,
-            @RequestParam("trang_thai") Boolean trangThai
-    ) {
-        String ma = sanPhamService.taoMaTuDong();  // Tạo mã sản phẩm bằng tự động
+    public String themSanPham(@ModelAttribute SanPhamChiTiet sanPhamChiTiet,
+                              @RequestParam("hinhAnhFile") MultipartFile hinhAnhFile) {
+        try {
+            if (!hinhAnhFile.isEmpty()) {
+                String fileName = hinhAnhFile.getOriginalFilename();
+                // Lưu tên file vào thuộc tính hinh_anh của sanPhamChiTiet
+                sanPhamChiTiet.setHinh_anh(fileName);
+                // Lưu file vào thư mục uploads (hoặc cơ sở dữ liệu)
+                File file = new File("/static/admin/images/" + fileName);
+                hinhAnhFile.transferTo(file);
+            }
 
-        SanPham sanPham = new SanPham();
-        sanPham.setMa(ma);
-        sanPham.setTen(ten);
-        sanPham.setMo_ta(moTa);
-        sanPham.setNgay_tao(new Date());  // Set ngày tạo bằng ngày hiện tại
-        sanPham.setTrang_thai(trangThai);
-        sanPham.setNgay_sua(new Date());  // Set ngày sửa bằng ngày hiện tại
+            // Thiết lập các thông tin mặc định
+            sanPhamChiTiet.setNgay_tao(new Date());
+            sanPhamChiTiet.setNguoi_tao("Admin"); // hoặc lấy từ người dùng đăng nhập
 
-        sanPhamRepo.save(sanPham);
+            sanPhamService.create(sanPhamChiTiet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "redirect:/admin/san-pham";
     }
 
-    @GetMapping("/san-pham-chi-tiet")
-    public String sanPhamChiTietHienThi(Model model) {
-        // model.addAttribute("list", spctRepo.findAll());
-        return "/admin/san_pham/san_pham_chi_tiet";
-    }
 }
