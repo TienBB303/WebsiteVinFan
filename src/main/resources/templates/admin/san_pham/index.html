@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{/admin/fragments/head :: head}">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body class="hold-transition skin-yellow-light sidebar-mini">
 <div class="wrapper">
     <header th:replace="~{/admin/fragments/header :: header}"></header>
@@ -25,104 +24,78 @@
                     <div class="box">
                         <div class="box-header">
                             <h3 class="box-title">Danh sách sản phẩm</h3>
-                            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addProduct">Thêm
-                                mới
-                            </button>
+                            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addProduct">Thêm mới</button>
                         </div>
 
                         <div class="box-body">
                             <div id="san_pham_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
                                 <div class="row">
-<!--                                    BOX HEADER-->
+                                    <!-- BOX HEADER -->
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <table id="san_pham"
-                                               class="table table-bordered table-striped table-hover dataTable"
-                                               role="grid" aria-describedby="san_pham_info">
+                                        <table id="san_pham" class="table table-bordered table-striped table-hover dataTable" role="grid" aria-describedby="san_pham_info">
                                             <thead>
                                             <tr>
+                                                <th>STT</th>
                                                 <th>Mã sản phẩm</th>
                                                 <th>Tên sản phẩm</th>
                                                 <th>Mô tả</th>
-                                                <th>Ngày tạo</th>
-                                                <th>Ngày sửa</th>
+                                                <th>Giá bán</th>
+                                                <th>Số lượng</th>
                                                 <th>Trạng thái</th>
+                                                <th>Hành động</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="sanPham : ${list}">
-                                                <td th:text="${sanPham.ma}">Mã sản phẩm</td>
-                                                <td th:text="${sanPham.ten}">Tên sản phẩm</td>
-                                                <td th:text="${sanPham.mo_ta}">Mô tả</td>
-                                                <td th:text="${#dates.format(sanPham.ngay_tao, 'dd-MM-yyyy')}">Ngày
-                                                    tạo
-                                                </td>
-                                                <td th:text="${#dates.format(sanPham.ngay_sua, 'dd-MM-yyyy')}">Ngày
-                                                    sửa
-                                                </td>
-                                                <td th:text="${sanPham.trang_thai ? 'Hoạt động' : 'Không hoạt động'}">
-                                                    Trạng thái
+                                            <tr th:each="sp, iter : ${listSP}">
+                                                <td th:text="${iter.index + 1}"></td>
+                                                <td th:text="${sp.sanPham.ma}"></td>
+                                                <td th:text="${sp.sanPham.ten}"></td>
+                                                <td th:text="${sp.sanPham.mo_ta}"></td>
+                                                <td th:text="${sp.gia}"></td>
+                                                <td th:text="${sp.so_luong}"></td>
+                                                <td th:text="${sp.trang_thai ? 'Hoạt động' : 'Không hoạt động'}"></td>
+                                                <td>
+                                                    <button class="btn btn-primary text-center"><i class="bi bi-info"></i></button>
                                                 </td>
                                             </tr>
                                             </tbody>
                                             <tfoot>
                                             <tr>
-                                                <th rowspan="1" colspan="1">Mã sản phẩm</th>
-                                                <th rowspan="1" colspan="1">Tên sản phẩm</th>
-                                                <th rowspan="1" colspan="1">Mô tả</th>
-                                                <th rowspan="1" colspan="1">Ngày tạo</th>
-                                                <th rowspan="1" colspan="1">Ngày sửa</th>
-                                                <th rowspan="1" colspan="1">Trạng thái</th>
+                                                <th>STT</th>
+                                                <th>Mã sản phẩm</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Mô tả</th>
+                                                <th>Giá bán</th>
+                                                <th>Số lượng</th>
+                                                <th>Trạng thái</th>
+                                                <th>Hành động</th>
                                             </tr>
                                             </tfoot>
                                         </table>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div id="detailsDropdown" class="dropdown">
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <form class="px-4 py-3">
-                                                    <div class="form-group">
-                                                        <label for="detailName">Tên chi tiết</label>
-                                                        <input type="text" class="form-control" id="detailName"
-                                                               placeholder="Nhập tên chi tiết">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="detailDescription">Mô tả chi tiết</label>
-                                                        <input type="text" class="form-control" id="detailDescription"
-                                                               placeholder="Nhập mô tả chi tiết">
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Lưu</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             <div class="row">
-<!--                                Footer box-->
+                                <!-- Footer box -->
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
+        </section>
     </div>
-    </section>
 </div>
 
 <footer th:replace="~{/admin/fragments/footer :: footer}"></footer>
 </div>
 
-<!-- Add Product Modal -->
-<div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="addProductLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Thêm vào tệp HTML của bạn -->
+<!-- Thêm vào tệp HTML của bạn -->
+<!-- Modal -->
+<div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="addProductLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document"> <!-- Sử dụng 'modal-lg' để mở rộng kích thước modal -->
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="addProductLabel"><b>Thêm sản phẩm mới</b></h4>
@@ -131,32 +104,143 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form th:action="@{/admin/san-pham/add}" method="post">
-                    <div class="form-group">
-                        <label for="productCode">Mã sản phẩm</label>
-                        <input type="text" class="form-control" id="productCode" name="ma"
-                               placeholder="Mã sản phẩm tự động tạo" readonly>
+                <form th:action="@{/admin/san-pham/add}" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img id="preview" src="https://www.kindpng.com/picc/m/462-4629470_file-upload-logo-png-transparent-png.png" alt="Ảnh xem trước" style="max-width: 250px; margin-top: 10px; display: none;">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="productName">Tên sản phẩm</label>
-                        <input type="text" class="form-control" id="productName" name="ten"
-                               placeholder="Nhập tên sản phẩm">
-                    </div>
-                    <div class="form-group">
-                        <label for="productDescription">Mô tả</label>
-                        <input type="text" class="form-control" id="productDescription" name="mo_ta"
-                               placeholder="Nhập mô tả sản phẩm">
-                    </div>
-                    <div class="form-group">
-                        <label for="productStatus">Trạng thái</label>
-                        <select class="form-control" id="productStatus" name="trang_thai">
-                            <option value="true">Hoạt động</option>
-                            <option value="false">Không hoạt động</option>
-                        </select>
+
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <label for="sanPhamMauSac">Kiểu quạt <b style="color: red">*</b></label>
+                                <select class="form-control" id="sanPhamKieuQuat" name="kieuQuat.id">
+                                    <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}" th:text="${kieuQuat.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamMa">Mã sản phẩm <b style="color: red">*</b></label>
+                                <input type="text" class="form-control" id="sanPhamMa" name="sanPham.ma" placeholder="Nhập Mã sản phẩm">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="sanPhamName">Tên sản phẩm <b style="color: red">*</b></label>
+                                <input type="text" class="form-control" id="sanPhamName" name="sanPham.ten" placeholder="Nhập tên sản phẩm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamDescription">Mô tả</label>
+                                <input type="text" class="form-control" id="sanPhamDescription" name="sanPham.mo_ta" placeholder="Nhập mô tả sản phẩm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamPrice">Giá bán <b style="color: red">*</b></label>
+                                <input type="number" class="form-control" id="sanPhamPrice" name="gia" placeholder="Nhập giá bán">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamGiaNhap">Giá nhập</label>
+                                <input type="number" class="form-control" id="sanPhamGiaNhap" name="gia_nhap" placeholder="Nhập giá nhập">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamQuantity">Số lượng <b style="color: red">*</b></label>
+                                <input type="number" class="form-control" id="sanPhamQuantity" name="so_luong" placeholder="Nhập số lượng">
+                            </div>
+                            <div class="mb-3">
+                                <label>Trạng thái</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="trangThaiActive" name="trang_thai" value="true">
+                                    <label class="form-check-label" for="trangThaiActive">Hoạt động</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="trangThaiInactive" name="trang_thai" value="false">
+                                    <label class="form-check-label" for="trangThaiInactive">Không hoạt động</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamMauSac">Màu sắc</label>
+                                <select class="form-control" id="sanPhamMauSac" name="mauSac.id">
+                                    <option th:each="mauSac : ${listMau}" th:value="${mauSac.id}" th:text="${mauSac.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamNutBam">Nút bấm</label>
+                                <select class="form-control" id="sanPhamNutBam" name="nutBam.id">
+                                    <option th:each="nutBam : ${listNutBam}" th:value="${nutBam.id}" th:text="${nutBam.ten}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Right Column -->
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <label for="sanPhamCongSuat">Công suất</label>
+                                <select class="form-control" id="sanPhamCongSuat" name="congSuat.id">
+                                    <option th:each="congSuat : ${listCongSuat}" th:value="${congSuat.id}" th:text="${congSuat.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamChatLieuCanh">Chất liệu cánh</label>
+                                <select class="form-control" id="sanPhamChatLieuCanh" name="chatLieuCanh.id">
+                                    <option th:each="chatLieuCanh : ${listChatLieuCanh}" th:value="${chatLieuCanh.id}" th:text="${chatLieuCanh.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamDuongKinhCanh">Đường kính cánh</label>
+                                <select class="form-control" id="sanPhamDuongKinhCanh" name="duongKinhCanh.id">
+                                    <option th:each="duongKinhCanh : ${listDuongKinhCanh}" th:value="${duongKinhCanh.id}" th:text="${duongKinhCanh.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamChatLieuKhung">Chất liệu khung</label>
+                                <select class="form-control" id="sanPhamChatLieuKhung" name="chatLieuKhung.id">
+                                    <option th:each="chatLieuKhung : ${listChatLieuKhung}" th:value="${chatLieuKhung.id}" th:text="${chatLieuKhung.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamDeQuat">Đế quạt</label>
+                                <select class="form-control" id="sanPhamDeQuat" name="deQuat.id">
+                                    <option th:each="deQuat : ${listDeQuat}" th:value="${deQuat.id}" th:text="${deQuat.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamChieuCao">Chiều cao</label>
+                                <select class="form-control" id="sanPhamChieuCao" name="chieuCao.id">
+                                    <option th:each="chieuCao : ${listChieuCao}" th:value="${chieuCao.id}" th:text="${chieuCao.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamHang">Hãng</label>
+                                <select class="form-control" id="sanPhamHang" name="hang.id">
+                                    <option th:each="hang : ${listHang}" th:value="${hang.id}" th:text="${hang.ten}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sanPhamHinhAnh">Hình ảnh</label>
+                                <input type="file" class="form-control" id="sanPhamHinhAnh" name="hinhAnhFile" onchange="previewImage(event)">
+                            </div>
+                            <div class="mb-3">
+                                <label>Điều khiển từ xa</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="dieuKhienTuXaYes" name="dieuKhienTuXa.id" value="1">
+                                    <label class="form-check-label" for="dieuKhienTuXaYes">Có</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="dieuKhienTuXaNo" name="dieuKhienTuXa.id" value="2">
+                                    <label class="form-check-label" for="dieuKhienTuXaNo">Không</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Chế độ gió</label>
+                                <div class="form-check" th:each="cheDoGio : ${listCheDoGio}">
+                                    <input class="form-check-input" type="checkbox" th:id="${'cheDoGio_' + cheDoGio.id}" th:value="${cheDoGio.id}" th:name="${'cheDoGio_' + cheDoGio.id}">
+                                    <label class="form-check-label" th:for="${'cheDoGio_' + cheDoGio.id}" th:text="${cheDoGio.ten}"></label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-danger">Xóa</button>
                         <button type="submit" class="btn btn-primary">Lưu</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                     </div>
                 </form>
             </div>
@@ -164,26 +248,30 @@
     </div>
 </div>
 
-<!-- jQuery 3 -->
-<script th:replace="~{/admin/fragments/script :: script}"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<!-- JavaScript để hiển thị ảnh xem trước -->
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('preview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+
+
+
+<!-- Include jQuery before other scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Include DataTables -->
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+<!-- Include other scripts -->
+<script th:replace="~{/admin/fragments/script :: script}"></script>
 
-<script>
-    $(document).ready(function () {
-        $('#san_pham').DataTable({
-            "paging": true,
-            "searching": true,
-            "lengthChange": false,
-            "info": true
-        });
-        $('#san_pham tbody').on('click', 'tr', function () {
-            var id = table.row(this).data('id'); // Lấy id của hàng được click
-            // Hiển thị dropdown tương ứng với sản phẩm có id là id
-            $('#detailsDropdown').appendTo($(this)).toggle();
-        });
-    });
-</script>
 </body>
 </html>
