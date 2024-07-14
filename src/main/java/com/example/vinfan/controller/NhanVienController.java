@@ -60,7 +60,6 @@ public class NhanVienController {
         model.addAttribute("nowday", LocalDate.now());
         return "admin/nhan-vien/sua";
     }
-
     @PostMapping("/update")
     public String suaNhanVien(NhanVien nhanVien) {
         LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
