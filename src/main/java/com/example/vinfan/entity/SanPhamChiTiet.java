@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "san_pham_chi_tiet")
@@ -80,10 +82,12 @@ public class SanPhamChiTiet {
 
     Integer so_luong;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date ngay_tao;
 
     String nguoi_tao;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date ngay_sua;
 
     String nguoi_sua;

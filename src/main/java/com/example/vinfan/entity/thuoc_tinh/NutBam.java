@@ -26,4 +26,8 @@ public class NutBam {
     String ten;
 
     Boolean trang_thai;
+
+    public NutBam(Integer nutBamId) {
+        this.id = nutBamId;
+    }
 }

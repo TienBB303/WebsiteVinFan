@@ -10,7 +10,7 @@
     <aside th:replace="~{/admin/fragments/sidebar :: sidebar}"></aside>
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>Sản phẩm</h1>
+            <h1>Danh sách sản phẩm</h1>
             <ol class="breadcrumb">
                 <li><a href="/admin/index"><i class="bi bi-house"></i> Home</a></li>
                 <li class="active">Quản lý sản phẩm</li>
@@ -22,10 +22,52 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box">
-                        <div class="box-header">
-                            <h3 class="box-title">Danh sách sản phẩm</h3>
-                            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addProduct">Thêm mới</button>
+                        <div class="box-header d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="box-title mb-0">Danh sách sản phẩm</h3>
+                            <a class="btn btn-primary" href="/admin/san-pham/viewAdd">Thêm mới</a>
+                            <div class="mb-4">
+                                   <form method="get" action="/admin/san-pham/search">
+                                    <div class="row g-3 align-items-center">
+<!--                                        <div class="col-md-4">-->
+<!--                                            <fieldset>-->
+<!--                                                <legend class="col-form-label">Trạng thái</legend>-->
+<!--                                                <div class="form-check">-->
+<!--                                                    <input class="form-check-input" type="radio" value="true" id="hd"-->
+<!--                                                           name="trangThai" checked>-->
+<!--                                                    <label class="form-check-label" for="hd">-->
+<!--                                                        Hoạt động-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
+<!--                                                <div class="form-check">-->
+<!--                                                    <input class="form-check-input" type="radio" value="false" id="khd"-->
+<!--                                                           name="trangThai">-->
+<!--                                                    <label class="form-check-label" for="khd">-->
+<!--                                                        Không hoạt động-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
+<!--                                            </fieldset>-->
+<!--                                        </div>-->
+
+                                        <div class="col-md-4">
+                                            <input type="text" id="searchInput" class="form-control" name="query"
+                                                   placeholder="Tìm kiếm sản phẩm">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" id="searchInputMinPrice" class="form-control"
+                                                   name="minPrice" placeholder="Giá nhỏ nhất">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" id="searchInputMaxPrice" class="form-control"
+                                                   name="maxPrice" placeholder="Giá lớn nhất">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-primary w-100" type="submit">Tìm kiếm</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
+
 
                         <div class="box-body">
                             <div id="san_pham_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
@@ -34,7 +76,9 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <table id="san_pham" class="table table-bordered table-striped table-hover dataTable" role="grid" aria-describedby="san_pham_info">
+                                        <table id="san_pham"
+                                               class="table table-bordered table-striped table-hover dataTable"
+                                               role="grid" aria-describedby="san_pham_info">
                                             <thead>
                                             <tr>
                                                 <th>STT</th>
@@ -48,19 +92,25 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="sp, iter : ${listSP}">
-                                                <td th:text="${iter.index + 1}"></td>
+                                            <tr th:each="sp, iter : ${listSP.content}" th:data-id="${sp.id}">
+                                                <td th:text="${(listSP.number * listSP.size) + iter.index + 1}"></td>
                                                 <td th:text="${sp.sanPham.ma}"></td>
                                                 <td th:text="${sp.sanPham.ten}"></td>
                                                 <td th:text="${sp.sanPham.mo_ta}"></td>
                                                 <td th:text="${sp.gia}"></td>
                                                 <td th:text="${sp.so_luong}"></td>
-                                                <td th:text="${sp.trang_thai ? 'Hoạt động' : 'Không hoạt động'}"></td>
+                                                <td th:text="${sp.sanPham.trang_thai ? 'Hoạt động' : 'Không hoạt động'}"></td>
                                                 <td>
-                                                    <button class="btn btn-primary text-center"><i class="bi bi-info"></i></button>
+                                                    <button class="btn btn-info" data-toggle="modal"
+                                                            data-target="#editSanPham"><i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-warning edit-price-btn"><i
+                                                            class="bi bi-pencil-square"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                             </tbody>
+
                                             <tfoot>
                                             <tr>
                                                 <th>STT</th>
@@ -74,6 +124,38 @@
                                             </tr>
                                             </tfoot>
                                         </table>
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination justify-content-center">
+                                                <!-- Previous Page Link -->
+                                                <li class="page-item"
+                                                    th:classappend="${listSP.first ? 'disabled' : ''}">
+                                                    <a class="page-link"
+                                                       th:href="@{'/admin/san-pham?page=' + ${listSP.number - 1}}"
+                                                       aria-label="Previous" th:if="${!listSP.first}">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                </li>
+
+                                                <!-- Page Number Links -->
+                                                <li class="page-item"
+                                                    th:each="i : ${#numbers.sequence(0, listSP.totalPages - 1)}"
+                                                    th:classappend="${i == listSP.number ? 'active' : ''}">
+                                                    <a class="page-link" th:href="@{'/admin/san-pham?page=' + ${i}}"
+                                                       th:text="${i + 1}"></a>
+                                                </li>
+
+                                                <!-- Next Page Link -->
+                                                <li class="page-item" th:classappend="${listSP.last ? 'disabled' : ''}">
+                                                    <a class="page-link"
+                                                       th:href="@{'/admin/san-pham?page=' + ${listSP.number + 1}}"
+                                                       aria-label="Next" th:if="${!listSP.last}">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </nav>
                                     </div>
                                 </div>
                             </div>
@@ -90,178 +172,66 @@
 
 <footer th:replace="~{/admin/fragments/footer :: footer}"></footer>
 </div>
+<!--mở form sửa giá-->
+<form id="editPriceForm" method="post" action="/admin/san-pham/updatePrice" style="display: none;">
+    <input type="hidden" name="id" id="editPriceId">
+    <input type="number" name="newPrice" id="editPriceInput" class="form-control">
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <button type="button" class="btn btn-secondary" id="cancelEditPrice">Hủy</button>
+</form>
 
-<!-- Thêm vào tệp HTML của bạn -->
-<!-- Thêm vào tệp HTML của bạn -->
-<!-- Modal -->
-<div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="addProductLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document"> <!-- Sử dụng 'modal-lg' để mở rộng kích thước modal -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="addProductLabel"><b>Thêm sản phẩm mới</b></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form th:action="@{/admin/san-pham/add}" method="post" enctype="multipart/form-data">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <img id="preview" src="https://www.kindpng.com/picc/m/462-4629470_file-upload-logo-png-transparent-png.png" alt="Ảnh xem trước" style="max-width: 250px; margin-top: 10px; display: none;">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Left Column -->
-                        <div class="col-sm-6">
-                            <div class="mb-3">
-                                <label for="sanPhamMauSac">Kiểu quạt <b style="color: red">*</b></label>
-                                <select class="form-control" id="sanPhamKieuQuat" name="kieuQuat.id">
-                                    <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}" th:text="${kieuQuat.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamMa">Mã sản phẩm <b style="color: red">*</b></label>
-                                <input type="text" class="form-control" id="sanPhamMa" name="sanPham.ma" placeholder="Nhập Mã sản phẩm">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="sanPhamName">Tên sản phẩm <b style="color: red">*</b></label>
-                                <input type="text" class="form-control" id="sanPhamName" name="sanPham.ten" placeholder="Nhập tên sản phẩm">
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamDescription">Mô tả</label>
-                                <input type="text" class="form-control" id="sanPhamDescription" name="sanPham.mo_ta" placeholder="Nhập mô tả sản phẩm">
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamPrice">Giá bán <b style="color: red">*</b></label>
-                                <input type="number" class="form-control" id="sanPhamPrice" name="gia" placeholder="Nhập giá bán">
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamGiaNhap">Giá nhập</label>
-                                <input type="number" class="form-control" id="sanPhamGiaNhap" name="gia_nhap" placeholder="Nhập giá nhập">
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamQuantity">Số lượng <b style="color: red">*</b></label>
-                                <input type="number" class="form-control" id="sanPhamQuantity" name="so_luong" placeholder="Nhập số lượng">
-                            </div>
-                            <div class="mb-3">
-                                <label>Trạng thái</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="trangThaiActive" name="trang_thai" value="true">
-                                    <label class="form-check-label" for="trangThaiActive">Hoạt động</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="trangThaiInactive" name="trang_thai" value="false">
-                                    <label class="form-check-label" for="trangThaiInactive">Không hoạt động</label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamMauSac">Màu sắc</label>
-                                <select class="form-control" id="sanPhamMauSac" name="mauSac.id">
-                                    <option th:each="mauSac : ${listMau}" th:value="${mauSac.id}" th:text="${mauSac.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamNutBam">Nút bấm</label>
-                                <select class="form-control" id="sanPhamNutBam" name="nutBam.id">
-                                    <option th:each="nutBam : ${listNutBam}" th:value="${nutBam.id}" th:text="${nutBam.ten}"></option>
-                                </select>
-                            </div>
-                        </div>
-                        <!-- Right Column -->
-                        <div class="col-sm-6">
-                            <div class="mb-3">
-                                <label for="sanPhamCongSuat">Công suất</label>
-                                <select class="form-control" id="sanPhamCongSuat" name="congSuat.id">
-                                    <option th:each="congSuat : ${listCongSuat}" th:value="${congSuat.id}" th:text="${congSuat.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamChatLieuCanh">Chất liệu cánh</label>
-                                <select class="form-control" id="sanPhamChatLieuCanh" name="chatLieuCanh.id">
-                                    <option th:each="chatLieuCanh : ${listChatLieuCanh}" th:value="${chatLieuCanh.id}" th:text="${chatLieuCanh.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamDuongKinhCanh">Đường kính cánh</label>
-                                <select class="form-control" id="sanPhamDuongKinhCanh" name="duongKinhCanh.id">
-                                    <option th:each="duongKinhCanh : ${listDuongKinhCanh}" th:value="${duongKinhCanh.id}" th:text="${duongKinhCanh.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamChatLieuKhung">Chất liệu khung</label>
-                                <select class="form-control" id="sanPhamChatLieuKhung" name="chatLieuKhung.id">
-                                    <option th:each="chatLieuKhung : ${listChatLieuKhung}" th:value="${chatLieuKhung.id}" th:text="${chatLieuKhung.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamDeQuat">Đế quạt</label>
-                                <select class="form-control" id="sanPhamDeQuat" name="deQuat.id">
-                                    <option th:each="deQuat : ${listDeQuat}" th:value="${deQuat.id}" th:text="${deQuat.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamChieuCao">Chiều cao</label>
-                                <select class="form-control" id="sanPhamChieuCao" name="chieuCao.id">
-                                    <option th:each="chieuCao : ${listChieuCao}" th:value="${chieuCao.id}" th:text="${chieuCao.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamHang">Hãng</label>
-                                <select class="form-control" id="sanPhamHang" name="hang.id">
-                                    <option th:each="hang : ${listHang}" th:value="${hang.id}" th:text="${hang.ten}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sanPhamHinhAnh">Hình ảnh</label>
-                                <input type="file" class="form-control" id="sanPhamHinhAnh" name="hinhAnhFile" onchange="previewImage(event)">
-                            </div>
-                            <div class="mb-3">
-                                <label>Điều khiển từ xa</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="dieuKhienTuXaYes" name="dieuKhienTuXa.id" value="1">
-                                    <label class="form-check-label" for="dieuKhienTuXaYes">Có</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="dieuKhienTuXaNo" name="dieuKhienTuXa.id" value="2">
-                                    <label class="form-check-label" for="dieuKhienTuXaNo">Không</label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label>Chế độ gió</label>
-                                <div class="form-check" th:each="cheDoGio : ${listCheDoGio}">
-                                    <input class="form-check-input" type="checkbox" th:id="${'cheDoGio_' + cheDoGio.id}" th:value="${cheDoGio.id}" th:name="${'cheDoGio_' + cheDoGio.id}">
-                                    <label class="form-check-label" th:for="${'cheDoGio_' + cheDoGio.id}" th:text="${cheDoGio.ten}"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger">Xóa</button>
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript để hiển thị ảnh xem trước -->
 <script>
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function() {
-            var output = document.getElementById('preview');
-            output.src = reader.result;
-            output.style.display = 'block';
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        var prevLink = document.querySelector('.pagination .page-item.disabled a[aria-label="Previous"]');
+        var nextLink = document.querySelector('.pagination .page-item.disabled a[aria-label="Next"]');
+
+        if (prevLink) {
+            prevLink.addEventListener('click', function (event) {
+                event.preventDefault();
+            });
+        }
+
+        if (nextLink) {
+            nextLink.addEventListener('click', function (event) {
+                event.preventDefault();
+            });
+        }
+        //Sửa giá
+        var editButtons = document.querySelectorAll('.edit-price-btn');
+        var editPriceForm = document.getElementById('editPriceForm');
+        var editPriceId = document.getElementById('editPriceId');
+        var editPriceInput = document.getElementById('editPriceInput');
+        var cancelEditPrice = document.getElementById('cancelEditPrice');
+
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var row = button.closest('tr');
+                var priceCell = row.querySelector('td:nth-child(5)'); // Cột thứ 5 là cột giá bán
+                var currentPrice = priceCell.textContent.trim();
+
+                editPriceId.value = row.dataset.id;
+                editPriceInput.value = currentPrice;
+                editPriceInput.select();
+
+                priceCell.appendChild(editPriceForm);
+                editPriceForm.style.display = 'block';
+                editPriceInput.focus();
+
+                editPriceInput.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        editPriceForm.submit();
+                    }
+                });
+            });
+        });
+
+        cancelEditPrice.addEventListener('click', function () {
+            editPriceForm.style.display = 'none';
+            document.body.appendChild(editPriceForm);
+        });
+    });
+
 </script>
-
-
 
 <!-- Include jQuery before other scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -273,5 +243,7 @@
 <!-- Include other scripts -->
 <script th:replace="~{/admin/fragments/script :: script}"></script>
 
+
 </body>
+
 </html>

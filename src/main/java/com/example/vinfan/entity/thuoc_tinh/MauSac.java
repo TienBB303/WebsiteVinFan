@@ -26,4 +26,8 @@ public class MauSac {
     String ten;
 
     Boolean trang_thai;
+
+    public MauSac(Integer mauSacId) {
+        this.id = mauSacId;
+    }
 }
