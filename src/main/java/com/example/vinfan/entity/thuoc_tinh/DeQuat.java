@@ -26,4 +26,8 @@ public class DeQuat {
     String ten;
 
     Boolean trang_thai;
+
+    public DeQuat(Integer deQuatId) {
+        this.id = deQuatId;
+    }
 }

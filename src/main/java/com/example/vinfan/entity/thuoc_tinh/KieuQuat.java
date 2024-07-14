@@ -20,4 +20,8 @@ public class KieuQuat {
     String ten;
 
     Boolean trang_thai;
+
+    public KieuQuat(Integer kieuQuatId) {
+        this.id = kieuQuatId;
+    }
 }

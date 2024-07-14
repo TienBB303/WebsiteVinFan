@@ -26,4 +26,8 @@ public class ChieuCao {
     String ten;
 
     Boolean trang_thai;
+
+    public ChieuCao(Integer chieuCaoId) {
+        this.id = chieuCaoId;
+    }
 }

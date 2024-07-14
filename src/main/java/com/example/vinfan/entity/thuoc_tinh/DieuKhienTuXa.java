@@ -26,4 +26,8 @@ public class DieuKhienTuXa {
     String ten;
 
     Boolean trang_thai;
+
+    public DieuKhienTuXa(Integer dieuKhienTuXaId) {
+        this.id = dieuKhienTuXaId;
+    }
 }
