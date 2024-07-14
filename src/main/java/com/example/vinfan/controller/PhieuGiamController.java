@@ -1,5 +1,7 @@
 package com.example.vinfan.controller;
 
+import com.example.vinfan.entity.NhanVienEntity.ChucVu;
+import com.example.vinfan.entity.NhanVienEntity.NhanVien;
 import com.example.vinfan.entity.PhieuGiam;
 import com.example.vinfan.repository.PhieuGiamRepo;
 import com.example.vinfan.service.PhieuGiamService;
@@ -12,7 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -42,77 +46,39 @@ public class PhieuGiamController {
         model.addAttribute("ListPGG", phieuGiamGiaPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", phieuGiamGiaPage.getTotalPages());
+        // Thêm bean pgg vào model
+        model.addAttribute("pgg", new PhieuGiam());
 
         return "admin/phieu_giam/index"; // Trả về tên view, không cần "/" ở đầu
     }
+
     @PostMapping("/add")
-    public String addPGG(
-            Model model,
-            @RequestParam("ten") String ten,
-            @RequestParam("soLuong") Integer soLuong,
-            @RequestParam("loaiPhieuGiam") boolean loaiPhieu,
-            @RequestParam("giaTriMin") BigDecimal min,
-            @RequestParam("giaTriMax") BigDecimal max,
-            @RequestParam("nguoiTao") String nguoiTao,
-            @RequestParam("trangThai") boolean trangThai
-    ) {
-        String ma = pggSV.taoMaTuDong();  // Tạo mã sản phẩm bằng tự động
+    public String add(PhieuGiam pgg) {
+        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
+        java.sql.Date sqlDate = Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
+        pgg.setNgayTao(sqlDate); // Lưu ngày hiện tại vào đối tượng PhieuGiam
+        String ma = pggSV.taoMaTuDong();
+        // Thiết lập giá trị mặc định cho người tạo là "admin"
+        pgg.setMa(ma);
+        pgg.setNguoiTao("admin");
 
-        PhieuGiam sanPham = new PhieuGiam();
-        sanPham.setMa(ma);
-        sanPham.setTen(ten);
-        sanPham.setNgayBD(new Date());  // Set ngày tạo bằng ngày hiện tại
-        sanPham.setNgayKT(new Date());
-        sanPham.setSoLuong(soLuong);
-        sanPham.setLoaiPhieuGiam(loaiPhieu);
-        sanPham.setGiaTriMax(max);
-        sanPham.setGiaTriMin(min);
-        sanPham.setNgayTao(new Date());
-        sanPham.setNguoiTao(nguoiTao);
-        sanPham.setTrangThai(trangThai);
-
-        pggRepo.save(sanPham);
-        return "redirect:/admin/phieu-giam/index";
+        pggRepo.save(pgg); // Lưu đối tượng PhieuGiam vào cơ sở dữ liệu
+        return "redirect:/admin/phieu-giam/index"; // Chuyển hướng về trang danh sách phiếu giảm giá
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable int id) {
-        Optional<PhieuGiam> pggOptional = pggRepo.findById(id);
-        if (pggOptional.isPresent()) {
-            PhieuGiam pgg = pggOptional.get();
-            model.addAttribute("pgg", pgg);
-            return "/admin/phieu_giam/edit"; // Template form sửa
-        } else {
-            // Xử lý khi không tìm thấy phiếu giảm giá với id tương ứng
-            return "redirect:/admin/phieu-giam/index";
-        }
+    public String edit(@PathVariable("id") Integer id, Model model) {
+        PhieuGiam phieuGiam = pggRepo.findById(id).orElse(null);
+        model.addAttribute("pgg", phieuGiam);
+        return "admin/phieu_giam/update";
     }
 
-    @PostMapping("/update/{id}")
-    public String updatePGG(
-            Model model,
-            @PathVariable("id") int id,
-            @RequestParam("ten") String ten,
-            @RequestParam("ngayBD") @DateTimeFormat(pattern = "yyyy-MM-dd") Date ngayBD,
-            @RequestParam("ngayKT") @DateTimeFormat(pattern = "yyyy-MM-dd") Date ngayKT,
-            @RequestParam("soLuong") Integer soLuong,
-            @RequestParam("trangThai") boolean trangThai
-    ) {
-        Optional<PhieuGiam> optionalPhieuGiam = pggRepo.findById(id);
-        if (optionalPhieuGiam.isPresent()) {
-            PhieuGiam sanPham = optionalPhieuGiam.get();
-            sanPham.setTen(ten);
-            sanPham.setNgayBD(ngayBD);
-            sanPham.setNgayKT(ngayKT);
-            sanPham.setNgaySua(new Date());
-            sanPham.setSoLuong(soLuong);
-            sanPham.setTrangThai(trangThai);
-
-            pggRepo.save(sanPham); // Lưu lại phiếu giảm giá đã chỉnh sửa
-        }
-
-        return "redirect:/admin/phieu-giam/index"; // Điều hướng về trang danh sách phiếu giảm giá
+    @PostMapping("/update")
+    public String update(PhieuGiam phieuGiam) {
+        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
+        java.sql.Date sqlDate = java.sql.Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
+        phieuGiam.setNgaySua(sqlDate);
+        pggRepo.save(phieuGiam);
+        return "redirect:/admin/phieu-giam/index";
     }
-
-
 }

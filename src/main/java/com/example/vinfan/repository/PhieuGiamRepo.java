@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
-    @Query("SELECT MAX(sp.ma) FROM SanPham sp")
+    @Query("SELECT MAX(pgg.ma) FROM PhieuGiam pgg")
     String findMaxCode();
     public Page<PhieuGiam> findByTenLike(String keyword, PageRequest p);
 }
