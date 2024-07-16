@@ -1,9 +1,12 @@
 package com.example.vinfan.entity.thuoc_tinh;
 
+import com.example.vinfan.entity.SanPhamChiTiet;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "che_do_gio")
@@ -26,4 +29,8 @@ public class CheDoGio {
     String ten;
 
     Boolean trang_thai;
+
+    public CheDoGio(Integer cheDoGioId) {
+        this.id = cheDoGioId;
+    }
 }

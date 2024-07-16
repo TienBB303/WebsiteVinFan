@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/admin/fragments/head :: head}"></head>
+<body class="hold-transition skin-yellow-light sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+    <div>
+        <header th:replace="~{/admin/fragments/header :: header}"></header>
+    </div>
+
+    <!-- Left side column. contains the sidebar -->
+    <div>
+        <aside th:replace="~{/admin/fragments/sidebar :: sidebar}"></aside>
+    </div>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Trang Sửa Phiếu Giảm Giá</h1>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+            <form th:action="@{/admin/phieu-giam/update}" th:object="${pgg}" method="post"
+                  onsubmit="return validateForm()" name="updateForm">
+                <input type="hidden" th:field="*{id}"/>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="ma" th:field="*{ma}" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="ten" th:field="*{ten}"
+                               placeholder="Nhập tên phiếu giảm giá" required>
+                        <span id="tenError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" name="ngayBD" th:field="*{ngayBD}" required>
+                        <span id="ngayBDError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" name="ngayKT" th:field="*{ngayKT}" required>
+                        <span id="ngayKTError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Số lượng</label>
+                    <div class="col-sm-8">
+                        <input type="number" class="form-control" name="soLuong" th:field="*{soLuong}"
+                               placeholder="Nhập số lượng" required>
+                        <span id="soLuongError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" name="loaiPhieuGiam" th:field="*{loaiPhieuGiam}" required>
+                            <option value="true">Giảm giá theo phần trăm</option>
+                            <option value="false">Giảm giá theo số tiền cố định</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Giá trị tối thiểu áp dụng</label>
+                    <div class="col-sm-8">
+                        <input type="number" class="form-control" name="giaTriMin" th:field="*{giaTriMin}"
+                               placeholder="Nhập giá trị tối thiểu áp dụng" required>
+                        <span id="giaTriMinError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Giá trị tối đa áp dụng</label>
+                    <div class="col-sm-8">
+                        <input type="number" class="form-control" name="giaTriMax" th:field="*{giaTriMax}"
+                               placeholder="Nhập giá trị tối đa áp dụng" required>
+                        <span id="giaTriMaxError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Người tạo</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="nguoiTao" th:field="*{nguoiTao}" readonly required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Trạng thái</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" name="trangThai" th:field="*{trangThai}" required>
+                            <option value="true">Hoạt động</option>
+                            <option value="false">Không hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Ngày tạo</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="ngayTao" th:field="*{ngayTao}" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Ngày sửa</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="ngaySua" th:field="*{ngaySua}" readonly>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <button type="submit" class="btn btn-primary" style="width: 500px;">Cập Nhật</button>
+                </div>
+            </form>
+        </section>
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <div>
+        <footer th:replace="~{/admin/fragments/footer :: footer}"></footer>
+    </div>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<script th:inline="javascript">
+    function validateForm() {
+        var currentDate = new Date();
+        var ngayBD = document.forms["updateForm"]["ngayBD"].value;
+        var ngayKT = document.forms["updateForm"]["ngayKT"].value;
+        var soLuong = document.forms["updateForm"]["soLuong"].value;
+        var giaTriMin = document.forms["updateForm"]["giaTriMin"].value;
+        var giaTriMax = document.forms["updateForm"]["giaTriMax"].value;
+
+        var selectedStartDate = new Date(ngayBD);
+        if (selectedStartDate < currentDate) {
+            document.getElementById("ngayBDError").innerText = "Ngày bắt đầu không được là ngày quá khứ";
+            return false;
+        } else {
+            document.getElementById("ngayBDError").innerText = "";
+        }
+
+        var selectedEndDate = new Date(ngayKT);
+        if (selectedEndDate < currentDate) {
+            document.getElementById("ngayKTError").innerText = "Ngày kết thúc phải lớn hơn ngày hiện tại";
+            return false;
+        } else {
+            document.getElementById("ngayKTError").innerText = "";
+        }
+
+        if (selectedEndDate <= selectedStartDate) {
+            document.getElementById("ngayKTError").innerText = "Ngày kết thúc phải lớn hơn ngày bắt đầu";
+            return false;
+        } else {
+            document.getElementById("ngayKTError").innerText = "";
+        }
+
+        if (parseInt(giaTriMin) >= parseInt(giaTriMax)) {
+            document.getElementById("giaTriMinError").innerText = "Giá trị tối thiểu phải nhỏ hơn giá trị tối đa";
+            document.getElementById("giaTriMaxError").innerText = "Giá trị tối đa phải lớn hơn giá trị tối thiểu";
+            return false;
+        } else {
+            document.getElementById("giaTriMinError").innerText = "";
+            document.getElementById("giaTriMaxError").innerText = "";
+        }
+
+        if (soLuong <= 0) {
+            document.getElementById("soLuongError").innerText = "Số lượng phải lớn hơn 0";
+            return false;
+        } else {
+            document.getElementById("soLuongError").innerText = "";
+        }
+
+        if (giaTriMin <= 0) {
+            document.getElementById("giaTriMinError").innerText = "Giá trị tối thiểu phải lớn hơn 0";
+            return false;
+        } else {
+            document.getElementById("giaTriMinError").innerText = "";
+        }
+
+        if (giaTriMax <= 0) {
+            document.getElementById("giaTriMaxError").innerText = "Giá trị tối đa phải lớn hơn 0";
+            return false;
+        } else {
+            document.getElementById("giaTriMaxError").innerText = "";
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>

@@ -26,4 +26,8 @@ public class DuongKinhCanh {
     String ten;
 
     Boolean trang_thai;
+
+    public DuongKinhCanh(Integer duongKinhCanhId) {
+        this.id = duongKinhCanhId;
+    }
 }
