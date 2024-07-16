@@ -1,4 +1,4 @@
-package com.example.vinfan.entity.NhanVienEntity;
+package com.example.vinfan.entity;
 
 
 import jakarta.persistence.Column;
