@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/fragments/head :: head"></head>
+<body class="hold-transition sidebar-mini skin-yellow-light">
+<!-- Site wrapper -->
+<div class="wrapper">
+    <div>
+        <header th:replace="/admin/fragments/header :: header">
+
+        </header>
+    </div>
+
+    <!-- Left side column. contains the sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container mt-5">
+                <!-- Order Tracking Section -->
+                <div class="card mb-4">
+                    <div class="card-header">Theo dõi đơn hàng</div>
+                    <div class="card-body text-center">
+                        <div class="status-icon mb-3">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h5>Chờ xác nhận</h5>
+                        <p>29-04-2024 19:58:26</p>
+                        <div class="d-flex btn-align-left">
+                            <button class="btn btn-primary btn-custom">Xác nhận</button>
+                            <button class="btn btn-danger btn-custom">Hủy</button>
+                        </div>
+                        <div class="d-flex btn-align-right">
+                            <button class="btn btn-success btn-custom">Lịch sử</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Payment History Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>Lịch sử thanh toán</span>
+                        <button class="btn btn-primary">+ Thanh toán</button>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã GD</th>
+                                <th>Số tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thời gian</th>
+                                <th>Phương thức thanh toán</th>
+                                <th>Người tạo</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Add rows here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+<!---->
+            <div class="container mt-5">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h2><strong>Thông tin đơn hàng:</strong> <span th:text="${hoaDon.ma}"></span></h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p th:switch="${hoaDon.trangThai}"><strong>Trạng thái:</strong>
+                                        <span th:case="0" class="text-danger">Đang chờ xác nhận</span>
+                                        <span th:case="1" class="text-primary">Đã xác nhận</span>
+                                        <span th:case="2" class="text-warning">Đang giao hàng</span>
+                                        <span th:case="3" class="text-success">Đã giao hàng</span>
+                                    </p>
+                                    <p><strong>Tên người nhận:</strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
+                                    <p><strong>Địa chỉ:</strong> <span th:text="${hoaDon.diaChi}"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Loại hóa đơn:</strong><span th:text="${hoaDon.loaiHoaDon == 1 ? 'Tại quầy' : 'Giao hàng'}"></span></p>
+                                    <p><strong>Số điện thoại:</strong> <span th:text="${hoaDon.sdtNguoiNhan}"></span></p>
+                                    <p><strong>Ngày tạo:</strong><span th:text="${hoaDon.ngayTao}"></span></p>
+                                    <p><strong>Ngày cập nhật cuối:</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <h2><strong>Thông tin sản phẩm</strong></h2>
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã hóa đơn</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá bán</th>
+                                <th>Số lượng</th>
+                                <th>Tổng tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item, iter : ${listHDCT}">
+                                <td th:text="${iter.count}"></td>
+                                <td th:text="${item.maHoaDon}"></td>
+                                <td th:text="${item.tenSanPham}"></td>
+                                <td th:text="${item.gia}"></td>
+                                <td th:text="${item.soLuong}"></td>
+                                <td th:text="${item.thanhTien}"></td>
+
+                                <td>
+                                    <input type="number" class="form-control" value="1">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-right mt-3">
+                            <button class="btn btn-add-product">Thêm sản phẩm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--            -->
+            <div class="container container-custom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Phiếu giảm giá:</p>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <p>Giảm giá mừng lễ</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Giá trị:</p>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <p>10%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="container container-custom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Tổng tiền hàng</p>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <p>đ 2,000,000</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Giảm giá</p>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <p>đ 200,000</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Phí vận chuyển</p>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <p>0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 highlight">
+                        <p>Tổng tiền</p>
+                    </div>
+                    <div class="col-md-6 text-right highlight">
+                        <p>đ 1,800,000</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <div>
+        <footer th:replace="/admin/fragments/footer :: footer"></footer>
+    </div>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<div>
+    <script th:replace="/admin/fragments/script :: script">
+
+    </script>
+</div>
+
+</body>
+</html>

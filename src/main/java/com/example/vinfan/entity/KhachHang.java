@@ -1,36 +1,36 @@
-package com.example.vinfan.entity.NhanVienEntity;
+package com.example.vinfan.entity;
 
 
+import com.example.vinfan.entity.DiaChi;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 
 @Entity
-@Table(name = "nhan_vien")
-@NoArgsConstructor
+@Table(name = "khach_hang")
+@Data
 @AllArgsConstructor
-@Getter
-@Setter
-public class NhanVien {
+@NoArgsConstructor
+public class KhachHang {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "id_chuc_vu")
-    private ChucVu chucVu;
 
     @Column(name = "ma")
     private String ma;
@@ -39,11 +39,7 @@ public class NhanVien {
     private String ten;
 
     @Column(name = "gioi_tinh")
-    private Boolean gioiTinh;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "ngay_sinh")
-    private Date ngaySinh;
+    private String gioiTinh;
 
     @Column(name = "so_dien_thoai")
     private String soDienThoai;
@@ -54,26 +50,31 @@ public class NhanVien {
     @Column(name = "mat_khau")
     private String matKhau;
 
-    @Column(name = "can_cuoc_cong_dan")
-    private String canCuocCongDan;
-
-    @Column(name = "dia_chi")
-    private String diaChi;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "ngay_sinh")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ngaySinh;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "ngay_tao")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date ngayTao;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "ngay_sua")
-    private Date ngaySua;
 
     @Column(name = "nguoi_tao")
     private String nguoiTao;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "ngay_sua")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ngaySua;
 
     @Column(name = "nguoi_sua")
     private String nguoiSua;
 
     @Column(name = "trang_thai")
     private Boolean trangThai;
+
+    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiaChi> diaChiList = new ArrayList<>();
+
 }

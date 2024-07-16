@@ -26,4 +26,8 @@ public class ChatLieuCanh {
     String ten;
 
     Boolean trang_thai;
+
+    public ChatLieuCanh(Integer chatLieuCanhId) {
+        this.id = chatLieuCanhId;
+    }
 }

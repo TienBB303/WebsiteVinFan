@@ -1,3 +1,5 @@
+/**/
+
 .box-tools .breadcrumb{
     margin-bottom: 0;
     padding: 5px;
@@ -40,3 +42,103 @@
 .table-action a.label{
     margin-left: 5px
 }
+/*trang hoa đơn*/
+
+.container-custom {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+.highlight {
+    color: #ff0000;
+    font-weight: bold;
+}
+/**/
+/* Cài đặt chung cho tất cả các nút */
+.btn-custom {
+    margin: 0 5px; /* Khoảng cách giữa các nút */
+    padding: 10px 20px; /* Padding bên trong nút */
+    border-radius: 5px; /* Bo góc cho nút */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: 600; /* Đậm chữ */
+    border: none; /* Loại bỏ đường viền mặc định */
+}
+
+/* Màu nền và màu chữ cho các nút */
+.btn-primary {
+    background-color: #007bff; /* Màu nền xanh dương */
+    color: #fff; /* Màu chữ trắng */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+}
+
+.btn-danger {
+    background-color: #dc3545; /* Màu nền đỏ */
+    color: #fff; /* Màu chữ trắng */
+}
+
+.btn-danger:hover {
+    background-color: #c82333; /* Màu nền khi hover */
+}
+
+.btn-success {
+    background-color: #28a745; /* Màu nền xanh lá */
+    color: #fff; /* Màu chữ trắng */
+}
+
+.btn-success:hover {
+    background-color: #218838; /* Màu nền khi hover */
+}
+/* Nút thêm sản phẩm */
+.btn-add-product {
+    background-color: #28a745; /* Màu nền xanh lá */
+    color: #fff; /* Màu chữ trắng */
+    border-radius: 20px; /* Bo góc tròn cho nút */
+    padding: 10px 30px; /* Padding cho nút */
+    font-size: 16px; /* Kích thước chữ */
+}
+
+.btn-add-product:hover {
+    background-color: #218838; /* Màu nền khi hover */
+}
+
+/* Cài đặt cho các nút trong các phần khác của trang */
+.btn-custom-container {
+    display: flex; /* Hiển thị các nút theo hàng ngang */
+    justify-content: center; /* Canh giữa các nút */
+}
+
+.btn-custom-container .btn {
+    margin: 0 10px; /* Khoảng cách giữa các nút */
+}
+.btn-align-left {
+    display: flex;
+    justify-content: flex-start; /* Căn chỉnh các nút về phía bên trái */
+    gap: 10px; /* Khoảng cách giữa các nút */
+    margin-bottom: 15px; /* Khoảng cách phía dưới để tạo khoảng cách với các phần tử khác */
+}
+.btn-align-right {
+    display: flex;
+    justify-content: flex-end; /* Căn chỉnh các nút về phía bên phải */
+    margin-bottom: 15px; /* Khoảng cách phía dưới để tạo khoảng cách với các phần tử khác */
+}
+/*btn thanh toan*/
+.card-header {
+    display: flex; /* Sử dụng Flexbox để bố trí */
+    justify-content: space-between; /* Căn chỉnh khoảng cách giữa các phần tử */
+    align-items: center; /* Canh giữa các phần tử theo chiều dọc */
+}
+
+/* Tùy chỉnh cho nút thanh toán */
+.card-header .btn-primary {
+    margin-left: auto; /* Đẩy nút thanh toán ra bên phải */
+}
+/**/
+
+
+
+

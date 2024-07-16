@@ -26,4 +26,8 @@ public class Hang {
     String ten;
 
     Boolean trang_thai;
+
+    public Hang(Integer hangId) {
+        this.id = hangId;
+    }
 }

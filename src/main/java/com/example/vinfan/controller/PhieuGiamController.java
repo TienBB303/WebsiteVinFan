@@ -1,23 +1,17 @@
 package com.example.vinfan.controller;
 
-import com.example.vinfan.entity.NhanVienEntity.ChucVu;
-import com.example.vinfan.entity.NhanVienEntity.NhanVien;
 import com.example.vinfan.entity.PhieuGiam;
 import com.example.vinfan.repository.PhieuGiamRepo;
 import com.example.vinfan.service.PhieuGiamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin/phieu-giam")
