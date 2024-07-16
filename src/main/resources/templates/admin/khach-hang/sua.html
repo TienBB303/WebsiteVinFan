@@ -1,14 +1,16 @@
-
-
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/admin/fragments/head :: head}"></head>
+<head th:replace="~{/admin/fragments/head :: head}">
+
+</head>
 <body class="hold-transition skin-yellow-light sidebar-mini">
 <!-- Site wrapper -->
 <div class="wrapper">
     <div>
-        <header th:replace="~{/admin/fragments/header :: header}"></header>
+        <header th:replace="~{/admin/fragments/header :: header}">
+
+        </header>
+
     </div>
 
     <!-- Left side column. contains the sidebar -->
@@ -18,61 +20,160 @@
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>trang hoa don</h1>
+            <h4>Sửa Khách hàng</h4>
+            <ol class="breadcrumb">
+                <li><a href="/admin/index"><i class="bi bi-house"></i> Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin/khach-hang/index">Quản lý khách hàng</a></li>
+                <li class="breadcrumb-item active"><a href="/admin/khach-hang/update">Thêm khách hàng</a></li>
+            </ol>
         </section>
         <!-- Main content -->
         <section class="content">
-            <h1>Sửa Khách Hàng</h1>
-            <form th:action="@{/admin/khach-hang/update}" th:object="${khachHang}" method="post">
-                <input type="hidden" th:field="*{id}" />
-                <div class="mb-3">
-                    <label for="ma" class="form-label">Mã</label>
-                    <input type="text" class="form-control" id="ma" th:field="*{ma}" />
+            <div class="row">
+                <div class="box-body">
+                    <div class="col-md-2">
+
+                    </div>
+                    <div class="col-md-8">
+                        <form th:action="@{/admin/khach-hang/update}" th:object="${khachHang}" method="post">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="ma" class="form-label">Mã</label>
+                                            <input type="text" class="form-control" id="ma" th:field="*{ma}"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="ten" class="form-label">Tên</label>
+                                            <input type="text" class="form-control" id="ten" th:field="*{ten}"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Số Điện thoại</label>
+                                            <input type="text" class="form-control" th:field="*{soDienThoai}"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email</label>
+                                                <input type="text" class="form-control" id="email" th:field="*{email}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="matKhau" class="form-label">Mật Khẩu</label>
+                                            <input type="text" class="form-control" id="matKhau" th:field="*{matKhau}"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="ngayTao" class="form-label">Ngày Tạo</label>
+                                            <input type="date" class="form-control" id="ngayTao" th:field="*{ngayTao}"
+                                                   disabled/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="nguoiTao" class="form-label">Người Tạo</label>
+                                            <input type="text" class="form-control" id="nguoiTao" th:field="*{nguoiTao}"
+                                                   disabled/>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Ngày sinh</label>
+                                                <input type="date" class="form-control" id="ngaySinh"
+                                                       th:field="*{ngaySinh}"/>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Giới tính</label>
+                                                <div>
+                                                    <input class="form-check-input" type="radio" name="gioiTinh"
+                                                           id="gridRadios1"
+                                                           value="Nam" checked>
+                                                    <label class="form-check-label" for="gridRadios1">Nam</label>
+                                                    <input class="form-check-input" type="radio" name="gioiTinh"
+                                                           id="gridRadios2"
+                                                           value="Nữ">
+                                                    <label class="form-check-label" for="gridRadios2">Nữ</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Trạng thái</label>
+                                                <select class="form-control" id="trangThai" th:field="*{trangThai}">
+                                                    <option value="0" th:selected="*{trangThai == 0}">Ngừng Hoạt Động
+                                                    </option>
+                                                    <option value="1" th:selected="*{trangThai == 1}">Đang Hoạt Động
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+
+                                    <input type="hidden" id="tinhThanhPho" th:value="${diaChi.tinhThanhPho}"/>
+                                    <input type="hidden" id="quanHuyen" th:value="${diaChi.quanHuyen}"/>
+                                    <input type="hidden" id="xaPhuong" th:value="${diaChi.xaPhuong}"/>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Tỉnh/Thành phố</label>
+                                            <select class="form-control" id="city" aria-label=".form-select-sm"
+                                                    name="tinhThanhPho">
+                                                <option value="" selected>Chọn tỉnh thành</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Quận/Huyện</label>
+                                            <select class="form-control" id="district" aria-label=".form-select-sm"
+                                                    name="quanHuyen">
+                                                <option value="" selected>Chọn quận huyện</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Phường/Xã</label>
+                                            <select class="form-control" id="ward" aria-label=".form-select-sm"
+                                                    name="xaPhuong">
+                                                <option value="" selected>Chọn phường xã</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Số nhà/ngõ đường</label>
+                                            <input class="form-control" type="text" th:field="${diaChi.soNhaNgoDuong}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-8"></div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">Sửa</button>
+                                    <a th:href="@{/admin/khach-hang/index}" class="btn btn-secondary">Quay lại trang
+                                        danh
+                                        sách</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="ten" class="form-label">Tên</label>
-                    <input type="text" class="form-control" id="ten" th:field="*{ten}" />
-                </div>
-                <div class="mb-3">
-                    <label for="gioiTinh" class="form-label">Giới Tính</label>
-                    <input type="text" class="form-control" id="gioiTinh" th:field="*{gioiTinh}" />
-                </div>
-                <div class="mb-3">
-                    <label for="soDienThoai" class="form-label">Số Điện Thoại</label>
-                    <input type="text" class="form-control" id="soDienThoai" th:field="*{soDienThoai}" />
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" id="email" th:field="*{email}" />
-                </div>
-                <div class="mb-3">
-                    <label for="matKhau" class="form-label">Mật Khẩu</label>
-                    <input type="text" class="form-control" id="matKhau" th:field="*{matKhau}" />
-                </div>
-                <div class="mb-3">
-                    <label for="ngaySinh" class="form-label">Ngày Sinh</label>
-                    <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}" />
-                </div>
-                <div class="mb-3">
-                    <label for="ngayTao" class="form-label">Ngày Tạo</label>
-                    <input type="date" class="form-control" id="ngayTao" th:field="*{ngayTao}" />
-                </div>
-                <div class="mb-3">
-                    <label for="nguoiTao" class="form-label">Người Tạo</label>
-                    <input type="text" class="form-control" id="nguoiTao" th:field="*{nguoiTao}" />
-                </div>
-<!--                <div class="mb-3">-->
-<!--                    <label for="ngaySua" class="form-label">Ngày Sửa</label>-->
-<!--                    <input type="date" class="form-control" id="ngaySua"  name="ngaySua" />-->
-<!--                </div>-->
-                <div class="mb-3">
-                    <label for="trangThai" class="form-label">Trạng Thái</label>
-                    <input type="checkbox" class="form-check-input" id="trangThai" th:field="*{trangThai}" />
-                </div>
-                <button type="submit" class="btn btn-primary">Lưu</button>
-            </form>
+            </div>
         </section>
 
     </div>
@@ -88,6 +189,74 @@
 <!-- jQuery 3 -->
 <div>
     <script th:replace="~{/admin/fragments/script :: script}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+
+        var idTinh = document.getElementById("tinhThanhPho").value;
+        var idHuyen = document.getElementById("quanHuyen").value;
+        var idXa = document.getElementById("xaPhuong").value;
+
+        var citis = document.getElementById("city");
+        var districts = document.getElementById("district");
+        var wards = document.getElementById("ward");
+
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        axios(Parameter).then(function (result) {
+            renderCity(result.data);
+            // Preselect city, district, and ward after data is loaded
+            citis.value = idTinh;
+            citis.dispatchEvent(new Event('change'));
+
+            setTimeout(function () {
+                districts.value = idHuyen;
+                districts.dispatchEvent(new Event('change'));
+            }, 500);
+
+            setTimeout(function () {
+                wards.value = idXa;
+            }, 1000);
+        });
+
+        function renderCity(data) {
+            for (const x of data) {
+                citis.options[citis.options.length] = new Option(x.Name, x.Id);
+            }
+
+            citis.onchange = function () {
+                districts.length = 1;
+                wards.length = 1;
+
+                if (this.value != "") {
+                    const result = data.filter(n => n.Id === this.value);
+                    for (const k of result[0].Districts) {
+                        districts.options[districts.options.length] = new Option(k.Name, k.Id);
+                    }
+                }
+            };
+
+            districts.onchange = function () {
+                wards.length = 1;
+                const dataCity = data.filter((n) => n.Id === citis.value);
+
+                if (this.value != "") {
+                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+                    for (const w of dataWards) {
+                        wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                    }
+                }
+            };
+        }
+    </script>
+    <script th:replace="~{/admin/fragments/script :: script}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 </div>
 
 </body>

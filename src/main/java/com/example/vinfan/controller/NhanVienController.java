@@ -1,14 +1,17 @@
 package com.example.vinfan.controller;
 
 
-import com.example.vinfan.entity.NhanVienEntity.ChucVu;
-import com.example.vinfan.entity.NhanVienEntity.NhanVien;
+import com.example.vinfan.entity.ChucVu;
+import com.example.vinfan.entity.NhanVien;
 import com.example.vinfan.repository.ChucVuRepository;
 import com.example.vinfan.repository.NhanVienRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -68,4 +71,5 @@ public class NhanVienController {
         nhanVienRepository.save(nhanVien);
         return "redirect:/admin/nhan-vien/hien-thi";
     }
+
 }

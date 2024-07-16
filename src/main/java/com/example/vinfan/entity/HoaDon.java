@@ -1,7 +1,5 @@
 package com.example.vinfan.entity;
 
-import com.example.vinfan.entity.KhachHangEntity.KhachHang;
-import com.example.vinfan.entity.NhanVienEntity.NhanVien;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
