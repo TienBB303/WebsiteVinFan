@@ -26,4 +26,8 @@ public class CongSuat {
     String ten;
 
     Boolean trang_thai;
+
+    public CongSuat(Integer congSuatId) {
+        this.id = congSuatId;
+    }
 }

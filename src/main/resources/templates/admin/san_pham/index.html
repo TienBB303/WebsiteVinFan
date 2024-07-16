@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{/admin/fragments/head :: head}">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body class="hold-transition skin-yellow-light sidebar-mini">
 <div class="wrapper">
     <header th:replace="~{/admin/fragments/header :: header}"></header>
     <aside th:replace="~{/admin/fragments/sidebar :: sidebar}"></aside>
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>Sản phẩm</h1>
+            <h1>Danh sách sản phẩm</h1>
             <ol class="breadcrumb">
                 <li><a href="/admin/index"><i class="bi bi-house"></i> Home</a></li>
                 <li class="active">Quản lý sản phẩm</li>
@@ -23,17 +22,57 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box">
-                        <div class="box-header">
-                            <h3 class="box-title">Danh sách sản phẩm</h3>
-                            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addProduct">Thêm
-                                mới
-                            </button>
+                        <div class="box-header d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="box-title mb-0">Danh sách sản phẩm</h3>
+                            <a class="btn btn-primary" href="/admin/san-pham/viewAdd">Thêm mới</a>
+                            <div class="mb-4">
+                                   <form method="get" action="/admin/san-pham/search">
+                                    <div class="row g-3 align-items-center">
+<!--                                        <div class="col-md-4">-->
+<!--                                            <fieldset>-->
+<!--                                                <legend class="col-form-label">Trạng thái</legend>-->
+<!--                                                <div class="form-check">-->
+<!--                                                    <input class="form-check-input" type="radio" value="true" id="hd"-->
+<!--                                                           name="trangThai" checked>-->
+<!--                                                    <label class="form-check-label" for="hd">-->
+<!--                                                        Hoạt động-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
+<!--                                                <div class="form-check">-->
+<!--                                                    <input class="form-check-input" type="radio" value="false" id="khd"-->
+<!--                                                           name="trangThai">-->
+<!--                                                    <label class="form-check-label" for="khd">-->
+<!--                                                        Không hoạt động-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
+<!--                                            </fieldset>-->
+<!--                                        </div>-->
+
+                                        <div class="col-md-4">
+                                            <input type="text" id="searchInput" class="form-control" name="query"
+                                                   placeholder="Tìm kiếm sản phẩm">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" id="searchInputMinPrice" class="form-control"
+                                                   name="minPrice" placeholder="Giá nhỏ nhất">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" id="searchInputMaxPrice" class="form-control"
+                                                   name="maxPrice" placeholder="Giá lớn nhất">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-primary w-100" type="submit">Tìm kiếm</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
+
 
                         <div class="box-body">
                             <div id="san_pham_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
                                 <div class="row">
-<!--                                    BOX HEADER-->
+                                    <!-- BOX HEADER -->
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -42,148 +81,169 @@
                                                role="grid" aria-describedby="san_pham_info">
                                             <thead>
                                             <tr>
+                                                <th>STT</th>
                                                 <th>Mã sản phẩm</th>
                                                 <th>Tên sản phẩm</th>
                                                 <th>Mô tả</th>
-                                                <th>Ngày tạo</th>
-                                                <th>Ngày sửa</th>
+                                                <th>Giá bán</th>
+                                                <th>Số lượng</th>
                                                 <th>Trạng thái</th>
+                                                <th>Hành động</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="sanPham : ${list}">
-                                                <td th:text="${sanPham.ma}">Mã sản phẩm</td>
-                                                <td th:text="${sanPham.ten}">Tên sản phẩm</td>
-                                                <td th:text="${sanPham.mo_ta}">Mô tả</td>
-                                                <td th:text="${#dates.format(sanPham.ngay_tao, 'dd-MM-yyyy')}">Ngày
-                                                    tạo
-                                                </td>
-                                                <td th:text="${#dates.format(sanPham.ngay_sua, 'dd-MM-yyyy')}">Ngày
-                                                    sửa
-                                                </td>
-                                                <td th:text="${sanPham.trang_thai ? 'Hoạt động' : 'Không hoạt động'}">
-                                                    Trạng thái
+                                            <tr th:each="sp, iter : ${listSP.content}" th:data-id="${sp.id}">
+                                                <td th:text="${(listSP.number * listSP.size) + iter.index + 1}"></td>
+                                                <td th:text="${sp.sanPham.ma}"></td>
+                                                <td th:text="${sp.sanPham.ten}"></td>
+                                                <td th:text="${sp.sanPham.mo_ta}"></td>
+                                                <td th:text="${sp.gia}"></td>
+                                                <td th:text="${sp.so_luong}"></td>
+                                                <td th:text="${sp.sanPham.trang_thai ? 'Hoạt động' : 'Không hoạt động'}"></td>
+                                                <td>
+                                                    <button class="btn btn-info" data-toggle="modal"
+                                                            data-target="#editSanPham"><i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-warning edit-price-btn"><i
+                                                            class="bi bi-pencil-square"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                             </tbody>
+
                                             <tfoot>
                                             <tr>
-                                                <th rowspan="1" colspan="1">Mã sản phẩm</th>
-                                                <th rowspan="1" colspan="1">Tên sản phẩm</th>
-                                                <th rowspan="1" colspan="1">Mô tả</th>
-                                                <th rowspan="1" colspan="1">Ngày tạo</th>
-                                                <th rowspan="1" colspan="1">Ngày sửa</th>
-                                                <th rowspan="1" colspan="1">Trạng thái</th>
+                                                <th>STT</th>
+                                                <th>Mã sản phẩm</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Mô tả</th>
+                                                <th>Giá bán</th>
+                                                <th>Số lượng</th>
+                                                <th>Trạng thái</th>
+                                                <th>Hành động</th>
                                             </tr>
                                             </tfoot>
                                         </table>
-                                    </div>
-                                </div>
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination justify-content-center">
+                                                <!-- Previous Page Link -->
+                                                <li class="page-item"
+                                                    th:classappend="${listSP.first ? 'disabled' : ''}">
+                                                    <a class="page-link"
+                                                       th:href="@{'/admin/san-pham?page=' + ${listSP.number - 1}}"
+                                                       aria-label="Previous" th:if="${!listSP.first}">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                </li>
 
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div id="detailsDropdown" class="dropdown">
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <form class="px-4 py-3">
-                                                    <div class="form-group">
-                                                        <label for="detailName">Tên chi tiết</label>
-                                                        <input type="text" class="form-control" id="detailName"
-                                                               placeholder="Nhập tên chi tiết">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="detailDescription">Mô tả chi tiết</label>
-                                                        <input type="text" class="form-control" id="detailDescription"
-                                                               placeholder="Nhập mô tả chi tiết">
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Lưu</button>
-                                                </form>
-                                            </div>
-                                        </div>
+                                                <!-- Page Number Links -->
+                                                <li class="page-item"
+                                                    th:each="i : ${#numbers.sequence(0, listSP.totalPages - 1)}"
+                                                    th:classappend="${i == listSP.number ? 'active' : ''}">
+                                                    <a class="page-link" th:href="@{'/admin/san-pham?page=' + ${i}}"
+                                                       th:text="${i + 1}"></a>
+                                                </li>
+
+                                                <!-- Next Page Link -->
+                                                <li class="page-item" th:classappend="${listSP.last ? 'disabled' : ''}">
+                                                    <a class="page-link"
+                                                       th:href="@{'/admin/san-pham?page=' + ${listSP.number + 1}}"
+                                                       aria-label="Next" th:if="${!listSP.last}">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </nav>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-<!--                                Footer box-->
+                                <!-- Footer box -->
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
+        </section>
     </div>
-    </section>
 </div>
 
 <footer th:replace="~{/admin/fragments/footer :: footer}"></footer>
 </div>
-
-<!-- Add Product Modal -->
-<div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="addProductLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="addProductLabel"><b>Thêm sản phẩm mới</b></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form th:action="@{/admin/san-pham/add}" method="post">
-                    <div class="form-group">
-                        <label for="productCode">Mã sản phẩm</label>
-                        <input type="text" class="form-control" id="productCode" name="ma"
-                               placeholder="Mã sản phẩm tự động tạo" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="productName">Tên sản phẩm</label>
-                        <input type="text" class="form-control" id="productName" name="ten"
-                               placeholder="Nhập tên sản phẩm">
-                    </div>
-                    <div class="form-group">
-                        <label for="productDescription">Mô tả</label>
-                        <input type="text" class="form-control" id="productDescription" name="mo_ta"
-                               placeholder="Nhập mô tả sản phẩm">
-                    </div>
-                    <div class="form-group">
-                        <label for="productStatus">Trạng thái</label>
-                        <select class="form-control" id="productStatus" name="trang_thai">
-                            <option value="true">Hoạt động</option>
-                            <option value="false">Không hoạt động</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- jQuery 3 -->
-<script th:replace="~{/admin/fragments/script :: script}"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+<!--mở form sửa giá-->
+<form id="editPriceForm" method="post" action="/admin/san-pham/updatePrice" style="display: none;">
+    <input type="hidden" name="id" id="editPriceId">
+    <input type="number" name="newPrice" id="editPriceInput" class="form-control">
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <button type="button" class="btn btn-secondary" id="cancelEditPrice">Hủy</button>
+</form>
 
 <script>
-    $(document).ready(function () {
-        $('#san_pham').DataTable({
-            "paging": true,
-            "searching": true,
-            "lengthChange": false,
-            "info": true
+    document.addEventListener('DOMContentLoaded', function () {
+        var prevLink = document.querySelector('.pagination .page-item.disabled a[aria-label="Previous"]');
+        var nextLink = document.querySelector('.pagination .page-item.disabled a[aria-label="Next"]');
+
+        if (prevLink) {
+            prevLink.addEventListener('click', function (event) {
+                event.preventDefault();
+            });
+        }
+
+        if (nextLink) {
+            nextLink.addEventListener('click', function (event) {
+                event.preventDefault();
+            });
+        }
+        //Sửa giá
+        var editButtons = document.querySelectorAll('.edit-price-btn');
+        var editPriceForm = document.getElementById('editPriceForm');
+        var editPriceId = document.getElementById('editPriceId');
+        var editPriceInput = document.getElementById('editPriceInput');
+        var cancelEditPrice = document.getElementById('cancelEditPrice');
+
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var row = button.closest('tr');
+                var priceCell = row.querySelector('td:nth-child(5)'); // Cột thứ 5 là cột giá bán
+                var currentPrice = priceCell.textContent.trim();
+
+                editPriceId.value = row.dataset.id;
+                editPriceInput.value = currentPrice;
+                editPriceInput.select();
+
+                priceCell.appendChild(editPriceForm);
+                editPriceForm.style.display = 'block';
+                editPriceInput.focus();
+
+                editPriceInput.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        editPriceForm.submit();
+                    }
+                });
+            });
         });
-        $('#san_pham tbody').on('click', 'tr', function () {
-            var id = table.row(this).data('id'); // Lấy id của hàng được click
-            // Hiển thị dropdown tương ứng với sản phẩm có id là id
-            $('#detailsDropdown').appendTo($(this)).toggle();
+
+        cancelEditPrice.addEventListener('click', function () {
+            editPriceForm.style.display = 'none';
+            document.body.appendChild(editPriceForm);
         });
     });
+
 </script>
+
+<!-- Include jQuery before other scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Include DataTables -->
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+<!-- Include other scripts -->
+<script th:replace="~{/admin/fragments/script :: script}"></script>
+
+
 </body>
+
 </html>

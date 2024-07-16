@@ -11,12 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KieuQuat {
-    //    CREATE TABLE kieu_quat (
-//            id INT PRIMARY KEY IDENTITY(1, 1),
-//    ma NVARCHAR(255),
-//    ten NVARCHAR(255),
-//    trang_thai BIT
-//);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
@@ -26,4 +20,8 @@ public class KieuQuat {
     String ten;
 
     Boolean trang_thai;
+
+    public KieuQuat(Integer kieuQuatId) {
+        this.id = kieuQuatId;
+    }
 }
