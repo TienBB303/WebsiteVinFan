@@ -1,7 +1,40 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/admin/fragments/head :: head}"></head>
-<body class="hold-transition skin-yellow-light sidebar-mini">
+<head th:replace="~{/admin/fragments/head :: head}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css"/>
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>-->
+    <style>
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            margin-right: 1rem;
+            min-width: 100px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /*.modal-fullscreen {*/
+        /*    width: 100%;*/
+        /*    height: 100%;*/
+        /*    margin: 0;*/
+        /*    padding: 0;*/
+        /*    max-width: none;*/
+        /*}*/
+
+        /*.modal-content-fullscreen {*/
+        /*    height: 100vh;*/
+        /*}*/
+    </style>
+</head>
+<body class="hold-transition skin-yellow-light sidebar-mini"
+      style="height: auto;min-height: 100%;/* padding-right: 17px; */">
 <!-- Site wrapper -->
 <div class="wrapper">
     <div>
@@ -15,13 +48,98 @@
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>trang hoa don</h1>
+            <h1>Hóa đơn</h1>
+            <ol class="breadcrumb">
+                <li><a href="/admin/index"><i class="bi bi-house"></i> Home</a></li>
+                <li class="active"><a href="#">Hóa đơn</a></li>
+            </ol>
         </section>
-        <!-- Main content -->
-        <section class="content">
 
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Danh sách hóa đơn</h3>
+                        </div>
+
+                        <div class="box-body">
+                            <div id="san_pham_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                                <div class="row">
+                                    <!-- BOX HEADER -->
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table id="" class="table table-bordered table-striped table-hover dataTable" role="grid" aria-describedby="">
+                                            <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Mã hóa đơn</th>
+                                                <th>Loại hóa đơn</th>
+                                                <th>Mã khách hàng</th>
+                                                <th>Tên khách hàng</th>
+                                                <th>SDT khách hàng</th>
+                                                <th>Mã nhân viên</th>
+                                                <!--                                    <th>Thanh toán</th>-->
+                                                <th>Vận chuyển</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="item, iterStat : ${list}">
+                                                <td th:text="${iterStat.count}"></td>
+                                                <td th:text="${item.ma}"></td>
+                                                <td th:text="${item.loaiHoaDon == 1 ? 'Tại quầy' : 'Online'}"></td>
+                                                <td th:text="${item.khachHang.ma}"></td>
+                                                <td th:text="${item.khachHang.ten}"></td>
+                                                <td th:text="${item.khachHang.soDienThoai}"></td>
+                                                <td th:text="${item.nhanVien.ma}"></td>
+                                                <td th:text="${item.phiVanChuyen}"></td>
+
+                                                <!--                                    <td>-->
+                                                <!--                                        <li th:each="thanhToan : ${hoaDon.thanhToan}">-->
+                                                <!--                                            <p>ID: <span th:text="${thanhToan.id}"></span></p>-->
+                                                <!--                                        </li>-->
+                                                <!--                                    </td>-->
+                                                <td th:switch="${item.trangThai}">
+                                                    <span th:case="0" class="text-danger">Đang chờ xác nhận</span>
+                                                    <span th:case="1" class="text-primary">Đã xác nhận</span>
+                                                    <span th:case="2" class="text-warning">Đang giao hàng</span>
+                                                    <span th:case="3" class="text-success">Đã giao hàng</span>
+                                                </td>
+                                                <td>
+                                                    <a th:href="@{/hoa-don/detail/{id}(id=${item.id})}" type="button" class="btn btn-warning">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Mã hóa đơn</th>
+                                                <th>Loại hóa đơn</th>
+                                                <th>Mã khách hàng</th>
+                                                <th>Tên khách hàng</th>
+                                                <th>SDT khách hàng</th>
+                                                <th>Mã nhân viên</th>
+                                                <!--                                    <th>Thanh toán</th>-->
+                                                <th>Vận chuyển</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- Footer box -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </div>
@@ -34,10 +152,23 @@
 </div>
 <!-- ./wrapper -->
 
-<!-- jQuery 3 -->
-<div>
-    <script th:replace="~{/admin/fragments/script :: script}"></script>
-</div>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Bootstrap 4 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+<script th:replace="~{/admin/fragments/script :: script}"></script>
+<script>
+    $(document).on('show.bs.modal', function () {
+        $('body').css('padding-right', '0');
+    });
+
+    $(document).on('hidden.bs.modal', function () {
+        $('body').css('padding-right', '');
+    });
+
+
+</script>
 
 </body>
 </html>
