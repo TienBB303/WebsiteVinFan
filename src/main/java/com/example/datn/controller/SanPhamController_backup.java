@@ -1,6 +1,5 @@
 package com.example.datn.controller;
 
-import com.example.datn.entity.DTO.SanPhamDTO;
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.entity.SanPhamChiTietTam;
