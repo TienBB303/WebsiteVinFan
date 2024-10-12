@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
 </head>
+<body>
 <!-- Site wrapper -->
 <div class="wrapper">
     <!-- Sidebar -->
@@ -39,7 +40,6 @@
                 <section class="col-12">
                     <div class="card p-4">
                         <form th:action="@{/admin/san-pham/add-bien-the}" method="post" enctype="multipart/form-data">
-
                             <!-- Thông tin sản phẩm -->
                             <div class="row">
                                 <div class="col-md-6">
@@ -224,11 +224,14 @@
 
                     <div class="card p-4">
                         <form th:action="@{/admin/san-pham/confirm}" method="post">
-                            <table class="col-12">
+                            <table class="table table-bordered">
                                 <thead>
                                 <tr>
+                                    <th>STT</th>
                                     <th>Tên</th>
-                                    <th>Màu Sắc</th>
+                                    <th>Kiểu quạt</th>
+                                    <th>Số lượng chế độ gió</th>
+                                    <th>Công suất quạt</th>
                                     <th>Giá</th>
                                     <th>Số lượng</th>
                                     <th>Hành động</th>
@@ -238,10 +241,13 @@
                                 <tbody>
                                 <tr th:each="spTam, stat : ${listSPCTTam}">
                                     <!-- Hiển thị thông tin sản phẩm -->
+                                    <td th:text="${stat.index + 1}"></td>
                                     <td th:text="${spTam.sanPhamTam.ten + ' (' + spTam.mauSac.ten + ')'}"></td>
                                     <td th:text="${spTam.sanPhamTam.kieuQuat.ten}"></td>
-                                    <td th:text="${spTam.gia}"></td>
-                                    <td th:text="${spTam.so_luong}"></td>
+                                    <td th:text="${spTam.cheDoGio.ten}"></td>
+                                    <td th:text="${spTam.congSuat.ten}"></td>
+                                    <td><input type="number" th:value="${spTam.gia}" name="gia" class="form-control" required/></td>
+                                    <td><input type="number" th:value="${spTam.so_luong}" name="so_luong" class="form-control" required/></td>
                                     <td>
                                         <button class="btn btn-warning" type="button"><i class="bi bi-trash"></i> Xóa</button>
                                     </td>

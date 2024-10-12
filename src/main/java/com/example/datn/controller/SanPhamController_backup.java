@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -125,7 +124,7 @@ public class SanPhamController_backup {
                                  @RequestParam(defaultValue = "5") int size,
                                  Model model) {
         if (maxPrice.compareTo(BigDecimal.ZERO) == 0) {
-            maxPrice = new BigDecimal("9999999999");
+            maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
         Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(query, minPrice, maxPrice, PageRequest.of(page, size));
         model.addAttribute("listSP", searchPage);
@@ -218,7 +217,10 @@ public class SanPhamController_backup {
 
     // Confirm the product variants from session
     @PostMapping("/san-pham/confirm")
-    public String confirmProducts(HttpSession session, Model model) {
+    public String confirmProducts(
+            @RequestParam("gia") BigDecimal gia,
+            @RequestParam("so_luong") Integer so_luong,
+            HttpSession session, Model model) {
 
         // Retrieve the list of product variants from the session
         @SuppressWarnings("unchecked")
@@ -251,9 +253,12 @@ public class SanPhamController_backup {
             sanPhamChiTiet.setChatLieuKhung(spTam.getChatLieuKhung());
             sanPhamChiTiet.setNutBam(spTam.getNutBam());
             sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
+            sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
+            sanPhamChiTiet.setHang(spTam.getHang());
+            sanPhamChiTiet.setDieuKhienTuXa(spTam.getDieuKhienTuXa());
 
-            sanPhamChiTiet.setGia(spTam.getGia());
-            sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
+            sanPhamChiTiet.setGia(new BigDecimal(String.valueOf(gia)));
+            sanPhamChiTiet.setSo_luong(new Integer(so_luong));
             sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
             sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
             sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
