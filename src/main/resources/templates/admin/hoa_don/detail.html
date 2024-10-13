@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+    <link rel="stylesheet" th:href="@{/admin/assets/extensions/choices.js/public/assets/styles/hoaDon.css}">
 
 </head>
 <body>
@@ -69,7 +70,15 @@
                 <div>
                     <td class="d-flex justify-content-center"
                         th:if="${hoaDon.trangThai != 4 && hoaDon.trangThai != 5 }">
-                        <form method="post" th:action="@{/hoa-don/xac-nhan}" th:if="${hoaDon.trangThai != 2}">
+                        <form method="post" th:action="@{/hoa-don/xac-nhan}"
+                              th:if="${hoaDon.trangThai != 2}">
+                            <input type="hidden" name="id" th:value="${hoaDon.id}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa-solid fa-cart-plus"></i> Xác Nhận
+                            </button>
+                        </form>
+                        <form method="post" th:action="@{/hoa-don/giao-hang}"
+                              th:if="${hoaDon.trangThai != 2}">
                             <input type="hidden" name="id" th:value="${hoaDon.id}">
                             <button type="submit" class="btn btn-success">
                                 <i class="fa-solid fa-cart-plus"></i> Xác Nhận
