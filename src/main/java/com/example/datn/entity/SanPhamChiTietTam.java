@@ -22,10 +22,11 @@ public class SanPhamChiTietTam {
     private CongSuat congSuat;
     private DieuKhienTuXa dieuKhienTuXa;
     private Hang hang;
-
     private ChieuCao chieuCao;
     private DeQuat deQuat;
     private CheDoGio cheDoGio;
+    private HinhAnh hinhAnh;
+
     private BigDecimal gia;
     private Integer so_luong;
     private Date ngay_tao;

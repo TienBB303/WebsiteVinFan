@@ -6,20 +6,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "dieu_khien_tu_xa")
+@Table(name = "hinh_anh")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DieuKhienTuXa {
+public class HinhAnh {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    String ten;
+    String hinh_anh_1;
 
-    Boolean trang_thai;
+    String hinh_anh_2;
 
-    public DieuKhienTuXa(Integer dieuKhienTuXaId) {
-        this.id = dieuKhienTuXaId;
+    String hinh_anh_3;
+
+
+    public HinhAnh(Integer hinhAnhId) {
+        this.id = hinhAnhId;
     }
 }

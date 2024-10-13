@@ -11,17 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChieuCao {
-    //    CREATE TABLE chieu_cao (
-//            id INT PRIMARY KEY IDENTITY(1, 1),
-//    ma NVARCHAR(255),
-//    ten NVARCHAR(255),
-//    trang_thai BIT
-//);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-
-    String ma;
 
     String ten;
 
@@ -30,7 +22,4 @@ public class ChieuCao {
     public ChieuCao(Integer chieuCaoId) {
         this.id = chieuCaoId;
     }
-//
-//    public ChieuCao(ChieuCao chieuCao) {
-//    }
 }
