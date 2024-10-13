@@ -15,8 +15,6 @@ public class KieuQuat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    String ma;
-
     String ten;
 
     Boolean trang_thai;

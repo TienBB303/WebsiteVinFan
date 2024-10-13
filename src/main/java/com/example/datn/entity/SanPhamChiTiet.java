@@ -69,15 +69,11 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_che_do_gio")
     CheDoGio cheDoGio;
 
+    @ManyToOne
+    @JoinColumn(name = "id_hinh_anh")
+    HinhAnh hinhAnh;
+
     BigDecimal gia;
-
-    BigDecimal gia_nhap;
-
-    @Transient
-    MultipartFile hinhAnhFile;
-
-    String hinh_anh;
-
 
     Integer so_luong;
 
