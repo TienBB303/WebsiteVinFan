@@ -90,6 +90,28 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+    @PostMapping("/giao-hang")
+    public String dangGiaoHang(@ModelAttribute("id") int id) {
+        // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
+        Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
+
+        if (hoaDonOptional.isPresent()) {
+            HoaDon hoaDon = hoaDonOptional.get();
+
+            // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDangGiaoHang());
+            hoaDonService.save(hoaDon);
+
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDangGiaoHang());
+            lichSuHoaDonRepo.save(lichSuHoaDon);
+        }
+
+        // Chuyển hướng người dùng đến trang chi tiết của HoaDon
+        return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
+    }
 
 
     @PostMapping("/hoan-thanh")
@@ -107,6 +129,26 @@ public class HoaDonController {
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+            lichSuHoaDonRepo.save(lichSuHoaDon);
+        }
+        // Chuyển hướng người dùng đến trang chi tiết của HoaDon
+        return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
+    }
+    @PostMapping("/huy")
+    public String huy(@ModelAttribute("id") int id) {
+        // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
+        Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
+        if (hoaDonOptional.isPresent()) {
+            HoaDon hoaDon = hoaDonOptional.get();
+
+            // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
+            hoaDonService.save(hoaDon);
+
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
             lichSuHoaDonRepo.save(lichSuHoaDon);
         }
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon

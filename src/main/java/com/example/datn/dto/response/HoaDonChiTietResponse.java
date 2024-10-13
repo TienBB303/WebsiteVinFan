@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 public class HoaDonChiTietResponse {
     String maHoaDon;
     String tenSanPham;
-    String hinhAnh;
     Integer soLuong;
     BigDecimal gia;
     BigDecimal thanhTien;

@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Integer> {
     @Query("SELECT new com.example.datn.dto.response.HoaDonChiTietResponse(" +
-            "hd.ma, sp.ten, spct.hinh_anh, hdct.soLuong, hdct.gia, hdct.thanhTien) " +
+            "hd.ma, sp.ten, hdct.soLuong, hdct.gia, hdct.thanhTien) " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN hdct.hoaDon hd " +
             "JOIN hdct.sanPhamChiTiet spct " +

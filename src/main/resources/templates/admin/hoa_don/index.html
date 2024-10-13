@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+    <link rel="stylesheet" th:href="@{/admin/assets/extensions/choices.js/public/assets/styles/hoaDon.css}">
 
 </head>
+<body>
 <!-- Site wrapper -->
 <div class="wrapper">
     <!-- </header>-->
@@ -69,7 +71,7 @@
                                         <div class="col-12 col-lg-2">
                                             <button class="btn btn-primary" type="submit">Tìm kiếm</button>
                                         </div>
-                                        <div class="col-12 col-lg-2 d-flex justify-content-lg-end mt-2 mt-lg-0">
+                                        <div class="col-12 col-lg-2 ">
                                             <a class="btn btn-warning" href="/hoa-don/index">Reset</a>
                                         </div>
                                     </div>
@@ -165,7 +167,7 @@
                                             <span th:case="5" class="text-success">Hủy</span>
                                         </td>
                                         <td>
-<!--                                            <a th:href="@{/hoa-don/detail/{id}(id=${item.id})}" type="button"-->
+                                            <!--                                            <a th:href="@{/hoa-don/detail/{id}(id=${item.id})}" type="button"-->
                                             <!--                                               class="btn btn-warning">-->
                                             <!--                                                <i class="bi bi-pencil-square"></i>-->
                                             <!--                                            </a>-->
