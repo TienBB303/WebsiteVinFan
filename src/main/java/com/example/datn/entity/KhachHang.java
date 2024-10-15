@@ -74,7 +74,7 @@ public class KhachHang {
     @Column(name = "trang_thai")
     private Boolean trangThai;
 
-    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DiaChi> diaChiList = new ArrayList<>();
+//    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<DiaChi> diaChiList = new ArrayList<>();
 
 }
