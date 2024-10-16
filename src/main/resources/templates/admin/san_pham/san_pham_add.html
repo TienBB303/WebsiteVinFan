@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+    <!--    <link rel="stylesheet" th:href="@{/admin/css/san_pham_add}">-->
 </head>
 <body>
 <!-- Site wrapper -->
@@ -60,7 +61,6 @@
                                                 <option value="" selected>Chọn kiểu quạt</option>
                                                 <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}"
                                                         th:text="${kieuQuat.ten}"></option>
-                                                <button class="btn btn-primary">+</button>
                                             </select>
                                         </div>
                                     </div>
@@ -81,7 +81,6 @@
                                                 <option th:each="nutBam : ${listNutBam}" th:value="${nutBam.id}"
                                                         th:text="${nutBam.ten}"></option>
                                             </select>
-                                            <button class="btn btn-primary">+</button>
                                         </div>
                                     </div>
                                     <!-- Phần hãng -->
@@ -92,7 +91,6 @@
                                                 <option th:each="hang : ${listHang}" th:value="${hang.id}"
                                                         th:text="${hang.ten}"></option>
                                             </select>
-                                            <button class="btn btn-primary">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -107,7 +105,6 @@
                                                         th:value="${chatLieuCanh.id}"
                                                         th:text="${chatLieuCanh.ten}"></option>
                                             </select>
-                                            <button class="btn btn-primary">+</button>
                                         </div>
                                     </div>
 
@@ -121,7 +118,6 @@
                                                         th:value="${duongKinhCanh.id}"
                                                         th:text="${duongKinhCanh.ten}"></option>
                                             </select>
-                                            <button class="btn btn-primary">+</button>
                                         </div>
                                     </div>
 
@@ -135,7 +131,6 @@
                                                         th:value="${chatLieuKhung.id}"
                                                         th:text="${chatLieuKhung.ten}"></option>
                                             </select>
-                                            <button class="btn btn-primary">+</button>
                                         </div>
                                     </div>
 
@@ -147,7 +142,6 @@
                                                 <option th:each="deQuat : ${listDeQuat}" th:value="${deQuat.id}"
                                                         th:text="${deQuat.ten}"></option>
                                             </select>
-                                            <button class="btn btn-primary">+</button>
                                         </div>
                                     </div>
 
@@ -159,7 +153,6 @@
                                                 <option th:each="chieuCao : ${listChieuCao}" th:value="${chieuCao.id}"
                                                         th:text="${chieuCao.ten}"></option>
                                             </select>
-                                            <button class="btn btn-primary">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -171,7 +164,6 @@
                                 <div class="mb-3">
                                     <div class="mb-3">
                                         <label for="sanPhamMauSac" class="form-label">Màu sắc</label>
-                                        <button class="btn btn-outline-warning" type="button">+</button>
                                         <div class="form-group">
                                             <!-- Update the name attribute to allow multiple values -->
                                             <select id="sanPhamMauSac" name="mauSac.id"
@@ -187,7 +179,6 @@
                                     <!-- Phần chế độ gió -->
                                     <div class="mb-3">
                                         <label for="sanPhamCheDoGio" class="form-label">Chế độ gió</label>
-                                        <button class="btn btn-outline-warning" type="button">+</button>
                                         <div class="form-group">
                                             <select id="sanPhamCheDoGio" name="cheDoGio.id"
                                                     class="form-select me-2 multiple-remove" multiple>
@@ -202,7 +193,6 @@
                                     <!-- Phần công suất -->
                                     <div class="mb-3">
                                         <label for="sanPhamCongSuat" class="form-label">Công suất</label>
-                                        <button class="btn btn-outline-warning" type="button">+</button>
                                         <div class="form-group">
                                             <select id="sanPhamCongSuat" name="congSuat.id"
                                                     class="form-select me-2 multiple-remove" multiple>
@@ -246,10 +236,14 @@
                                     <td th:text="${spTam.sanPhamTam.kieuQuat.ten}"></td>
                                     <td th:text="${spTam.cheDoGio.ten}"></td>
                                     <td th:text="${spTam.congSuat.ten}"></td>
-                                    <td><input type="number" th:value="${spTam.gia}" name="gia" class="form-control" required/></td>
-                                    <td><input type="number" th:value="${spTam.so_luong}" name="so_luong" class="form-control" required/></td>
+                                    <td><input type="number" th:value="${spTam.gia}" name="gia" class="form-control"/>
+                                    </td>
+                                    <td><input type="number" th:value="${spTam.so_luong}" name="so_luong"
+                                               class="form-control"/></td>
                                     <td>
-                                        <button class="btn btn-warning" type="button"><i class="bi bi-trash"></i> Xóa</button>
+                                        <button class="btn btn-warning" type="submit" onclick="return confirm('Are you sure you want to delete this item?');">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -267,7 +261,15 @@
         <footer th:replace="/admin/fragments/footer :: footer"></footer>
     </div>
 </div>
+<!--end wraper-->
+
 <div>
+    <script th:replace="/admin/fragments/script :: script"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const colorSelect = new Choices('#sanPhamMauSac', {
@@ -290,7 +292,8 @@
         });
 
     </script>
-    <script th:replace="/admin/fragments/script :: script"></script>
+
+
 </div>
 </body>
 </html>
