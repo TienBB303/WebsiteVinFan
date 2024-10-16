@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sản phẩm giảm giá</title>
+</head>
+<body>
+<h1>Các sản phẩm áp dụng phiếu giảm giá</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Tên sản phẩm</th>
+        <th>Số tiền giảm</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="spct : ${sanPhamChiTiets}">
+        <td th:text="${spct.sanPham.ten}">Tên sản phẩm</td> <!-- Tên sản phẩm từ SanPham -->
+        <td th:text="${spct.gia}">Giá</td> <!-- Giá từ SanPhamChiTiet -->
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
