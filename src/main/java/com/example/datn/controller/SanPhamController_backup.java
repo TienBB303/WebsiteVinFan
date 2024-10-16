@@ -214,11 +214,16 @@ public class SanPhamController_backup {
     // Nhận giá trị từ sản phẩm tạm
     @PostMapping("/san-pham/confirm")
     public String confirmProducts(
-            @RequestParam("gia") List<BigDecimal> gias,
-            @RequestParam("so_luong") List<Integer> soLuongs,
+            @RequestParam(value = "gia", required = false) List<BigDecimal> gias,
+            @RequestParam(value = "so_luong", required = false) List<Integer> soLuongs,
             HttpSession session, Model model) {
 
         List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
+
+        if (sanPhamChiTietTamList == null || sanPhamChiTietTamList.isEmpty()) {
+            model.addAttribute("error", "Không có sản phẩm tạm để confirm");
+            return "admin/san_pham/san_pham_add";
+        }
 
         // Cập nhật giá và số lượng cho từng sản phẩm tạm khi update ở bảng
         for (int i = 0; i < sanPhamChiTietTamList.size(); i++) {
@@ -228,10 +233,7 @@ public class SanPhamController_backup {
         }
 
         // Kiểm tra sản phẩm tạm null hay không
-        if (sanPhamChiTietTamList == null || sanPhamChiTietTamList.isEmpty()) {
-            model.addAttribute("error", "Không cso sản phẩm tạm để confirm");
-            return "admin/san_pham/san_pham_add";
-        }
+
 
         // confirm
         SanPham sanPham = new SanPham();
@@ -275,7 +277,28 @@ public class SanPhamController_backup {
 
         return "redirect:/admin/san-pham";
     }
-//    Chuyển trang update
+    @GetMapping("/san-pham/delete-tam/{id}")
+    public String xoaSPTam(@PathVariable("id") Long id, HttpSession session, Model model) {
+        // Lấy danh sách tạm từ session
+        List<SanPhamChiTietTam> listSPCTTam = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
+
+        // Kiểm tra xem danh sách có tồn tại không
+        if (listSPCTTam != null) {
+            // Xóa sản phẩm chi tiết theo ID
+            listSPCTTam.removeIf(spTam -> spTam.getId().equals(id));
+        }
+
+        // Cập nhật lại danh sách trong session
+        session.setAttribute("listSPCTTam", listSPCTTam);
+        model.addAttribute("listSPCTTam", listSPCTTam);
+
+        // Redirect to the same page to refresh the list
+        return "admin/san_pham/san_pham_add"; // Trả về trang hiển thị danh sách
+    }
+
+
+
+    //    Chuyển trang update
     @GetMapping("/san-pham/viewUpdate/{id}")
     public String viewUpdateProduct(@PathVariable("id") Long id, Model model) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(id);

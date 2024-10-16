@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SanPhamChiTietTam {
-    Long id; // ID tạm thời, không cần thiết trong cơ sở dữ liệu
+    private Long id; // ID tạm thời, không cần thiết trong cơ sở dữ liệu
     private MauSac mauSac;
     private ChatLieuCanh chatLieuCanh;
     private NutBam nutBam;
