@@ -5,7 +5,7 @@
 <!--        Chỉnh thành phần trên cùng cảu sidebar: logo, button-->
             <div class="d-flex justify-content-between align-items-center">
 <!--            Chỉnh logo-->
-                <a href="index.html">
+                <a href="/admin/index">
                     <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 50%; height: 50%;" alt="Logo">
                 </a>
 <!--            Chỉnh giao diện sáng tối-->
@@ -50,9 +50,23 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
                 <li class="sidebar-item  ">
-                    <a href="index.html" class="sidebar-link">
+                    <a href="/admin/index" class="sidebar-link">
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-title">Bán hàng</li>
+<!--            Bán hàng tại quầy-->
+                <li class="sidebar-item  ">
+                    <a href="/ban-hang/index" class="sidebar-link">
+                        <i class="bi bi-basket"></i>
+                        <span>Bán hàng tại quầy</span>
+                    </a>
+                </li>
+                <li class="sidebar-item  ">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-shop"></i>
+                        <span>Website</span>
                     </a>
                 </li>
 <!--            Sản phẩm-->
@@ -102,6 +116,19 @@
                     <ul class="submenu submenu-closed" style="--submenu-height: 215px;">
                         <li class="submenu-item  ">
                             <a href="/hoa-don/index" class="submenu-link">Hóa đơn</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        <span>Quản lý phiếu giảm giá</span>
+                    </a>
+
+                    <ul class="submenu submenu-closed" style="--submenu-height: 215px;">
+                        <li class="submenu-item  ">
+                            <a href="/admin/phieu-giam/index" class="submenu-link">Phiếu giảm giá</a>
                         </li>
                     </ul>
                 </li>

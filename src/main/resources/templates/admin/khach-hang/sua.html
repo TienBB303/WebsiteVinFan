@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+
+</head>
+<!-- Site wrapper -->
+<div class="wrapper">
+    <!-- </header>-->
+    <div>
+        <!--        <header th:replace="/admin/fragments/header :: header">-->
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
+
+    <!-- Main-->
+    <div id="main">
+        <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+        </header>
+
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Sửa Khách Hàng</h3>
+                        <p class="text-subtitle text-muted">các sản phẩm quạt</p>
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">sửa khách hàng</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <section class="card">
+                <div class="card-body">
+                    <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
+                        <div class="box-header">
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div  class="row">
+
+                                        <div class="col-md-12">
+                                            <!--                                            cho pham sua kh-->
+                                            <form th:action="@{/admin/khach-hang/update}" th:object="${khachHang}" method="post">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <a th:href="@{/admin/khach-hang/index}" class="btn btn-secondary">Quay lại
+                                                            trang
+                                                            danh
+                                                            sách</a>
+                                                    </div>
+
+                                                    <div class="col-md-2">
+                                                        <button type="submit" class="btn btn-primary">Sửa</button>
+                                                    </div>
+
+                                                </div>
+                                                <br>
+                                                <br>
+                                                <input type="hidden" th:field="*{id}"/>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label for="ma" class="form-label">Mã</label>
+                                                                <input type="text" class="form-control" id="ma" th:field="*{ma}"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label for="ten" class="form-label">Tên</label>
+                                                                <input type="text" class="form-control" id="ten" th:field="*{ten}"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label class="form-label">Số Điện thoại</label>
+                                                                <input type="text" class="form-control" th:field="*{soDienThoai}"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="mb-3">
+                                                                    <label for="email" class="form-label">Email</label>
+                                                                    <input type="text" class="form-control" id="email"
+                                                                           th:field="*{email}"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label for="matKhau" class="form-label">Mật Khẩu</label>
+                                                                <input type="text" class="form-control" id="matKhau"
+                                                                       th:field="*{matKhau}"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="ngayTao" class="form-label">Ngày Tạo</label>
+                                                                <input type="date" class="form-control" id="ngayTao"
+                                                                       th:field="*{ngayTao}"
+                                                                       disabled/>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="nguoiTao" class="form-label">Người Tạo</label>
+                                                                <input type="text" class="form-control" id="nguoiTao"
+                                                                       th:field="*{nguoiTao}"
+                                                                       disabled/>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Ngày sinh</label>
+                                                                <input type="date" class="form-control" id="ngaySinh"
+                                                                       th:field="*{ngaySinh}"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Giới tính</label>
+                                                                <div>
+                                                                    <input class="form-check-input" type="radio" name="gioiTinh"
+                                                                           id="gridRadios1"
+                                                                           value="Nam" checked>
+                                                                    <label class="form-check-label" for="gridRadios1">Nam</label>
+                                                                    <input class="form-check-input" type="radio" name="gioiTinh"
+                                                                           id="gridRadios2"
+                                                                           value="Nữ">
+                                                                    <label class="form-check-label" for="gridRadios2">Nữ</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Trạng thái</label>
+                                                                <select class="form-control" id="trangThai" th:field="*{trangThai}">
+                                                                    <option value="0" th:selected="*{trangThai == 0}">Ngừng Hoạt
+                                                                        Động
+                                                                    </option>
+                                                                    <option value="1" th:selected="*{trangThai == 1}">Đang Hoạt Động
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div  class="row">
+                                        <div class="col-md-12">
+                                            <button  onclick="disPlayBlook()">Thêm địa chỉ</button>
+                                            <br>
+                                            <div id="magic" style=" display: none;border: #008FFB solid 2px; border-radius: 20px;padding: 5px 10px 5px 10px">
+                                                <form th:action="@{/admin/khach-hang/them-dia-chi}" method="post">
+                                                    <!-- Truyền ID của khách hàng -->
+                                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
+
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Tỉnh/Thành phố</label>
+                                                            <select class="form-control" id="city2" name="tinhThanhPho">
+                                                                <option value="" selected>Chọn tỉnh thành</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Quận/Huyện</label>
+                                                            <select class="form-control" id="district2" name="quanHuyen">
+                                                                <option value="" selected>Chọn quận huyện</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Phường/Xã</label>
+                                                            <select class="form-control" id="ward2" name="xaPhuong">
+                                                                <option value="" selected>Chọn phường xã</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Số nhà/ngõ đường</label>
+                                                            <input type="text" class="form-control" name="soNhaNgoDuong">
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" onclick="disPlayBlook()" class="bi bi-plus-lg">
+
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <div id="formSuaDiaChi" style=" display: none;border: #008FFB solid 2px; border-radius: 20px;padding: 5px 10px 5px 10px">
+                                                <form th:action="@{/admin/khach-hang/them-dia-chi}" method="post">
+                                                    <!-- Truyền ID của khách hàng -->
+                                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
+
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Tỉnh/Thành phố</label>
+                                                            <select class="form-control" id="city2" name="tinhThanhPho">
+                                                                <option value="" selected>Chọn tỉnh thành</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Quận/Huyện</label>
+                                                            <select class="form-control" id="district2" name="quanHuyen">
+                                                                <option value="" selected>Chọn quận huyện</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Phường/Xã</label>
+                                                            <select class="form-control" id="ward2" name="xaPhuong">
+                                                                <option value="" selected>Chọn phường xã</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Số nhà/ngõ đường</label>
+                                                            <input type="text" class="form-control" name="soNhaNgoDuong">
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" onclick="disPlayBlook()" class="bi bi-plus-lg">
+
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <br>
+
+                                            <div id="danhSachDiaChi" th:each="diaChi, stat : ${diaChiList}">
+                                                <form th:action="@{/admin/khach-hang/dia-chi-mac-dinh}"
+                                                      method="post">
+                                                    <div style="padding: 5px 10px 5px 10px">
+                                                        <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
+                                                        <input type="hidden" name="diaChiId" th:value="${diaChi.id}"/>
+                                                        <input type="hidden" th:id="'tinhThanhPho' + ${stat.index}" th:value="${diaChi.tinhThanhPho}" />
+                                                        <input type="hidden"th:id="'quanHuyen' + ${stat.index}" th:value="${diaChi.quanHuyen}" />
+                                                        <input type="hidden" th:id="'xaPhuong' + ${stat.index}" th:value="${diaChi.xaPhuong}" />
+
+
+                                                        <h6 th:id="'city' + ${stat.index}">Tỉnh: </h6>
+                                                        <h6 th:id="'district' + ${stat.index}">Quận / Huyện: </h6>
+                                                        <h6 th:id="'ward' + ${stat.index}">Xã / Phường: </h6>
+                                                        <h6 th:text="${diaChi.soNhaNgoDuong}">chi tiết địa chỉ</h6>
+
+                                                        <!--                                                        <button-->
+                                                        <!--                                                                th:id="'radio'+ ${diaChi.id}"-->
+                                                        <!--                                                                name="checkDiaChiMacDinh"-->
+                                                        <!--                                                                type="submit"-->
+                                                        <!--                                                                th:value="${diaChi.id}"-->
+                                                        <!--                                                        >mac dinh</button>-->
+                                                        <input type="radio" th:id="'radio' + ${diaChi.id} "
+                                                               name="checkDiaChiMacDinh"
+                                                               th:value="${diaChi.id}" th:checked="${diaChi.trangThai == true}"  onchange="this.form.submit()" />
+                                                    </div>
+                                                </form>
+                                                <a class="btn btn-secondary"
+                                                   th:href="@{/admin/khach-hang/xoa/{id}(id=${diaChi.id}, khachHangId=${khachHang.id})}">
+                                                    Xóa
+                                                </a>
+                                                <button class="btn btn-secondary" onclick="suaDiaChi()">sua</button>
+                                                <hr>
+                                                <br>
+                                                <br>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-2">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- Footer-->
+    <div>
+        <footer th:replace="/admin/fragments/footer :: footer"></footer>
+    </div>
+
+</div>
+
+
+<!-- Script -->
+<div>
+    <script th:replace="/admin/fragments/script :: script"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script th:inline="javascript">
+        // Lấy danh sách địa chỉ từ Thymeleaf (chuyển từ dạng Thymeleaf sang JSON)
+
+        var listDiaChi = /*[[${diaChiList}]]*/ [];
+
+        // Duyệt qua danh sách địa chỉ
+        // listDiaChi.forEach(function(diaChi) {
+        //     console.log("Tỉnh/Thành phố: " + diaChi.tinhThanhPho);
+        //     console.log("Quận/Huyện: " + diaChi.quanHuyen);
+        //     console.log("Xã/Phường: " + diaChi.xaPhuong);
+        // });
+        // Thực hiện vòng lặp qua danh sách địa chỉ
+        listDiaChi.forEach(function (diaChi, index) {
+            // Lấy giá trị từ các trường input dựa theo chỉ số
+            var idTinh = document.getElementById('tinhThanhPho' + index).value;
+            var idHuyen = document.getElementById('quanHuyen' + index).value;
+            var idXa = document.getElementById('xaPhuong' + index).value;
+
+            // Phần tử hiển thị kết quả
+            var citis = document.getElementById('city' + index);
+            var districts = document.getElementById('district' + index);
+            var wards = document.getElementById('ward' + index);
+
+            // Cấu hình Axios để lấy dữ liệu từ GitHub
+            var Parameter = {
+                url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+                method: "GET",
+                responseType: "application/json",
+            };
+
+            // Gọi API để lấy dữ liệu địa giới hành chính
+            axios(Parameter).then(function (result) {
+                renderCity(result.data, idTinh, idHuyen, idXa, citis, districts, wards);
+            });
+
+            // Hàm xử lý dữ liệu địa giới hành chính
+            function renderCity(data, idTinh, idHuyen, idXa, citis, districts, wards) {
+                var selectedCity = data.find(city => city.Id == idTinh);
+                if (selectedCity) {
+                    citis.textContent = "Tỉnh: " + selectedCity.Name;
+
+                    var selectedDistrict = selectedCity.Districts.find(district => district.Id == idHuyen);
+                    if (selectedDistrict) {
+                        districts.textContent = "Quận / Huyện: " + selectedDistrict.Name;
+
+                        var selectedWard = selectedDistrict.Wards.find(ward => ward.Id == idXa);
+                        if (selectedWard) {
+                            wards.textContent = "Xã / Phường: " + selectedWard.Name;
+                        } else {
+                            wards.textContent = "Xã / Phường: Không tìm thấy";
+                        }
+                    } else {
+                        districts.textContent = "Quận / Huyện: Không tìm thấy";
+                        wards.textContent = "Xã / Phường: Không tìm thấy";
+                    }
+                } else {
+                    citis.textContent = "Tỉnh: Không tìm thấy";
+                    districts.textContent = "Quận / Huyện: Không tìm thấy";
+                    wards.textContent = "Xã / Phường: Không tìm thấy";
+                }
+            }
+        });
+        var cities2 = document.getElementById("city2");
+        var districts2 = document.getElementById("district2");
+        var wards2 = document.getElementById("ward2");
+
+        var parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "json",
+        };
+
+        axios(parameter).then(function (result) {
+            renderCity2(result.data);
+        });
+
+        function renderCity2(data) {
+            for (const city of data) {
+                cities2.options[cities2.options.length] = new Option(city.Name, city.Id);
+            }
+            cities2.onchange = function () {
+                districts2.length = 1;
+                wards2.length = 1;
+                if (this.value !== "") {
+                    const result = data.find(n => n.Id === this.value);
+                    if (result) {
+                        for (const district of result.Districts) {
+                            districts2.options[districts2.options.length] = new Option(district.Name, district.Id);
+                        }
+                    }
+                }
+            };
+
+            districts2.onchange = function () {
+                wards2.length = 1;
+                const selectedCity = data.find(n => n.Id === cities2.value);
+                if (this.value !== "") {
+                    const result = selectedCity.Districts.find(n => n.Id === this.value);
+                    if (result) {
+                        for (const ward of result.Wards) {
+                            wards2.options[wards2.options.length] = new Option(ward.Name, ward.Id);
+                        }
+                    }
+                }
+            };
+        }
+        function suaDiaChi(){
+            var p = document.getElementById("formSuaDiaChi");
+            if(p.style.display == "block"){
+                p.style.display = "none"
+            }else{
+                p.style.display = "block"
+            }
+        }
+        function disPlayBlook(){
+            var p = document.getElementById("magic");
+            if(p.style.display == "block"){
+                p.style.display = "none"
+            }else{
+                p.style.display = "block"
+            }
+        }
+        function diachiMacDinh(){
+            var nameButton = document.getElementsByName("checkDiaChiMacDinh")
+            // var buttonMacDinh = document.getElementsByName("checkDiaChiMacDinh")
+            for(var i =0 ; i < nameButton.length; i++ ){
+                if(nameButton.values() == null){
+                    console.log("khong co dc mac dinh")
+                }else if(nameButton.values() == true){
+                    buttonMacDinh[i].parentElement.style.color = "red"
+                }else{
+                    buttons[i].parentElement.style.color = "blue";
+                }
+            }
+        }
+        // window.onload = diachiMacDinh
+
+    </script>
+
+
+
+    <!--    <script>-->
+
+    <!--        var idTinh = document.getElementById("tinhThanhPho").value;-->
+    <!--        var idHuyen = document.getElementById("quanHuyen").value;-->
+    <!--        var idXa = document.getElementById("xaPhuong").value;-->
+
+    <!--        var citis = document.getElementById("city");-->
+    <!--        var districts = document.getElementById("district");-->
+    <!--        var wards = document.getElementById("ward");-->
+
+    <!--        var Parameter = {-->
+    <!--            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",-->
+    <!--            method: "GET",-->
+    <!--            responseType: "application/json",-->
+    <!--        };-->
+
+    <!--        axios(Parameter).then(function (result) {-->
+    <!--            renderCity(result.data);-->
+    <!--            // Preselect city, district, and ward after data is loaded-->
+    <!--            citis.value = idTinh;-->
+    <!--            citis.dispatchEvent(new Event('change'));-->
+
+    <!--            setTimeout(function () {-->
+    <!--                districts.value = idHuyen;-->
+    <!--                districts.dispatchEvent(new Event('change'));-->
+    <!--            }, 500);-->
+
+    <!--            setTimeout(function () {-->
+    <!--                wards.value = idXa;-->
+    <!--            }, 1000);-->
+    <!--        });-->
+
+    <!--        function renderCity(data) {-->
+    <!--            for (const x of data) {-->
+    <!--                citis.options[citis.options.length] = new Option(x.Name, x.Id);-->
+    <!--            }-->
+
+    <!--            citis.onchange = function () {-->
+    <!--                districts.length = 1;-->
+    <!--                wards.length = 1;-->
+
+    <!--                if (this.value != "") {-->
+    <!--                    const result = data.filter(n => n.Id === this.value);-->
+    <!--                    for (const k of result[0].Districts) {-->
+    <!--                        districts.options[districts.options.length] = new Option(k.Name, k.Id);-->
+    <!--                    }-->
+    <!--                }-->
+    <!--            };-->
+
+    <!--            districts.onchange = function () {-->
+    <!--                wards.length = 1;-->
+    <!--                const dataCity = data.filter((n) => n.Id === citis.value);-->
+
+    <!--                if (this.value != "") {-->
+    <!--                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;-->
+    <!--                    for (const w of dataWards) {-->
+    <!--                        wards.options[wards.options.length] = new Option(w.Name, w.Id);-->
+    <!--                    }-->
+    <!--                }-->
+    <!--            };-->
+    <!--        }-->
+    <!--    </script>-->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+    <style>
+        /* Đặt màu cho các mục trong danh sách dropdown */
+        .select2-container--default .select2-results__option {
+            color: #000; /* Màu chữ đen cho các mục trong danh sách */
+        }
+
+        /* Đặt màu nền cho các mục trong danh sách khi hover */
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #007bff; /* Màu nền khi hover */
+            color: #fff; /* Màu chữ trắng khi hover */
+        }
+
+        /* Đặt màu cho các mục đã chọn trong dropdown */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #000; /* Màu chữ đen cho mục đã chọn */
+        }
+    </style>
+</head>
+
+<body>
+<!-- Site wrapper -->
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
+
+    <!-- Main-->
+    <div id="main">
+        <header th:replace="/admin/fragments/header :: header"></header>
+
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Phiếu giảm giá</h3>
+                        <p class="text-subtitle text-muted">Thêm mới phiếu giảm giá</p>
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a
+                                        href="/admin/phieu-giam/index">Phiếu
+                                    giảm giá</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a
+                                        href="/admin/phieu-giam/store">Thêm phiếu giảm giá</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <section class="row">
+                <section class="col-12">
+                    <div class="card p-4">
+                        <form th:action="@{/admin/phieu-giam/add}" method="post" enctype="multipart/form-data"
+                              onsubmit="return validateForm()" name="addForm">
+                            <!-- Mã phiếu giảm giá -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="ma" placeholder="Mã tự động"
+                                           readonly>
+                                </div>
+                            </div>
+
+                            <!-- Tên phiếu giảm giá -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="ten"
+                                           placeholder="Nhập tên phiếu giảm giá">
+                                    <span id="tenError" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Ngày bắt đầu -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control" name="ngayBD">
+                                    <span id="ngayBDError" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Ngày kết thúc -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control" name="ngayKT">
+                                    <span id="ngayKTError" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Số lượng -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Số lượng</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="soLuong"
+                                           placeholder="Nhập số lượng">
+                                    <span id="soLuongError" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Loại phiếu giảm giá -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="loaiPhieuGiam">
+                                        <option value="true">Giảm giá sản phẩm</option>
+                                        <option value="false">Giảm giá hóa đơn</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Giá trị tối thiểu áp dụng -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Giá trị tối thiểu áp dụng</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="giaTriMin"
+                                           placeholder="Nhập giá trị tối thiểu áp dụng">
+                                    <span id="giaTriMinError" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Giá trị tối đa áp dụng -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Giá trị tối đa áp dụng</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="giaTriMax"
+                                           placeholder="Nhập giá trị tối đa áp dụng">
+                                    <span id="giaTriMaxError" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Trạng thái -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Trạng thái</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="trangThai" required>
+                                        <option value="true">Áp dụng</option>
+                                        <option value="false">Ngừng áp dụng</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Chọn sản phẩm -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Chọn sản phẩm</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="sanPhamId" id="productSelect" required>
+                                        <option value="">Chọn sản phẩm</option>
+                                        <option th:each="sanPham : ${sanPhams}" th:value="${sanPham.id}"
+                                                th:text="${sanPham.ten}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Button thêm mới -->
+                            <div style="display: flex; justify-content: center;">
+                                <button type="submit" class="btn btn-primary" style="width: 500px;">Thêm mới</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <div>
+            <footer th:replace="/admin/fragments/footer :: footer"></footer>
+        </div>
+    </div>
+
+    <script th:replace="/admin/fragments/script :: script"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <!-- Thêm SweetAlert2 CSS và JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        function validateForm() {
+            var currentDate = new Date();
+            var ten = document.forms["addForm"]["ten"].value; // Sửa tên form thành "addForm"
+            var ngayBD = document.forms["addForm"]["ngayBD"].value; // Sửa tên form thành "addForm"
+            var ngayKT = document.forms["addForm"]["ngayKT"].value; // Sửa tên form thành "addForm"
+            var soLuong = document.forms["addForm"]["soLuong"].value; // Sửa tên form thành "addForm"
+            var giaTriMin = document.forms["addForm"]["giaTriMin"].value; // Sửa tên form thành "addForm"
+            var giaTriMax = document.forms["addForm"]["giaTriMax"].value; // Sửa tên form thành "addForm"
+
+            var selectedStartDate = new Date(ngayBD);
+            var selectedEndDate = new Date(ngayKT);
+
+            // Mảng lưu thông báo lỗi
+            var errorMessages = [];
+
+            // Kiểm tra từng trường và thêm thông báo lỗi vào mảng
+            if (ten.trim() === "") {
+                showToast("Không để trống tên phiếu giảm giá.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            }
+
+            if (ngayBD.trim() === "") {
+                showToast("Không để trống ngày bắt đầu.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            } else if (selectedStartDate < currentDate) {
+                showToast("Ngày bắt đầu không được là ngày quá khứ.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            }
+
+            if (ngayKT.trim() === "") {
+                showToast("Không để trống ngày kết thúc.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            } else if (selectedEndDate < currentDate) {
+                showToast("Ngày kết thúc phải lớn hơn ngày hiện tại.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            } else if (selectedEndDate <= selectedStartDate) {
+                showToast("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            }
+
+            if (soLuong.trim() === "" || soLuong <= 0) {
+                showToast("Số lượng phải lớn hơn 0.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            }
+
+            if (giaTriMin.trim() === "" || giaTriMin <= 0) {
+                showToast("Giá trị tối thiểu phải lớn hơn 0.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            }
+
+            if (giaTriMax.trim() === "" || giaTriMax <= 0) {
+                showToast("Giá trị tối đa phải lớn hơn 0.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            }
+
+            if (giaTriMax <= giaTriMin) {
+                showToast("Giá trị tối đa phải lớn hơn giá trị tối thiểu.");
+                return false; // Dừng lại ngay khi phát hiện lỗi
+            }
+
+            // Nếu không có lỗi, cho phép form submit
+            return true;
+        }
+
+        function showToast(message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end', // Vị trí góc phải
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                onOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+
+            Toast.fire({
+                icon: 'error',
+                title: message
+            });
+        }
+
+        $(document).ready(function () {
+            $('#productSelect').select2({
+                placeholder: "Chọn sản phẩm giảm giá",
+                allowClear: true,
+                width: '100%',
+                templateResult: function (data) {
+                    return $('<span style="color: #333;">' + data.text + '</span>'); // Màu chữ xám đậm
+                },
+                templateSelection: function (data) {
+                    return $('<span style="color: #007bff;">' + data.text + '</span>'); // Màu chữ xanh đậm cho mục đã chọn
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
