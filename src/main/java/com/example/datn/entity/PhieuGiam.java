@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "phieu_giam_gia")
@@ -62,4 +63,11 @@ public class PhieuGiam {
 
     @Column(name = "trang_thai")
     private boolean trangThai;
+
+    @ManyToOne
+    @JoinColumn(name = "id_san_pham")
+    private SanPham sanPham;
+
+    @OneToMany(mappedBy = "phieuGiam")
+    private List<SanPham> sanPhams;
 }
