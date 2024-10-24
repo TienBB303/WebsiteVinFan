@@ -1,0 +1,56 @@
+package com.example.datn.repository;
+
+import com.example.datn.dto.response.ThongKeResponse;
+import com.example.datn.entity.HoaDonChiTiet;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
+    @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
+            "'YEAR',"+
+            "EXTRACT(YEAR FROM hd.ngayTao), " +
+            "sum(hdct.thanhTien), " +
+            "sum(hdct.soLuong))" +
+            "from HoaDon hd" +
+            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
+            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+            " group by EXTRACT(YEAR FROM hd.ngayTao)")
+    List<ThongKeResponse> getListYear();
+
+    @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
+            "'MONTH',"+
+            "EXTRACT(MONTH FROM hd.ngayTao), " +
+            "sum(hdct.thanhTien), " +
+            "sum(hdct.soLuong))" +
+            "from HoaDon hd" +
+            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
+            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+            " group by EXTRACT(MONTH FROM hd.ngayTao)")
+    List<ThongKeResponse> getListMonth();
+
+    @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
+            "'WEEK'," +
+            "EXTRACT(week FROM hd.ngayTao), " +
+            "sum(hdct.thanhTien), " +
+            "sum(hdct.soLuong))" +
+            "from HoaDon hd" +
+            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
+            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+            " group by EXTRACT(week FROM hd.ngayTao)")
+    List<ThongKeResponse> getListWeek();
+
+    @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
+            "'DAY'," +
+            "EXTRACT(day FROM hd.ngayTao), " +
+            "sum(hdct.thanhTien), " +
+            "sum(hdct.soLuong))" +
+            "from HoaDon hd" +
+            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
+            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+            " group by EXTRACT(day FROM hd.ngayTao)")
+    List<ThongKeResponse> getListDay();
+}

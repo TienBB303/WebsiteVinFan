@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HoaDonService {
-    List<HoaDon> findAll();
+    Page<HoaDon> findAll(Pageable pageable);
 
     void save(HoaDon hoaDon);
 
@@ -26,5 +26,5 @@ public interface HoaDonService {
 
     Page<HoaDon> searchHoaDon(String query, Pageable pageable);
 
-    List<HoaDon> getAllHoaDonByTrangThai(Integer trangThai);
+    Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai, Pageable pageable);
 }
