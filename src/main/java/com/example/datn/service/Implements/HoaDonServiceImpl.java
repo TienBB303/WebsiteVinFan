@@ -21,8 +21,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final HoaDonRepo hoaDonRepo;
     private final HoaDonChiTietRepo hoaDonChiTietRepo;
     @Override
-    public List<HoaDon> findAll() {
-        return hoaDonRepo.findAll();
+    public Page<HoaDon> findAll(Pageable pageable) {
+        return hoaDonRepo.findAll(pageable);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public List<HoaDon> getAllHoaDonByTrangThai(Integer trangThai) {
-        return hoaDonRepo.findAllByTrangThai(trangThai);
+    public Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai,Pageable pageable) {
+        return hoaDonRepo.findAllByTrangThai(trangThai,pageable);
     }
 }

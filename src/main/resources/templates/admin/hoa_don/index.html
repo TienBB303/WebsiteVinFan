@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
-    <link rel="stylesheet" th:href="@{/admin/assets/extensions/choices.js/public/assets/styles/hoaDon.css}">
+<head th:replace="/admin/custom_css/headQA :: headQA" xmlns:th="http://www.thymeleaf.org">
+
 
 </head>
 <body>
@@ -160,11 +160,11 @@
                                         <!--                                        </li>-->
                                         <!--                                    </td>-->
                                         <td th:switch="${item.trangThai}">
-                                            <span th:case="1" class="text-danger">Đang chờ xác nhận</span>
-                                            <span th:case="2" class="text-primary">Đã xác nhận</span>
+                                            <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
+                                            <span th:case="2" class="text-success">Đã xác nhận</span>
                                             <span th:case="3" class="text-warning">Đang giao hàng</span>
-                                            <span th:case="4" class="text-success">Đã giao hàng</span>
-                                            <span th:case="5" class="text-success">Hủy</span>
+                                            <span th:case="4" class="text-primary">Đã giao hàng</span>
+                                            <span th:case="5" class="text-danger">Hủy</span>
                                         </td>
                                         <td>
                                             <!--                                            <a th:href="@{/hoa-don/detail/{id}(id=${item.id})}" type="button"-->
