@@ -80,22 +80,27 @@
                             <div class="dataTable-container">
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item2">
-                                        <a class="nav-link active" href="#">Tất cả</a>
+                                        <a class="nav-link" th:classappend="${status == 0} ? 'active'" th:href="@{/hoa-don/index}">Tất cả</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Chờ xác nhận </a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.choXacNhan} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.choXacNhan})}">Chờ xác nhận</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Đã xác nhận</a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.daXacNhan} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daXacNhan})}">Đã xác nhận</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Đang giao</a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.dangGiaoHang} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.dangGiaoHang})}">Đang giao</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Hoàn thành </a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.daGiaoHang} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daGiaoHang})}">Hoàn thành</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Hủy</a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.huy} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.huy})}">Hủy</a>
                                     </li>
                                 </ul>
                             </div>

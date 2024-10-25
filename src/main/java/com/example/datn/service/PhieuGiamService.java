@@ -1,13 +1,21 @@
 package com.example.datn.service;
 
+import com.example.datn.entity.SanPham;
+import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.PhieuGiamRepo;
+import com.example.datn.repository.SPCTRepo;
+import com.example.datn.repository.SanPhamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PhieuGiamService {
     @Autowired
     private PhieuGiamRepo pgRepo;
+    @Autowired
+    private SPCTRepo spctRepo;
 
     public String taoMaTuDong() {
         String lastCode = pgRepo.findMaxCode();
@@ -22,5 +30,17 @@ public class PhieuGiamService {
         }
         // Trả về mã mới dưới dạng "SP" cộng với số đã tăng, định dạng thành 3 chữ số
         return String.format("PGG%03d", nextCode);
+    }
+
+    private SanPhamRepo sanPhamRepository;
+
+    // Tìm sản phẩm theo ID
+    public SanPham findById(Long id) {
+        Optional<SanPham> sanPham = sanPhamRepository.findById(id);
+        return sanPham.orElse(null); // Trả về null nếu không tìm thấy
+    }
+    public SanPhamChiTiet findDetailById(Long id) {  // Đổi tên phương thức
+        Optional<SanPhamChiTiet> sanPhamChiTiet = spctRepo.findById(id);
+        return sanPhamChiTiet.orElse(null); // Trả về null nếu không tìm thấy
     }
 }

@@ -1,5 +1,6 @@
 package com.example.datn.controller;
 
+import com.example.datn.dto.request.TrangThaiHoaDonRequest;
 import com.example.datn.dto.response.HoaDonChiTietResponse;
 import com.example.datn.dto.response.HoaDonResponse;
 import com.example.datn.entity.HoaDon;
@@ -30,20 +31,27 @@ public class HoaDonController {
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
                         @RequestParam(name = "size", defaultValue = "5") int size,
                         @RequestParam(name = "query", defaultValue = "") String query,
-                        @RequestParam(name = "trangThai", defaultValue = "") Integer trangThai,
+                        @RequestParam(name = "trangThai", required = false) Integer trangThai,
                         Model model) {
-//        Page<HoaDon> list = hoaDonService.findHoaDonAndSortDay(page, size);
-        Page<HoaDon> list ;
+        Page<HoaDon> list;
         if (query.isEmpty() && trangThai == null) {
             list = hoaDonService.findHoaDonAndSortDay(page, size);
-        } else if(!query.isEmpty() && trangThai == null){
+        } else if (!query.isEmpty() && trangThai == null) {
             list = hoaDonService.searchHoaDon("%" + query + "%", PageRequest.of(page, size));
-        }else{
+        } else if (trangThai != null) {
             list = hoaDonService.getAllHoaDonByTrangThai(trangThai, PageRequest.of(page, size));
+        } else {
+            list = hoaDonService.findHoaDonAndSortDay(page, size);
         }
+
         model.addAttribute("list", list);
         model.addAttribute("query", query);
         model.addAttribute("status", trangThai != null ? trangThai : 0);
+
+        // Lấy thông tin trạng thái để đổ vào dropdown lọc
+        TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
+        model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
+
         return "/admin/hoa_don/index";
     }
 
