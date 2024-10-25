@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Catalog</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .navbar-custom {
+        background-color: #ffffff; /* Màu nền */
+        border-bottom: 1px solid #ddd; /* Đường viền dưới */
+    }
+
+    .navbar-brand img {
+        transition: transform 0.3s; /* Hiệu ứng zoom khi di chuột */
+    }
+
+    .navbar-brand img:hover {
+        transform: scale(1.1); /* Phóng to logo khi di chuột */
+    }
+
+    .search-bar {
+        position: relative;
+        width: 350px; /* Độ rộng của thanh tìm kiếm */
+    }
+
+    .search-bar input {
+        width: 100%;
+        padding: 10px; /* Đệm trong */
+        border: 1px solid #ccc; /* Đường viền */
+        border-radius: 20px; /* Bo tròn góc */
+        outline: none; /* Bỏ viền khi được chọn */
+        transition: border-color 0.3s; /* Hiệu ứng chuyển đổi màu viền */
+    }
+
+    .search-bar input:focus {
+        border-color: #007bff; /* Màu viền khi được chọn */
+    }
+
+    .search-bar button {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #007bff; /* Màu nền nút */
+        color: white; /* Màu chữ */
+        border: none; /* Bỏ đường viền */
+        border-radius: 20px; /* Bo tròn góc */
+        padding: 10px 15px; /* Đệm trong */
+        cursor: pointer; /* Con trỏ khi hover */
+        transition: background-color 0.3s; /* Hiệu ứng chuyển đổi màu nền */
+    }
+
+    .search-bar button:hover {
+        background-color: #0056b3; /* Màu nền khi hover */
+    }
+
+    .contact-info {
+        color: #333; /* Màu chữ */
+        font-size: 14px; /* Kích thước chữ */
+    }
+
+    .icons-section a {
+        color: #333; /* Màu chữ cho biểu tượng */
+        font-size: 20px; /* Kích thước biểu tượng */
+        margin-left: 15px; /* Khoảng cách giữa các biểu tượng */
+        transition: color 0.3s; /* Hiệu ứng chuyển đổi màu */
+    }
+
+    .icons-section a:hover {
+        color: #007bff; /* Màu chữ khi hover */
+    }
+
+    .product-card {
+        transition: transform 0.3s ease-in-out;
+        position: relative;
+        overflow: hidden; /* Đảm bảo nội dung không ra ngoài card */
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng */
+    }
+
+    .product-title {
+        min-height: 50px;
+        font-weight: bold; /* Đậm tiêu đề sản phẩm */
+    }
+
+    .product-price {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .old-price {
+        text-decoration: line-through;
+        color: #888;
+        margin-right: 10px; /* Khoảng cách với giá mới */
+    }
+
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: red;
+        color: white;
+        padding: 5px;
+        font-size: 0.9rem;
+        border-radius: 5px;
+    }
+
+    footer {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    .carousel-item img {
+        width: 100%;
+        height: auto;
+    }
+
+    #carouselExample {
+        width: 80%; /* Chiều rộng 80% để slideshow hẹp lại */
+        max-width: 100%; /* Đảm bảo không vượt quá 100% */
+        height: 300px; /* Chiều cao bạn mong muốn, có thể điều chỉnh thêm */
+        overflow: hidden; /* Ẩn phần thừa */
+        margin: auto; /* Căn giữa slideshow */
+    }
+
+    #carouselExample .carousel-item {
+        height: 100%; /* Đảm bảo carousel-item có chiều cao đầy đủ */
+    }
+
+    #carouselExample .carousel-item img {
+        height: 100%; /* Đảm bảo ảnh đầy chiều cao của carousel */
+        object-fit: cover; /* Giữ tỷ lệ ảnh, có thể cắt bớt */
+        width: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng */
+    }
+
+    .footer-info {
+        font-size: 14px; /* Thay đổi kích thước chữ nếu cần */
+        color: #6c757d; /* Màu chữ nếu muốn */
+    }
+
+    .dropdown-menu {
+        display: none; /* Ẩn menu con mặc định */
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block; /* Hiển thị menu con khi di chuột */
+    }
+
+    .dropdown-item img {
+        width: 30px; /* Điều chỉnh kích thước hình ảnh */
+        margin-right: 10px; /* Khoảng cách giữa hình ảnh và văn bản */
+    }
+
+    #navbar2 {
+        background-color: #007BFF; /* Màu nền */
+    }
+
+    #navbar2 .navbar-nav .nav-link {
+        color: #ffffff; /* Màu chữ trắng */
+    }
+
+    #navbar2 .navbar-nav .dropdown-menu {
+        background-color: #0056b3; /* Màu nền cho menu dropdown */
+    }
+
+    #navbar2 .navbar-nav .dropdown-item {
+        color: #ffffff; /* Màu chữ cho items trong dropdown */
+    }
+
+    #navbar2 .navbar-nav .dropdown-item:hover {
+        background-color: #004085; /* Màu nền khi hover */
+    }
+    .text-danger {
+        color: red;
+    }
+
+</style>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-custom py-3" id="navbar1">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/admin/index">
+            <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"
+                 alt="Logo">
+        </a>
+
+        <!-- Search bar -->
+        <form class="d-flex ms-4 search-bar">
+            <input type="text" placeholder="Bạn tìm gì..." aria-label="Search for products">
+            <button class="btn btn-outline-none" type="submit" aria-label="Search">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <!-- Right-side icons and contact info -->
+        <div class="d-flex align-items-center ms-auto">
+            <div class="contact-info me-4">
+                <i class="fas fa-phone-alt"></i> Gọi mua hàng: 0977 27 6646
+            </div>
+            <div class="contact-info me-4">
+                <i class="fas fa-user"></i> Đăng nhập
+            </div>
+            <div class="contact-info me-4">
+                <a href="/cart/view" class="text-decoration-none">
+                    <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                </a>
+            </div>
+            <div class="icons-section">
+                <!--                <a href="#"><i class="fas fa-cart-plus cart-icon"></i></a>-->
+                <a href="https://www.facebook.com/yuamikami1608"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- Loc san pham -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="your-logo.png" alt="Logo của bạn">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        Quạt trần
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#"><img
+                                src="https://quatviet.net/wp-content/uploads/2023/07/Untitled-3-2.jpg">Quạt trần đèn
+                            Klasse 48KSA 300W</a></li>
+                        <li><a class="dropdown-item" href="#"><img
+                                src="https://quattranachau.vn/wp-content/uploads/2023/11/quat_tran_gking1350_01.png">QUẠT
+                            TRẦN THỦ LĨNH ÂU LẠC</a></li>
+                        <li><a class="dropdown-item" href="#"><img
+                                src="https://hoangminhhome.vn/uploads/images/644099a81ddab11374b58f9b/Qu%E1%BA%A1t-tr%E1%BA%A7n-6-c%C3%A1nh-nh%E1%BB%B1a-v%C3%A2n-g%E1%BB%97-VIFA-64-VF63.jpg">Quạt
+                            trần 6 cánh nhựa vân gỗ Vinfan</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Slideshow -->
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1000">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div style="width: 100%; overflow: hidden;">
+                <img src="https://dailyquattran.vn/wp-content/uploads/2022/07/banner-quat-tran-panasonic.jpg"
+                     class="d-block" alt="Slide 1"
+                     style="width: 100%; height: 300px; object-fit: contain;">
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div style="width: 100%; overflow: hidden;">
+                <img src="https://bizweb.dktcdn.net/100/465/315/products/b8f277f4-38b1-4621-a2d6-f6b9863b0f9a.jpg?v=1676452041187"
+                     class="d-block" alt="Slide 2"
+                     style="width: 100%; height: 300px; object-fit: contain;">
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div style="width: 100%; overflow: hidden;">
+                <img src="https://thietbipanasonic.com/wp-content/uploads/2022/07/Banner-quat-treo-tuong.jpg"
+                     class="d-block" alt="Slide 3"
+                     style="width: 100%; height: 300px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+    <!-- Thêm chấm điều hướng -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true"
+                aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+</div>
+<!-- Product Catalog Section -->
+<section class="py-5">
+    <div class="container">
+        <h1 class="text-center mb-5">Danh mục sản phẩm quạt của chúng tôi</h1>
+        <div class="row g-4">
+
+            <!-- Hiển thị sản phẩm có giảm giá -->
+            <th:block th:each="phieuGiamSanPham : ${sanPhamGiamGia}">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card product-card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title product-title" th:text="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
+
+                            <!-- Hiển thị giảm giá nếu có -->
+                            <p class="card-text text-danger" th:if="${phieuGiamSanPham.phieuGiam.giaTriGiam > 0}">
+                                Giảm: <span th:text="'-' + ${#numbers.formatDecimal(phieuGiamSanPham.phieuGiam.giaTriGiam, 1, 1)} + ' đ'">-0đ</span>
+                            </p>
+
+                            <!-- Gạch bỏ giá gốc và hiển thị giá đã giảm -->
+                            <p class="card-text">
+                                <span class="old-price text-decoration-line-through" th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}" th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 1)}">0đ</span>
+                            </p>
+
+                            <!-- Hiển thị giá sau khi giảm -->
+                            <p class="card-text">
+                                <span class="product-price text-danger" th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 1)}">0đ</span>
+                            </p>
+
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-primary w-100">Xem chi tiết</a>
+
+                                <!-- Form thêm vào giỏ hàng -->
+                                <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
+                                    <input type="hidden" name="productId" th:value="${phieuGiamSanPham.sanPhamChiTiet.id}"/>
+                                    <input type="hidden" name="name" th:value="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}"/>
+                                    <input type="hidden" name="price" th:value="${phieuGiamSanPham.sanPhamChiTiet.gia}"/>
+                                    <input type="hidden" name="discountedPrice" th:value="${phieuGiamSanPham.giaSauGiam}"/>
+                                    <input type="hidden" name="quantity" value="1"/> <!-- Mặc định số lượng là 1 -->
+                                    <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+
+            <!-- Hiển thị sản phẩm không có giảm giá -->
+            <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card product-card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
+
+                            <!-- Hiển thị giá bình thường nếu không có giảm giá -->
+                            <p class="card-text">
+                                <span class="product-price" th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 1)}">0đ</span>
+                            </p>
+
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-primary w-100">Xem chi tiết</a>
+
+                                <!-- Form thêm vào giỏ hàng -->
+                                <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
+                                    <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
+                                    <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
+                                    <input type="hidden" name="price" th:value="${sanPhamChiTiet.gia}"/>
+                                    <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/> <!-- Không có giảm giá thì discountedPrice = giá -->
+                                    <input type="hidden" name="quantity" value="1"/> <!-- Mặc định số lượng là 1 -->
+                                    <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</section>
+<!-- Footer -->
+<footer class="text-start py-4">
+    <div class="container">
+        <p class="footer-info mb-1">© 2024 Bản quyền thuộc về Công ty Vinfan</p>
+        <p class="footer-info mb-1">Địa chỉ: Vinhome smart city, Tây mỗ, Nam từ liêm</p>
+        <p class="footer-info mb-1">Điện thoại: 0977 27 6646</p>
+        <p class="footer-info mb-1">Email: khoi19304@gmail.com</p>
+        <p class="footer-info mb-0">Website: www.vinfan.com</p>
+    </div>
+</footer>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function () {
+        $('.add-to-cart-form').on('submit', function (e) {
+            e.preventDefault(); // Ngăn chặn hành vi submit mặc định
+
+            var form = $(this);
+            var productName = form.find('input[name="name"]').val();
+
+            // Thực hiện yêu cầu thêm vào giỏ hàng thông qua AJAX
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                success: function () {
+                    // Hiển thị thông báo SweetAlert2 khi thêm thành công
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thêm vào giỏ hàng thành công!',
+                        text: productName + ' đã được thêm vào giỏ hàng.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                },
+                error: function () {
+                    // Hiển thị thông báo lỗi nếu có
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!',
+                    });
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

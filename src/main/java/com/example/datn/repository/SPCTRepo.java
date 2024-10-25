@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 
@@ -21,4 +22,8 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 //  Tìm sản phẩm cso giá cao nhất hiện tại
     @Query("SELECT MAX(spct.gia) FROM SanPhamChiTiet spct")
     BigDecimal findMaxPrice();
+
+    List<SanPhamChiTiet> findBySanPhamId(Long sanPhamId);
+
+    List<SanPhamChiTiet> findByIdNotIn(List<Long> ids);
 }

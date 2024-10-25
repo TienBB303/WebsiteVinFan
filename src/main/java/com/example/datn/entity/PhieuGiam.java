@@ -47,6 +47,9 @@ public class PhieuGiam {
     @Column(name = "gia_tri_toi_da_giam")
     private BigDecimal giaTriMax;
 
+    @Column(name = "gia_tri_giam")
+    private BigDecimal giaTriGiam;
+
     @Column(name = "ngay_tao")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date ngayTao;
@@ -67,7 +70,4 @@ public class PhieuGiam {
     @ManyToOne
     @JoinColumn(name = "id_san_pham")
     private SanPham sanPham;
-
-    @OneToMany(mappedBy = "phieuGiam")
-    private List<SanPham> sanPhams;
 }
