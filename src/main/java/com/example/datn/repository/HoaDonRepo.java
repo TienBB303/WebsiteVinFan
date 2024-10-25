@@ -26,7 +26,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Integer> {
     Page<HoaDon> searchHoaDon(String query, Pageable pageable);
 
     @Query("SELECT new com.example.datn.dto.response.HoaDonResponse(" +
-            "pgg.ma , pgg.ten, pgg.giaTriMax, hd.tongTien, hd.tongTienSauGiamGia, hd.phiVanChuyen) " +
+            "pgg.ma , pgg.ten, hd.tongTien, hd.tongTienSauGiamGia, hd.phiVanChuyen) " +
             "FROM HoaDon hd " +
             "join hd.phieuGiamGia pgg " +
             "where hd.id =:hoaDonId")
