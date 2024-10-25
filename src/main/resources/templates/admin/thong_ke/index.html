@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/custom_css/headQA :: headQA" xmlns:th="http://www.thymeleaf.org">
+
+</head>
+<body>
+<!-- Site wrapper -->
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar" ></aside>
+    </div>
+
+    <!-- Main-->
+    <div id="main">
+        <header th:replace="/admin/fragments/header :: header"></header>
+
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Khung, thay tiêu đề ở đây</h3>
+                        <p class="text-subtitle text-muted">chữ nhỏ, k dùng thì xóa</p>
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="#">Quản lý ...</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!--        dữ liệu thực hiện trong secsion-->
+            <section class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Thống Kê Bán Hàng</h4>
+                    </div>
+                    <div class="container">
+                        <div class="dashboard-container-qa">
+                            <div class="dashboard-qa" th:each="item : ${thongKeListDay}" th:if="${item.day == currentDay}">
+                                <div>Ngày hôm nay</div>
+                                <p><span th:text="${item.day}"></span></p>
+                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+                            </div>
+
+                            <div class="dashboard-qa" th:each="item : ${thongKeListWeek}" th:if="${item.week == currentWeek}">
+                                <div>Tuần này</div>
+                                <p><span th:text="${item.week}"></span></p>
+                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+                            </div>
+
+                            <div class="dashboard-qa" th:each="item : ${thongKeListMonth}" th:if="${item.month == currentMonth}">
+                                <div>Tháng này</div>
+                                <p><span th:text="${item.month}"></span></p>
+                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+                            </div>
+
+                            <div class="dashboard-qa" th:each="item : ${thongKeListYear}" th:if="${item.year == currentYear}">
+                                <div>Năm này</div>
+                                <p><span th:text="${item.year}"></span></p>
+                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- Footer-->
+    <div>
+        <footer th:replace="/admin/fragments/footer :: footer"></footer>
+    </div>
+</div>
+<div>
+    <script th:replace="/admin/fragments/script :: script"></script>
+</div>
+</body>
+</html>

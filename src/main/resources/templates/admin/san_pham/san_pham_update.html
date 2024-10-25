@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+</head>
+<body>
+<!-- Site wrapper -->
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
+
+    <!-- Main-->
+    <div id="main">
+        <header th:replace="/admin/fragments/header :: header"></header>
+        <!--        </header>-->
+
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Chỉnh sửa sản phẩm</h3>
+<!--                        <p class="text-subtitle text-muted">chữ nhỏ, k dùng thì xóa</p>-->
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="#">Chỉnh sửa sản phẩm</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!--        dữ liệu thực hiện trong secsion-->
+            <section class="row">
+                <section class="col-12">
+                    <div class="card p-4">
+                        <form th:action="@{/admin/san-pham/update}" th:object="${spUpdate}" method="post" enctype="multipart/form-data">
+
+                            <input type="text" class="form-control" id="sanPhamid" th:field="*{id}" hidden>
+
+<!--                            <div class="row mb-3">-->
+<!--                                &lt;!&ndash; Ảnh sản phẩm &ndash;&gt;-->
+<!--                                <div class="col-md-4">-->
+<!--                                    <div class="card">-->
+<!--                                        <img class="card-img-top" id="productImagePreview" th:src="@{'/static/admin/images/' + ${hinhAnhHienTai}}" alt="Hình ảnh sản phẩm" width="200"/>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <!-- Phần kiểu quạt -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamKieuQuat">Kiểu quạt <b style="color: red">*</b></label>
+<!--                                        <select class="form-select" id="sanPhamKieuQuat" th:field="*{sanPham.kieuQuat.id}" disabled>-->
+<!--                                            <option value="" selected>Chọn kiểu quạt</option>-->
+<!--                                            <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}" th:text="${kieuQuat.ten}"></option>-->
+<!--                                        </select>-->
+                                        <input type="text" class="form-control" id="sanPhamKieuQuat" th:field="*{sanPham.kieuQuat.ten}" readonly>
+                                    </div>
+                                    <!-- Phần mã sản phẩm -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamMa">Mã sản phẩm <b style="color: red">*</b></label>
+                                        <input type="text" class="form-control" id="sanPhamMa" th:field="*{sanPham.ma}" readonly>
+                                    </div>
+                                    <!-- Phần tên sản phẩm -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamName">Tên sản phẩm <b style="color: red">*</b></label>
+                                        <input type="text" class="form-control" id="sanPhamName" th:field="*{sanPham.ten}" placeholder="Nhập tên sản phẩm">
+                                    </div>
+                                    <!-- Phần mô tả -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamDescription">Mô tả</label>
+                                        <input type="text" class="form-control" id="sanPhamDescription" th:field="*{sanPham.mo_ta}" placeholder="Nhập mô tả sản phẩm">
+                                    </div>
+                                    <!-- Phần giá bán -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamPrice">Giá bán <b style="color: red">*</b></label>
+                                        <input type="number" class="form-control" id="sanPhamPrice" th:field="*{gia}" placeholder="Nhập giá bán" required>
+                                    </div>
+                                    <!-- Phần số lượng -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamQuantity">Số lượng <b style="color: red">*</b></label>
+                                        <input type="number" class="form-control" id="sanPhamQuantity" th:field="*{so_luong}" placeholder="Nhập số lượng" required>
+                                    </div>
+                                    <!-- Phần trạng thái -->
+                                    <div class="mb-3">
+                                        <label>Trạng thái</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="trangThaiActive" th:field="*{trang_thai}" value="true">
+                                            <label class="form-check-label" for="trangThaiActive">Hoạt động</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="trangThaiInactive" th:field="*{trang_thai}" value="false">
+                                            <label class="form-check-label" for="trangThaiInactive">Không hoạt động</label>
+                                        </div>
+                                    </div>
+                                    <!-- Phần màu sắc -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamMauSac">Màu sắc</label>
+                                        <select class="form-select" id="sanPhamMauSac" th:field="*{mauSac.id}">
+                                            <option th:each="mauSac : ${listMau}" th:value="${mauSac.id}" th:text="${mauSac.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần nút bấm -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamNutBam">Nút bấm</label>
+                                        <select class="form-select" id="sanPhamNutBam" th:field="*{nutBam.id}">
+                                            <option th:each="nutBam : ${listNutBam}" th:value="${nutBam.id}" th:text="${nutBam.ten}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <!-- Phần công suất -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamCongSuat">Công suất</label>
+                                        <select class="form-select" id="sanPhamCongSuat" th:field="*{congSuat.id}">
+                                            <option th:each="congSuat : ${listCongSuat}" th:value="${congSuat.id}" th:text="${congSuat.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần chất liệu cánh -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamChatLieuCanh">Chất liệu cánh</label>
+                                        <select class="form-select" id="sanPhamChatLieuCanh" th:field="*{chatLieuCanh.id}">
+                                            <option th:each="chatLieuCanh : ${listChatLieuCanh}" th:value="${chatLieuCanh.id}" th:text="${chatLieuCanh.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần đường kính cánh -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamDuongKinhCanh">Đường kính cánh</label>
+                                        <select class="form-select" id="sanPhamDuongKinhCanh" th:field="*{duongKinhCanh.id}">
+                                            <option th:each="duongKinhCanh : ${listDuongKinhCanh}" th:value="${duongKinhCanh.id}" th:text="${duongKinhCanh.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần chất liệu khung -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamChatLieuKhung">Chất liệu khung</label>
+                                        <select class="form-select" id="sanPhamChatLieuKhung" th:field="*{chatLieuKhung.id}">
+                                            <option th:each="chatLieuKhung : ${listChatLieuKhung}" th:value="${chatLieuKhung.id}" th:text="${chatLieuKhung.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần đế quạt -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamDeQuat">Đế quạt</label>
+                                        <select class="form-select" id="sanPhamDeQuat" th:field="*{deQuat.id}">
+                                            <option th:each="deQuat : ${listDeQuat}" th:value="${deQuat.id}" th:text="${deQuat.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần chiều cao -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamChieuCao">Chiều cao</label>
+                                        <select class="form-select" id="sanPhamChieuCao" th:field="*{chieuCao.id}">
+                                            <option th:each="chieuCao : ${listChieuCao}" th:value="${chieuCao.id}" th:text="${chieuCao.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần hãng -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamHang">Hãng</label>
+                                        <select class="form-select" id="sanPhamHang" th:field="*{hang.id}">
+                                            <option th:each="hang : ${listHang}" th:value="${hang.id}" th:text="${hang.ten}"></option>
+                                        </select>
+                                    </div>
+                                    <!-- Phần hình ảnh -->
+<!--                                    <div class="mb-3">-->
+<!--                                        <label for="sanPhamHinhAnh">Hình ảnh</label>-->
+<!--                                        <input type="file" class="form-control" id="sanPhamHinhAnh" th:field="*{hinhAnhFile}">-->
+<!--                                    </div>-->
+                                    <!-- Phần điều khiển từ xa -->
+                                    <div class="mb-3">
+                                        <label>Điều khiển từ xa</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="dieuKhienTuXaYes" th:field="*{dieuKhienTuXa.id}" value="1">
+                                            <label class="form-check-label" for="dieuKhienTuXaYes">Có</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="dieuKhienTuXaNo" th:field="*{dieuKhienTuXa.id}" value="2">
+                                            <label class="form-check-label" for="dieuKhienTuXaNo">Không</label>
+                                        </div>
+                                    </div>
+                                    <!-- Phần chế độ gió -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamCheDoGio">Chế độ gió</label>
+                                        <select class="form-select" id="sanPhamCheDoGio" th:field="*{cheDoGio.id}">
+                                            <option th:each="cheDoGio : ${listCheDoGio}" th:value="${cheDoGio.id}" th:text="${cheDoGio.ten}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Nút submit -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="submit" class="btn btn-primary">Cập nhật sản phẩm</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </div>
+    <!-- Footer-->
+    <div>
+        <footer th:replace="/admin/fragments/footer :: footer"></footer>
+    </div>
+</div>
+<div>
+    <script th:replace="/admin/fragments/script :: script"></script>
+</div>
+</body>
+</html>

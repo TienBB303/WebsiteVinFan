@@ -11,17 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatLieuKhung {
-    //    CREATE TABLE chat_lieu_khung (
-//            id INT PRIMARY KEY IDENTITY(1, 1),
-//    ma NVARCHAR(255),
-//    ten NVARCHAR(255),
-//    trang_thai BIT
-//);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-
-    String ma;
 
     String ten;
 
@@ -30,7 +22,4 @@ public class ChatLieuKhung {
     public ChatLieuKhung(Integer chatLieuKhungId) {
         this.id = chatLieuKhungId;
     }
-
-//    public ChatLieuKhung(ChatLieuKhung chatLieuKhung) {
-//    }
 }

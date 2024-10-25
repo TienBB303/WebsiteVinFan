@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "san_pham_chi_tiet")
@@ -69,15 +70,11 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_che_do_gio")
     CheDoGio cheDoGio;
 
+    @ManyToOne
+    @JoinColumn(name = "id_hinh_anh")
+    HinhAnh hinhAnh;
+
     BigDecimal gia;
-
-    BigDecimal gia_nhap;
-
-    @Transient
-    MultipartFile hinhAnhFile;
-
-    String hinh_anh;
-
 
     Integer so_luong;
 

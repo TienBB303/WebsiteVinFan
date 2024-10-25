@@ -1,0 +1,71 @@
+package com.example.datn.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "hoa_don")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class HoaDon {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_khach_hang")
+    KhachHang khachHang;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_nhan_vien")
+    NhanVien nhanVien;
+    //
+//    @ManyToMany
+//    @JoinTable(
+//            name = "thanh_toan", // Tên bảng liên kết
+//            joinColumns = {@JoinColumn(name = "id")}, // Cột liên kết của bảng hiện tại
+//            inverseJoinColumns = @JoinColumn(name = "id_thanh_toan") // Cột liên kết của bảng ThanhToan
+//    )
+//    private Set<ThanhToan> thanhToan;
+//
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_phieu_giam_gia")
+    PhieuGiam phieuGiamGia;
+
+    @Column(name = "ma")
+    String ma;
+    @Column(name = "ten_nguoi_nhan")
+    String tenNguoiNhan;
+    @Column(name = "sdt_nguoi_nhan")
+    String sdtNguoiNhan;
+    @Column(name = "tong_tien")
+    BigDecimal tongTien;
+    @Column(name = "tong_tien_sau_giam_gia")
+    BigDecimal tongTienSauGiamGia;
+    @Column(name = "dia_chi")
+    String diaChi;
+    @Column(name = "phi_van_chuyen")
+    BigDecimal phiVanChuyen;
+    @Column(name = "ghi_chu")
+    String ghiChu;
+    @Column(name = "loai_hoa_don")
+    boolean loaiHoaDon;
+    @Column(name = "ngay_tao")
+    LocalDate ngayTao;
+    @Column(name = "ngay_sua")
+    LocalDate ngaySua;
+    @Column(name = "nguoi_tao")
+    String nguoiTao;
+    @Column(name = "nguoi_sua")
+    String nguoiSua;
+    @Column(name = "trang_thai")
+    Integer trangThai;
+
+}

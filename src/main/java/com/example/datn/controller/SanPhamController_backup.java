@@ -1,6 +1,5 @@
 package com.example.datn.controller;
 
-import com.example.datn.entity.DTO.SanPhamDTO;
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.entity.SanPhamChiTietTam;
@@ -17,8 +16,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +59,8 @@ public class SanPhamController_backup {
     SPCTRepo spctRepo;
     @Autowired
     SanPhamRepo sanPhamRepo;
+    @Autowired
+    HinhAnhRepo hinhAnhRepo;
 
     @ModelAttribute("listMau")
     public List<MauSac> listMau() {
@@ -126,7 +130,7 @@ public class SanPhamController_backup {
                                  @RequestParam(defaultValue = "5") int size,
                                  Model model) {
         if (maxPrice.compareTo(BigDecimal.ZERO) == 0) {
-            maxPrice = new BigDecimal("9999999999");
+            maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
         Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(query, minPrice, maxPrice, PageRequest.of(page, size));
         model.addAttribute("listSP", searchPage);
@@ -136,16 +140,6 @@ public class SanPhamController_backup {
         return "admin/san_pham/san_pham_index";
     }
 
-    @GetMapping("/san-pham/viewUpdate/{id}")
-    public String viewUpdateProduct(@PathVariable("id") Long id, Model model) {
-        SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(id);
-        if (sanPhamChiTiet == null) {
-            return "redirect:/admin/san-pham";
-        }
-        model.addAttribute("spUpdate", sanPhamChiTiet);
-        model.addAttribute("hinhAnhHienTai", sanPhamChiTiet.getHinh_anh());
-        return "admin/san_pham/san_pham_update";
-    }
 
 
     @GetMapping("/san-pham/viewAdd")
@@ -217,21 +211,31 @@ public class SanPhamController_backup {
         return "admin/san_pham/san_pham_add";
     }
 
-    // Confirm the product variants from session
+    // Nhận giá trị từ sản phẩm tạm
     @PostMapping("/san-pham/confirm")
-    public String confirmProducts(HttpSession session, Model model) {
+    public String confirmProducts(
+            @RequestParam(value = "gia", required = false) List<BigDecimal> gias,
+            @RequestParam(value = "so_luong", required = false) List<Integer> soLuongs,
+            HttpSession session, Model model) {
 
-        // Retrieve the list of product variants from the session
-        @SuppressWarnings("unchecked")
         List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
 
-        // Check if the list is null or empty
         if (sanPhamChiTietTamList == null || sanPhamChiTietTamList.isEmpty()) {
-            model.addAttribute("error", "No product variants to confirm.");
+            model.addAttribute("error", "Không có sản phẩm tạm để confirm");
             return "admin/san_pham/san_pham_add";
         }
 
-        // Process and confirm the variants
+        // Cập nhật giá và số lượng cho từng sản phẩm tạm khi update ở bảng
+        for (int i = 0; i < sanPhamChiTietTamList.size(); i++) {
+            SanPhamChiTietTam spTam = sanPhamChiTietTamList.get(i);
+            spTam.setGia(gias.get(i));
+            spTam.setSo_luong(soLuongs.get(i));
+        }
+
+        // Kiểm tra sản phẩm tạm null hay không
+
+
+        // confirm
         SanPham sanPham = new SanPham();
         List<SanPhamChiTiet> listSPCT = new ArrayList<>();
 
@@ -252,6 +256,9 @@ public class SanPhamController_backup {
             sanPhamChiTiet.setChatLieuKhung(spTam.getChatLieuKhung());
             sanPhamChiTiet.setNutBam(spTam.getNutBam());
             sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
+            sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
+            sanPhamChiTiet.setHang(spTam.getHang());
+            sanPhamChiTiet.setDieuKhienTuXa(spTam.getDieuKhienTuXa());
 
             sanPhamChiTiet.setGia(spTam.getGia());
             sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
@@ -262,13 +269,115 @@ public class SanPhamController_backup {
             listSPCT.add(sanPhamChiTiet);
         }
 
-        // Save the product and its variants
+        // lưu vào db sản phẩm + SPCT
         sanPhamService.create(sanPham, listSPCT);
 
-        // Clear session after confirming
+        // Xóa list sp tạm
         session.removeAttribute("listSPCTTam");
 
         return "redirect:/admin/san-pham";
     }
+    @GetMapping("/san-pham/delete-tam/{id}")
+    public String xoaSPTam(@PathVariable("id") Long id, HttpSession session, Model model) {
+        // Lấy danh sách tạm từ session
+        List<SanPhamChiTietTam> listSPCTTam = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
 
+        // Kiểm tra xem danh sách có tồn tại không
+        if (listSPCTTam != null) {
+            // Xóa sản phẩm chi tiết theo ID
+            listSPCTTam.removeIf(spTam -> spTam.getId().equals(id));
+        }
+
+        // Cập nhật lại danh sách trong session
+        session.setAttribute("listSPCTTam", listSPCTTam);
+        model.addAttribute("listSPCTTam", listSPCTTam);
+
+        // Redirect to the same page to refresh the list
+        return "admin/san_pham/san_pham_add"; // Trả về trang hiển thị danh sách
+    }
+
+
+
+    //    Chuyển trang update
+    @GetMapping("/san-pham/viewUpdate/{id}")
+    public String viewUpdateProduct(@PathVariable("id") Long id, Model model) {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(id);
+        if (sanPhamChiTiet == null) {
+            return "redirect:/admin/san-pham";
+        }
+        model.addAttribute("spUpdate", sanPhamChiTiet);
+//        model.addAttribute("hinhAnhHienTai", sanPhamChiTiet.getHinh_anh());
+        return "admin/san_pham/san_pham_update";
+    }
+
+//  Cập nhật sản phẩm
+    @PostMapping("/san-pham/update")
+    public String updateProduct(
+            @RequestParam("id") Long sanPhamId,
+            @RequestParam("sanPham.ten") String ten,
+            @RequestParam("sanPham.mo_ta") String moTa,
+            @RequestParam("gia") BigDecimal gia,
+            @RequestParam("so_luong") Integer soLuong,
+            @RequestParam("trang_thai") Boolean trangThai,
+            @RequestParam("mauSac.id") Integer mauSacId,
+            @RequestParam("nutBam.id") Integer nutBamId,
+            @RequestParam("congSuat.id") Integer congSuatId,
+            @RequestParam("chatLieuCanh.id") Integer chatLieuCanhId,
+            @RequestParam("duongKinhCanh.id") Integer duongKinhCanhId,
+            @RequestParam("chatLieuKhung.id") Integer chatLieuKhungId,
+            @RequestParam("deQuat.id") Integer deQuatId,
+            @RequestParam("chieuCao.id") Integer chieuCaoId,
+            @RequestParam("hang.id") Integer hangId,
+            @RequestParam("cheDoGio.id") Integer cheDoGioId,
+            @RequestParam("dieuKhienTuXa.id") Integer dieuKhienTuXaId,
+//            @RequestParam("hinhAnhFile") MultipartFile hinhAnhFile,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
+            if (sanPhamChiTiet == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Sản phẩm không tồn tại!");
+                return "redirect:/admin/san-pham";
+            }
+
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            sanPham.setTen(ten);
+            sanPham.setMo_ta(moTa);
+            sanPham.setNgay_sua(new Date());
+            sanPham.setTrang_thai(trangThai);
+            sanPham.setKieuQuat(sanPham.getKieuQuat());
+
+            sanPhamChiTiet.setGia(gia);
+            sanPhamChiTiet.setSo_luong(soLuong);
+            sanPhamChiTiet.setMauSac(new MauSac(mauSacId));
+            sanPhamChiTiet.setNutBam(new NutBam(nutBamId));
+            sanPhamChiTiet.setCongSuat(new CongSuat(congSuatId));
+            sanPhamChiTiet.setChatLieuCanh(new ChatLieuCanh(chatLieuCanhId));
+            sanPhamChiTiet.setDuongKinhCanh(new DuongKinhCanh(duongKinhCanhId));
+            sanPhamChiTiet.setChatLieuKhung(new ChatLieuKhung(chatLieuKhungId));
+            sanPhamChiTiet.setDeQuat(new DeQuat(deQuatId));
+            sanPhamChiTiet.setChieuCao(new ChieuCao(chieuCaoId));
+            sanPhamChiTiet.setHang(new Hang(hangId));
+            sanPhamChiTiet.setCheDoGio(new CheDoGio(cheDoGioId));
+            sanPhamChiTiet.setDieuKhienTuXa(new DieuKhienTuXa(dieuKhienTuXaId));
+            sanPhamChiTiet.setNgay_sua(new Date());
+
+//            if (!hinhAnhFile.isEmpty()) {
+//                String fileName = hinhAnhFile.getOriginalFilename();
+//                sanPhamChiTiet.setHinh_anh(fileName);
+//
+//                File file = new File("/src/main/resources/static/admin/images/" + fileName); // Thay đổi đường dẫn đến thư mục hình ảnh
+//                hinhAnhFile.transferTo(file);
+//            }
+
+            sanPhamChiTiet.setNguoi_sua("admin");
+            sanPhamService.update(sanPhamChiTiet);
+            redirectAttributes.addFlashAttribute("message", "Cập nhật sản phẩm thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Cập nhật sản phẩm thất bại!");
+        }
+
+        return "redirect:/admin/san-pham";
+    }
 }

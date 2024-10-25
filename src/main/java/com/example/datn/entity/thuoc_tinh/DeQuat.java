@@ -11,17 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeQuat {
-    //    CREATE TABLE de_quat (
-//            id INT PRIMARY KEY IDENTITY(1, 1),
-//    ma NVARCHAR(255),
-//    ten NVARCHAR(255),
-//    trang_thai BIT
-//);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-
-    String ma;
 
     String ten;
 
@@ -30,7 +22,4 @@ public class DeQuat {
     public DeQuat(Integer deQuatId) {
         this.id = deQuatId;
     }
-
-//    public DeQuat(DeQuat deQuat) {
-//    }
 }

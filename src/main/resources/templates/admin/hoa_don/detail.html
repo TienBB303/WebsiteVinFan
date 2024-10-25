@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/custom_css/headQA :: headQA" xmlns:th="http://www.thymeleaf.org">
+
+
+</head>
+<body>
+<!-- Site wrapper -->
+<div class="wrapper">
+    <!-- </header>-->
+    <div>
+        <!--        <header th:replace="/admin/fragments/header :: header">-->
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
+
+    <!-- Main-->
+    <div id="main">
+        <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+        </header>
+
+        <!--        <div class="page-heading">-->
+        <!--            <div class="page-title">-->
+        <!--                <div class="row">-->
+        <!--                    <div class="col-12 col-md-6 order-md-1 order-last">-->
+        <!--                        <h3>Khung, thay tiêu đề ở đây</h3>-->
+        <!--                        <p class="text-subtitle text-muted">chữ nhỏ, k dùng thì xóa</p>-->
+        <!--                    </div>-->
+        <!--                    <div class="col-12 col-md-6 order-md-2 order-first">-->
+        <!--                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">-->
+        <!--                            <ol class="breadcrumb">-->
+        <!--                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>-->
+        <!--                                <li class="breadcrumb-item active" aria-current="page"><a href="#">Quản lý ...</a></li>-->
+        <!--                            </ol>-->
+        <!--                        </nav>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+        <!-- Main content -->
+        <main class="page-content">
+            <!-- Order Tracking Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2><strong>Theo dõi đơn hàng</strong></h2>
+                </div>
+                <div class="row">
+                    <div th:each="history : ${listHistory}" class="col-12 col-sm-6 col-md-3 mb-3">
+                        <div class="d-flex align-items-center justify-content-center" style="height: 70px;">
+                            <div>
+                                <div th:switch="${history.trangThai}">
+                                    <div th:case="1" class="arrow-qa bg-primary-qa">
+                                        <span>Chờ xác nhận</span>
+                                    </div>
+                                    <div th:case="2" class="arrow-qa bg-success-qa">
+                                        <span>Đã xác nhận</span>
+                                    </div>
+                                    <div th:case="3" class="arrow-qa bg-info-qa">
+                                        <span>Đang vận chuyển</span>
+                                    </div>
+                                    <div th:case="4" class="arrow-qa">
+                                        <span>Đã giao hàng</span>
+                                    </div>
+                                    <div th:case="5" class="arrow-qa">
+                                        <span>Hủy</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="d-flex mb-3"
+                     th:if="${hoaDon.trangThai != 4 && hoaDon.trangThai != 5 }">
+
+                    <form method="post" th:action="@{/hoa-don/xac-nhan}"
+                          th:if="${hoaDon.trangThai != 2 && hoaDon.trangThai != 3}" class="me-2">
+                        <input type="hidden" name="id" th:value="${hoaDon.id}">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-cart-plus"></i> Xác Nhận
+                        </button>
+                    </form>
+
+                    <form method="post" th:action="@{/hoa-don/giao-hang}"
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1}" class="me-2">
+                        <input type="hidden" name="id" th:value="${hoaDon.id}">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-cart-plus"></i> Đang giao hàng
+                        </button>
+                    </form>
+
+                    <form method="post" th:action="@{/hoa-don/hoan-thanh}"
+                          th:if="${hoaDon.trangThai == 3}" class="me-2">
+                        <input type="hidden" name="id" th:value="${hoaDon.id}">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-cart-plus"></i> Hoàn Thành
+                        </button>
+                    </form>
+
+                    <form method="post" th:action="@{/hoa-don/huy}"
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 2}" class="me-2">
+                        <input type="hidden" name="id" th:value="${hoaDon.id}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-cart-plus"></i> Hủy
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- Payment History Section -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2><strong><span>Lịch sử thanh toán</span></strong></h2>
+                    <button class="btn btn-primary">+ Thanh toán</button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã GD</th>
+                            <th>Số tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Thời gian</th>
+                            <th>Phương thức thanh toán</th>
+                            <th>Người tạo</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Add rows here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Order Information Section -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2><strong>Thông tin đơn hàng:</strong> <span th:text="${hoaDon.ma}"></span></h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p th:switch="${hoaDon.trangThai}"><strong>Trạng thái:</strong>
+                                <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
+                                <span th:case="2" class="text-success">Đã xác nhận</span>
+                                <span th:case="3" class="text-warning">Đang giao hàng</span>
+                                <span th:case="4" class="text-primary">Đã giao hàng</span>
+                                <span th:case="5" class="text-danger">Hủy</span>
+                            </p>
+                            <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
+                            <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Loại hóa đơn: </strong><span
+                                    th:text="${hoaDon.loaiHoaDon == 1 ? 'Tại quầy' : 'Giao hàng'}"></span></p>
+                            <p><strong>Số điện thoại: </strong> <span th:text="${hoaDon.sdtNguoiNhan}"></span></p>
+                            <p><strong>Ngày tạo: </strong><span th:text="${hoaDon.ngayTao}"></span></p>
+                            <p><strong>Ngày cập nhật cuối: </strong><span th:text="${hoaDon.ngaySua}"></span></p>
+                        </div>
+                    </div>
+                    <h2><strong>Thông tin sản phẩm</strong></h2>
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã hóa đơn</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá bán</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item, iter : ${listHDCT}">
+                            <td th:text="${iter.count}"></td>
+                            <td th:text="${item.maHoaDon}"></td>
+                            <td th:text="${item.tenSanPham}"></td>
+                            <td th:text="${item.gia}"></td>
+                            <td th:text="${item.soLuong}"></td>
+                            <td th:text="${item.thanhTien}"></td>
+                            <!--                            <td>-->
+                            <!--                                <input type="number" class="form-control" value="1">-->
+                            <!--                            </td>-->
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-end mt-3">
+                        <button class="btn btn-success">Thêm sản phẩm</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discount and Total Section -->
+            <div class="card mb-4">
+                <div class="container-custom">
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <strong>Phiếu giảm giá</strong>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><span th:text="${listPGG.maPGG}"></span></p>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <p>Giá trị:</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><span th:text="${listPGG.tenPGG}"></span></p>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <p>Tổng tiền hàng:</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><span th:text="${listPGG.tongTien}"></span></p>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <p>Giảm giá:</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><span th:text="${listPGG.giaTriMax}"></span></p>
+
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <p>Phí vận chuyển:</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>
+
+                        </div>
+                    </div>
+                    <div class="row highlight">
+                        <div class="col-md-6">
+                            <p>Tổng tiền:</p>
+                        </div>
+                        <div class="col-md-6 text-end highlight">
+                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Footer-->
+        <div>
+            <footer th:replace="/admin/fragments/footer :: footer"></footer>
+        </div>
+
+    </div>
+
+    <!-- Script -->
+    <div>
+        <script th:replace="/admin/fragments/script :: script"></script>
+    </div>
+</div>
+</body>
+</html>

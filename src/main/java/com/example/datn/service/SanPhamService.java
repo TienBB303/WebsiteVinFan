@@ -22,7 +22,7 @@ public interface SanPhamService {
 
     String taoMaTuDong();
 
-//    Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trangThai, Pageable pageable);
     Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 
+    BigDecimal getSanPhamGiaLonNhat();
 }
