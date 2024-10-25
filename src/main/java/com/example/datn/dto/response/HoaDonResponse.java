@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 public class HoaDonResponse {
     String maPGG;
     String tenPGG;
-    BigDecimal giaTriMax;
     BigDecimal tongTien;
     BigDecimal tongTienSauGiamGia;
     BigDecimal phiVanChuyen;
