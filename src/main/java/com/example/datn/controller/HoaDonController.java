@@ -30,16 +30,20 @@ public class HoaDonController {
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
                         @RequestParam(name = "size", defaultValue = "5") int size,
                         @RequestParam(name = "query", defaultValue = "") String query,
+                        @RequestParam(name = "trangThai", defaultValue = "") Integer trangThai,
                         Model model) {
 //        Page<HoaDon> list = hoaDonService.findHoaDonAndSortDay(page, size);
-        Page<HoaDon> list;
-        if (query.isEmpty()) {
+        Page<HoaDon> list ;
+        if (query.isEmpty() && trangThai == null) {
             list = hoaDonService.findHoaDonAndSortDay(page, size);
-        } else {
+        } else if(!query.isEmpty() && trangThai == null){
             list = hoaDonService.searchHoaDon("%" + query + "%", PageRequest.of(page, size));
+        }else{
+            list = hoaDonService.getAllHoaDonByTrangThai(trangThai, PageRequest.of(page, size));
         }
         model.addAttribute("list", list);
         model.addAttribute("query", query);
+        model.addAttribute("status", trangThai != null ? trangThai : 0);
         return "/admin/hoa_don/index";
     }
 

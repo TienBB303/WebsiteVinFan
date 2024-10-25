@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon, Integer> {
     @Query("select hd from HoaDon hd order by hd.ngayTao desc ")
@@ -33,5 +31,8 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Integer> {
             "join hd.phieuGiamGia pgg " +
             "where hd.id =:hoaDonId")
     HoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") int hoaDonId);
-    List<HoaDon> findAllByTrangThai(Integer trangThai);
+
+    Page<HoaDon> findAllByTrangThai(Integer trangThai, Pageable pageable);
+
+
 }
