@@ -1,0 +1,36 @@
+.arrow-qa {
+    display: inline-block;
+    position: relative;
+    padding: 150px 150px; /* Khoảng cách giữa văn bản và mũi tên */
+    color: #5A8DEE; /* Màu chữ */
+    background-color: transparent; /* Không có nền, sẽ dùng mũi tên làm nền */
+
+}
+
+.arrow-qa::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%; /* Đưa mũi tên ra ngoài bên phải */
+    margin-top: -21px; /* Canh giữa mũi tên theo chiều dọc */
+    border-width: 21px; /* Kích thước mũi tên */
+    border-style: solid;
+    border-color: transparent transparent transparent; /* Mũi tên chỉ có màu bên phải */
+}
+
+/* Màu sắc cho từng trạng thái */
+.bg-success-qa::after {
+    border-color: transparent transparent transparent #0056b3; /* Màu xanh lá cho "Chờ xác nhận" */
+}
+
+.bg-primary-qa::after {
+    border-color: transparent transparent transparent #007bff; /* Màu xanh dương cho "Đã xác nhận" */
+}
+
+.bg-info-qa::after {
+    border-color: transparent transparent transparent #17a2b8; /* Màu xanh nước cho "Đang vận chuyển" */
+}
+/**/
+
+
+

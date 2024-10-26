@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
-    <link rel="stylesheet" th:href="@{/admin/assets/extensions/choices.js/public/assets/styles/hoaDon.css}">
+<head th:replace="/admin/custom_css/headQA :: headQA" xmlns:th="http://www.thymeleaf.org">
+
 
 </head>
 <body>
@@ -80,22 +80,27 @@
                             <div class="dataTable-container">
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item2">
-                                        <a class="nav-link active" href="#">Tất cả</a>
+                                        <a class="nav-link" th:classappend="${status == 0} ? 'active'" th:href="@{/hoa-don/index}">Tất cả</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Chờ xác nhận </a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.choXacNhan} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.choXacNhan})}">Chờ xác nhận</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Đã xác nhận</a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.daXacNhan} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daXacNhan})}">Đã xác nhận</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Đang giao</a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.dangGiaoHang} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.dangGiaoHang})}">Đang giao</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Hoàn thành </a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.daGiaoHang} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daGiaoHang})}">Hoàn thành</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" href="#">Hủy</a>
+                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.huy} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.huy})}">Hủy</a>
                                     </li>
                                 </ul>
                             </div>
@@ -160,11 +165,11 @@
                                         <!--                                        </li>-->
                                         <!--                                    </td>-->
                                         <td th:switch="${item.trangThai}">
-                                            <span th:case="1" class="text-danger">Đang chờ xác nhận</span>
-                                            <span th:case="2" class="text-primary">Đã xác nhận</span>
+                                            <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
+                                            <span th:case="2" class="text-success">Đã xác nhận</span>
                                             <span th:case="3" class="text-warning">Đang giao hàng</span>
-                                            <span th:case="4" class="text-success">Đã giao hàng</span>
-                                            <span th:case="5" class="text-success">Hủy</span>
+                                            <span th:case="4" class="text-primary">Đã giao hàng</span>
+                                            <span th:case="5" class="text-danger">Hủy</span>
                                         </td>
                                         <td>
                                             <!--                                            <a th:href="@{/hoa-don/detail/{id}(id=${item.id})}" type="button"-->
@@ -231,6 +236,9 @@
 <!-- Script -->
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </div>
 
 </body>

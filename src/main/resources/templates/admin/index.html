@@ -18,15 +18,11 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-12 col-md-6 order-md-1 order-last">
-                        <h3>Khung, thay tiêu đề ở đây</h3>
-                        <p class="text-subtitle text-muted">chữ nhỏ, k dùng thì xóa</p>
+                        <h3>Thông Tin Tài Khoản</h3>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="#">Quản lý ...</a></li>
-                            </ol>
+
                         </nav>
                     </div>
                 </div>
@@ -38,13 +34,57 @@
             <section class="row">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Default Layout</h4>
+
                     </div>
                     <div class="card-body">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, commodi? Ullam quaerat similique iusto
-                        temporibus, vero aliquam praesentium, odit deserunt eaque nihil saepe hic deleniti? Placeat delectus
-                        quibusdam ratione ullam!
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="mb-0">Thông Tin Nhân Viên</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-3">
+                                    <i class="bi bi-person-fill me-2"></i>
+                                    <strong>Tên:</strong> <span th:text="${nhanVien.ten}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-gender-ambiguous me-2"></i>
+                                    <strong>Giới Tính:</strong> <span th:text="${nhanVien.gioiTinh ? 'Nam' : 'Nữ'}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-calendar-fill me-2"></i>
+                                    <strong>Ngày Sinh:</strong> <span th:text="${#dates.format(nhanVien.ngaySinh, 'yyyy-MM-dd')}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-telephone-fill me-2"></i>
+                                    <strong>Số Điện Thoại:</strong> <span th:text="${nhanVien.soDienThoai}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-envelope-fill me-2"></i>
+                                    <strong>Email:</strong> <span th:text="${nhanVien.email}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-card-text me-2"></i>
+                                    <strong>Căn Cước Công Dân:</strong> <span th:text="${nhanVien.canCuocCongDan}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-house-door-fill me-2"></i>
+                                    <strong>Địa Chỉ:</strong> <span th:text="${nhanVien.soNhaNgoDuong + ', ' + nhanVien.xaPhuong + ', ' + nhanVien.quanHuyen + ', ' + nhanVien.tinhThanhPho}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <strong>Trạng Thái:</strong> <span th:text="${nhanVien.trangThai ? 'Kích Hoạt' : 'Ngưng Hoạt Động'}"></span>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </section>
         </div>

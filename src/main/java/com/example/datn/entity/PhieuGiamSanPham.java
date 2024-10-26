@@ -1,10 +1,9 @@
 package com.example.datn.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -12,12 +11,24 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Table(name = "phieu_giam_san_pham")
 public class PhieuGiamSanPham {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer phieuGiamId;
-    private Long sanPhamId;
+    @ManyToOne
+    @JoinColumn(name = "id_phieu_giam")
+    private PhieuGiam phieuGiam;
+
+    @ManyToOne
+    @JoinColumn(name = "id_san_pham")
+    private SanPham sanPham;
+
+    @ManyToOne
+    @JoinColumn(name = "id_san_pham_chi_tiet")
+    private SanPhamChiTiet sanPhamChiTiet;
+    @Column(name = "gia_sau_giam")
+    private BigDecimal giaSauGiam;
 }
