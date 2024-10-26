@@ -6,6 +6,8 @@ import com.example.datn.repository.KhachHangRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class KhachHangService {
 
@@ -19,4 +21,5 @@ public class KhachHangService {
         khachHang.setTrangThai(trangThai);
         khachHangRepo.save(khachHang);
     }
+
 }
