@@ -26,7 +26,6 @@ public class PhieuGiamController {
     private final PhieuGiamRepo pggRepo;
     private final PhieuGiamService pggSV;
     private final SanPhamRepo spRepo;
-    private final PhieuGiamSanPhamRepo pggspRepo;
 
     //phieu giam gia
     @GetMapping("/index")
@@ -70,12 +69,12 @@ public class PhieuGiamController {
 
 
 
-    @GetMapping("/discount")
-    public String test(Model model) {
-        List<SanPhamChiTiet> sanPhamChiTiets = pggRepo.findByPhieuGiamNotNull();
-        model.addAttribute("sanPhamChiTiets", sanPhamChiTiets);
-        return "/admin/phieu_giam/cart"; // Trả về view test
-    }
+//    @GetMapping("/discount")
+//    public String test(Model model) {
+//        List<SanPhamChiTiet> sanPhamChiTiets = pggRepo.findByPhieuGiamNotNull();
+//        model.addAttribute("sanPhamChiTiets", sanPhamChiTiets);
+//        return "/admin/phieu_giam/cart"; // Trả về view test
+//    }
 
     @PostMapping("/add")
     public String add(PhieuGiam pgg, @RequestParam("sanPhamId") Long sanPhamId) {
@@ -95,7 +94,6 @@ public class PhieuGiamController {
         PhieuGiam savedPgg = pggRepo.save(pgg);
         // Thêm thông tin vào bảng sản phẩm
         SanPham updatedSanPham = sanPham; // Cập nhật thông tin sản phẩm nếu cần
-        updatedSanPham.setPhieuGiam(savedPgg); // Giả sử có quan hệ với phiếu giảm giá
         spRepo.save(updatedSanPham); // Lưu lại sản phẩm với thông tin đã cập nhật
 
         return "redirect:/admin/phieu-giam/index";

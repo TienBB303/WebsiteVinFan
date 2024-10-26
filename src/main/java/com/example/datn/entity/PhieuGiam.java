@@ -68,6 +68,4 @@ public class PhieuGiam {
     @JoinColumn(name = "id_san_pham")
     private SanPham sanPham;
 
-    @OneToMany(mappedBy = "phieuGiam")
-    private List<SanPham> sanPhams;
 }

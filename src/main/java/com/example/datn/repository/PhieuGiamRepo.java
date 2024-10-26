@@ -19,6 +19,6 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
 
     Page<PhieuGiam> findByTenLike(String ten, Pageable pageable);
 
-    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.phieuGiam IS NOT NULL")
-    List<SanPhamChiTiet> findByPhieuGiamNotNull();
+//    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.phieuGiam IS NOT NULL")
+//    List<SanPhamChiTiet> findByPhieuGiamNotNull();
 }
