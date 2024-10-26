@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
+import java.util.Optional;
 
 public interface KhachHangRepo extends JpaRepository<KhachHang,Integer>{
 
@@ -25,5 +26,6 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer>{
             Pageable pageable
     );
     KhachHang findBySoDienThoai(String soDienThoai);
-    KhachHang findByEmail(String email);
+    Optional<KhachHang> findByEmail(String email);
+
 }

@@ -119,9 +119,10 @@
                                     <tr>
                                         <th>Mã phiếu giảm giá</th>
                                         <th>Tên phiếu giảm giá</th>
+                                        <th>Loại phiếu giảm giá</th>
                                         <th>Ngày bắt đầu</th>
                                         <th>Ngày kết thúc</th>
-                                        <th>Số lượng</th>
+                                        <th>Giá trị giảm</th>
                                         <th>Trạng thái</th>
                                         <th>Chi tiết</th>
                                     </tr>
@@ -130,9 +131,10 @@
                                     <tr th:each="pgg : ${ListPGG}" style="cursor: pointer;">
                                         <td th:text="${pgg.ma}">Mã phiếu giảm</td>
                                         <td th:text="${pgg.ten}">Tên phiếu giảm</td>
+                                        <td th:text="${pgg.loaiPhieuGiam }== true ? 'Giảm giá hóa đơn' : 'Giảm sản phẩm'">Loại phiếu giảm</td>
                                         <td th:text="${pgg.ngayBD}">Ngày bắt đầu</td>
                                         <td th:text="${pgg.ngayKT}">Ngày kết thúc</td>
-                                        <td th:text="${pgg.soLuong}">Số lượng</td>
+                                        <td th:text="${pgg.giaTriGiam}">Số lượng</td>
                                         <td th:text="${pgg.trangThai} == true ? 'Áp dụng' : 'Ngừng áp dụng'"></td>
                                         <td>
                                             <a class="btn btn-info"

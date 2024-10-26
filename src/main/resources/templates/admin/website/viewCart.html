@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng của bạn</title>
+    <style>
+        /* Đặt font chữ và nền tổng thể */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Thiết kế phần chứa giỏ hàng */
+        .cart-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tiêu đề chính */
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Phần chứa các sản phẩm trong giỏ hàng */
+        .cart-items {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+        /* Mỗi sản phẩm trong giỏ hàng */
+        .cart-items li {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9fbfd;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Hiệu ứng hover cho mỗi sản phẩm */
+        .cart-items li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 123, 255, 0.1);
+        }
+
+        /* Thiết kế chung cho các chữ */
+        .cart-items li span {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        /* Tên sản phẩm */
+        .cart-items li .item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Giá sản phẩm và tổng cộng */
+        .cart-items li .item-price,
+        .cart-items li .item-total {
+            color: #1a73e8;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-align: right;
+        }
+
+        /* Phần điều chỉnh số lượng */
+        .cart-items li .item-quantity {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Input số lượng sản phẩm */
+        .cart-items li .item-quantity input {
+            width: 50px;
+            padding: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 0 10px;
+            outline: none;
+        }
+
+        /* Nút điều chỉnh số lượng */
+        .cart-items li .item-quantity button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .cart-items li .item-quantity button:hover {
+            background-color: #0f57c1;
+            transform: scale(1.05);
+        }
+
+        /* Nút xóa sản phẩm */
+        .cart-items li .item-remove button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .cart-items li .item-remove button:hover {
+            background-color: #c9302c;
+            transform: scale(1.05);
+        }
+
+        /* Tổng tiền */
+        .total-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        /* Nút thanh toán */
+        .checkout-btn {
+            display: block;
+            background-color: #1a73e8;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 30px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .checkout-btn:hover {
+            background-color: #0f57c1;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            /* Đảm bảo layout thích ứng cho di động */
+            .cart-items li {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-btn {
+                font-size: 1.2rem;
+                padding: 12px 20px;
+            }
+
+            .total-price {
+                text-align: center;
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="cart-container">
+    <h1>Giỏ hàng của bạn</h1>
+
+    <div>
+        <ul class="cart-items">
+            <th:block th:each="item : ${cartItems}">
+                <li>
+                    <span class="item-name" th:text="${item.name}">Tên sản phẩm</span>
+                    <span class="item-price" th:text="${item.price}">0</span>
+                    <div class="item-quantity">
+                        <button class="decrease-quantity" th:attr="data-id=${item.productId}">-</button>
+                        <input type="number" min="1" value="1" th:value="${item.quantity}" th:attr="data-id=${item.productId}" class="quantity-input">
+                        <button class="increase-quantity" th:attr="data-id=${item.productId}">+</button>
+                    </div>
+                    <span class="item-total" th:text="${item.price * item.quantity}">0</span>
+                    <div class="item-remove">
+                        <button class="remove-item" th:attr="data-id=${item.productId}">Xóa</button>
+                    </div>
+                </li>
+            </th:block>
+        </ul>
+
+        <p class="total-price">Tổng tiền: <span th:text="${totalPrice}"></span></p>
+    </div>
+
+    <a href="/checkout" class="checkout-btn">Thanh toán</a>
+</div>
+
+<script>
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('input', function () {
+            let quantity = this.value;
+            let price = parseFloat(this.closest('li').querySelector('.item-price').textContent);
+            let totalElement = this.closest('li').querySelector('.item-total');
+            let total = price * quantity;
+
+            // Cập nhật tổng tiền với định dạng tiền tệ
+            totalElement.textContent = total.toLocaleString('vi-VN');
+            updateTotalPrice();
+
+            // Cập nhật số lượng trên server
+            updateCartQuantity(this.getAttribute('data-id'), quantity);
+        });
+    });
+
+    document.querySelectorAll('.increase-quantity').forEach(button => {
+        button.addEventListener('click', function () {
+            let input = this.closest('li').querySelector('.quantity-input');
+            input.value = parseInt(input.value) + 1;
+            input.dispatchEvent(new Event('input'));
+        });
+    });
+
+    document.querySelectorAll('.decrease-quantity').forEach(button => {
+        button.addEventListener('click', function () {
+            let input = this.closest('li').querySelector('.quantity-input');
+            if (input.value > 1) {
+                input.value = parseInt(input.value) - 1;
+                input.dispatchEvent(new Event('input'));
+            }
+        });
+    });
+
+    document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', function () {
+            let productId = this.getAttribute('data-id');
+            this.closest('li').remove();
+            updateTotalPrice();
+
+            // Gửi yêu cầu xóa sản phẩm khỏi giỏ hàng
+            removeCartItem(productId);
+        });
+    });
+
+    function updateTotalPrice() {
+        let totalPrice = 0;
+        document.querySelectorAll('.item-total').forEach(totalElement => {
+            totalPrice += parseFloat(totalElement.textContent.replace(/\./g, ''));
+        });
+        // Cập nhật tổng tiền với định dạng tiền tệ
+        document.querySelector('.total-price span').textContent = totalPrice.toLocaleString('vi-VN');
+    }
+
+    // Hàm cập nhật số lượng sản phẩm trên server
+    function updateCartQuantity(productId, quantity) {
+        fetch(`/cart/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId, quantity }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => {
+                console.error('Error updating cart:', error);
+            });
+    }
+
+    // Hàm xóa sản phẩm khỏi giỏ hàng trên server
+    function removeCartItem(productId) {
+        fetch(`/cart/remove`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId: productId }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => {
+                console.error('Error removing item:', error);
+            });
+    }
+</script>
+</body>
+</html>

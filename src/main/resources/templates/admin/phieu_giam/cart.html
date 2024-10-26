@@ -5,17 +5,23 @@
 </head>
 <body>
 <h1>Các sản phẩm áp dụng phiếu giảm giá</h1>
-<table>
+<table border="1">
     <thead>
     <tr>
         <th>Tên sản phẩm</th>
         <th>Số tiền giảm</th>
+        <th>Giá sản phẩm</th>
+        <th>Số tiền sau giảm</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="spct : ${sanPhamChiTiets}">
-        <td th:text="${spct.sanPham.ten}">Tên sản phẩm</td> <!-- Tên sản phẩm từ SanPham -->
-        <td th:text="${spct.gia}">Giá</td> <!-- Giá từ SanPhamChiTiet -->
+    <tr th:each="item : ${discountProducts}">
+        <td th:text="${item.sanPham.ten}">Tên sản phẩm</td>
+        <td th:text="${item.PhieuGiam.giaTriGiam}">Giá trị giảm</td>
+        <td th:text="${item.sanPhamChiTiet.gia}">Giá sản phẩm</td>
+        <td th:text="${item.sanPhamChiTiet.gia - item.PhieuGiam.giaTriGiam}"> <!-- Tính toán giá sau giảm -->
+            Giá sau giảm
+        </td>
     </tr>
     </tbody>
 </table>
