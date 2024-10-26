@@ -1,4 +1,4 @@
-package com.example.datn;
+package com.example.datn.config;
 
 
 import org.springframework.context.annotation.Bean;
