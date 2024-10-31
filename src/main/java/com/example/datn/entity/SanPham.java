@@ -36,4 +36,5 @@ public class SanPham {
     @ManyToOne
     @JoinColumn(name = "id_kieu_quat")
     KieuQuat kieuQuat;
+
 }

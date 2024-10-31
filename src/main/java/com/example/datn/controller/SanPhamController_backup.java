@@ -13,14 +13,12 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -148,7 +146,7 @@ public class SanPhamController_backup {
     }
 
     @PostMapping("/san-pham/add-bien-the")
-    public String addProduct(
+    public ResponseEntity<?> addProduct(
             @RequestParam("sanPham.ten") String ten,
             @RequestParam("sanPham.kieuQuat.id") Integer kieuQuatId,
             @RequestParam("mauSac.id") List<Integer> mauSacIds,
@@ -164,13 +162,18 @@ public class SanPhamController_backup {
             HttpSession session, Model model) {
 
         SanPhamTam sanPhamTam = new SanPhamTam();
-        String ma = sanPhamService.taoMaTuDong();  // Auto-generate product code
+        String ma = sanPhamService.taoMaTuDong();  // tự động gen mã
         sanPhamTam.setMa(ma);
         sanPhamTam.setTen(ten);
         sanPhamTam.setKieuQuat(kieuQuatRepo.findById(kieuQuatId).orElse(null));
         sanPhamTam.setTrang_thai(true);
         sanPhamTam.setNgay_tao(new Date());
 
+        List<String> existingProductNames = sanPhamRepo.getTenTonTai();
+
+        if (existingProductNames.contains(sanPhamTam.getTen())) {
+            return ResponseEntity.badRequest().body("Đã có tên sản phẩm, vui lòng chọn tên khác.");
+        }
         List<SanPhamChiTietTam> listSPCTTam = new ArrayList<>();
 
         for (Integer mauSacId : mauSacIds) {
@@ -208,31 +211,43 @@ public class SanPhamController_backup {
         // Store the list in the session
         session.setAttribute("listSPCTTam", listSPCTTam);
         model.addAttribute("listSPCTTam", listSPCTTam);
-        return "admin/san_pham/san_pham_add";
+//        return ResponseEntity.ok("admin/san_pham/san_pham_add");
+        return ResponseEntity.ok(listSPCTTam);
     }
 
     // Nhận giá trị từ sản phẩm tạm
     @PostMapping("/san-pham/confirm")
-    public String confirmProducts(
+    public ResponseEntity<String> confirmProducts(
             @RequestParam(value = "gia", required = false) List<BigDecimal> gias,
             @RequestParam(value = "so_luong", required = false) List<Integer> soLuongs,
             HttpSession session, Model model) {
 
         List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
 
+        // Kiểm tra sản phẩm tạm null hay không
         if (sanPhamChiTietTamList == null || sanPhamChiTietTamList.isEmpty()) {
-            model.addAttribute("error", "Không có sản phẩm tạm để confirm");
-            return "admin/san_pham/san_pham_add";
+            return ResponseEntity.badRequest().body("Không có sản phẩm để xác nhận.");
         }
 
         // Cập nhật giá và số lượng cho từng sản phẩm tạm khi update ở bảng
         for (int i = 0; i < sanPhamChiTietTamList.size(); i++) {
             SanPhamChiTietTam spTam = sanPhamChiTietTamList.get(i);
-            spTam.setGia(gias.get(i));
-            spTam.setSo_luong(soLuongs.get(i));
+            BigDecimal gia = gias.get(i);
+            Integer soLuong = soLuongs.get(i);
+
+            // Kiểm tra điều kiện cho giá và số lượng
+            if (gia.compareTo(new BigDecimal(10000)) < 0) {
+                return ResponseEntity.badRequest().body("Giá sản phẩm phải lớn hơn 10.000.");
+            }
+            if (soLuong < 0 || soLuong > 500) {
+                return ResponseEntity.badRequest().body("Số lượng phải nằm trong khoảng 0 - 500.");
+            }
+
+            // Cập nhật giá và số lượng
+            spTam.setGia(gia);
+            spTam.setSo_luong(soLuong);
         }
 
-        // Kiểm tra sản phẩm tạm null hay không
 
 
         // confirm
@@ -274,8 +289,7 @@ public class SanPhamController_backup {
 
         // Xóa list sp tạm
         session.removeAttribute("listSPCTTam");
-
-        return "redirect:/admin/san-pham";
+        return ResponseEntity.ok("Sản phẩm đã được xác nhận thành công.");
     }
     @GetMapping("/san-pham/delete-tam/{id}")
     public String xoaSPTam(@PathVariable("id") Long id, HttpSession session, Model model) {
@@ -362,14 +376,6 @@ public class SanPhamController_backup {
             sanPhamChiTiet.setDieuKhienTuXa(new DieuKhienTuXa(dieuKhienTuXaId));
             sanPhamChiTiet.setNgay_sua(new Date());
 
-//            if (!hinhAnhFile.isEmpty()) {
-//                String fileName = hinhAnhFile.getOriginalFilename();
-//                sanPhamChiTiet.setHinh_anh(fileName);
-//
-//                File file = new File("/src/main/resources/static/admin/images/" + fileName); // Thay đổi đường dẫn đến thư mục hình ảnh
-//                hinhAnhFile.transferTo(file);
-//            }
-
             sanPhamChiTiet.setNguoi_sua("admin");
             sanPhamService.update(sanPhamChiTiet);
             redirectAttributes.addFlashAttribute("message", "Cập nhật sản phẩm thành công!");
@@ -379,5 +385,16 @@ public class SanPhamController_backup {
         }
 
         return "redirect:/admin/san-pham";
+    }
+
+    @DeleteMapping("/admin/san-pham/delete-tam")
+    @ResponseBody
+    public ResponseEntity<?> deleteSanPhamTam(@RequestParam Long sanPhamTamId) {
+        try {
+            spctRepo.deleteById(sanPhamTamId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("");
+        }
     }
 }

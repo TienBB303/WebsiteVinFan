@@ -40,7 +40,7 @@
             <section class="row">
                 <section class="col-12">
                     <div class="card p-4">
-                        <form th:action="@{/admin/san-pham/add-bien-the}" method="post" enctype="multipart/form-data">
+                        <form id="TaoBienThe" th:action="@{/admin/san-pham/add-bien-the}" method="post" enctype="multipart/form-data">
                             <!-- Thông tin sản phẩm -->
                             <div class="row">
                                 <div class="col-md-6">
@@ -57,7 +57,7 @@
                                                 class="text-danger">*</span></label>
                                         <div class="d-flex align-items-center">
                                             <select class="form-select me-2" id="sanPhamKieuQuat"
-                                                    name="sanPham.kieuQuat.id" required>
+                                                    name="sanPham.kieuQuat.id" >
                                                 <option value="" selected>Chọn kiểu quạt</option>
                                                 <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}"
                                                         th:text="${kieuQuat.ten}"></option>
@@ -70,7 +70,7 @@
                                         <label for="sanPhamName" class="form-label">Tên sản phẩm <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="sanPhamName" name="sanPham.ten"
-                                               placeholder="Nhập tên sản phẩm" required>
+                                               placeholder="Nhập tên sản phẩm" >
                                     </div>
 
                                     <!-- Phần nút bấm -->
@@ -213,7 +213,7 @@
                     </div>
 
                     <div class="card p-4">
-                        <form th:action="@{/admin/san-pham/confirm}" method="post">
+                        <form id="confirmSP" th:action="@{/admin/san-pham/confirm}" method="post">
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
@@ -229,9 +229,10 @@
                                 </thead>
 
                                 <tbody>
-                                <tr th:each="spTam, stat : ${listSPCTTam}">
+                                <tr th:each="spTam, stat : ${listSPCTTam}" data-id="${spTam.id}">
                                     <!-- Hiển thị thông tin sản phẩm -->
                                     <td th:text="${stat.index + 1}"></td>
+                                    <input type="hidden" name="sanPhamTamId" th:value="${spTam.id}" />
                                     <td th:text="${spTam.sanPhamTam.ten + ' (' + spTam.mauSac.ten + ')'}"></td>
                                     <td th:text="${spTam.sanPhamTam.kieuQuat.ten}"></td>
                                     <td th:text="${spTam.cheDoGio.ten}"></td>
@@ -241,7 +242,7 @@
                                     <td><input type="number" th:value="${spTam.so_luong}" name="so_luong"
                                                class="form-control"/></td>
                                     <td>
-                                        <button class="btn btn-warning" type="submit" onclick="return confirm('Are you sure you want to delete this item?');">
+                                        <button class="btn btn-warning" onclick="deleteSanPhamTam(${spTam.id})">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </td>
@@ -262,14 +263,218 @@
     </div>
 </div>
 <!--end wraper-->
-
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<!--Tao Bien The-->
     <script>
+        $(document).ready(function () {
+            $('#TaoBienThe').submit(function(event) {
+                event.preventDefault(); // Ngăn chặn hành động mặc định
 
+                // Kiểm tra các giá trị đầu vào
+                const productName = $('#sanPhamName').val().trim();
+                const fanType = $('#sanPhamKieuQuat').val();
+                const color = $('#sanPhamMauSac').prop('selectedOptions').length;
+                const airflowMode = $('#sanPhamCheDoGio').prop('selectedOptions').length;
+                const power = $('#sanPhamCongSuat').prop('selectedOptions').length;
+
+                if (productName === "") {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: 'Tên sản phẩm không được để trống!',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
+                if (fanType === "") {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: 'Vui lòng chọn kiểu quạt!',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
+                if (color === 0) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: 'Vui lòng chọn ít nhất một màu sắc!',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
+                if (airflowMode === 0) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: 'Vui lòng chọn ít nhất một chế độ gió!',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
+                if (power === 0) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: 'Vui lòng chọn ít nhất một công suất!',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
+                // Gửi yêu cầu AJAX
+                $.ajax({
+                    url: '/admin/san-pham/add-bien-the',
+                    type: 'POST',
+                    data: $(this).serialize(), // Lấy tất cả dữ liệu trong form
+                    success: function(response) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: 'Sản phẩm thêm biến thể thành công.',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+
+                        // Xử lý dữ liệu trả về từ server để cập nhật bảng mà không reload trang
+                        let tableBody = $('tbody');  // Đoạn tbody của bảng biến thể
+                        tableBody.empty();  // Xóa dữ liệu cũ (nếu có)
+
+                        // Duyệt qua từng sản phẩm biến thể trả về từ server
+                        $.each(response, function(index, item) {
+                            let newRow = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.sanPhamTam.ten} (${item.mauSac.ten})</td>
+                                <td>${item.sanPhamTam.kieuQuat.ten}</td>
+                                <td>${item.cheDoGio.ten}</td>
+                                <td>${item.congSuat.ten}</td>
+                                <td><input type="number" value="${item.gia}" name="gia" class="form-control"/></td>
+                                <td><input type="number" value="${item.so_luong}" name="so_luong" class="form-control"/></td>
+                                <td><button class="btn btn-warning"><i class="bi bi-trash"></i></button></td>
+                            </tr>`;
+                            tableBody.append(newRow);  // Thêm dòng mới vào bảng
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: xhr.responseText, // Thông báo lỗi từ server
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                    }
+                });
+            });
+        });
     </script>
+<!--Confirm -->
+    <script>
+        $('#confirmSP').submit(function(event) {
+            event.preventDefault();  // Ngăn form reload trang
+
+            // Nếu kiểm tra thành công, tiếp tục gửi form
+            $.ajax({
+                url: '/admin/san-pham/confirm',  // URL của endpoint xử lý form
+                type: 'POST',
+                data: $(this).serialize(),  // Lấy tất cả dữ liệu trong form
+                success: function(response) {
+                    // Hiển thị thông báo thành công bằng SweetAlert
+                    Swal.fire({
+                        toast: true,
+                        icon: 'success',
+                        title: 'Sản phẩm thêm thành công reload trang sau 3 giây.',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        // Chuyển hướng sau 3 giây
+                        setTimeout(function() {
+                            window.location.href = '/admin/san-pham/viewAdd'; // URL của trang add mới
+                        }, 1000);
+                    });
+                },
+                error: function(xhr) {
+                    // Hiển thị lỗi bằng SweetAlert nếu có lỗi từ phía server
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: xhr.responseText,  // Thông báo lỗi trả về từ server
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }
+            });
+        });
+    </script>
+<!--Xóa sp tạm -->
+    <script>
+        function deleteSanPhamTam(sanPhamTamId) {
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+                $.ajax({
+                    url: '/admin/san-pham/delete-tam',  // Endpoint xử lý xóa sản phẩm tạm
+                    type: 'DELETE',
+                    data: { sanPhamTamId: sanPhamTamId },
+                    success: function(response) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: 'Sản phẩm đã được xóa.',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+
+                        // Cập nhật lại bảng bằng cách xóa dòng hiện tại
+                        $(`tr[data-id="${sanPhamTamId}"]`).remove();
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: 'Xóa không thành công. Thử lại sau!',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+<!--multi select cho các option thêm : màu sắc, công suất, chê sdodoj gió-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const colorSelect = new Choices('#sanPhamMauSac', {
@@ -289,11 +494,9 @@
                 placeholder: true,
                 searchEnabled: true
             });
+
         });
-
     </script>
-
-
 </div>
 </body>
 </html>
