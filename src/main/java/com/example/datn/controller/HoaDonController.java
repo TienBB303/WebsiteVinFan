@@ -11,10 +11,12 @@ import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +34,13 @@ public class HoaDonController {
                         @RequestParam(name = "size", defaultValue = "5") int size,
                         @RequestParam(name = "query", defaultValue = "") String query,
                         @RequestParam(name = "trangThai", required = false) Integer trangThai,
+                        @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                         Model model) {
         Page<HoaDon> list;
-        if (query.isEmpty() && trangThai == null) {
+
+        if (date != null) {
+            list = hoaDonService.findByNgayTao(date, PageRequest.of(page, size));
+        } else if (query.isEmpty() && trangThai == null) {
             list = hoaDonService.findHoaDonAndSortDay(page, size);
         } else if (!query.isEmpty() && trangThai == null) {
             list = hoaDonService.searchHoaDon("%" + query + "%", PageRequest.of(page, size));
@@ -47,8 +53,8 @@ public class HoaDonController {
         model.addAttribute("list", list);
         model.addAttribute("query", query);
         model.addAttribute("status", trangThai != null ? trangThai : 0);
+        model.addAttribute("date", date);
 
-        // Lấy thông tin trạng thái để đổ vào dropdown lọc
         TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
         model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
 
