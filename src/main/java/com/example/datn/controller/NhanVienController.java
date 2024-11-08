@@ -7,6 +7,7 @@ import com.example.datn.entity.ChucVu;
 import com.example.datn.entity.NhanVien;
 import com.example.datn.repository.ChucVuRepository;
 import com.example.datn.repository.NhanVienRepository;
+import com.example.datn.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -15,13 +16,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/nhan-vien/")
@@ -33,6 +37,8 @@ public class NhanVienController {
     @Autowired
     private ChucVuRepository chucVuRepository;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @GetMapping("/index")
     public String loadTable(
@@ -72,13 +78,31 @@ public class NhanVienController {
     }
 
     @PostMapping("/add")
-    public String addNhanVien(@ModelAttribute NhanVien nhanVien) {
-        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
-        Date sqlDate = Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
-        nhanVien.setNgayTao(sqlDate); // Lưu ngày hiện tại vào đối tượng NhanVien
-        nhanVien.setTrangThai(true);
-        nhanVienRepository.save(nhanVien);
-        return "redirect:/admin/nhan-vien/index";
+    public String addNhanVien(@ModelAttribute NhanVien nhanVien, @RequestParam("file") MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                throw new IllegalArgumentException("Chưa có tệp hình ảnh được chọn.");
+            }
+
+            Map uploadResult = cloudinaryService.upload(file);
+            String imageUrl = (String) uploadResult.get("url");
+            nhanVien.setHinhAnh(imageUrl);
+
+            LocalDate currentDate = LocalDate.now();
+            Date sqlDate = Date.valueOf(currentDate);
+            nhanVien.setNgayTao(sqlDate);
+            nhanVien.setTrangThai(true);
+
+            nhanVienRepository.save(nhanVien);
+
+            return "redirect:/admin/nhan-vien/index";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "redirect:/admin/nhan-vien/add?error=upload_failed";
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return "redirect:/admin/nhan-vien/add?error=" + e.getMessage();
+        }
     }
 
 

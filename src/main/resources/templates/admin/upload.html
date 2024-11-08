@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload File</title>
+</head>
+<body>
+<h2>Upload Hình Ảnh</h2>
+<form th:action="@{/hinh-anh/upload}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required />
+    <button type="submit">Upload</button>
+</form>
+
+<!-- Hiển thị URL và ảnh sau khi upload thành công -->
+<div th:if="${url}">
+    <p>File uploaded successfully: <a th:href="${url}" th:text="${url}"></a></p>
+    <img th:src="${url}" alt="Uploaded Image" style="max-width: 100%; height: auto;">
+</div>
+
+<!-- Hiển thị lỗi nếu có -->
+<div th:if="${error}">
+    <p style="color: red;" th:text="${error}"></p>
+</div>
+
+</body>
+</html>
+
+
