@@ -1,0 +1,12 @@
+#productList {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+}
+
+#productList .list-group-item {
+    flex: 1 0 30%; /* Đặt chiều rộng của mỗi phần tử là 30% */
+    margin: 10px; /* Khoảng cách giữa các phần tử */
+    box-sizing: border-box; /* Đảm bảo padding và border không ảnh hưởng đến kích thước */
+}
