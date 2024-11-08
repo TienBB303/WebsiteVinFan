@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -205,9 +205,21 @@
             <div class="contact-info me-4">
                 <i class="fas fa-phone-alt"></i> Gọi mua hàng: 0977 27 6646
             </div>
-            <div class="contact-info me-4">
-                <i class="fas fa-user"></i> Đăng nhập
+            <div th:block>
+                <div th:if="${currentPrincipalName } != anonymousUser ">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                        </button>
+                    </form>
+                </div>
+                <div th:if="${currentPrincipalName} == anonymousUser">
+                    <a th:href="@{/login}">Đăng nhập</a>
+                </div>
             </div>
+
+
+
             <div class="contact-info me-4">
                 <a href="/cart/view" class="text-decoration-none">
                     <i class="fas fa-shopping-cart"></i> Giỏ hàng

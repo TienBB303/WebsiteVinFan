@@ -5,6 +5,8 @@ import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.PhieuGiamSanPhamRepo;
 import com.example.datn.repository.SPCTRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class ProductCatalog {
+
+
     @Autowired
     private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
     @Autowired
@@ -24,6 +28,7 @@ public class ProductCatalog {
 
     @GetMapping("/product-catalog")
     public String productCatalog(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Lấy danh sách sản phẩm chi tiết chưa áp dụng giảm giá
         List<SanPhamChiTiet> sanPhamKhongGiamGia = spctRepo.findByIdNotIn(
                 phieuGiamSanPhamRepo.findAllSanPhamChiTietIds());
@@ -52,6 +57,9 @@ public class ProductCatalog {
         // Đưa danh sách sản phẩm chi tiết vào model
         model.addAttribute("sanPhamKhongGiamGia", sanPhamKhongGiamGia);
         model.addAttribute("sanPhamGiamGia", sanPhamGiamGia);
+        String currentPrincipalName = authentication.getName();
+
+        model.addAttribute("currentPrincipalName", currentPrincipalName);
 
         return "/admin/website/productCatalog";
     }
