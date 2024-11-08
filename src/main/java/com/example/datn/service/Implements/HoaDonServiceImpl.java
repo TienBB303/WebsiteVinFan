@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,4 +67,9 @@ public class HoaDonServiceImpl implements HoaDonService {
     public Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai,Pageable pageable) {
         return hoaDonRepo.findAllByTrangThai(trangThai,pageable);
     }
+    @Override
+    public Page<HoaDon> findByNgayTao(LocalDate date, Pageable pageable) {
+        return hoaDonRepo.findByNgayTao(date, pageable);
+    }
+
 }

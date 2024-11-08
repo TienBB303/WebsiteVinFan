@@ -32,4 +32,10 @@ public class BanHangController {
         model.addAttribute("danhSachSanPham", danhSachSanPham);
         return "admin/ban_hang_tai_quay/index";
     }
+
+    @GetMapping("/thanh-toan")
+    public String thanhToan(){
+
+        return "admin/ban_hang_tai_quay/index";
+    }
 }
