@@ -23,9 +23,7 @@ public class HoaDonChiTiet {
     private HoaDon hoaDon;
 
     @ManyToOne
-    @JoinColumn(
-            name = "id_san_pham_chi_tiet"
-    )
+    @JoinColumn(name = "id_san_pham_chi_tiet")
     private SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "so_luong")

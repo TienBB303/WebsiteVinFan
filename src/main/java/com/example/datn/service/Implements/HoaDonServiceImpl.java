@@ -32,7 +32,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Long id) {
 
     }
 
@@ -43,17 +43,17 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public List<HoaDonChiTietResponse> getSanPhamByHoaDonId(int hoaDonId) {
+    public List<HoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId) {
         return hoaDonChiTietRepo.findSanPhamByHoaDonId(hoaDonId);
     }
 
     @Override
-    public HoaDonResponse getPGGbyHoaDonId(int hoaDonId) {
+    public HoaDonResponse getPGGbyHoaDonId(Long hoaDonId) {
         return hoaDonRepo.findPGGByHoaDonId(hoaDonId);
     }
 
     @Override
-    public Optional<HoaDon> findById(Integer id) {
+    public Optional<HoaDon> findById(Long id) {
         Optional<HoaDon> hoaDonOptional = hoaDonRepo.findById(id);
         return hoaDonOptional;
     }
@@ -70,6 +70,12 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public Page<HoaDon> findByNgayTao(LocalDate date, Pageable pageable) {
         return hoaDonRepo.findByNgayTao(date, pageable);
+    }
+
+//  TienBB
+    @Override
+    public List<HoaDon> getAllHoaDon() {
+        return hoaDonRepo.findAll();
     }
 
 }

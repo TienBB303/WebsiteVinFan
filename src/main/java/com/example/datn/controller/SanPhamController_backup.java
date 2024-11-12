@@ -291,26 +291,6 @@ public class SanPhamController_backup {
         session.removeAttribute("listSPCTTam");
         return ResponseEntity.ok("Sản phẩm đã được xác nhận thành công.");
     }
-    @GetMapping("/san-pham/delete-tam/{id}")
-    public String xoaSPTam(@PathVariable("id") Long id, HttpSession session, Model model) {
-        // Lấy danh sách tạm từ session
-        List<SanPhamChiTietTam> listSPCTTam = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
-
-        // Kiểm tra xem danh sách có tồn tại không
-        if (listSPCTTam != null) {
-            // Xóa sản phẩm chi tiết theo ID
-            listSPCTTam.removeIf(spTam -> spTam.getId().equals(id));
-        }
-
-        // Cập nhật lại danh sách trong session
-        session.setAttribute("listSPCTTam", listSPCTTam);
-        model.addAttribute("listSPCTTam", listSPCTTam);
-
-        // Redirect to the same page to refresh the list
-        return "admin/san_pham/san_pham_add"; // Trả về trang hiển thị danh sách
-    }
-
-
 
     //    Chuyển trang update
     @GetMapping("/san-pham/viewUpdate/{id}")

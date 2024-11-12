@@ -15,15 +15,15 @@ public interface HoaDonService {
 
     void save(HoaDon hoaDon);
 
-    void delete(int id);
+    void delete(Long id);
 
     Page<HoaDon> findHoaDonAndSortDay(int page, int size);
 
-    List<HoaDonChiTietResponse> getSanPhamByHoaDonId(int hoaDonId);
+    List<HoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId);
 
-    HoaDonResponse getPGGbyHoaDonId(int hoaDonId);
+    HoaDonResponse getPGGbyHoaDonId(Long hoaDonId);
 
-    Optional<HoaDon> findById(Integer id);
+    Optional<HoaDon> findById(Long id);
 
     Page<HoaDon> searchHoaDon(String query, Pageable pageable);
 
@@ -31,4 +31,5 @@ public interface HoaDonService {
 
     Page<HoaDon> findByNgayTao(LocalDate date, Pageable pageable);
 
+    List<HoaDon> getAllHoaDon();
 }

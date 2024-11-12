@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 
 @Repository
-public interface HoaDonRepo extends JpaRepository<HoaDon, Integer> {
+public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     @Query("select hd from HoaDon hd order by hd.ngayTao desc ")
     Page<HoaDon> findHoaDonAndSortDay(Pageable pageable);
 
@@ -32,10 +32,12 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Integer> {
             "FROM HoaDon hd " +
             "join hd.phieuGiamGia pgg " +
             "where hd.id =:hoaDonId")
-    HoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") int hoaDonId);
+    HoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") Long hoaDonId);
 
     Page<HoaDon> findAllByTrangThai(Integer trangThai, Pageable pageable);
 
     @Query("SELECT hd FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = :date ORDER BY hd.ngayTao DESC")
     Page<HoaDon> findByNgayTao(@Param("date") LocalDate date, Pageable pageable);
+
+//    TienBB
 }

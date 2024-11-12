@@ -18,5 +18,5 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Integer> 
             "JOIN hdct.sanPhamChiTiet spct " +
             "JOIN spct.sanPham sp " +
             "WHERE hd.id = :hoaDonId")
-    List<HoaDonChiTietResponse> findSanPhamByHoaDonId(@Param("hoaDonId") int hoaDonId);
+    List<HoaDonChiTietResponse> findSanPhamByHoaDonId(@Param("hoaDonId") Long hoaDonId);
 }
