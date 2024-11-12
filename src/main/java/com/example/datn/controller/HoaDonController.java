@@ -62,7 +62,7 @@ public class HoaDonController {
     }
 
     @GetMapping("/detail")
-    public String detail(@RequestParam int id, Model model) {
+    public String detail(@RequestParam Long id, Model model) {
         //Lấy thông tin hóa đơn
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
         HoaDon hoaDon = new HoaDon();
@@ -87,7 +87,7 @@ public class HoaDonController {
     }
 
     @PostMapping("/xac-nhan")
-    public String xacNhan(@ModelAttribute("id") int id) {
+    public String xacNhan(@ModelAttribute("id") Long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
 
@@ -109,7 +109,7 @@ public class HoaDonController {
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
     @PostMapping("/giao-hang")
-    public String dangGiaoHang(@ModelAttribute("id") int id) {
+    public String dangGiaoHang(@ModelAttribute("id") Long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
 
@@ -133,7 +133,7 @@ public class HoaDonController {
 
 
     @PostMapping("/hoan-thanh")
-    public String hoanThanh(@ModelAttribute("id") int id) {
+    public String hoanThanh(@ModelAttribute("id") Long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
         if (hoaDonOptional.isPresent()) {
@@ -153,7 +153,7 @@ public class HoaDonController {
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
     @PostMapping("/huy")
-    public String huy(@ModelAttribute("id") int id) {
+    public String huy(@ModelAttribute("id") Long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
         if (hoaDonOptional.isPresent()) {

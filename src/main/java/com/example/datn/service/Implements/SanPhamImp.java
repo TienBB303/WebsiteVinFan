@@ -28,6 +28,12 @@ public class SanPhamImp implements SanPhamService {
         return spctRepo.findAll(pageable);
     }
 
+    @Override
+    public List<SanPhamChiTiet> findAll() {
+//        List<SanPhamChiTiet> listSanPhamChiTiet = spctRepo.findAll();
+        return spctRepo.findAll();
+    }
+
     @Transactional
     @Override
     public void create(SanPham sanPham, List<SanPhamChiTiet> sanPhamChiTietList) {
