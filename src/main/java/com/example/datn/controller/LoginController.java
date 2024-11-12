@@ -16,8 +16,16 @@ import java.util.Optional;
 public class LoginController {
 
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "username", required = false) String username,
+                        Model model) {
+        if (error != null) {
+            model.addAttribute("error", "Tên tài khoản hoặc mật khẩu không đúng.");
+        }
+        model.addAttribute("username", username);  // Giữ lại username khi nhập sai
         return "/admin/login";
     }
+
+
 
 }
