@@ -16,24 +16,24 @@ import java.math.BigDecimal;
 public class HoaDonChiTiet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Long id;
 
     @ManyToOne
     @JoinColumn(name = "id_hoa_don")
-    private HoaDon hoaDon;
+     HoaDon hoaDon;
 
     @ManyToOne
     @JoinColumn(
             name = "id_san_pham_chi_tiet"
     )
-    private SanPhamChiTiet sanPhamChiTiet;
+     SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "so_luong")
-    private Integer soLuong;
+     Integer soLuong;
     @Column(name = "gia_ban")
-    private BigDecimal gia;
+     BigDecimal gia;
     @Column(name = "thanh_tien")
-    private BigDecimal thanhTien;
+     BigDecimal thanhTien;
     @Column(name = "trang_thai")
-    private Integer trangThai;
+     Integer trangThai;
 }
