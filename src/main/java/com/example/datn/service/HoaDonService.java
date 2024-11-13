@@ -35,5 +35,5 @@ public interface HoaDonService {
 
     HoaDonChiTiet addSanPhamToHDCT(AddSPToHoaDonChiTietRequest request);
 
-//    void getIdSPCT();
+    List<HoaDon> getAllHoaDon();
 }

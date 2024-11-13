@@ -36,10 +36,10 @@ public class GioHangOffController {
         List<HoaDon> hoaDons = hoaDonService.getAllHoaDon();
         model.addAttribute("hoaDons", hoaDons);
 
-//        if (hoaDonId != null) {
-//            Map<Long, Integer> cartSanPhams = gioHangOffService.getCart(hoaDonId);
-//            model.addAttribute("cartSanPhams", cartSanPhams);
-//        }
+        if (hoaDonId != null) {
+            Map<Long, Integer> cartSanPhams = gioHangOffService.getCart(hoaDonId);
+            model.addAttribute("cartSanPhams", cartSanPhams);
+        }
 
         return "admin/ban_hang_tai_quay/index";
     }
