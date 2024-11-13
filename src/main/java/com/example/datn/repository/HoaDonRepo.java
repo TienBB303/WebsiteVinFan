@@ -32,7 +32,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
             "FROM HoaDon hd " +
             "join hd.phieuGiamGia pgg " +
             "where hd.id =:hoaDonId")
-    HoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") Long hoaDonId);
+    HoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") long hoaDonId);
 
     Page<HoaDon> findAllByTrangThai(Integer trangThai, Pageable pageable);
 
