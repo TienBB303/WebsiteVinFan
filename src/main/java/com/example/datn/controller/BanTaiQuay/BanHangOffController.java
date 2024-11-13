@@ -6,18 +6,17 @@ import com.example.datn.service.GioHangOffService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.csrf.CsrfToken;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/ban-hang-tai-quay")
-public class GioHangOffController {
+public class BanHangOffController {
     @Autowired
     private GioHangOffService gioHangOffService;
 
