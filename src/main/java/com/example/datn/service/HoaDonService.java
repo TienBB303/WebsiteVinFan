@@ -1,12 +1,14 @@
 package com.example.datn.service;
 
-import com.example.datn.dto.response.HoaDonChiTietResponse;
+import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
+import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.HoaDonResponse;
+import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
+import com.example.datn.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +21,9 @@ public interface HoaDonService {
 
     Page<HoaDon> findHoaDonAndSortDay(int page, int size);
 
-    List<HoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId);
+    List<ListSanPhamInHoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId);
+
+    List<ListSpNewInHoaDonResponse> getSanPhamInHoaDon();
 
     HoaDonResponse getPGGbyHoaDonId(Long hoaDonId);
 
@@ -29,7 +33,7 @@ public interface HoaDonService {
 
     Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai, Pageable pageable);
 
-    Page<HoaDon> findByNgayTao(LocalDate date, Pageable pageable);
+    HoaDonChiTiet addSanPhamToHDCT(AddSPToHoaDonChiTietRequest request);
 
-    List<HoaDon> getAllHoaDon();
+//    void getIdSPCT();
 }

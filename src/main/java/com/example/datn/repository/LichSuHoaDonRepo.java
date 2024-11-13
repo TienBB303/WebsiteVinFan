@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LichSuHoaDonRepo extends JpaRepository<LichSuHoaDon,Integer> {
+public interface LichSuHoaDonRepo extends JpaRepository<LichSuHoaDon,Long> {
     @Query("select l from LichSuHoaDon l where l.hoaDon.id=:idHoaDon")
-    List<LichSuHoaDon> findLichSuHoaDonByIdHoaDon(@Param("idHoaDon") Long idHoaDon);
+    List<LichSuHoaDon> findLichSuHoaDonByIdHoaDon(@Param("idHoaDon") long idHoaDon);
 }

@@ -1,7 +1,10 @@
 package com.example.datn.repository;
 
 import com.example.datn.dto.response.ThongKeResponse;
+import com.example.datn.dto.response.ThongKeSanPhamResponse;
 import com.example.datn.entity.HoaDonChiTiet;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -53,4 +56,14 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
             " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
             " group by EXTRACT(day FROM hd.ngayTao)")
     List<ThongKeResponse> getListDay();
+
+    @Query("SELECT new com.example.datn.dto.response.ThongKeSanPhamResponse(" +
+            "sp.ten, SUM(hdct.soLuong), SUM(hdct.thanhTien)) " +
+            "FROM HoaDonChiTiet hdct " +
+            "JOIN hdct.sanPhamChiTiet spct " +
+            "JOIN spct.sanPham sp " +
+            "GROUP BY sp.id, sp.ten " +
+            "ORDER BY SUM(hdct.soLuong) DESC")
+    List<ThongKeSanPhamResponse> findSanPhamBanChay();
+
 }
