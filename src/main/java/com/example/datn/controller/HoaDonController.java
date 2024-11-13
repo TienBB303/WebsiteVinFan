@@ -120,7 +120,7 @@ public class HoaDonController {
     }
 
     @PostMapping("/xac-nhan")
-    public String xacNhan(@ModelAttribute("id") long id) {
+    public String xacNhan(@ModelAttribute("id") int id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
 

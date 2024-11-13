@@ -12,6 +12,8 @@ public interface SanPhamService {
 
     Page<SanPhamChiTiet> findAll(Pageable pageable);
 
+    List<SanPhamChiTiet>  findAll();
+
     void create(SanPham sanPham, List<SanPhamChiTiet> sanPhamChiTietList);
 
     SanPhamChiTiet findById(Long id);

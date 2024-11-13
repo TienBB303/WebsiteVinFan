@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     @Query("select hd from HoaDon hd order by hd.ngayTao desc ")
@@ -34,5 +36,8 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
 
     Page<HoaDon> findAllByTrangThai(Integer trangThai, Pageable pageable);
 
+    @Query("SELECT hd FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = :date ORDER BY hd.ngayTao DESC")
+    Page<HoaDon> findByNgayTao(@Param("date") LocalDate date, Pageable pageable);
 
+//    TienBB
 }

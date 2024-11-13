@@ -77,6 +77,9 @@ public class NhanVien {
     @Column(name = "nguoi_sua")
     private String nguoiSua;
 
+    @Column(name = "hinh_anh")
+    private String hinhAnh;
+
     @Column(name = "trang_thai")
     private Boolean trangThai;
 }
