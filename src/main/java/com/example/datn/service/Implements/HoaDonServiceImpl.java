@@ -97,6 +97,11 @@ public class HoaDonServiceImpl implements HoaDonService {
         return hoaDonChiTietRepo.save(hoaDonChiTiet);
     }
 
+    @Override
+    public List<HoaDon> getAllHoaDon() {
+        return hoaDonRepo.findAll();
+    }
+
 //    @Override
 //    public void getIdSPCT() {
 //        List<ListSpNewInHoaDonResponse> listSpInHoaDon = hoaDonChiTietRepo.findSanPhamInHoaDon();
