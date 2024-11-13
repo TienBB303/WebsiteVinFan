@@ -32,13 +32,16 @@
         <div class="page-content">
             <section class="card">
                 <div class="card-body">
-                    <form th:action="@{/admin/nhan-vien/add}" method="post" th:object="${nhanVien}">
+                    <form th:action="@{/admin/nhan-vien/add}" method="post" th:object="${nhanVien}" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-2">
                                 <button type="submit" class="btn btn-primary">Thêm</button>
                             </div>
                             <div class="col-md-4">
                                 <a th:href="@{/admin/nhan-vien/index}" class="btn btn-secondary">Quay lại trang danh sách</a>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="file" name="file" class="form-control" required />
                             </div>
                         </div>
                         <br>

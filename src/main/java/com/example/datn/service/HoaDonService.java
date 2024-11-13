@@ -9,6 +9,7 @@ import com.example.datn.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,10 @@ public interface HoaDonService {
 
     HoaDonResponse getPGGbyHoaDonId(Long hoaDonId);
 
+    List<HoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId);
+
+    HoaDonResponse getPGGbyHoaDonId(Long hoaDonId);
+
     Optional<HoaDon> findById(Long id);
 
     Page<HoaDon> searchHoaDon(String query, Pageable pageable);
@@ -36,4 +41,7 @@ public interface HoaDonService {
     HoaDonChiTiet addSanPhamToHDCT(AddSPToHoaDonChiTietRequest request);
 
 //    void getIdSPCT();
+    Page<HoaDon> findByNgayTao(LocalDate date, Pageable pageable);
+
+    List<HoaDon> getAllHoaDon();
 }

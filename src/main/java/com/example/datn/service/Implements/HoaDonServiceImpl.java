@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,8 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public List<ListSanPhamInHoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId) {
+
+    public List<HoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId) {
         return hoaDonChiTietRepo.findSanPhamByHoaDonId(hoaDonId);
     }
 
@@ -104,5 +107,16 @@ public class HoaDonServiceImpl implements HoaDonService {
 //            Long idSPCT = item.getIdSPCT();
 //        }
 //    }
+=======
+    @Override
+    public Page<HoaDon> findByNgayTao(LocalDate date, Pageable pageable) {
+        return hoaDonRepo.findByNgayTao(date, pageable);
+    }
+
+//  TienBB
+    @Override
+    public List<HoaDon> getAllHoaDon() {
+        return hoaDonRepo.findAll();
+    }
 
 }
