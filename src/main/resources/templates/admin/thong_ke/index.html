@@ -8,7 +8,7 @@
 <div class="wrapper">
     <!-- Sidebar -->
     <div>
-        <aside th:replace="/admin/fragments/sidebar :: sidebar" ></aside>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
     </div>
 
     <!-- Main-->
@@ -39,41 +39,73 @@
             <section class="row">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Thống Kê Bán Hàng</h4>
+                        <h1 class="mt-1">Thống Kê Bán Hàng</h1>
                     </div>
                     <div class="container">
                         <div class="dashboard-container-qa">
-                            <div class="dashboard-qa" th:each="item : ${thongKeListDay}" th:if="${item.day == currentDay}">
+                            <div class="dashboard-qa" th:each="item : ${thongKeListDay}"
+                                 th:if="${item.day == currentDay}">
                                 <div>Ngày hôm nay</div>
                                 <p><span th:text="${item.day}"></span></p>
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
                                 <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
                             </div>
 
-                            <div class="dashboard-qa" th:each="item : ${thongKeListWeek}" th:if="${item.week == currentWeek}">
+                            <div class="dashboard-qa" th:each="item : ${thongKeListWeek}"
+                                 th:if="${item.week == currentWeek}">
                                 <div>Tuần này</div>
                                 <p><span th:text="${item.week}"></span></p>
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
                                 <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
                             </div>
 
-                            <div class="dashboard-qa" th:each="item : ${thongKeListMonth}" th:if="${item.month == currentMonth}">
+                            <div class="dashboard-qa" th:each="item : ${thongKeListMonth}"
+                                 th:if="${item.month == currentMonth}">
                                 <div>Tháng này</div>
                                 <p><span th:text="${item.month}"></span></p>
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
                                 <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
                             </div>
 
-                            <div class="dashboard-qa" th:each="item : ${thongKeListYear}" th:if="${item.year == currentYear}">
+                            <div class="dashboard-qa" th:each="item : ${thongKeListYear}"
+                                 th:if="${item.year == currentYear}">
                                 <div>Năm này</div>
                                 <p><span th:text="${item.year}"></span></p>
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
                                 <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
                             </div>
                         </div>
-
-
                     </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <h1 class="mt-5">Sản Phẩm Bán Chạy</h1>
+                            <div class="col">
+                                <table class="table table-bordered mt-3">
+                                    <thead class="table-info">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên Sản Phẩm</th>
+                                        <th>Số Lượng Bán</th>
+                                        <th>Giá</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="sp, iterStat : ${listSPBanChay}">
+                                        <td th:text="${iterStat.count}">Tên Sản Phẩm</td>
+                                        <td th:text="${sp.tenSanPham}">Tên Sản Phẩm</td>
+                                        <td th:text="${sp.soLuongBan}">Số Lượng Bán</td>
+                                        <td th:text="${sp.gia}">Giá</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col text-center">
+                                Column
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
         </div>
@@ -85,6 +117,7 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
+
 </div>
 </body>
 </html>

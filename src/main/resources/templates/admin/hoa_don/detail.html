@@ -49,7 +49,7 @@
                 <div class="card-header">
                     <h2><strong>Theo dõi đơn hàng</strong></h2>
                 </div>
-                <div class="row">
+                <div class="row-ls overflow-x-auto">
                     <div th:each="history : ${listHistory}" class="col-12 col-sm-6 col-md-3 mb-3">
                         <div class="d-flex align-items-center justify-content-center" style="height: 70px;">
                             <div>
@@ -74,6 +74,59 @@
                         </div>
                     </div>
                 </div>
+
+            </div>
+
+            <div class="card mb-4">
+                <div class="container d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#myModal1">
+                        Lịch sử
+                    </button>
+                    <div class="modal fade" id="myModal1" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel1">Lịch sử thao tác</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <table class="table table-bordered mt-3">
+                                            <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Trạng thái</th>
+                                                <th>Ngày</th>
+                                                <th>Người xác nhận</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="item, iter : ${listHistory}">
+                                                <td th:text="${iter.count}"></td>
+                                                <td th:switch="${item.trangThai}">
+                                                    <span th:case="1" th:text="'Đang chờ xác nhận'"></span>
+                                                    <span th:case="2" th:text="'Đã xác nhận'"></span>
+                                                    <span th:case="3" th:text="'Đang giao hàng'"></span>
+                                                    <span th:case="4" th:text="'Đã giao hàng'"></span>
+                                                    <span th:case="5" th:text="'Hủy'"></span>
+                                                </td>
+                                                <td th:text="${item.ngayTao}"></td>
+                                                <td th:text="${item.nguoiTao}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="card mb-4">
@@ -84,31 +137,39 @@
                           th:if="${hoaDon.trangThai != 2 && hoaDon.trangThai != 3}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-success">
-                            <i class="fa-solid fa-cart-plus"></i> Xác Nhận
+                            <i class=""></i> Xác Nhận
                         </button>
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/giao-hang}"
                           th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa-solid fa-cart-plus"></i> Đang giao hàng
+                        <button type="submit" class="btn btn-warning">
+                            <i class=""></i> Đang giao hàng
+                        </button>
+                    </form>
+
+                    <form method="post" th:action="@{/hoa-don/cho-xac-nhan}"
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1}" class="me-2">
+                        <input type="hidden" name="id" th:value="${hoaDon.id}">
+                        <button type="submit" class="btn btn-secondary ">
+                            <i class=""></i>Hoàn tác
                         </button>
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/hoan-thanh}"
                           th:if="${hoaDon.trangThai == 3}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa-solid fa-cart-plus"></i> Hoàn Thành
+                        <button type="submit" class="btn btn-primary">
+                            <i class=""></i> Hoàn Thành
                         </button>
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/huy}"
                           th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 2}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-dangerz">
-                            <i class="fa-solid fa-cart-plus"></i> Hủy
+                        <button type="submit" class="btn btn-danger">
+                            <i class=""></i> Hủy
                         </button>
                     </form>
                 </div>
@@ -148,8 +209,8 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h2><strong>Thông tin đơn hàng:</strong> <span th:text="${hoaDon.ma}"></span></h2>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
+                <div class="container text-center">
+                    <div class="row">
                         <div class="col-md-6">
                             <p th:switch="${hoaDon.trangThai}"><strong>Trạng thái:</strong>
                                 <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
@@ -161,102 +222,159 @@
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
                             <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>Loại hóa đơn: </strong><span
-                                    th:text="${hoaDon.loaiHoaDon == 1 ? 'Tại quầy' : 'Giao hàng'}"></span></p>
-                            <p><strong>Số điện thoại: </strong> <span th:text="${hoaDon.sdtNguoiNhan}"></span></p>
-                            <p><strong>Ngày tạo: </strong><span th:text="${hoaDon.ngayTao}"></span></p>
-                            <p><strong>Ngày cập nhật cuối: </strong><span th:text="${hoaDon.ngaySua}"></span></p>
+
+                        <div class="col">
+                            <div class="col-md-6">
+                                <p><strong>Loại hóa đơn: </strong><span
+                                        th:text="${hoaDon.loaiHoaDon == 1 ? 'Tại quầy' : 'Giao hàng'}"></span></p>
+                                <p><strong>Số điện thoại: </strong> <span th:text="${hoaDon.sdtNguoiNhan}"></span></p>
+                                <p><strong>Ngày tạo: </strong><span th:text="${hoaDon.ngayTao}"></span></p>
+                            </div>
                         </div>
-                    </div>
-                    <h2><strong>Thông tin sản phẩm</strong></h2>
-                    <table class="table table-bordered mt-3">
-                        <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Mã hóa đơn</th>
-                            <th>Tên sản phẩm</th>
-                            <th>Giá bán</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="item, iter : ${listHDCT}">
-                            <td th:text="${iter.count}"></td>
-                            <td th:text="${item.maHoaDon}"></td>
-                            <td th:text="${item.tenSanPham}"></td>
-                            <td th:text="${item.gia}"></td>
-                            <td th:text="${item.soLuong}"></td>
-                            <td th:text="${item.thanhTien}"></td>
-                            <!--                            <td>-->
-                            <!--                                <input type="number" class="form-control" value="1">-->
-                            <!--                            </td>-->
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="text-end mt-3">
-;                            <div class="container">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-                                    Thêm sản phẩm
+                        <div class="text-end mt-3">
+                            <div class="container">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#myModal2">
+                                    Sửa hóa đơn
                                 </button>
 
-                                <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                     aria-hidden="true">
                                     <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Danh sách sản phẩm</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <h5 class="modal-title" id="exampleModalLabel2">Thay đổi thông tin</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <form>
                                                     <div class="mb-3">
-                                                        <label for="name" class="form-label">Tên sản phẩm</label>
-                                                        <input type="text" class="form-control" id="name" placeholder="Tìm kiếm sản phẩm">
+                                                        <input type="text" class="form-control" id="name1"
+                                                               placeholder="Tên người nhận">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="size" class="form-label">Kích thước</label>
-                                                        <input type="size" class="form-control" id="size" placeholder="Nhập kích thước">
+                                                        <input type="text" class="form-control" id="address"
+                                                               placeholder="Địa chỉ">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="color" class="form-label">Màu sắc</label>
-                                                        <textarea class="form-control" id="color" rows="3" placeholder="Nhập màu sắc"></textarea>
+                                                        <input type="text" class="form-control" id="phoneNumber"
+                                                               placeholder="Số điện thoại">
                                                     </div>
-                                                    <div>
-                                                        <button type="button" class="btn btn-primary">Tìm kiếm</button>
-                                                    </div>
-                                                    <table class="table table-bordered mt-3">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>STT</th>
-                                                            <th>Tên sản phẩm</th>
-                                                            <th>Giá bán</th>
-                                                            <th>Số lượng</th>
-                                                            <th>Thành tiền</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr th:each="item, iter : ${listHDCT}">
-                                                            <td th:text="${iter.count}"></td>
-                                                            <td th:text="${item.tenSanPham}"></td>
-                                                            <td th:text="${item.gia}"></td>
-                                                            <td th:text="${item.soLuong}"></td>
-                                                            <td th:text="${item.thanhTien}"></td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
                                                 </form>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Đóng
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2><strong>Thông tin sản phẩm</strong></h2>
+                </div>
+                <table class="table table-bordered mt-3">
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item, iter : ${listHDCT}">
+                        <td th:text="${iter.count}"></td>
+                        <td th:text="${item.tenSanPham}"></td>
+                        <td th:text="${item.gia}"></td>
+                        <td>
+                            <!-- Nút Giảm -->
+                            <button type="button" class="btn btn-light-secondary btn-sm" >-</button>
+                            <!-- Ô nhập số lượng -->
+                            <input type="number" class="form-control"
+                                   th:value="${item.soLuong}"
+                                   min="1"
+                                   style="width: 60px; text-align: center; display: inline-block;" />
+                            <!-- Nút Tăng -->
+                            <button type="button" class="btn btn-light-secondary btn-sm">+</button>
+                        </td>
+                        <td th:text="${item.thanhTien}"></td>
+                        <!--                            <td>-->
+                        <!--                                <input type="number" class="form-control" value="1">-->
+                        <!--                            </td>-->
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="text-end mt-3">
+                    <div class="container">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#myModal">
+                            Thêm sản phẩm
+                        </button>
+
+                        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Danh sách sản phẩm</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="input-group mb-3 ">
+                                                <input type="text" class="form-control" id="name"
+                                                       placeholder="Tìm kiếm sản phẩm">
+                                                <button type="button" class="btn btn-primary">Tìm kiếm</button>
+                                            </div>
+
+                                            <table class="table table-bordered mt-3">
+                                                <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên sản phẩm</th>
+                                                    <th>Giá bán</th>
+                                                    <th>Số lượng</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="item, iter : ${listSPInHoaDon}">
+                                                    <td th:text="${iter.count}"></td>
+                                                    <td th:text="${item.tenSanPham}"></td>
+                                                    <td th:text="${item.gia}"></td>
+                                                    <td th:text="${item.soLuong}"></td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary">ADD</button>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </form>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Đóng
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Discount and Total Section -->
             <div class="card mb-4">
