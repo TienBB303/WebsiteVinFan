@@ -1,12 +1,14 @@
 package com.example.datn.service;
 
-import com.example.datn.dto.response.HoaDonChiTietResponse;
+import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
+import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.HoaDonResponse;
+import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
+import com.example.datn.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,20 +17,23 @@ public interface HoaDonService {
 
     void save(HoaDon hoaDon);
 
-    void delete(int id);
+    void delete(Long id);
 
     Page<HoaDon> findHoaDonAndSortDay(int page, int size);
 
-    List<HoaDonChiTietResponse> getSanPhamByHoaDonId(int hoaDonId);
+    List<ListSanPhamInHoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId);
 
-    HoaDonResponse getPGGbyHoaDonId(int hoaDonId);
+    List<ListSpNewInHoaDonResponse> getSanPhamInHoaDon();
 
-    Optional<HoaDon> findById(Integer id);
+    HoaDonResponse getPGGbyHoaDonId(Long hoaDonId);
+
+    Optional<HoaDon> findById(Long id);
 
     Page<HoaDon> searchHoaDon(String query, Pageable pageable);
 
     Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai, Pageable pageable);
 
-    Page<HoaDon> findByNgayTao(LocalDate date, Pageable pageable);
+    HoaDonChiTiet addSanPhamToHDCT(AddSPToHoaDonChiTietRequest request);
 
+    List<HoaDon> getAllHoaDon();
 }

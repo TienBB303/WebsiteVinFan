@@ -26,4 +26,5 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
     List<SanPhamChiTiet> findBySanPhamId(Long sanPhamId);
 
     List<SanPhamChiTiet> findByIdNotIn(List<Long> ids);
+
 }

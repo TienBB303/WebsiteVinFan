@@ -33,9 +33,17 @@ public class BanHangController {
         return "admin/ban_hang_tai_quay/index";
     }
 
-    @GetMapping("/thanh-toan")
-    public String thanhToan(){
+//    @PostMapping("/thanh-toan")
+//    public String thanhToan(@RequestParam("idSP") String id,
+//                            @RequestParam("tenSP") String ten,
+//                            @RequestParam("soLuongSP") Integer soLuong){
+////        SanPhamChiTiet spct = spctRepo.findById(id).orElse(null);
+//        return "admin/ban_hang_tai_quay/index";
+//    }
 
-        return "admin/ban_hang_tai_quay/index";
-    }
+//    @GetMapping("/tim-kiem")
+//    public String timKiem(){
+//
+//    }
+
 }
