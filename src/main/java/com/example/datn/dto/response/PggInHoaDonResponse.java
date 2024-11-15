@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HoaDonResponse {
+public class PggInHoaDonResponse {
     String maPGG;
     String tenPGG;
     BigDecimal tongTien;

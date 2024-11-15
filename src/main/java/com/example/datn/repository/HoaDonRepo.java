@@ -1,6 +1,7 @@
 package com.example.datn.repository;
 
-import com.example.datn.dto.response.HoaDonResponse;
+import com.example.datn.dto.response.LichSuThanhToanResponse;
+import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,12 +28,19 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     )
     Page<HoaDon> searchHoaDon(String query, Pageable pageable);
 
-    @Query("SELECT new com.example.datn.dto.response.HoaDonResponse(" +
+    @Query("SELECT new com.example.datn.dto.response.PggInHoaDonResponse(" +
             "pgg.ma , pgg.ten, hd.tongTien, hd.tongTienSauGiamGia, hd.phiVanChuyen) " +
             "FROM HoaDon hd " +
             "join hd.phieuGiamGia pgg " +
             "where hd.id =:hoaDonId")
-    HoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") long hoaDonId);
+    PggInHoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") long hoaDonId);
+
+    @Query("SELECT new com.example.datn.dto.response.LichSuThanhToanResponse(" +
+            "hd.tongTien , hd.ngayTao, hd.loaiHoaDon,httt.hinhThucThanhToan, hd.trangThai, hd.nguoiTao) " +
+            "FROM HoaDon hd " +
+            "join hd.hinhThucThanhToan httt " +
+            "where hd.id =:hoaDonId")
+    LichSuThanhToanResponse findThanhToanHoaDonId(@Param("hoaDonId") long hoaDonId);
 
     Page<HoaDon> findAllByTrangThai(Integer trangThai, Pageable pageable);
 
