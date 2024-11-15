@@ -108,4 +108,12 @@ public class HoaDonServiceImpl implements HoaDonService {
         return hoaDonRepo.findAll();
     }
 
+//    @Override
+//    public void getIdSPCT() {
+//        List<ListSpNewInHoaDonResponse> listSpInHoaDon = hoaDonChiTietRepo.findSanPhamInHoaDon();
+//        for (ListSpNewInHoaDonResponse item : listSpInHoaDon) {
+//            Long idSPCT = item.getIdSPCT();
+//        }
+//    }
+
 }
