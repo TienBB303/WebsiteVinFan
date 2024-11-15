@@ -33,8 +33,8 @@ public class GioHangOffController {
         model.addAttribute("sanPhams", sanPhams);
 
         gioHangOffService.taoHoaDonMoi();
-        List<HoaDon> hoaDons = hoaDonService.getAllHoaDon();
-        model.addAttribute("hoaDons", hoaDons);
+//        List<HoaDon> hoaDons = hoaDonService.getAllHoaDon();
+//        model.addAttribute("hoaDons", hoaDons);
 
 //        if (hoaDonId != null) {
 //            Map<Long, Integer> cartSanPhams = gioHangOffService.getCart(hoaDonId);

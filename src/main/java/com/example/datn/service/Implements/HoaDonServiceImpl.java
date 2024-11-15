@@ -1,8 +1,8 @@
 package com.example.datn.service.Implements;
 
-import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
+import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-import com.example.datn.dto.response.HoaDonResponse;
+import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public List<ListSanPhamInHoaDonChiTietResponse> getSanPhamByHoaDonId(Long hoaDonId) {
+    public List<ListSanPhamInHoaDonChiTietResponse> getSanPhamCTByHoaDonId(Long hoaDonId) {
         return hoaDonChiTietRepo.findSanPhamByHoaDonId(hoaDonId);
     }
 
@@ -60,8 +61,13 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public HoaDonResponse getPGGbyHoaDonId(Long hoaDonId) {
+    public PggInHoaDonResponse getPGGbyHoaDonId(Long hoaDonId) {
         return hoaDonRepo.findPGGByHoaDonId(hoaDonId);
+    }
+
+    @Override
+    public LichSuThanhToanResponse getLSTTByHoaDonId(Long hoaDonId) {
+        return hoaDonRepo.findThanhToanHoaDonId(hoaDonId);
     }
 
     @Override
@@ -71,38 +77,30 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
+    public Optional<SanPhamChiTiet> findByIdSanPhamChiTiet(Long id) {
+        Optional<SanPhamChiTiet> sanPhamChiTietOptional = spctRepo.findById(id);
+        return sanPhamChiTietOptional;
+    }
+
+    @Override
     public Page<HoaDon> searchHoaDon(String query, Pageable pageable) {
         return hoaDonRepo.searchHoaDon(query, pageable);
     }
 
     @Override
-    public Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai,Pageable pageable) {
-        return hoaDonRepo.findAllByTrangThai(trangThai,pageable);
+    public Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai, Pageable pageable) {
+        return hoaDonRepo.findAllByTrangThai(trangThai, pageable);
     }
 
     @Override
-    public HoaDonChiTiet addSanPhamToHDCT(AddSPToHoaDonChiTietRequest request) {
-        HoaDon hoaDon = hoaDonRepo.findById(request.getHoaDonId())
-                .orElseThrow(() -> new RuntimeException("Hoa Don không tồn tại"));
-        SanPhamChiTiet sanPhamChiTiet = spctRepo.findById(request.getSanPhamChiTietId())
-                .orElseThrow(() -> new RuntimeException("San Pham Chi Tiet không tồn tại"));
-
-        // Tạo và lưu HoaDonChiTiet mới
-        HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-        hoaDonChiTiet.setHoaDon(hoaDon);
-        hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
-        hoaDonChiTiet.setSoLuong(request.getSoLuong());
-        hoaDonChiTiet.setGia(request.getGia());
-
-        return hoaDonChiTietRepo.save(hoaDonChiTiet);
+    public List<SanPhamChiTiet> getSPCTInHDCT() {
+        return hoaDonChiTietRepo.findSanPhamChiTietWithSanPham();
     }
 
-//    @Override
-//    public void getIdSPCT() {
-//        List<ListSpNewInHoaDonResponse> listSpInHoaDon = hoaDonChiTietRepo.findSanPhamInHoaDon();
-//        for (ListSpNewInHoaDonResponse item : listSpInHoaDon) {
-//            Long idSPCT = item.getIdSPCT();
-//        }
-//    }
+    @Override
+    public SanPhamChiTiet getIdSPCT(long idSPCT) {
+        return spctRepo.findById(idSPCT)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tìm thấy"));
+    }
 
 }

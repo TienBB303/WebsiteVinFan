@@ -19,7 +19,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/ban-hang-tai-quay/**") // Chỉ vô hiệu hóa CSRF cho bán hàng
                 )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/login", "/error","/admin/website/**").permitAll()
+                        .requestMatchers("/", "/login", "/error","/admin/website/**","/admin/nhan-vien/index","/admin/nhan-vien/from-them").permitAll()
                         .requestMatchers(HttpMethod.POST, "/ban-hang-tai-quay/**").permitAll()  // Cho phép POST
                         .requestMatchers(HttpMethod.PUT, "/ban-hang-tai-quay/**").permitAll()   // Cho phép PUT
                         .requestMatchers(HttpMethod.DELETE, "/ban-hang-tai-quay/**").permitAll()// Cho phép DELETE
@@ -27,7 +27,7 @@ public class SecurityConfig {
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/admin/index", true)
+                        .defaultSuccessUrl("/hoa-don/index", true)
                         .permitAll()
                 )
                 .logout()
