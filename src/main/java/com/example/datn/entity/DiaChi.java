@@ -28,6 +28,10 @@ public class DiaChi {
     @JoinColumn(name = "id_khach_hang", nullable = false)
     private KhachHang khachHang;
 
+    @ManyToOne
+    @JoinColumn(name = "id_hoa_don", nullable = false)
+    private HoaDon hoaDon;
+
     private String tinhThanhPho;
     private String quanHuyen;
     private String xaPhuong;

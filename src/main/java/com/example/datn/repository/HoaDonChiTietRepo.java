@@ -3,6 +3,7 @@ package com.example.datn.repository;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDonChiTiet;
+import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,8 +23,11 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
     List<ListSanPhamInHoaDonChiTietResponse> findSanPhamByHoaDonId(@Param("hoaDonId") Long hoaDonId);
 
     @Query("SELECT new com.example.datn.dto.response.ListSpNewInHoaDonResponse(" +
-            "spct.id,sp.ten, spct.so_luong, spct.gia) " +
+            "sp.ten, spct.so_luong, spct.gia) " +
             "FROM SanPhamChiTiet spct " +
             "JOIN spct.sanPham sp ")
     List<ListSpNewInHoaDonResponse> findSanPhamInHoaDon();
+
+    @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp WHERE spct.sanPham.id = sp.id")
+    List<SanPhamChiTiet> findSanPhamChiTietWithSanPham();
 }

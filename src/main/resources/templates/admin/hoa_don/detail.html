@@ -183,21 +183,35 @@
                     <h2><strong><span>Lịch sử thanh toán</span></strong></h2>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered"
+                           th:if="${hoaDon.trangThai != 1 && hoaDon.trangThai != 2
+                           && hoaDon.trangThai != 3
+                           }">
                         <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Mã GD</th>
                             <th>Số tiền</th>
-                            <th>Trạng thái</th>
                             <th>Thời gian</th>
                             <th>Phương thức thanh toán</th>
+                            <th>Loại hóa đơn</th>
+                            <th>Trạng thái</th>
                             <th>Người tạo</th>
-                            <th>Ghi chú</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- Add rows here -->
+                        <tr th:each="item: ${listLSTT}">
+                            <td th:text="${item.tongTien}"></td>
+                            <td th:text="${item.ngayTao}"></td>
+                            <td th:text="${item.hinhThucThanhToan}"></td>
+                            <td th:text="${item.loaiHoaDon == 1 ? 'Tại quầy' : 'Online'}"></td>
+                            <td th:switch="${item.trangThai}">
+                                <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
+                                <span th:case="2" class="text-success">Đã xác nhận</span>
+                                <span th:case="3" class="text-warning">Đang giao hàng</span>
+                                <span th:case="4" class="text-primary">Đã giao hàng</span>
+                                <span th:case="5" class="text-danger">Hủy</span>
+                            </td>
+                            <td th:text="${item.nguoiTao}"></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -220,7 +234,7 @@
                                 <span th:case="5" class="text-danger">Hủy</span>
                             </p>
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
-                            <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>
+<!--                            <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>-->
                         </div>
 
                         <div class="col">
@@ -298,12 +312,12 @@
                         <td th:text="${item.gia}"></td>
                         <td>
                             <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm" >-</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm">-</button>
                             <!-- Ô nhập số lượng -->
                             <input type="number" class="form-control"
                                    th:value="${item.soLuong}"
                                    min="1"
-                                   style="width: 60px; text-align: center; display: inline-block;" />
+                                   style="width: 60px; text-align: center; display: inline-block;"/>
                             <!-- Nút Tăng -->
                             <button type="button" class="btn btn-light-secondary btn-sm">+</button>
                         </td>
@@ -343,19 +357,29 @@
                                                 <tr>
                                                     <th>STT</th>
                                                     <th>Tên sản phẩm</th>
+                                                    <th>Màu sắc</th>
+                                                    <th>Công xuất</th>
                                                     <th>Giá bán</th>
                                                     <th>Số lượng</th>
                                                     <th>Thao tác</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr th:each="item, iter : ${listSPInHoaDon}">
+                                                <tr th:each="item, iter : ${listSPCTInHDCT}">
                                                     <td th:text="${iter.count}"></td>
-                                                    <td th:text="${item.tenSanPham}"></td>
+                                                    <td th:text="${item.sanPham.ten}"></td>
+                                                    <td th:text="${item.mauSac.ten}"></td>
+                                                    <td th:text="${item.congSuat.ten}"></td>
                                                     <td th:text="${item.gia}"></td>
-                                                    <td th:text="${item.soLuong}"></td>
+                                                    <td th:text="${item.so_luong}"></td>
                                                     <td>
-                                                        <button type="button" class="btn btn-primary">ADD</button>
+                                                        <form method="post" th:action="@{/hoa-don/addSPCT}" class="me-2">
+                                                            <input type="hidden" name="idHD" th:value="${hoaDon.id}">
+                                                            <input type="hidden" name="idSP" th:value="${item.id}">
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <i class=""></i> ADD
+                                                            </button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                                 </tbody>
