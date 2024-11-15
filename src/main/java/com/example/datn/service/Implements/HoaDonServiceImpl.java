@@ -103,4 +103,9 @@ public class HoaDonServiceImpl implements HoaDonService {
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tìm thấy"));
     }
 
+    @Override
+    public List<HoaDon> getAllHoaDon() {
+        return hoaDonRepo.findAll();
+    }
+
 }

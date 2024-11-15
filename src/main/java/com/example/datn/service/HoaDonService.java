@@ -43,5 +43,6 @@ public interface HoaDonService {
 
     SanPhamChiTiet getIdSPCT(long idSPCT);
 
+    List<HoaDon> getAllHoaDon();
 
 }
