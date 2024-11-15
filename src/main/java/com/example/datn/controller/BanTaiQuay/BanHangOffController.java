@@ -1,23 +1,23 @@
 package com.example.datn.controller.BanTaiQuay;
 
+
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.service.GioHangOffService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.csrf.CsrfToken;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/ban-hang-tai-quay")
-public class GioHangOffController {
+public class BanHangOffController {
     @Autowired
     private GioHangOffService gioHangOffService;
 
@@ -33,13 +33,13 @@ public class GioHangOffController {
         model.addAttribute("sanPhams", sanPhams);
 
         gioHangOffService.taoHoaDonMoi();
-//        List<HoaDon> hoaDons = hoaDonService.getAllHoaDon();
-//        model.addAttribute("hoaDons", hoaDons);
+        List<HoaDon> hoaDons = hoaDonService.getAllHoaDon();
+        model.addAttribute("hoaDons", hoaDons);
 
-//        if (hoaDonId != null) {
-//            Map<Long, Integer> cartSanPhams = gioHangOffService.getCart(hoaDonId);
-//            model.addAttribute("cartSanPhams", cartSanPhams);
-//        }
+        if (hoaDonId != null) {
+            Map<Long, Integer> cartSanPhams = gioHangOffService.getCart(hoaDonId);
+            model.addAttribute("cartSanPhams", cartSanPhams);
+        }
 
         return "admin/ban_hang_tai_quay/index";
     }
