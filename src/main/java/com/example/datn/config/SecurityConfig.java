@@ -16,18 +16,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/ban-hang-tai-quay/**") // Chỉ vô hiệu hóa CSRF cho bán hàng
+                        .ignoringRequestMatchers("/ban-hang-tai-quay/**","/cart/**","admin/**") // Chỉ vô hiệu hóa CSRF cho bán hàng
                 )
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/login", "/error","/admin/website/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/ban-hang-tai-quay/**").permitAll()  // Cho phép POST
-                        .requestMatchers(HttpMethod.PUT, "/ban-hang-tai-quay/**").permitAll()   // Cho phép PUT
-                        .requestMatchers(HttpMethod.DELETE, "/ban-hang-tai-quay/**").permitAll()// Cho phép DELETE
+                        .requestMatchers(HttpMethod.POST, "/ban-hang-tai-quay/**","/cart/**").permitAll()  // Cho phép POST
+                        .requestMatchers(HttpMethod.PUT, "/ban-hang-tai-quay/**","/cart/**").permitAll()   // Cho phép PUT
+                        .requestMatchers(HttpMethod.DELETE, "/ban-hang-tai-quay/**","/cart/**").permitAll()// Cho phép DELETE
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/admin/index", true)
+                        .defaultSuccessUrl("/hoa-don/index", true)
                         .permitAll()
                 )
                 .logout()
