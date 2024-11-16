@@ -7,13 +7,26 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        <!-- Lựa chọn hóa đơn -->
-        <div class="col-lg-12">
-            <h5>Danh sách hóa đơn</h5>
-            <select id="hoaDonSelector" class="form-select">
-                <option th:each="hd : ${hoaDons}" th:value="${hd.id}" th:text="${hd.id}" />
-            </select>
-            <button class="btn btn-success" >Tạo hóa đơn mới</button>
+        <div class="col-4 custom-search-bar d-flex align-items-center">
+            <input type="text" class="form-control" placeholder="Tìm hàng hóa (F3)" aria-label="Search"/>
+            <button class="btn btn-success ms-2">
+                <i class="material-icons">search</i>
+            </button>
+        </div>
+        <!-- Lựa chọn hóa đơn và tạo hóa đơn mới -->
+        <div class="col-8">
+            <div class="d-flex align-items-center">
+                <div id="hoaDonContainer" class="d-flex flex-row overflow-auto bg-warning">
+                    <div class="tab active row" th:each="hd : ${hoaDons}" th:id="'hoadon' + ${hd.id}"
+                         th:onclick="'switchInvoice(\'hoadon' + ${hd.id} + '\')'">
+                        Hóa đơn <span th:text="${hd.id}" style="width: auto"></span>
+                        <span class="material-icons" th:onclick="'closeInvoice(\'hoadon' + ${hd.id} + '\', event)'">close</span>
+                    </div>
+                </div>
+                <button id="taoHoaDonMoiBtn" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -60,7 +73,7 @@
                         <td th:text="${sp.so_luong}"></td>
                         <td>
                             <form action="/ban-hang-tai-quay/gio-hang-them" method="post">
-                                <span th:text="${hoaDonSelector != null ? hoaDonSelector.value : ''}"></span>
+                                <input type="hidden" th:text="${hoaDonSelector != null ? hoaDonSelector.value : ''}"/>
                                 <input type="hidden" name="id" th:value="${sp.id}"/>
                                 <input type="number" name="soLuong" min="1" value="1"/>
                                 <button type="submit" class="btn btn-primary">Add to Cart</button>
@@ -79,6 +92,56 @@
 
 <!-- script -->
 <script th:replace="/admin/fragments/script :: script"></script>
-<!--quản lý hóa đơn -->
+<!--Hóa đơn-->
+<script>
+    <!--Thêm hóa đơn mới-->
+    document.getElementById('taoHoaDonMoiBtn').addEventListener('click', function () {
+        fetch('/ban-hang-tai-quay/hoa-don/them-moi', {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(newHoaDonId => {
+                // Chuyển hướng sang trang mới với hóa đơn được chọn
+                window.location.href = `/ban-hang-tai-quay/ban-hang?hoaDonId=${newHoaDonId}`;
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    // Hàm chuyển đổi giữa các hóa đơn
+    function switchInvoice(hoadonId) {
+        const hoaDonId = hoadonId.replace('hoadon', '');
+        window.location.href = `/ban-hang-tai-quay/ban-hang?hoaDonId=${hoaDonId}`;
+    }
+
+    // Hàm đóng hóa đơn
+    function closeInvoice(hoadonId, event) {
+        event.stopPropagation();
+
+        fetch(`/ban-hang-tai-quay/hoa-don/xoa/${hoadonId.replace('hoadon', '')}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Xóa tab khỏi giao diện
+                    document.getElementById(hoadonId).remove();
+
+                    // Tự động chọn tab khác nếu còn
+                    const remainingTabs = document.querySelectorAll('.tab');
+                    if (remainingTabs.length > 0) {
+                        const firstTabId = remainingTabs[0].id;
+                        const newHoaDonId = firstTabId.replace('hoadon', '');
+                        window.location.href = `/ban-hang-tai-quay/ban-hang?hoaDonId=${newHoaDonId}`;
+                    } else {
+                        // Không còn hóa đơn nào
+                        console.log("Không còn hóa đơn nào.");
+                    }
+                } else {
+                    console.error("Lỗi khi xóa hóa đơn: " + hoadonId);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
 </body>
 </html>
