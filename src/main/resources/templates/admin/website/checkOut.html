@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phương thức thanh toán</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        /* Toàn bộ trang */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f6fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container chính */
+        .container {
+            max-width: 1100px;
+            margin: 60px auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        /* Form chính */
+        .checkout-form, .order-summary {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            flex: 1;
+        }
+
+        .checkout-form:hover, .order-summary:hover {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+        }
+
+        /* Tiêu đề */
+        .checkout-form h2, .order-summary h3 {
+            font-size: 2rem;
+            color: #4a90e2;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        /* Radio button */
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .form-check-input {
+            margin-right: 10px;
+            accent-color: #4a90e2;
+        }
+
+        .form-check-label {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Nút submit */
+        .btn-primary {
+            background-color: #4a90e2;
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #4178c0;
+            transform: translateY(-2px);
+        }
+
+        /* Chi tiết đơn hàng */
+        .summary-details .total {
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Sản phẩm */
+        .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+
+        .product-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            margin-right: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-item img:hover {
+            transform: scale(1.1);
+        }
+
+        .product-item .badge-quantity {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #1a73e8;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .product-item .product-info {
+            flex: 1;
+        }
+
+        .product-item .product-price {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="checkout-form">
+        <h2>Chọn phương thức thanh toán</h2>
+        <form th:action="@{/process-payment}" method="post">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD">
+                <label class="form-check-label" for="cod">Thanh toán khi nhận hàng (COD)</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="credit-card" value="CreditCard">
+                <label class="form-check-label" for="credit-card">Thanh toán qua thẻ tín dụng / ghi nợ</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="e-wallet" value="EWallet">
+                <label class="form-check-label" for="e-wallet">Thanh toán qua ví điện tử (Momo, ZaloPay)</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">Xác nhận phương thức thanh toán</button>
+        </form>
+    </div>
+
+    <div class="order-summary">
+        <h3>Giỏ hàng của bạn</h3>
+        <div th:each="item : ${cartItems}" class="product-item">
+            <img src="https://via.placeholder.com/60" alt="Product Image">
+            <span class="badge-quantity" th:text="${item.quantity}">1</span>
+            <div class="product-info">
+                <p th:text="${item.name}">Tên sản phẩm</p>
+                <p class="product-price formatted-price" th:attr="data-price=${item.price}">0₫</p>
+            </div>
+        </div>
+        <div class="summary-details">
+            <p>Tạm tính: <span class="formatted-price" th:attr="data-price=${totalPrice}"></span></p>
+            <p>Phí vận chuyển: <span class="formatted-price" data-price="30000">30,000₫</span></p>
+            <p class="total">Tổng cộng: <span class="formatted-price" th:attr="data-price=${totalPrice + 30000}"></span></p>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.formatted-price').forEach(function (element) {
+            const price = parseInt(element.getAttribute('data-price'), 10);
+            if (!isNaN(price)) {
+                element.textContent = formatVND(price);
+            }
+        });
+    });
+
+    function formatVND(amount) {
+        return amount.toLocaleString('vi-VN') + '₫';
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!selectedPaymentMethod) {
+            event.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Vui lòng chọn phương thức thanh toán!',
+            });
+        }
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
