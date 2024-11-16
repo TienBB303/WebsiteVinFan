@@ -74,7 +74,6 @@
                         <td>
                             <form action="/ban-hang-tai-quay/gio-hang-them" method="post">
                                 <input type="hidden" th:text="${hoaDonSelector != null ? hoaDonSelector.value : ''}"/>
-                                <!--                                <span th:text="${hoaDonSelector != null ? hoaDonSelector.value : ''}"></span>-->
                                 <input type="hidden" name="id" th:value="${sp.id}"/>
                                 <input type="number" name="soLuong" min="1" value="1"/>
                                 <button type="submit" class="btn btn-primary">Add to Cart</button>
