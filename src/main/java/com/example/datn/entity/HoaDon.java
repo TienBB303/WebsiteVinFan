@@ -26,15 +26,11 @@ public class HoaDon {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_nhan_vien")
     NhanVien nhanVien;
-    //
-//    @ManyToMany
-//    @JoinTable(
-//            name = "thanh_toan", // Tên bảng liên kết
-//            joinColumns = {@JoinColumn(name = "id")}, // Cột liên kết của bảng hiện tại
-//            inverseJoinColumns = @JoinColumn(name = "id_thanh_toan") // Cột liên kết của bảng ThanhToan
-//    )
-//    private Set<ThanhToan> thanhToan;
-//
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_hinh_thuc_thanh_toan")
+    HinhThucThanhToan hinhThucThanhToan;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_phieu_giam_gia")
     PhieuGiam phieuGiamGia;
