@@ -28,6 +28,7 @@ public class DiaChi {
     @JoinColumn(name = "id_khach_hang", nullable = false)
     private KhachHang khachHang;
 
+
     private String tinhThanhPho;
     private String quanHuyen;
     private String xaPhuong;

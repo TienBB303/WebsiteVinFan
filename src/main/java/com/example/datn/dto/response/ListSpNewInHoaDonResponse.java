@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ListSpNewInHoaDonResponse {
-    Long idSPCT;
     String tenSanPham;
     Integer soLuong;
     BigDecimal gia;
