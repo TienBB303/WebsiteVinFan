@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class GioHangOffService {
+public class BanHangOffService {
     @Autowired
     private HoaDonRepo hoaDonRepository;
 
@@ -25,7 +25,6 @@ public class GioHangOffService {
 
     private Map<Long, Map<Long, Integer>> carts = new HashMap<>();
 
-    //    tạo nhiều hd
     public Long taoHoaDonMoi() {
         HoaDon hoaDon = new HoaDon();
         hoaDon = hoaDonRepository.save(hoaDon);
@@ -84,6 +83,15 @@ public class GioHangOffService {
 
         carts.remove(hoaDonId);
         return true;
+    }
+
+    public HoaDon findById(Long id){
+        HoaDon hoaDon = hoaDonRepository.findById(id).orElse(null);
+        return hoaDon;
+    }
+
+    public void xoaHoaDon(HoaDon hoaDon){
+        hoaDonRepository.delete(hoaDon);
     }
 }
 
