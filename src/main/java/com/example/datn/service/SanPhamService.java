@@ -27,4 +27,6 @@ public interface SanPhamService {
     Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 
     BigDecimal getSanPhamGiaLonNhat();
+
+    List<SanPhamChiTiet> timSanPhamTheoTen(String ten);
 }

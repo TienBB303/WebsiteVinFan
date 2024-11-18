@@ -1,97 +1,71 @@
 package com.example.datn.service;
-import com.example.datn.entity.HoaDon;
-import com.example.datn.entity.HoaDonChiTiet;
+
+import com.example.datn.entity.HoaDonOff;
+import com.example.datn.entity.HoaDonOffChiTiet;
 import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.repository.HoaDonChiTietRepo;
-import com.example.datn.repository.HoaDonRepo;
-import com.example.datn.repository.SPCTRepo;
+import com.example.datn.repository.BanOffRepo.HoaDonOffChiTietRepo;
+import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Service
 public class BanHangOffService {
     @Autowired
-    private HoaDonRepo hoaDonRepository;
+    private HoaDonOffRepo hoaDonOffRepo;
 
     @Autowired
-    private HoaDonChiTietRepo hoaDonChiTietRepository;
+    private HoaDonOffChiTietRepo hoaDonOffChiTietRepo;
 
     @Autowired
-    private SPCTRepo sanPhamChiTietRepository;
+    private SanPhamService sanPhamService;
 
-    private Map<Long, Map<Long, Integer>> carts = new HashMap<>();
-
-    public Long taoHoaDonMoi() {
-        HoaDon hoaDon = new HoaDon();
-        hoaDon = hoaDonRepository.save(hoaDon);
-
-        carts.put(hoaDon.getId(), new HashMap<>());
-        return hoaDon.getId();
+    public HoaDonOff taoHoaDon(){
+        HoaDonOff hoaDonOff = new HoaDonOff();
+        hoaDonOffRepo.save(hoaDonOff);
+        return hoaDonOff;
     }
 
-    public void checkTonTaiGioHang(Long hoaDonId) {
-        if (!carts.containsKey(hoaDonId)) {
-            carts.put(hoaDonId, new HashMap<>());
+    public List<HoaDonOff> findAllHoaDon(){
+        return hoaDonOffRepo.findAll();
+    }
+
+    public List<HoaDonOffChiTiet> getChiTietByHoaDonId(Long hoaDonOffId) {
+        if (hoaDonOffId == null) {
+            return List.of(); // Trả về danh sách rỗng nếu ID hóa đơn không được cung cấp
         }
+        return hoaDonOffChiTietRepo.findAllById(hoaDonOffId);
     }
 
-    public void themVaoGio(Long hoaDonId, Long sanPhamChiTietId, int soLuong) {
-        checkTonTaiGioHang(hoaDonId);
-        Map<Long, Integer> cart = carts.get(hoaDonId);
-
-        cart.put(sanPhamChiTietId, cart.getOrDefault(sanPhamChiTietId, 0) + soLuong);
-    }
-
-    public Map<Long, Integer> getCart(Long hoaDonId) {
-        return carts.getOrDefault(hoaDonId, new HashMap<>());
-    }
-
-    public boolean thanhToan(Long hoaDonId) {
-        Map<Long, Integer> cart = getCart(hoaDonId);
-
-        if (cart.isEmpty()) {
-            return false;
+    public BigDecimal getTongTien(Long hoaDonOffId) {
+        if (hoaDonOffId == null) {
+            return BigDecimal.ZERO; // Trả về 0 nếu ID hóa đơn không được cung cấp
         }
-
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElse(null);
-        if (hoaDon == null) return false;
-
-        for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
-            Long sanPhamChiTietId = entry.getKey();
-            int soLuong = entry.getValue();
-
-            SanPhamChiTiet sanPham = sanPhamChiTietRepository.findById(sanPhamChiTietId).orElse(null);
-            if (sanPham == null || sanPham.getSo_luong() < soLuong) {
-                return false;
-            }
-
-            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-            hoaDonChiTiet.setHoaDon(hoaDon);
-            hoaDonChiTiet.setSanPhamChiTiet(sanPham);
-            hoaDonChiTiet.setSoLuong(soLuong);
-            hoaDonChiTiet.setGia(sanPham.getGia());
-            hoaDonChiTiet.setThanhTien(sanPham.getGia().multiply(BigDecimal.valueOf(soLuong)));
-            hoaDonChiTietRepository.save(hoaDonChiTiet);
-
-            sanPham.setSo_luong(sanPham.getSo_luong() - soLuong);
-            sanPhamChiTietRepository.save(sanPham);
-        }
-
-        carts.remove(hoaDonId);
-        return true;
+        List<HoaDonOffChiTiet> chiTietList = hoaDonOffChiTietRepo.findAllById(hoaDonOffId);
+        return chiTietList.stream()
+                .map(HoaDonOffChiTiet::getThanh_tien)
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Tính tổng tiền
     }
 
-    public HoaDon findById(Long id){
-        HoaDon hoaDon = hoaDonRepository.findById(id).orElse(null);
-        return hoaDon;
+    public void themSanPhamVaoGio(Long hoaDonOffId, Long sanPhamId, int soLuong) {
+        HoaDonOff hoaDonOff = hoaDonOffRepo.findById(hoaDonOffId).orElseThrow();
+        SanPhamChiTiet sanPham = sanPhamService.findById(sanPhamId);
+
+        HoaDonOffChiTiet hdoct = hoaDonOffChiTietRepo
+                .findByHoaDonOffAndSanPhamChiTiet(hoaDonOff, sanPham)
+                .orElse(new HoaDonOffChiTiet(hoaDonOff, sanPham));
+
+        hdoct.setSo_luong(hdoct.getSo_luong() + soLuong);
+        hdoct.setThanh_tien(sanPham.getGia().multiply(BigDecimal.valueOf(hdoct.getSo_luong())));
+        hoaDonOffChiTietRepo.save(hdoct);
     }
 
-    public void xoaHoaDon(HoaDon hoaDon){
-        hoaDonRepository.delete(hoaDon);
+    public void thanhToanHoaDon(Long hoaDonOffId) {
+        HoaDonOff hoaDonOff = hoaDonOffRepo.findById(hoaDonOffId).orElseThrow();
+        hoaDonOffRepo.save(hoaDonOff);
     }
 }
+
 

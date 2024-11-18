@@ -6,7 +6,9 @@ import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
+import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
 import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.SPCTRepo;
@@ -17,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final HoaDonRepo hoaDonRepo;
     private final HoaDonChiTietRepo hoaDonChiTietRepo;
     private final SPCTRepo spctRepo;
+    private final HoaDonOffRepo hoaDonOffRepo;
 
 
     @Override
@@ -104,8 +106,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public List<HoaDon> getAllHoaDon() {
-        return hoaDonRepo.findAll();
+    public List<HoaDonOff> getAllHoaDonOff() {
+        return hoaDonOffRepo.findAll();
     }
 
     //khoi

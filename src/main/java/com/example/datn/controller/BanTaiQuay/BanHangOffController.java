@@ -1,10 +1,16 @@
 package com.example.datn.controller.BanTaiQuay;
 
 import com.example.datn.entity.HoaDon;
+import com.example.datn.entity.HoaDonOff;
+import com.example.datn.entity.HoaDonOffChiTiet;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.BanOffRepo.HoaDonOffChiTietRepo;
+import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
+import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.BanHangOffService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.SanPhamService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,56 +37,53 @@ public class BanHangOffController {
     private HoaDonService hoaDonService;
 
     @GetMapping("/ban-hang")
-    public String listSanPhamVaGioHang(@RequestParam(value = "hoaDonId", required = false) Long hoaDonId, Model model) {
-        List<SanPhamChiTiet> sanPhams = sanPhamService.findAll();
+    public String listSanPhamVaGioHang(
+            @RequestParam(value = "hoaDonId", required = false) Long hoaDonOffId,
+            @RequestParam(value = "search", required = false) String search,
+            Model model) {
+
+        // Danh sách sản phẩm
+        List<SanPhamChiTiet> sanPhams = (search == null || search.isBlank())
+                ? sanPhamService.findAll()
+                : sanPhamService.timSanPhamTheoTen(search);
         model.addAttribute("sanPhams", sanPhams);
 
-        List<HoaDon> hoaDons = hoaDonService.getAllHoaDon();
+        // Danh sách hóa đơn
+        List<HoaDonOff> hoaDons = banHangOffService.findAllHoaDon();
         model.addAttribute("hoaDons", hoaDons);
 
-        if (hoaDonId != null) {
-            Map<Long, Integer> cartSanPhams = banHangOffService.getCart(hoaDonId);
-            model.addAttribute("cartSanPhams", cartSanPhams);
+        // Giỏ hàng của hóa đơn hiện tại
+        if (hoaDonOffId != null) {
+            List<HoaDonOffChiTiet> sanPhamTrongGio = banHangOffService.getChiTietByHoaDonId(hoaDonOffId);
+            model.addAttribute("sanPhamTrongGio", sanPhamTrongGio);
+            model.addAttribute("tongTien", banHangOffService.getTongTien(hoaDonOffId));
+            model.addAttribute("idHoaDonHienTai", hoaDonOffId);
         }
 
         return "admin/ban_hang_tai_quay/index";
     }
 
 
+    @PostMapping("/tao-hoa-don")
+    public String taoHoaDon() {
+        HoaDonOff hoaDonOff = banHangOffService.taoHoaDon();
+        return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonOff.getId();
+    }
+
     @PostMapping("/gio-hang-them")
-    public String themVaoGio(@RequestParam("hoaDonId") Long hoaDonId,
-                             @RequestParam("id") Long sanPhamChiTietId,
-                             @RequestParam("soLuong") int soLuong) {
-        banHangOffService.themVaoGio(hoaDonId, sanPhamChiTietId, soLuong);
-        return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonId;
+    public String themSPvaoGio(
+            @RequestParam("idSanPham") Long id,
+            @RequestParam("soLuong") int soLuong,
+            @RequestParam("hoaDonOffId") Long hoaDonOffId) {
+        banHangOffService.themSanPhamVaoGio(hoaDonOffId, id, soLuong);
+        return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonOffId;
     }
 
-    @PostMapping("/gio-hang/thanh-toan")
-    public String checkout(@RequestParam("hoaDonId") Long hoaDonId, Model model) {
-        if (banHangOffService.thanhToan(hoaDonId)) {
-            return "redirect:/ban-hang-tai-quay/hoa-don-thanh-cong";
-        } else {
-            model.addAttribute("error", "Không thể thanh toán, kiểm tra lại số lượng sản phẩm.");
-            return "redirect:/ban-hang-tai-quay/ban-hang";
-        }
+    @PostMapping("/gio-hang-thanh-toan")
+    public String thanhToanHoaDon(@RequestParam Long hoaDonOffId) {
+        banHangOffService.thanhToanHoaDon(hoaDonOffId);
+        return "redirect:/ban-hang-tai-quay/ban-hang";
     }
-
-    @PostMapping("/hoa-don/them-moi")
-    @ResponseBody
-    public ResponseEntity<Long> taoHoaDonMoi() {
-        Long hoaDonId = banHangOffService.taoHoaDonMoi();
-        return ResponseEntity.ok(hoaDonId); // Trả về ID hóa đơn mới
-    }
-
-    @DeleteMapping("/hoa-don/xoa/{idHoaDon}")
-    @ResponseBody // Trả về JSON cho JavaScript
-    public ResponseEntity<String> xoaHoaDon(@PathVariable Long idHoaDon) {
-        HoaDon hoaDon = banHangOffService.findById(idHoaDon);
-        if (hoaDon != null) {
-            banHangOffService.xoaHoaDon(hoaDon);
-            return ResponseEntity.ok("Hóa đơn đã được xóa");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hóa đơn không tồn tại");
-    }
-
 }
+
+
