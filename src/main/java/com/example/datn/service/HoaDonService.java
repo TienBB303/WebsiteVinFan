@@ -21,6 +21,9 @@ public interface HoaDonService {
 
     void delete(Long id);
 
+    void saveHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet);
+
+
     Page<HoaDon> findHoaDonAndSortDay(int page, int size);
 
     List<ListSanPhamInHoaDonChiTietResponse> getSanPhamCTByHoaDonId(Long hoaDonId);
@@ -44,4 +47,6 @@ public interface HoaDonService {
     SanPhamChiTiet getIdSPCT(long idSPCT);
 
     List<HoaDon> getAllHoaDon();
+
+    String generateOrderCode();
 }
