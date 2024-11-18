@@ -34,4 +34,7 @@ public class HoaDonOffChiTiet {
         this.gia_ban = BigDecimal.ZERO;
         this.thanh_tien = BigDecimal.ZERO;
     }
+
+    public HoaDonOffChiTiet(HoaDonOff hoaDonOff, SanPhamChiTiet sanPhamChiTiet, int soLuong) {
+    }
 }

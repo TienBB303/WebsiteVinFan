@@ -70,14 +70,24 @@ public class BanHangOffController {
         return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonOff.getId();
     }
 
-    @PostMapping("/gio-hang-them")
-    public String themSPvaoGio(
-            @RequestParam("idSanPham") Long id,
-            @RequestParam("soLuong") int soLuong,
-            @RequestParam("hoaDonOffId") Long hoaDonOffId) {
-        banHangOffService.themSanPhamVaoGio(hoaDonOffId, id, soLuong);
-        return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonOffId;
+    public void themSanPhamVaoGio(Long hoaDonOffId, Long sanPhamId, int soLuong) {
+        HoaDonOff hoaDonOff = banHangOffService.findOnceHoaDon(hoaDonOffId).orElse(null);
+        SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
+
+        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hay chưa
+        HoaDonOffChiTiet hoaDonOffChiTiet = banHangOffService.checkTonTaiSanPhamTrongGio(hoaDonOff, sanPhamChiTiet);
+
+        if (hoaDonOffChiTiet != null) {
+            // Nếu sản phẩm đã tồn tại, cập nhật số lượng
+            hoaDonOffChiTiet.setSo_luong(hoaDonOffChiTiet.getSo_luong() + soLuong);
+            banHangOffService.luuHoaDonOffChiTiet(hoaDonOffChiTiet);
+        } else {
+            // Nếu sản phẩm chưa có trong giỏ, thêm mới
+            hoaDonOffChiTiet = new HoaDonOffChiTiet(hoaDonOff, sanPhamChiTiet, soLuong);
+            banHangOffService.luuHoaDonOffChiTiet(hoaDonOffChiTiet);
+        }
     }
+
 
     @PostMapping("/gio-hang-thanh-toan")
     public String thanhToanHoaDon(@RequestParam Long hoaDonOffId) {
