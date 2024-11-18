@@ -234,7 +234,7 @@
                                 <span th:case="5" class="text-danger">Hủy</span>
                             </p>
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
-<!--                            <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>-->
+                            <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>
                         </div>
 
                         <div class="col">
@@ -261,21 +261,47 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                             </div>
-                                            <div class="modal-body">
-                                                <form>
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" id="name1"
-                                                               placeholder="Tên người nhận">
+                                            <div class="modal-body" style="width: 80% ; margin: 0 auto">
+                                                <form method="post" th:action="@{/hoa-don/sua-thong-tin}">
+                                                    <input type="hidden" name="id" th:value="${hoaDon.id}">
+                                                    <input type="hidden" id="tinhThanhPho" name="tinhThanhPho">
+                                                    <input type="hidden" id="quanHuyen" name="quanHuyen">
+                                                    <input type="hidden" id="xaPhuong" name="xaPhuong">
+                                                    <div class="mb-2">
+                                                        <input type="text" class="form-control" id="name1" th:name="tenMoi" placeholder="Tên người nhận">
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" id="address"
-                                                               placeholder="Địa chỉ">
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Tỉnh/Thành phố</label>
+                                                        <select class="form-control" id="city" >
+                                                            <option value="" selected>Chọn tỉnh thành</option>
+                                                        </select>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" id="phoneNumber"
-                                                               placeholder="Số điện thoại">
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Quận/Huyện</label>
+                                                        <select class="form-control" id="district" >
+                                                            <option value="" selected>Chọn quận huyện</option>
+                                                        </select>
                                                     </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Phường/Xã</label>
+                                                        <select class="form-control" id="ward" >
+                                                            <option value="" selected>Chọn phường xã</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Số nhà/ngõ đường</label>
+                                                        <input type="text" class="form-control" id="street" th:name="soNhaNgoDuong">
+                                                    </div>
+                                                    <br>
+                                                    <div class="mb-2">
+                                                        <input type="text" class="form-control" id="phoneNumber" th:name="soDienThoaiMoi" placeholder="Số điện thoại">
+                                                    </div>
+
+
+
+                                                    <button type="submit" onclick="getCityValue()" class="btn btn-primary">Sửa</button>
                                                 </form>
+
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -461,6 +487,80 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+        <script>
+            var cities = document.getElementById("city");
+            var districts = document.getElementById("district");
+            var wards = document.getElementById("ward");
+
+
+            function getCityValue() {
+                const citySelect = document.getElementById("city");
+
+                // const wardsSelect = document.getElementById("wards");
+
+                // Lấy giá trị của các option đang được chọn
+                const selectedTinh = citySelect.options[citySelect.selectedIndex].text;
+                const selectedQuan = districts.options[districts.selectedIndex].text;
+                const selectedXa = wards.options[wards.selectedIndex].text;
+
+                // Gán giá trị vào các input ẩn
+                document.getElementById("tinhThanhPho").value = selectedTinh;
+                document.getElementById("quanHuyen").value = selectedQuan;
+                document.getElementById("xaPhuong").value = selectedXa;
+
+                console.log("Tỉnh/Thành phố:", selectedTinh);
+                console.log("Quận/Huyện:", selectedQuan);
+                console.log("Xã/Phường:", selectedXa);
+            }
+
+
+
+
+
+            var parameter = {
+                url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+                method: "GET",
+                responseType: "json",
+            };
+
+            axios(parameter).then(function (result) {
+                renderCity(result.data);
+            });
+
+            function renderCity(data) {
+                for (const city of data) {
+                    cities.options[cities.options.length] = new Option(city.Name, city.Id);
+                }
+                cities.onchange = function () {
+                    districts.length = 1;
+                    wards.length = 1;
+                    if (this.value !== "") {
+                        const result = data.find(n => n.Id === this.value);
+                        if (result) {
+                            for (const district of result.Districts) {
+                                districts.options[districts.options.length] = new Option(district.Name, district.Id);
+                            }
+                        }
+                    }
+                };
+
+                districts.onchange = function () {
+                    wards.length = 1;
+                    const selectedCity = data.find(n => n.Id === cities.value);
+                    if (this.value !== "") {
+                        const result = selectedCity.Districts.find(n => n.Id === this.value);
+                        if (result) {
+                            for (const ward of result.Wards) {
+                                wards.options[wards.options.length] = new Option(ward.Name, ward.Id);
+                            }
+                        }
+                    }
+                };
+            }
+
+
+        </script>
     </div>
 </div>
 </body>
