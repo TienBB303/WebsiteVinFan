@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BanHangOffService {
@@ -32,6 +33,19 @@ public class BanHangOffService {
         return hoaDonOffRepo.findAll();
     }
 
+    public Optional<HoaDonOff> findOnceHoaDon(Long hoaDonOffId){
+        return hoaDonOffRepo.findById(hoaDonOffId);
+    }
+
+    public void luuHoaDonOffChiTiet(HoaDonOffChiTiet hoaDonOffChiTiet){
+        hoaDonOffChiTietRepo.save(hoaDonOffChiTiet);
+    }
+
+    public HoaDonOffChiTiet checkTonTaiSanPhamTrongGio(HoaDonOff hoaDonOff, SanPhamChiTiet sanPhamChiTiet) {
+        return hoaDonOffChiTietRepo.findByHoaDonOffAndSanPhamChiTiet(hoaDonOff, sanPhamChiTiet)
+                .orElse(null);
+    }
+
     public List<HoaDonOffChiTiet> getChiTietByHoaDonId(Long hoaDonOffId) {
         if (hoaDonOffId == null) {
             return List.of(); // Trả về danh sách rỗng nếu ID hóa đơn không được cung cấp
@@ -50,16 +64,32 @@ public class BanHangOffService {
     }
 
     public void themSanPhamVaoGio(Long hoaDonOffId, Long sanPhamId, int soLuong) {
+        // Lấy thông tin hóa đơn
         HoaDonOff hoaDonOff = hoaDonOffRepo.findById(hoaDonOffId).orElseThrow();
-        SanPhamChiTiet sanPham = sanPhamService.findById(sanPhamId);
 
-        HoaDonOffChiTiet hdoct = hoaDonOffChiTietRepo
-                .findByHoaDonOffAndSanPhamChiTiet(hoaDonOff, sanPham)
-                .orElse(new HoaDonOffChiTiet(hoaDonOff, sanPham));
+        // Lấy thông tin sản phẩm chi tiết
+        SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
 
-        hdoct.setSo_luong(hdoct.getSo_luong() + soLuong);
-        hdoct.setThanh_tien(sanPham.getGia().multiply(BigDecimal.valueOf(hdoct.getSo_luong())));
-        hoaDonOffChiTietRepo.save(hdoct);
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        HoaDonOffChiTiet hoaDonOffChiTiet = hoaDonOffChiTietRepo
+                .findByHoaDonOffAndSanPhamChiTiet(hoaDonOff, sanPhamChiTiet)
+                .orElse(null);
+
+        if (hoaDonOffChiTiet != null) {
+            // Nếu sản phẩm đã tồn tại trong giỏ, cập nhật số lượng và thành tiền
+            hoaDonOffChiTiet.setSo_luong(hoaDonOffChiTiet.getSo_luong() + soLuong);
+            hoaDonOffChiTiet.setThanh_tien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonOffChiTiet.getSo_luong())));
+
+            // Lưu lại vào cơ sở dữ liệu
+            hoaDonOffChiTietRepo.save(hoaDonOffChiTiet);
+        } else {
+            // Nếu sản phẩm chưa có trong giỏ, tạo mới chi tiết hóa đơn
+            hoaDonOffChiTiet = new HoaDonOffChiTiet(hoaDonOff, sanPhamChiTiet, soLuong);
+            hoaDonOffChiTiet.setThanh_tien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(soLuong)));
+
+            // Lưu lại vào cơ sở dữ liệu
+            hoaDonOffChiTietRepo.save(hoaDonOffChiTiet);
+        }
     }
 
     public void thanhToanHoaDon(Long hoaDonOffId) {

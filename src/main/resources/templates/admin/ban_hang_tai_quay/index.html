@@ -91,9 +91,9 @@
                 <tbody>
                 <tr th:each="sp : ${sanPhamTrongGio}">
                     <td th:text="${sp.sanPhamChiTiet.sanPham.ten}"></td>
-                    <td th:text="${sp.gia}"></td>
+                    <td th:text="${sp.sanPhamChiTiet.gia}"></td>
                     <td th:text="${sp.sanPhamChiTiet.so_luong}"></td>
-                    <td th:text="${sp.thanhTien}"></td>
+                    <td th:text="${sp.thanh_tien}"></td>
                 </tr>
                 </tbody>
             </table>
