@@ -6,11 +6,11 @@ import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
+import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ public interface HoaDonService {
 
     SanPhamChiTiet getIdSPCT(long idSPCT);
 
-    List<HoaDon> getAllHoaDon();
+    List<HoaDonOff> getAllHoaDonOff();
 
     String generateOrderCode();
 }

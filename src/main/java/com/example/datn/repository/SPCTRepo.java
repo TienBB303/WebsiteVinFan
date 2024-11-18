@@ -27,4 +27,6 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 
     List<SanPhamChiTiet> findByIdNotIn(List<Long> ids);
 
+    @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham.ten LIKE %:ten%")
+    List<SanPhamChiTiet> timKiemTheoTen(String ten);
 }
