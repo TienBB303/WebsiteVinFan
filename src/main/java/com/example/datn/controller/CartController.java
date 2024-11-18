@@ -1,9 +1,11 @@
 package com.example.datn.controller;
 
+import com.example.datn.dto.request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
 import com.example.datn.repository.GioHangChiTietRepo;
 import com.example.datn.repository.GioHangRepo;
 import com.example.datn.repository.SPCTRepo;
+import com.example.datn.service.HoaDonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,25 +24,20 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
-@RequestMapping("cart")
+@RequestMapping("/cart")
 public class CartController {
+    private static final String CART_COOKIE_NAME = "cart";
+    private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // Lưu trong 7 ngày
+    @Autowired
+    private HoaDonService hoaDonService;
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Autowired
-    private SPCTRepo sanPhamChiTietRepo;
-    @Autowired
-    private GioHangRepo gioHangRepo;
-    @Autowired
-    private GioHangChiTietRepo gioHangChiTietRepo;
-
-    private static final String CART_COOKIE_NAME = "cart";
-    private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // Lưu trong 7 ngày
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -196,6 +193,126 @@ public class CartController {
         }
 
         return ResponseEntity.ok(new ApiResponse("Item removed successfully"));
+    }
+
+    @GetMapping("/orderinfor")
+    public String orderInfor(HttpSession session, Model model) {
+        // Lấy danh sách sản phẩm từ session
+        List<CartItem> cartItems = getCartFromSession(session);
+
+        // Tính tổng tiền
+        double totalPrice = cartItems.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+
+        // Đưa thông tin giỏ hàng và tổng tiền vào model để Thymeleaf có thể truy cập
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("totalPrice", totalPrice);
+
+        return "admin/website/orderInfor";
+    }
+
+    @GetMapping("/check-out")
+    public String checkOut(HttpSession session, Model model) {
+        // Lấy danh sách sản phẩm từ session
+        List<CartItem> cartItems = getCartFromSession(session);
+
+        // Tính tổng tiền
+        double totalPrice = cartItems.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+
+        // Đưa thông tin giỏ hàng và tổng tiền vào model để Thymeleaf có thể truy cập
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("totalPrice", totalPrice);
+
+        return "admin/website/checkOut";
+    }
+
+    @Transactional
+    @PostMapping("/process-payment")
+    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session) {
+        // Lấy giỏ hàng từ session
+        List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
+        if (cartItems == null || cartItems.isEmpty()) {
+            return "redirect:/cart/orderinfor?error=CartIsEmpty";
+        }
+
+        // Tạo hóa đơn
+        HoaDon hoaDon = new HoaDon();
+        hoaDon.setMa(hoaDonService.generateOrderCode());
+        hoaDon.setTenNguoiNhan(request.getName());
+        hoaDon.setSdtNguoiNhan(request.getPhone());
+
+        // Ghép địa chỉ
+        String diaChi = request.getAddress();
+        if (request.getDistrict() != null && !request.getDistrict().isEmpty()) {
+            diaChi += ", " + request.getDistrict();
+        }
+        if (request.getProvince() != null && !request.getProvince().isEmpty()) {
+            diaChi += ", " + request.getProvince();
+        }
+        hoaDon.setDiaChi(diaChi);
+
+        hoaDon.setNgayTao(LocalDate.now());
+        hoaDon.setTrangThai(1); // Trạng thái chờ xác nhận
+        hoaDon.setLoaiHoaDon(request.getPaymentMethod().equalsIgnoreCase("COD"));
+
+        // **Fake data bổ sung**
+        hoaDon.setTongTienSauGiamGia(BigDecimal.valueOf(0)); // Giá trị mặc định nếu không có giảm giá
+        hoaDon.setGhiChu("Fake note"); // Ghi chú mặc định
+        hoaDon.setNgaySua(LocalDate.now()); // Ngày sửa mặc định là ngày hiện tại
+        hoaDon.setNguoiTao("system"); // Người tạo mặc định
+        hoaDon.setNguoiSua("system"); // Người sửa mặc định
+
+        // **Fake ID cho các quan hệ ManyToOne**
+        hoaDon.setKhachHang(entityManager.find(KhachHang.class, 1L)); // ID giả lập cho Khách Hàng
+        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L)); // ID giả lập cho Nhân Viên
+        hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L)); // ID giả lập cho Phiếu Giảm Giá
+        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L)); // ID giả lập cho Hình Thức Thanh Toán
+
+        // Phí vận chuyển
+        BigDecimal shippingFee = BigDecimal.valueOf(30000); // 30,000 VND
+        BigDecimal total = BigDecimal.ZERO;
+
+        // Lưu hóa đơn trước
+        hoaDonService.save(hoaDon);
+        System.out.println("HoaDon saved with ID: " + hoaDon.getId());
+
+        // Tạo chi tiết hóa đơn
+        for (CartItem item : cartItems) {
+            // Tìm sản phẩm chi tiết
+            SanPhamChiTiet sanPhamChiTiet = entityManager.find(SanPhamChiTiet.class, item.getProductId());
+            if (sanPhamChiTiet == null) {
+                return "redirect:/cart/orderinfor?error=ProductNotFound";
+            }
+
+            // Tạo chi tiết hóa đơn
+            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+            hoaDonChiTiet.setHoaDon(hoaDon);
+            hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
+            hoaDonChiTiet.setSoLuong(item.getQuantity());
+            hoaDonChiTiet.setGia(sanPhamChiTiet.getGia());
+            hoaDonChiTiet.setThanhTien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(item.getQuantity())));
+            hoaDonChiTiet.setTrangThai(1); // Trạng thái mặc định
+
+            // Cộng dồn tổng tiền
+            total = total.add(hoaDonChiTiet.getThanhTien());
+
+            // Lưu chi tiết hóa đơn
+            hoaDonService.saveHoaDonChiTiet(hoaDonChiTiet);
+        }
+
+        // Cập nhật tổng tiền và phí vận chuyển cho hóa đơn
+        total = total.add(shippingFee);
+        hoaDon.setTongTien(total);
+        hoaDon.setPhiVanChuyen(shippingFee);
+        hoaDonService.save(hoaDon);
+
+        // Xóa giỏ hàng khỏi session
+        session.removeAttribute("cart");
+
+        return "redirect:/cart/orderinfor?success=OrderPlaced";
     }
 
 }

@@ -6,6 +6,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "hoa_don")
@@ -26,10 +28,6 @@ public class HoaDon {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_nhan_vien")
     NhanVien nhanVien;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_hinh_thuc_thanh_toan")
-    HinhThucThanhToan hinhThucThanhToan;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_phieu_giam_gia")
@@ -63,5 +61,13 @@ public class HoaDon {
     String nguoiSua;
     @Column(name = "trang_thai")
     Integer trangThai;
+
+    @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_hinh_thuc_thanh_toan", nullable = true)
+    HinhThucThanhToan hinhThucThanhToan;
+
 
 }

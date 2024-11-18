@@ -108,6 +108,20 @@ public class HoaDonServiceImpl implements HoaDonService {
         return hoaDonRepo.findAll();
     }
 
+    //khoi
+    @Override
+    public void saveHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet) {
+        hoaDonChiTietRepo.save(hoaDonChiTiet); // Lưu chi tiết hóa đơn vào DB
+    }
+    //khoi
+    @Override
+    public String generateOrderCode() {
+        // Lấy số lượng hóa đơn hiện tại
+        Long count = hoaDonRepo.count(); // Số lượng hóa đơn trong DB
+        // Tạo mã hóa đơn với tiền tố "HD" và số thứ tự
+        return String.format("HD%03d", count + 1); // VD: HD001, HD002
+    }
+
 //    @Override
 //    public void getIdSPCT() {
 //        List<ListSpNewInHoaDonResponse> listSpInHoaDon = hoaDonChiTietRepo.findSanPhamInHoaDon();
