@@ -51,12 +51,12 @@
                                                    placeholder="Tìm kiếm sản phẩm...." th:value="${param.query}">
                                         </div>
                                         <div class="col-11 col-lg-2">
-                                            <input type="number" id="searchInputMinPrice" class="form-control"
+                                            <input type="number" id="searchInputMinPrice" class="form-control" th:id="giaMinVND"
                                                    name="minPrice" placeholder="Giá nhỏ nhất"
                                                    th:value="${param.minPrice}">
                                         </div>
                                         <div class="col-11 col-lg-2">
-                                            <input type="number" id="searchInputMaxPrice" class="form-control"
+                                            <input type="number" id="searchInputMaxPrice" class="form-control" th:id="giaMaxVND"
                                                    name="maxPrice" placeholder="Giá lớn nhất"
                                                    th:value="${param.maxPrice}">
                                         </div>
@@ -106,7 +106,7 @@
                                         <td th:text="${sp.sanPham.ten + ' (' + sp.mauSac.ten + ')'}"></td>
                                         <td th:text="${sp.sanPham.kieuQuat.ten}"></td>
                                         <td th:text="${sp.congSuat.ten}"></td>
-                                        <td th:text="${sp.gia}"></td>
+                                        <td class="giaVND" th:text="${sp.gia}"></td>
                                         <td style="text-align: center">
                                             <span th:if="${sp.sanPham.trang_thai}" class="badge bg-light-success">
                                                 On
@@ -208,6 +208,15 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
+    <script>
+        document.querySelectorAll('.giaVND').forEach(element => {
+            const originalValue = parseFloat(element.innerText);
+            element.innerText = originalValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+        });
+
+        document.getElementById('giaMinVND').innerText = parseFloat(document.getElementById('giaMinVND').innerText).toLocaleString('vi-VN');
+        document.getElementById('giaMaxVND').innerText = parseFloat(document.getElementById('giaMaxVND').innerText).toLocaleString('vi-VN');
+    </script>
 </div>
 </body>
 </html>
