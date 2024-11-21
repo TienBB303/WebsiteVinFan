@@ -53,25 +53,29 @@
                             <div class="dataTable-top">
                                 <form method="get" action="/hoa-don/index">
                                     <div class="row">
-                                        <div class="col-12 col-lg-3">
+                                        <div class="col-12 col-lg-2">
                                             <input type="text" id="searchInput" class="form-control" name="query"
-                                                   placeholder="Tìm kiếm hóa đơn...."
-                                                   th:value="${query}">
+                                                   placeholder="Tìm kiếm hóa đơn...." th:value="${query}">
                                         </div>
                                         <div class="col-12 col-lg-2">
-                                            <input type="date" class="form-control" id="date" name="date" th:value="${date}">
+                                            <input type="date" class="form-control" id="startDate" name="startDate"
+                                                   placeholder="Từ ngày" th:value="${startDate}">
+                                        </div>
+                                        <div class="col-12 col-lg-2">
+                                            <input type="date" class="form-control" id="endDate" name="endDate"
+                                                   placeholder="Đến ngày" th:value="${endDate}">
                                         </div>
                                         <div class="col-12 col-lg-2">
                                             <select class="form-select" id="method" name="method">
-                                                <option value="all">Tất cả</option>
-                                                <option value="online">Online</option>
-                                                <option value="in-person">Tại quầy</option>
+                                                <option value="all" th:selected="${method == 'all'}">Tất cả</option>
+                                                <option value="1" th:selected="${method == '1'}">Tại quầy</option>
+                                                <option value="0" th:selected="${method == '0'}">Online</option>
                                             </select>
                                         </div>
                                         <div class="col-12 col-lg-2">
                                             <button class="btn btn-primary" type="submit">Tìm kiếm</button>
                                         </div>
-                                        <div class="col-12 col-lg-2 ">
+                                        <div class="col-12 col-lg-2">
                                             <a class="btn btn-warning" href="/hoa-don/index">Reset</a>
                                         </div>
                                     </div>
@@ -80,23 +84,32 @@
                             <div class="dataTable-container">
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item2">
-                                        <a class="nav-link" th:classappend="${status == 0} ? 'active'" th:href="@{/hoa-don/index}">Tất cả</a>
+                                        <a class="nav-link" th:classappend="${status == 0} ? 'active'"
+                                           th:href="@{/hoa-don/index}">Tất cả</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.choXacNhan} ? 'active'"
-                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.choXacNhan})}">Chờ xác nhận</a>
+                                        <a class="nav-link"
+                                           th:classappend="${status == trangThaiHoaDon.choXacNhan} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.choXacNhan})}">Chờ xác
+                                            nhận</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.daXacNhan} ? 'active'"
-                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daXacNhan})}">Đã xác nhận</a>
+                                        <a class="nav-link"
+                                           th:classappend="${status == trangThaiHoaDon.daXacNhan} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daXacNhan})}">Đã xác
+                                            nhận</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.dangGiaoHang} ? 'active'"
-                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.dangGiaoHang})}">Đang giao</a>
+                                        <a class="nav-link"
+                                           th:classappend="${status == trangThaiHoaDon.dangGiaoHang} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.dangGiaoHang})}">Đang
+                                            giao</a>
                                     </li>
                                     <li class="nav-item2">
-                                        <a class="nav-link" th:classappend="${status == trangThaiHoaDon.daGiaoHang} ? 'active'"
-                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daGiaoHang})}">Hoàn thành</a>
+                                        <a class="nav-link"
+                                           th:classappend="${status == trangThaiHoaDon.daGiaoHang} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daGiaoHang})}">Hoàn
+                                            thành</a>
                                     </li>
                                     <li class="nav-item2">
                                         <a class="nav-link" th:classappend="${status == trangThaiHoaDon.huy} ? 'active'"

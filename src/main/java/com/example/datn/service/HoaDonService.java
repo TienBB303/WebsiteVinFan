@@ -11,6 +11,7 @@ import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,4 +50,9 @@ public interface HoaDonService {
     List<HoaDonOff> getAllHoaDonOff();
 
     String generateOrderCode();
+
+    Page<HoaDon> getAllHoaDonByLoaiHoaDon(boolean isOnline, Pageable pageable);
+
+    Page<HoaDon> getHoaDonByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable);
+
 }
