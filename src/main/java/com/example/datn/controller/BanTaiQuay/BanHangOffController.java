@@ -1,16 +1,26 @@
 package com.example.datn.controller.BanTaiQuay;
 
 import com.example.datn.entity.HoaDon;
+import com.example.datn.entity.HoaDonOff;
+import com.example.datn.entity.HoaDonOffChiTiet;
 import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.service.GioHangOffService;
+import com.example.datn.repository.BanOffRepo.HoaDonOffChiTietRepo;
+import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
+import com.example.datn.repository.SPCTRepo;
+import com.example.datn.service.BanHangOffService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.SanPhamService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +28,7 @@ import java.util.Map;
 @RequestMapping("/ban-hang-tai-quay")
 public class BanHangOffController {
     @Autowired
-    private GioHangOffService gioHangOffService;
+    private BanHangOffService banHangOffService;
 
     @Autowired
     private SanPhamService sanPhamService;
@@ -27,44 +37,63 @@ public class BanHangOffController {
     private HoaDonService hoaDonService;
 
     @GetMapping("/ban-hang")
-    public String listSanPhamVaGioHang(@RequestParam(value = "hoaDonId", required = false) Long hoaDonId, Model model) {
-        List<SanPhamChiTiet> sanPhams = sanPhamService.findAll();
+    public String listSanPhamVaGioHang(
+            @RequestParam(value = "hoaDonId", required = false) Long hoaDonOffId,
+            @RequestParam(value = "search", required = false) String search,
+            Model model) {
+
+        // Danh sách sản phẩm
+        List<SanPhamChiTiet> sanPhams = (search == null || search.isBlank())
+                ? sanPhamService.findAll()
+                : sanPhamService.timSanPhamTheoTen(search);
         model.addAttribute("sanPhams", sanPhams);
 
-        gioHangOffService.taoHoaDonMoi();
-        List<HoaDon> hoaDons = hoaDonService.getAllHoaDon();
+        // Danh sách hóa đơn
+        List<HoaDonOff> hoaDons = banHangOffService.findAllHoaDon();
         model.addAttribute("hoaDons", hoaDons);
 
-        if (hoaDonId != null) {
-            Map<Long, Integer> cartSanPhams = gioHangOffService.getCart(hoaDonId);
-            model.addAttribute("cartSanPhams", cartSanPhams);
+        // Giỏ hàng của hóa đơn hiện tại
+        if (hoaDonOffId != null) {
+            List<HoaDonOffChiTiet> sanPhamTrongGio = banHangOffService.getChiTietByHoaDonId(hoaDonOffId);
+            model.addAttribute("sanPhamTrongGio", sanPhamTrongGio);
+            model.addAttribute("tongTien", banHangOffService.getTongTien(hoaDonOffId));
+            model.addAttribute("idHoaDonHienTai", hoaDonOffId);
         }
 
         return "admin/ban_hang_tai_quay/index";
     }
 
 
-    @PostMapping("/gio-hang-them")
-    public String themVaoGio(@RequestParam("hoaDonId") Long hoaDonId,
-                             @RequestParam("id") Long sanPhamChiTietId,
-                             @RequestParam("soLuong") int soLuong) {
-        gioHangOffService.themVaoGio(hoaDonId, sanPhamChiTietId, soLuong);
-        return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonId;
+    @PostMapping("/tao-hoa-don")
+    public String taoHoaDon() {
+        HoaDonOff hoaDonOff = banHangOffService.taoHoaDon();
+        return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonOff.getId();
     }
 
-    @PostMapping("/gio-hang/thanh-toan")
-    public String checkout(@RequestParam("hoaDonId") Long hoaDonId, Model model) {
-        if (gioHangOffService.thanhToan(hoaDonId)) {
-            return "redirect:/ban-hang-tai-quay/hoa-don-thanh-cong";
+    public void themSanPhamVaoGio(Long hoaDonOffId, Long sanPhamId, int soLuong) {
+        HoaDonOff hoaDonOff = banHangOffService.findOnceHoaDon(hoaDonOffId).orElse(null);
+        SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
+
+        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hay chưa
+        HoaDonOffChiTiet hoaDonOffChiTiet = banHangOffService.checkTonTaiSanPhamTrongGio(hoaDonOff, sanPhamChiTiet);
+
+        if (hoaDonOffChiTiet != null) {
+            // Nếu sản phẩm đã tồn tại, cập nhật số lượng
+            hoaDonOffChiTiet.setSo_luong(hoaDonOffChiTiet.getSo_luong() + soLuong);
+            banHangOffService.luuHoaDonOffChiTiet(hoaDonOffChiTiet);
         } else {
-            model.addAttribute("error", "Không thể thanh toán, kiểm tra lại số lượng sản phẩm.");
-            return "redirect:/ban-hang-tai-quay/ban-hang";
+            // Nếu sản phẩm chưa có trong giỏ, thêm mới
+            hoaDonOffChiTiet = new HoaDonOffChiTiet(hoaDonOff, sanPhamChiTiet, soLuong);
+            banHangOffService.luuHoaDonOffChiTiet(hoaDonOffChiTiet);
         }
     }
-    @PostMapping("/gio-hang/them-moi")
-    public String taoHoaDonMoi() {
-        Long hoaDonId = gioHangOffService.taoHoaDonMoi();
-        return "redirect:/ban-hang-tai-quay/ban-hang?hoaDonId=" + hoaDonId;
-    }
 
+
+    @PostMapping("/gio-hang-thanh-toan")
+    public String thanhToanHoaDon(@RequestParam Long hoaDonOffId) {
+        banHangOffService.thanhToanHoaDon(hoaDonOffId);
+        return "redirect:/ban-hang-tai-quay/ban-hang";
+    }
 }
+
+

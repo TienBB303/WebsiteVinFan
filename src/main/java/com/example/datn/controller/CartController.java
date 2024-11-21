@@ -2,9 +2,6 @@ package com.example.datn.controller;
 
 import com.example.datn.dto.request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
-import com.example.datn.repository.GioHangChiTietRepo;
-import com.example.datn.repository.GioHangRepo;
-import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -20,12 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller

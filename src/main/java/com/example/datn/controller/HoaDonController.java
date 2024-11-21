@@ -1,26 +1,29 @@
 package com.example.datn.controller;
 
+import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.request.TrangThaiHoaDonRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-import com.example.datn.dto.response.PggInHoaDonResponse;
+
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
+import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.LichSuHoaDon;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.HoaDonChiTietRepo;
+import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,11 @@ public class HoaDonController {
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
     private final HoaDonChiTietRepo hoaDonChiTietRepo;
+
+    @Autowired
+    HoaDonRepo hoaDonRespo;
+
+    PggInHoaDonResponse pggInHoaDonResponse;
 
 
     @GetMapping("index")
@@ -73,17 +81,21 @@ public class HoaDonController {
         }
         model.addAttribute("hoaDon", hoaDon);
 
-        List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
-        model.addAttribute("listSPCTInHDCT", listSPCTInHDCT);
-
-        //Lấy thông tin thanh toan theo id hóa đơn
-        LichSuThanhToanResponse lichSuThanhToanResponse = this.hoaDonService.getLSTTByHoaDonId(id);
-        model.addAttribute("listLSTT", lichSuThanhToanResponse);
+        //Lấy thông tin sp in hoa don
+        List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
+        model.addAttribute("listSPInHoaDon", list);
 
         //Lấy thông tin sp theo id hóa đơn
         List<ListSanPhamInHoaDonChiTietResponse> listHDCT = this.hoaDonService.getSanPhamCTByHoaDonId(id);
         model.addAttribute("listHDCT", listHDCT);
-        System.out.println(id);
+
+        //Lấy thông tin sp in hoaDonChiTiet
+        List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
+        model.addAttribute("listSPCTInHDCT",listSPCTInHDCT);
+
+        //Lấy thông tin thanh toan theo id hóa đơn
+        LichSuThanhToanResponse lichSuThanhToanResponse = this.hoaDonService.getLSTTByHoaDonId(id);
+        model.addAttribute("listLSTT", lichSuThanhToanResponse);
 
         //Lấy thông tin pgg theo id hóa đơn
         PggInHoaDonResponse hoaDonPGG = hoaDonService.getPGGbyHoaDonId(id);
@@ -163,7 +175,6 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
-
     @PostMapping("/giao-hang")
     public String dangGiaoHang(@ModelAttribute("id") long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
@@ -212,7 +223,6 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
-
     @PostMapping("/huy")
     public String huy(@ModelAttribute("id") long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
@@ -235,4 +245,26 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+
+
+    @PostMapping("/sua-thong-tin")
+    public String updateThongTinNguoiNhan(@RequestParam("tenMoi") String tenNguoiNhanMoi,
+                                          @RequestParam("soDienThoaiMoi") String sdtNguoiNhanMoi,
+                                          @RequestParam("tinhThanhPho") String tinhThanhPho,
+                                          @RequestParam("quanHuyen") String quanHuyen,
+                                          @RequestParam("xaPhuong") String xaPhuong,
+                                          @RequestParam("soNhaNgoDuong") String soNhaNgoDuong,
+                                          @RequestParam("id") long id) {
+        Optional<HoaDon> hoaDonOpt =  hoaDonRespo.findById(id);
+        String diaChiMoi = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + soNhaNgoDuong;
+        if (hoaDonOpt.isPresent()) {
+            HoaDon hoaDon = hoaDonOpt.get();
+            hoaDon.setTenNguoiNhan(tenNguoiNhanMoi);
+            hoaDon.setSdtNguoiNhan(sdtNguoiNhanMoi);
+            hoaDon.setDiaChi(diaChiMoi);
+            hoaDonRespo.save(hoaDon);
+        }
+        return "redirect:/hoa-don/detail?id=" + id;
+    }
+
 }

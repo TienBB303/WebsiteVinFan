@@ -1,84 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<!--</head>-->
-<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org"></head>
-
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/fragments/head :: head"></head>
 <body>
 <div class="container-fluid">
-    <div class="row">
-        <!-- Lựa chọn hóa đơn -->
-        <div class="col-lg-12">
-            <h5>Danh sách hóa đơn</h5>
-            <select id="hoaDonSelector" class="form-select">
-                <option th:each="hd : ${hoaDons}" th:value="${hd.id}" th:text="${hd.id}" />
-            </select>
-            <button class="btn btn-success" >Tạo hóa đơn mới</button>
+    <!-- Thanh tìm kiếm sản phẩm -->
+    <div class="row mb-3">
+        <div class="col-3">
+            <form method="get" th:action="@{/ban-hang-tai-quay/ban-hang}">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Tìm hàng hóa (F3)">
+                    <button class="btn btn-success">Tìm</button>
+                </div>
+            </form>
+        </div>
+        <!-- Quản lý hóa đơn -->
+        <div class="col-9 d-flex align-items-center">
+            <form method="post" th:action="@{/ban-hang-tai-quay/tao-hoa-don}">
+                <button class="btn btn-primary">Thêm hóa đơn</button>
+            </form>
         </div>
     </div>
-
+    <div>
+        <h5>Danh sách hóa đơn</h5>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Mã hóa đơn</th>
+                <th>Ngày tạo</th>
+                <th>Khách hàng</th>
+                <th>Tổng tiền</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="hoaDon : ${hoaDons}">
+<!--                <td th:text="${hoaDon.ma}"></td>-->
+<!--                <td th:text="${hoaDon.ngayTao}"></td>-->
+<!--                <td th:text="${hoaDon.khachHang.ten}"></td>-->
+                <td th:text="${hoaDon.tong_tien}"></td>
+                <td>
+                    <a th:href="@{/ban-hang-tai-quay/ban-hang(hoaDonId=${hoaDon.id})}" class="btn btn-primary btn-sm">Chọn</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <div class="row">
-        <!-- giỏ hàng -->
+        <!-- Danh sách sản phẩm -->
         <div class="col-lg-7">
-            <h5>Giỏ hàng</h5>
-            <table class="table">
+            <h5>Danh sách sản phẩm</h5>
+            <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thao tác</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="sp : ${cartSanPhams}">
-                    <td th:text="${sp.sanPham.ten}"></td>
+                <tr th:each="sp : ${sanPhams}">
+                    <td th:text="${sp.SanPham.ten}"></td>
                     <td th:text="${sp.gia}"></td>
                     <td th:text="${sp.so_luong}"></td>
+                    <td>
+                        <form method="post" th:action="@{/ban-hang-tai-quay/gio-hang-them}">
+                            <input type="hidden" name="idSanPham" th:value="${sp.id}">
+                            <input type="hidden" name="hoaDonOffId" th:value="${idHoaDonHienTai}">
+                            <input type="number" name="soLuong" class="form-control w-50 d-inline" min="1" value="1">
+                            <button class="btn btn-primary btn-sm">Thêm</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>
-            <h3>Total: <span th:text="${tongTien}"></span></h3>
         </div>
 
-        <!-- danh sách sản phẩm -->
+        <!-- Giỏ hàng -->
         <div class="col-lg-5">
-            <div class="container" style="max-height: 500px; overflow-y: auto;">
-                <h5>Danh sách sản phẩm</h5>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="sp : ${sanPhams}">
-                        <td th:text="${sp.sanPham.ten}"></td>
-                        <td th:text="${sp.gia}"></td>
-                        <td th:text="${sp.so_luong}"></td>
-                        <td>
-                            <form action="/ban-hang-tai-quay/gio-hang-them" method="post">
-                                <span th:text="${hoaDonSelector != null ? hoaDonSelector.value : ''}"></span>
-                                <input type="hidden" name="id" th:value="${sp.id}"/>
-                                <input type="number" name="soLuong" min="1" value="1"/>
-                                <button type="submit" class="btn btn-primary">Add to Cart</button>
-                            </form>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <form action="/ban-hang-tai-quay/gio-hang-thanh-toan" method="post">
-                <button type="submit" class="btn btn-success">Checkout</button>
+            <h5>Giỏ hàng</h5>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="sp : ${sanPhamTrongGio}">
+                    <td th:text="${sp.sanPhamChiTiet.sanPham.ten}"></td>
+                    <td th:text="${sp.sanPhamChiTiet.gia}"></td>
+                    <td th:text="${sp.sanPhamChiTiet.so_luong}"></td>
+                    <td th:text="${sp.thanh_tien}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <h4>Tổng tiền: <span th:text="${tongTien}"></span></h4>
+            <form method="post" th:action="@{/ban-hang-tai-quay/gio-hang-thanh-toan}">
+                <input type="hidden" name="hoaDonOffId" th:value="${idHoaDonHienTai}">
+                <button class="btn btn-success w-100">Thanh toán</button>
             </form>
         </div>
     </div>
 </div>
-
-<!-- script -->
 <script th:replace="/admin/fragments/script :: script"></script>
-<!--quản lý hóa đơn -->
 </body>
 </html>
