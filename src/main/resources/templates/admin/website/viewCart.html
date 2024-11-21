@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng của bạn</title>
+</head>
     <style>
         /* Đặt font chữ và nền tổng thể */
         body {
@@ -189,7 +190,6 @@
     </style>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-</head>
 <body>
 <div class="cart-container">
     <h1>Giỏ hàng của bạn</h1>
