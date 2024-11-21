@@ -110,6 +110,8 @@ public class HoaDonController {
 
     @PostMapping("/addSPCT")
     public String add(@ModelAttribute("idHD") long idHD, @ModelAttribute("idSP") long idSP) {
+        System.out.println("ID HD: " + idHD);
+        System.out.println("ID SP: " + idSP);
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(idHD);
         Optional<SanPhamChiTiet> sanPhamChiTietOptional = hoaDonService.findByIdSanPhamChiTiet(idSP);
