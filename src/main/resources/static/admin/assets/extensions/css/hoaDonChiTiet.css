@@ -43,6 +43,7 @@ table thead, table tbody tr {
     width: 100%;
     table-layout: fixed;
 }
+/*Theo dõi đơn hàng*/
 .row-ls {
     display: flex;             /* Sắp xếp các phần tử con theo hàng ngang */
     flex-wrap: nowrap;         /* Ngăn không cho các phần tử xuống dòng */

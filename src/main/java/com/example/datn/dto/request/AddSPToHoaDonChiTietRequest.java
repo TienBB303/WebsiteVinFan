@@ -12,7 +12,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddSPToHoaDonChiTietRequest {
-    Long id;
+    Long idSP;
+    Long idHD;
     String ten;
     BigDecimal gia;
     Integer soLuong;
