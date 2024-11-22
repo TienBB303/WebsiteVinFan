@@ -1,5 +1,6 @@
 package com.example.datn.service;
 
+import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
@@ -24,7 +25,6 @@ public interface HoaDonService {
 
     void saveHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet);
 
-
     Page<HoaDon> findHoaDonAndSortDay(int page, int size);
 
     List<ListSanPhamInHoaDonChiTietResponse> getSanPhamCTByHoaDonId(Long hoaDonId);
@@ -46,6 +46,10 @@ public interface HoaDonService {
     List<SanPhamChiTiet> getSPCTInHDCT();
 
     SanPhamChiTiet getIdSPCT(long idSPCT);
+
+    void addSpToHoaDonChiTietRequestList(AddSPToHoaDonChiTietRequest request);
+
+    HoaDonChiTiet convertToEntity(AddSPToHoaDonChiTietRequest dto, HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
 
     List<HoaDonOff> getAllHoaDonOff();
 
