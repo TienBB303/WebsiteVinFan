@@ -8,7 +8,6 @@ import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
-import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.LichSuHoaDon;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.HoaDonChiTietRepo;
@@ -91,7 +90,7 @@ public class HoaDonController {
 
         //Lấy thông tin sp in hoaDonChiTiet
         List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
-        model.addAttribute("listSPCTInHDCT",listSPCTInHDCT);
+        model.addAttribute("listSPCTInHDCT", listSPCTInHDCT);
 
         //Lấy thông tin thanh toan theo id hóa đơn
         LichSuThanhToanResponse lichSuThanhToanResponse = this.hoaDonService.getLSTTByHoaDonId(id);
@@ -109,25 +108,14 @@ public class HoaDonController {
     }
 
     @PostMapping("/addSPCT")
-    public String add(@ModelAttribute("idHD") long idHD, @ModelAttribute("idSP") long idSP) {
-        System.out.println("ID HD: " + idHD);
-        System.out.println("ID SP: " + idSP);
-        // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
-        Optional<HoaDon> hoaDonOptional = hoaDonService.findById(idHD);
-        Optional<SanPhamChiTiet> sanPhamChiTietOptional = hoaDonService.findByIdSanPhamChiTiet(idSP);
+    public String addSPToHoaDonChiTiet(
+            @ModelAttribute AddSPToHoaDonChiTietRequest request
+    ) {
+        System.out.println("Giá là" + request.getGia());
+        System.out.println("sl là" + request.getSoLuong());
+        hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
 
-        if (hoaDonOptional.isPresent()) {
-            HoaDon hoaDon = hoaDonOptional.get();
-            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietOptional.get();
-            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-            hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
-            hoaDonChiTiet.setHoaDon(hoaDon);
-            hoaDonChiTiet.setSoLuong(1);
-            hoaDonChiTietRepo.save(hoaDonChiTiet);
-        }
-
-        // Chuyển hướng người dùng đến trang chi tiết của HoaDon
-        return "redirect:/hoa-don/detail?id=" + idHD; // Chuyển hướng với tham số id
+        return "redirect:/hoa-don/detail?id=" + request.getIdHD();
     }
 
     @PostMapping("/cho-xac-nhan")
@@ -177,6 +165,7 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+
     @PostMapping("/giao-hang")
     public String dangGiaoHang(@ModelAttribute("id") long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
@@ -225,6 +214,7 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+
     @PostMapping("/huy")
     public String huy(@ModelAttribute("id") long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
@@ -257,7 +247,7 @@ public class HoaDonController {
                                           @RequestParam("xaPhuong") String xaPhuong,
                                           @RequestParam("soNhaNgoDuong") String soNhaNgoDuong,
                                           @RequestParam("id") long id) {
-        Optional<HoaDon> hoaDonOpt =  hoaDonRespo.findById(id);
+        Optional<HoaDon> hoaDonOpt = hoaDonRespo.findById(id);
         String diaChiMoi = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + soNhaNgoDuong;
         if (hoaDonOpt.isPresent()) {
             HoaDon hoaDon = hoaDonOpt.get();

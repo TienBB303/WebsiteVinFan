@@ -393,7 +393,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr th:each="item, iter : ${listSPCTInHDCT}">
+                                                <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
                                                     <td th:text="${iter.count}"></td>
                                                     <td th:text="${item.sanPham.ten}"></td>
                                                     <td th:text="${item.mauSac.ten}"></td>
@@ -401,9 +401,11 @@
                                                     <td th:text="${item.gia}"></td>
                                                     <td th:text="${item.so_luong}"></td>
                                                     <td>
-                                                        <form method="post" th:action="@{/hoa-don/addSPCT}" class="me-2">
+                                                        <form method="post" th:action="@{/hoa-don/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="me-2">
                                                             <input type="hidden" name="idHD" th:value="${hoaDon.id}">
                                                             <input type="hidden" name="idSP" th:value="${item.id}">
+                                                            <input type="hidden" name="gia" th:value="${item.gia}">
+                                                            <input type="hidden" name="soLuong" th:value="${item.so_luong}">
                                                             <button type="submit" class="btn btn-danger">
                                                                 <i class=""></i> ADD
                                                             </button>
