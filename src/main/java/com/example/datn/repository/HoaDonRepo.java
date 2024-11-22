@@ -47,5 +47,13 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     @Query("SELECT hd FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = :date ORDER BY hd.ngayTao DESC")
     Page<HoaDon> findByNgayTao(@Param("date") LocalDate date, Pageable pageable);
 
-//    TienBB
+    //khoi
+    @Query("SELECT hd FROM HoaDon hd WHERE hd.loaiHoaDon = :isOnline")
+    Page<HoaDon> findAllByLoaiHoaDon(@Param("isOnline") boolean isOnline, Pageable pageable);
+
+    @Query("SELECT hd FROM HoaDon hd WHERE hd.ngayTao BETWEEN :startDate AND :endDate ORDER BY hd.ngayTao DESC")
+    Page<HoaDon> findHoaDonByDateRange(@Param("startDate") LocalDate startDate,
+                                       @Param("endDate") LocalDate endDate,
+                                       Pageable pageable);
+
 }

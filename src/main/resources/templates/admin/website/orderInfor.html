@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thông tin giao hàng</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
     <style>
         /* Reset mặc định */
         * {
@@ -15,11 +16,12 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f3f6fa;
+            background-color: #f9f9f9;
             color: #333;
             line-height: 1.6;
         }
 
+        /* Container chính */
         .container {
             max-width: 1100px;
             margin: 60px auto;
@@ -35,60 +37,116 @@
             background: #ffffff;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .checkout-form:hover {
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            transform: translateY(-4px);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
         }
 
         .checkout-form h2 {
-            font-size: 2rem;
-            color: #4a90e2;
+            font-size: 1.8rem;
+            color: #2563eb;
             margin-bottom: 25px;
             font-weight: 700;
+            text-align: center;
         }
 
         .checkout-form input,
-        .checkout-form .form-check-input,
-        .checkout-form .btn-primary {
-            margin-bottom: 15px;
+        .checkout-form select {
             width: 100%;
-        }
-
-        .checkout-form input[type="text"],
-        .checkout-form input[type="tel"],
-        .checkout-form .form-check-input {
-            border-radius: 8px;
-            border: 1px solid #ddd;
             padding: 12px;
+            margin-bottom: 15px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background-color: #f9fafb;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .checkout-form input:focus,
-        .checkout-form .form-check-input:focus {
-            border-color: #4a90e2;
-            box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+        .checkout-form select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 5px rgba(37, 99, 235, 0.2);
             outline: none;
         }
 
+        .checkout-form label {
+            display: block;
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-bottom: 5px;
+        }
+
         .btn-primary {
-            background-color: #4a90e2;
-            color: #fff;
-            font-weight: 700;
+            display: block;
+            width: 100%;
+            background-color: #2563eb;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: bold;
             padding: 12px;
-            border-radius: 8px;
             border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-3px);
+        }
+
+        /* Phương thức thanh toán */
+        .payment-method {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background-color: #ffffff;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
-            background-color: #4178c0;
-            transform: translateY(-2px);
+        .payment-option:hover {
+            border-color: #2563eb;
+            background-color: #f1f5ff;
+            transform: translateY(-3px);
+        }
+
+        .payment-option.selected {
+            border-color: #2563eb;
+            background-color: #e0f2fe;
+        }
+
+        .payment-option input {
+            display: none;
+        }
+
+        .payment-option img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-option label {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+            margin: 0;
         }
 
         /* Tóm tắt đơn hàng */
@@ -97,18 +155,17 @@
             background: #ffffff;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .order-summary:hover {
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            transform: translateY(-4px);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
         }
 
         .order-summary h3 {
-            font-size: 1.8rem;
-            color: #4a90e2;
+            font-size: 1.5rem;
+            color: #2563eb;
             margin-bottom: 20px;
             font-weight: 700;
         }
@@ -117,9 +174,65 @@
             display: flex;
             align-items: center;
             margin-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 15px;
-            position: relative;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #d1d5db;
+        }
+
+        .product-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .product-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .product-price {
+            font-weight: bold;
+            font-size: 1rem;
+            color: #111827;
+        }
+
+        /* Chi tiết tóm tắt */
+        .summary-details {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .summary-details .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #111827;
+        }
+        .product-item {
+            position: relative; /* Đặt làm gốc cho badge */
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-quantity {
+            position: absolute;
+            top: 5px; /* Góc trên cùng */
+            left: 5px; /* Góc trái */
+            background-color: #2563eb; /* Màu xanh */
+            color: #ffffff; /* Màu chữ trắng */
+            border-radius: 50%; /* Bo tròn */
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1; /* Hiển thị trên cùng */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
         }
 
         .product-item img {
@@ -127,71 +240,25 @@
             height: 60px;
             border-radius: 8px;
             margin-right: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .product-item img:hover {
-            transform: scale(1.1);
-        }
-
-        .badge-quantity {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: #1a73e8;
-            color: white;
-            border-radius: 50%;
-            padding: 4px 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
         }
 
         .product-info {
             flex: 1;
         }
 
+        .product-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
         .product-price {
             font-weight: bold;
-            color: #333;
-        }
-
-        .summary-details {
-            margin-top: 20px;
-        }
-
-        .summary-details .total {
-            font-size: 1.7rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        /* Nút checkout */
-        .checkout-btn {
-            display: inline-block;
-            background-color: #4a90e2;
-            color: white;
-            padding: 10px 20px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-            margin-top: 20px;
-            text-decoration: none;
-        }
-
-        .checkout-btn:hover {
-            background-color: #4178c0;
-            transform: translateY(-3px) scale(1.03);
-        }
-
-        .checkout-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            color: #111827;
+            margin-top: 5px; /* Khoảng cách giữa tên sản phẩm và giá */
         }
     </style>
-</head>
 <body>
 
 <div class="container">
@@ -215,13 +282,22 @@
                 </select>
             </div>
 
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" value="COD" id="cod" checked>
-                <label class="form-check-label" for="cod">Thanh toán khi nhận hàng (COD)</label>
+            <div class="form-group">
+                <label for="note">Ghi chú:</label>
+                <textarea id="note" name="note" placeholder="Ghi chú cho đơn hàng" rows="4" class="form-control"></textarea>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" value="CreditCard" id="credit-card">
-                <label class="form-check-label" for="credit-card">Thanh toán bằng thẻ tín dụng</label>
+
+            <div class="payment-method">
+                <div class="payment-option">
+                    <input type="radio" id="cod" name="paymentMethod" value="COD">
+                    <img src="https://via.placeholder.com/40" alt="COD">
+                    <label for="cod">Thanh toán khi nhận hàng (COD)</label>
+                </div>
+                <div class="payment-option">
+                    <input type="radio" id="credit" name="paymentMethod" value="CreditCard">
+                    <img src="https://via.placeholder.com/40" alt="Credit Card">
+                    <label for="credit">Thanh toán bằng thẻ tín dụng</label>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary">Xác nhận</button>

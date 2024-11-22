@@ -24,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,29 +42,56 @@ public class HoaDonController {
 
     PggInHoaDonResponse pggInHoaDonResponse;
 
-
     @GetMapping("index")
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
                         @RequestParam(name = "size", defaultValue = "5") int size,
                         @RequestParam(name = "query", defaultValue = "") String query,
                         @RequestParam(name = "trangThai", required = false) Integer trangThai,
+                        @RequestParam(name = "method", defaultValue = "all") String method,
+                        @RequestParam(name = "startDate", required = false) String startDate,
+                        @RequestParam(name = "endDate", required = false) String endDate,
                         Model model) {
         Page<HoaDon> list;
-        if (query.isEmpty() && trangThai == null) {
+
+        LocalDate start = null;
+        LocalDate end = null;
+
+        try {
+            if (startDate != null && !startDate.isEmpty()) {
+                start = LocalDate.parse(startDate);
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                end = LocalDate.parse(endDate);
+            }
+        } catch (DateTimeParseException e) {
+            // Xử lý lỗi định dạng ngày nếu cần (ví dụ: ghi log)
+            e.printStackTrace();
+        }
+
+        // Logic lọc
+        if (query.isEmpty() && trangThai == null && method.equals("all") && start == null && end == null) {
             list = hoaDonService.findHoaDonAndSortDay(page, size);
-        } else if (!query.isEmpty() && trangThai == null) {
+        } else if (!query.isEmpty()) {
             list = hoaDonService.searchHoaDon("%" + query + "%", PageRequest.of(page, size));
         } else if (trangThai != null) {
             list = hoaDonService.getAllHoaDonByTrangThai(trangThai, PageRequest.of(page, size));
+        } else if (start != null && end != null) {
+            list = hoaDonService.getHoaDonByDateRange(start, end, PageRequest.of(page, size));
+        } else if (!method.equals("all")) {
+            boolean isOnline = method.equals("1");
+            list = hoaDonService.getAllHoaDonByLoaiHoaDon(isOnline, PageRequest.of(page, size));
         } else {
             list = hoaDonService.findHoaDonAndSortDay(page, size);
         }
 
+        // Gán dữ liệu vào Model
         model.addAttribute("list", list);
         model.addAttribute("query", query);
         model.addAttribute("status", trangThai != null ? trangThai : 0);
+        model.addAttribute("method", method);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
 
-        // Lấy thông tin trạng thái để đổ vào dropdown lọc
         TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
         model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
 

@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -229,6 +230,16 @@ public class HoaDonServiceImpl implements HoaDonService {
         // Tạo mã hóa đơn với tiền tố "HD" và số thứ tự
         return String.format("HD%03d", count + 1); // VD: HD001, HD002
     }
+    @Override
+    public Page<HoaDon> getAllHoaDonByLoaiHoaDon(boolean isOnline, Pageable pageable) {
+        return hoaDonRepo.findAllByLoaiHoaDon(isOnline, pageable);
+    }
+
+    @Override
+    public Page<HoaDon> getHoaDonByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return hoaDonRepo.findHoaDonByDateRange(startDate, endDate, pageable);
+    }
+
 
 //    @Override
 //    public void getIdSPCT() {
