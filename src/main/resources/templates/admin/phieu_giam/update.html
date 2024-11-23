@@ -44,55 +44,48 @@
                 <section class="col-12">
                     <div class="card p-4">
                         <div id="alert" class="alert alert-danger" style="display:none;"></div>
-                        <form th:action="@{/admin/phieu-giam/update}" th:object="${pgg}" method="post"
-                              onsubmit="return validateForm()" name="updateForm">
+                        <form th:action="@{/admin/phieu-giam/update}" th:object="${pgg}" method="post">
                             <input type="hidden" th:field="*{id}"/>
 
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ma" th:field="*{ma}">
+                                    <input type="text" class="form-control" name="ma" th:field="*{ma}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ten" th:field="*{ten}"
-                                           placeholder="Nhập tên phiếu giảm giá">
-                                    <span id="tenError" class="text-danger"></span>
+                                    <input type="text" class="form-control" name="ten" th:field="*{ten}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
                                 <div class="col-sm-8">
-                                    <input type="date" class="form-control" name="ngayBD" th:field="*{ngayBD}">
-                                    <span id="ngayBDError" class="text-danger"></span>
+                                    <input type="date" class="form-control" name="ngayBD" th:field="*{ngayBD}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
                                 <div class="col-sm-8">
-                                    <input type="date" class="form-control" name="ngayKT" th:field="*{ngayKT}">
-                                    <span id="ngayKTError" class="text-danger"></span>
+                                    <input type="date" class="form-control" name="ngayKT" th:field="*{ngayKT}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Giá trị giảm</label>
                                 <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="giaTriGiam" th:field="*{giaTriGiam}"
-                                           placeholder="Nhập số tiền giảm">
-                                    <span id="giaTriGiamError" class="text-danger"></span>
+                                    <input type="number" class="form-control" name="giaTriGiam" th:field="*{giaTriGiam}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="loaiPhieuGiam" th:field="*{loaiPhieuGiam}">
+                                    <select class="form-control" name="loaiPhieuGiam" th:field="*{loaiPhieuGiam}" th:disabled="${!isEditable}">
                                         <option value="false">Giảm giá sản phẩm</option>
                                         <option value="true">Giảm giá hóa đơn</option>
                                     </select>
@@ -100,34 +93,9 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Giá trị tối thiểu áp dụng</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="giaTriMin" th:field="*{giaTriMin}"
-                                           placeholder="Nhập giá trị tối thiểu áp dụng">
-                                    <span id="giaTriMinError" class="text-danger"></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Giá trị tối đa áp dụng</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="giaTriMax" th:field="*{giaTriMax}"
-                                           placeholder="Nhập giá trị tối đa áp dụng">
-                                    <span id="giaTriMaxError" class="text-danger"></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Người tạo</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="nguoiTao" th:field="*{nguoiTao}">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Trạng thái</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="trangThai" th:field="*{trangThai}">
+                                    <select class="form-control" name="trangThai" th:field="*{trangThai}" th:disabled="${!isEditable}">
                                         <option value="true">Áp dụng</option>
                                         <option value="false">Ngừng áp dụng</option>
                                     </select>
@@ -135,21 +103,17 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Ngày tạo</label>
+                                <label class="col-sm-4 col-form-label">Sản phẩm áp dụng</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ngayTao" th:field="*{ngayTao}">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Ngày sửa</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ngaySua" th:field="*{ngaySua}">
+                                    <input type="text" class="form-control"
+                                           th:value="${sanPham != null ? sanPham.ten : 'Không có sản phẩm áp dụng'}" readonly>
                                 </div>
                             </div>
 
                             <div style="display: flex; justify-content: center;">
-                                <button type="submit" class="btn btn-primary" style="width: 500px;">Cập Nhật</button>
+                                <button type="submit" class="btn btn-primary" style="width: 500px;" th:disabled="${!isEditable}">
+                                    Cập Nhật
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -274,5 +238,17 @@
         });
     }
 </script>
+<script th:inline="javascript">
+    var isEditable = /*[[${isEditable}]]*/ true;
+    if (!isEditable) {
+        Swal.fire({
+            title: 'Phiếu giảm giá ngừng áp dụng',
+            text: 'Bạn chỉ có thể xem thông tin. Không thể chỉnh sửa phiếu giảm giá này.',
+            icon: 'warning',
+            confirmButtonText: 'Đồng ý'
+        });
+    }
+</script>
+
 </body>
 </html>
