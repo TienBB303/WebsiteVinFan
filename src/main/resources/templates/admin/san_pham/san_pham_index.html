@@ -46,25 +46,31 @@
                             <div class="dataTable-top">
                                 <form method="get" action="/admin/san-pham">
                                     <div class="row">
-                                        <div class="col-11 col-lg-4">
+                                        <div class="col-4">
                                             <input type="text" id="searchInput" class="form-control" name="query"
                                                    placeholder="Tìm kiếm sản phẩm...." th:value="${param.query}">
                                         </div>
-                                        <div class="col-11 col-lg-2">
-                                            <input type="number" id="searchInputMinPrice" class="form-control" th:id="giaMinVND"
+                                        <div class="col-3">
+                                            <input type="text" id="searchInputMinPrice" class="form-control" th:id="giaMinVND"
                                                    name="minPrice" placeholder="Giá nhỏ nhất"
                                                    th:value="${param.minPrice}">
                                         </div>
-                                        <div class="col-11 col-lg-2">
-                                            <input type="number" id="searchInputMaxPrice" class="form-control" th:id="giaMaxVND"
+                                        <div class="col-3">
+                                            <input type="text" id="searchInputMaxPrice" class="form-control" th:id="giaMaxVND"
                                                    name="maxPrice" placeholder="Giá lớn nhất"
                                                    th:value="${param.maxPrice}">
                                         </div>
-                                        <div class="col-11 col-lg-2">
-                                            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
-                                        </div>
-                                        <div class="col-11 col-lg-1">
-                                            <a class="btn btn-warning" href="/admin/san-pham">Reset</a>
+                                        <div class="col-2 d-flex">
+                                            <div>
+                                                <button class="btn btn-primary" type="submit" style="width: 70px; margin-right: 10px">
+                                                    <i class="bi bi-search"></i>
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <a class="btn btn-warning" href="/admin/san-pham" style="width: 70px">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -108,10 +114,10 @@
                                         <td th:text="${sp.congSuat.ten}"></td>
                                         <td class="giaVND" th:text="${sp.gia}"></td>
                                         <td style="text-align: center">
-                                            <span th:if="${sp.sanPham.trang_thai}" class="badge bg-light-success">
+                                            <span th:if="${sp.trang_thai}" class="badge bg-light-success">
                                                 On
                                             </span>
-                                            <span th:unless="${sp.sanPham.trang_thai}" class="badge bg-light-danger">
+                                            <span th:unless="${sp.trang_thai}" class="badge bg-light-danger">
                                                 Off
                                             </span>
                                         </td>
@@ -213,9 +219,26 @@
             const originalValue = parseFloat(element.innerText);
             element.innerText = originalValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
         });
-
-        document.getElementById('giaMinVND').innerText = parseFloat(document.getElementById('giaMinVND').innerText).toLocaleString('vi-VN');
-        document.getElementById('giaMaxVND').innerText = parseFloat(document.getElementById('giaMaxVND').innerText).toLocaleString('vi-VN');
+        document.getElementById('giaMinVND').addEventListener('input', function (event) {
+            let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
+            if (value.length > 9) {
+                value = value.slice(0, 9); // Giới hạn tối đa 9 chữ số
+            }
+            if (value) {
+                value = parseInt(value).toLocaleString(); // Định dạng giá trị thành số
+            }
+            event.target.value = value ? value : '';
+        });
+        document.getElementById('giaMaxVND').addEventListener('input', function (event) {
+            let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
+            if (value.length > 9) {
+                value = value.slice(0, 9); // Giới hạn tối đa 9 chữ số
+            }
+            if (value) {
+                value = parseInt(value).toLocaleString(); // Định dạng giá trị thành số
+            }
+            event.target.value = value ? value : '';
+        });
     </script>
 </div>
 </body>
