@@ -6,13 +6,13 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddSPToHoaDonChiTietRequest {
-    Long id;
+    Long idSP;
+    Long idHD;
     String ten;
     BigDecimal gia;
     Integer soLuong;

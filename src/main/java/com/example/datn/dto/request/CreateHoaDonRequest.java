@@ -15,5 +15,6 @@ public class CreateHoaDonRequest {
     private String district;
     private String province;
     private String paymentMethod;
+    private String note;
     private List<CartItem> cartItems;
 }

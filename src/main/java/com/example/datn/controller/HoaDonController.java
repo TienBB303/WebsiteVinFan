@@ -2,12 +2,15 @@ package com.example.datn.controller;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.request.TrangThaiHoaDonRequest;
+import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.LichSuHoaDon;
+import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.service.HoaDonService;
@@ -21,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,35 +35,63 @@ public class HoaDonController {
     private final HoaDonService hoaDonService;
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
+    private final HoaDonChiTietRepo hoaDonChiTietRepo;
 
     @Autowired
     HoaDonRepo hoaDonRespo;
 
     PggInHoaDonResponse pggInHoaDonResponse;
 
-
     @GetMapping("index")
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
                         @RequestParam(name = "size", defaultValue = "5") int size,
                         @RequestParam(name = "query", defaultValue = "") String query,
                         @RequestParam(name = "trangThai", required = false) Integer trangThai,
+                        @RequestParam(name = "method", defaultValue = "all") String method,
+                        @RequestParam(name = "startDate", required = false) String startDate,
+                        @RequestParam(name = "endDate", required = false) String endDate,
                         Model model) {
         Page<HoaDon> list;
-        if (query.isEmpty() && trangThai == null) {
+
+        LocalDate start = null;
+        LocalDate end = null;
+
+        try {
+            if (startDate != null && !startDate.isEmpty()) {
+                start = LocalDate.parse(startDate);
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                end = LocalDate.parse(endDate);
+            }
+        } catch (DateTimeParseException e) {
+            // Xử lý lỗi định dạng ngày nếu cần (ví dụ: ghi log)
+            e.printStackTrace();
+        }
+
+        // Logic lọc
+        if (query.isEmpty() && trangThai == null && method.equals("all") && start == null && end == null) {
             list = hoaDonService.findHoaDonAndSortDay(page, size);
-        } else if (!query.isEmpty() && trangThai == null) {
+        } else if (!query.isEmpty()) {
             list = hoaDonService.searchHoaDon("%" + query + "%", PageRequest.of(page, size));
         } else if (trangThai != null) {
             list = hoaDonService.getAllHoaDonByTrangThai(trangThai, PageRequest.of(page, size));
+        } else if (start != null && end != null) {
+            list = hoaDonService.getHoaDonByDateRange(start, end, PageRequest.of(page, size));
+        } else if (!method.equals("all")) {
+            boolean isOnline = method.equals("1");
+            list = hoaDonService.getAllHoaDonByLoaiHoaDon(isOnline, PageRequest.of(page, size));
         } else {
             list = hoaDonService.findHoaDonAndSortDay(page, size);
         }
 
+        // Gán dữ liệu vào Model
         model.addAttribute("list", list);
         model.addAttribute("query", query);
         model.addAttribute("status", trangThai != null ? trangThai : 0);
+        model.addAttribute("method", method);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
 
-        // Lấy thông tin trạng thái để đổ vào dropdown lọc
         TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
         model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
 
@@ -76,6 +108,15 @@ public class HoaDonController {
         }
         model.addAttribute("hoaDon", hoaDon);
 
+        String chuoi = hoaDon.getDiaChi();
+        String[] mang = chuoi.split(",");
+        model.addAttribute("tinh", mang[0]);
+        model.addAttribute("huyen", mang[1]);
+        model.addAttribute("xa", mang[2]);
+        model.addAttribute("chitietdiachi", mang[3]);
+
+
+
         //Lấy thông tin sp in hoa don
         List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
         model.addAttribute("listSPInHoaDon", list);
@@ -83,6 +124,14 @@ public class HoaDonController {
         //Lấy thông tin sp theo id hóa đơn
         List<ListSanPhamInHoaDonChiTietResponse> listHDCT = this.hoaDonService.getSanPhamCTByHoaDonId(id);
         model.addAttribute("listHDCT", listHDCT);
+
+        //Lấy thông tin sp in hoaDonChiTiet
+        List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
+        model.addAttribute("listSPCTInHDCT", listSPCTInHDCT);
+
+        //Lấy thông tin thanh toan theo id hóa đơn
+        LichSuThanhToanResponse lichSuThanhToanResponse = this.hoaDonService.getLSTTByHoaDonId(id);
+        model.addAttribute("listLSTT", lichSuThanhToanResponse);
 
         //Lấy thông tin pgg theo id hóa đơn
         PggInHoaDonResponse hoaDonPGG = hoaDonService.getPGGbyHoaDonId(id);
@@ -95,13 +144,16 @@ public class HoaDonController {
         return "/admin/hoa_don/detail";
     }
 
-//    @PostMapping("/add-san-pham")
-//    public String addSanPham(@ModelAttribute("id") long id,
-//                             @ModelAttribute AddSPToHoaDonChiTietRequest request,
-//                             Model model) {
-//
-//        return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
-//    }
+    @PostMapping("/addSPCT")
+    public String addSPToHoaDonChiTiet(
+            @ModelAttribute AddSPToHoaDonChiTietRequest request
+    ) {
+        System.out.println("Giá là" + request.getGia());
+        System.out.println("sl là" + request.getSoLuong());
+        hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
+
+        return "redirect:/hoa-don/detail?id=" + request.getIdHD();
+    }
 
     @PostMapping("/cho-xac-nhan")
     public String choXacNhan(@ModelAttribute("id") long id) {
@@ -150,6 +202,7 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+
     @PostMapping("/giao-hang")
     public String dangGiaoHang(@ModelAttribute("id") long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
@@ -198,6 +251,7 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+
     @PostMapping("/huy")
     public String huy(@ModelAttribute("id") long id) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
@@ -230,7 +284,7 @@ public class HoaDonController {
                                           @RequestParam("xaPhuong") String xaPhuong,
                                           @RequestParam("soNhaNgoDuong") String soNhaNgoDuong,
                                           @RequestParam("id") long id) {
-        Optional<HoaDon> hoaDonOpt =  hoaDonRespo.findById(id);
+        Optional<HoaDon> hoaDonOpt = hoaDonRespo.findById(id);
         String diaChiMoi = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + soNhaNgoDuong;
         if (hoaDonOpt.isPresent()) {
             HoaDon hoaDon = hoaDonOpt.get();
