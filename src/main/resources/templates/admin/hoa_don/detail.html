@@ -183,37 +183,21 @@
                     <h2><strong><span>Lịch sử thanh toán</span></strong></h2>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered"
-                           th:if="${hoaDon.trangThai != 1 && hoaDon.trangThai != 2
-                           && hoaDon.trangThai != 3
-                           }">
+                    <table class="table table-bordered">
                         <thead>
                         <tr>
+                            <th>STT</th>
+                            <th>Mã GD</th>
                             <th>Số tiền</th>
+                            <th>Trạng thái</th>
                             <th>Thời gian</th>
                             <th>Phương thức thanh toán</th>
-                            <th>Loại hóa đơn</th>
-                            <th>Trạng thái</th>
                             <th>Người tạo</th>
+                            <th>Ghi chú</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="item: ${listLSTT}">
-                            <td th:text="${item.tongTien}"></td>
-                            <td th:text="${item.ngayTao}"></td>
-                            <td th:text="${item.hinhThucThanhToan}"></td>
-                            <td th:class="${item.loaiHoaDon ? 'text-danger' : 'text-primary'}"
-                                th:text="${item.loaiHoaDon ? 'Tại quầy' : 'Online'}">
-                            </td>
-                            <td th:switch="${item.trangThai}">
-                                <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
-                                <span th:case="2" class="text-success">Đã xác nhận</span>
-                                <span th:case="3" class="text-warning">Đang giao hàng</span>
-                                <span th:case="4" class="text-primary">Đã giao hàng</span>
-                                <span th:case="5" class="text-danger">Hủy</span>
-                            </td>
-                            <td th:text="${item.nguoiTao}"></td>
-                        </tr>
+                        <!-- Add rows here -->
                         </tbody>
                     </table>
                 </div>
@@ -236,21 +220,21 @@
                                 <span th:case="5" class="text-danger">Hủy</span>
                             </p>
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
-                            <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>
+                            <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi"></span></p>
+<!--                            <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi" th:text="${hoaDon.diaChi}"></span></p>-->
                         </div>
 
                         <div class="col">
                             <div class="col-md-6">
                                 <p><strong>Loại hóa đơn: </strong><span
-                                        th:class="${hoaDon.loaiHoaDon ? 'text-danger' : 'text-primary'}"
-                                        th:text="${hoaDon.loaiHoaDon ? 'Tại quầy' : 'Online'}"></span></p>
+                                        th:text="${hoaDon.loaiHoaDon == 1 ? 'Tại quầy' : 'Giao hàng'}"></span></p>
                                 <p><strong>Số điện thoại: </strong> <span th:text="${hoaDon.sdtNguoiNhan}"></span></p>
                                 <p><strong>Ngày tạo: </strong><span th:text="${hoaDon.ngayTao}"></span></p>
                             </div>
                         </div>
                         <div class="text-end mt-3">
                             <div class="container">
-                                <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                         data-bs-target="#myModal2">
                                     Sửa hóa đơn
                                 </button>
@@ -264,45 +248,45 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                             </div>
-                                            <div class="modal-body" style="width: 80% ; margin: 0 auto">
+                                            <div class="modal-body">
                                                 <form method="post" th:action="@{/hoa-don/sua-thong-tin}">
+                                                    <input type="hidden" id="tinhThanhPho" th:value="${tinh}"/>
+                                                    <input type="hidden" id="quanHuyen" th:value="${huyen}"/>
+                                                    <input type="hidden" id="xaPhuong" th:value="${xa}"/>
                                                     <input type="hidden" name="id" th:value="${hoaDon.id}">
-                                                    <input type="hidden" id="tinhThanhPho" name="tinhThanhPho">
-                                                    <input type="hidden" id="quanHuyen" name="quanHuyen">
-                                                    <input type="hidden" id="xaPhuong" name="xaPhuong">
-                                                    <div class="mb-2">
-                                                        <input type="text" class="form-control" id="name1" th:name="tenMoi" placeholder="Tên người nhận">
+                                                    <div class="mb-3">
+                                                        <input type="text" class="form-control" id="name1" th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}" placeholder="Tên người nhận">
                                                     </div>
-                                                    <div class="mb-2">
+                                                    <div class="mb-3">
                                                         <label class="form-label">Tỉnh/Thành phố</label>
-                                                        <select class="form-control" id="city" >
+                                                        <select class="form-control" id="city" name="tinhThanhPho">
                                                             <option value="" selected>Chọn tỉnh thành</option>
                                                         </select>
                                                     </div>
-                                                    <div class="mb-2">
+                                                    <div class="mb-3">
                                                         <label class="form-label">Quận/Huyện</label>
-                                                        <select class="form-control" id="district" >
+                                                        <select class="form-control" id="district" name="quanHuyen" >
                                                             <option value="" selected>Chọn quận huyện</option>
                                                         </select>
                                                     </div>
-                                                    <div class="mb-2">
+                                                    <div class="mb-3">
                                                         <label class="form-label">Phường/Xã</label>
-                                                        <select class="form-control" id="ward" >
+                                                        <select class="form-control" id="ward" name="xaPhuong">
                                                             <option value="" selected>Chọn phường xã</option>
                                                         </select>
                                                     </div>
-                                                    <div class="mb-2">
+                                                    <div class="mb-3">
                                                         <label class="form-label">Số nhà/ngõ đường</label>
-                                                        <input type="text" class="form-control" id="street" th:name="soNhaNgoDuong">
+                                                        <input type="text" class="form-control" id="street" th:value="${chitietdiachi}" th:name="soNhaNgoDuong">
                                                     </div>
-                                                    <br>
-                                                    <div class="mb-2">
-                                                        <input type="text" class="form-control" id="phoneNumber" th:name="soDienThoaiMoi" placeholder="Số điện thoại">
+                                                    <div class="mb-3">
+                                                        <input type="text" class="form-control" id="phoneNumber" th:value="${hoaDon.sdtNguoiNhan}" th:name="soDienThoaiMoi" placeholder="Số điện thoại">
                                                     </div>
 
+                                                    <!-- Input ẩn để lưu địa chỉ hoàn chỉnh -->
+                                                    <input type="hidden" id="fullAddress" name="diaChiMoi">
 
-
-                                                    <button  type="submit" onclick="getCityValue()" class="btn btn-primary">Sửa</button>
+                                                    <button type="submit" onclick="getCityValue()" class="btn btn-primary">Sửa</button>
                                                 </form>
 
                                             </div>
@@ -341,12 +325,12 @@
                         <td th:text="${item.gia}"></td>
                         <td>
                             <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm">-</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm" >-</button>
                             <!-- Ô nhập số lượng -->
                             <input type="number" class="form-control"
                                    th:value="${item.soLuong}"
                                    min="1"
-                                   style="width: 60px; text-align: center; display: inline-block;"/>
+                                   style="width: 60px; text-align: center; display: inline-block;" />
                             <!-- Nút Tăng -->
                             <button type="button" class="btn btn-light-secondary btn-sm">+</button>
                         </td>
@@ -359,7 +343,7 @@
                 </table>
                 <div class="text-end mt-3">
                     <div class="container">
-                        <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#myModal">
                             Thêm sản phẩm
                         </button>
@@ -374,6 +358,7 @@
                                                 aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
+                                        <form>
                                             <div class="input-group mb-3 ">
                                                 <input type="text" class="form-control" id="name"
                                                        placeholder="Tìm kiếm sản phẩm">
@@ -385,35 +370,24 @@
                                                 <tr>
                                                     <th>STT</th>
                                                     <th>Tên sản phẩm</th>
-                                                    <th>Màu sắc</th>
-                                                    <th>Công xuất</th>
                                                     <th>Giá bán</th>
                                                     <th>Số lượng</th>
                                                     <th>Thao tác</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
+                                                <tr th:each="item, iter : ${listSPInHoaDon}">
                                                     <td th:text="${iter.count}"></td>
-                                                    <td th:text="${item.sanPham.ten}"></td>
-                                                    <td th:text="${item.mauSac.ten}"></td>
-                                                    <td th:text="${item.congSuat.ten}"></td>
+                                                    <td th:text="${item.tenSanPham}"></td>
                                                     <td th:text="${item.gia}"></td>
-                                                    <td th:text="${item.so_luong}"></td>
+                                                    <td th:text="${item.soLuong}"></td>
                                                     <td>
-                                                        <form method="post" th:action="@{/hoa-don/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="me-2">
-                                                            <input type="hidden" name="idHD" th:value="${hoaDon.id}">
-                                                            <input type="hidden" name="idSP" th:value="${item.id}">
-                                                            <input type="hidden" name="gia" th:value="${item.gia}">
-                                                            <input type="hidden" name="soLuong" th:value="${item.so_luong}">
-                                                            <button type="submit" class="btn btn-danger">
-                                                                <i class=""></i> ADD
-                                                            </button>
-                                                        </form>
+                                                        <button type="button" class="btn btn-primary">ADD</button>
                                                     </td>
                                                 </tr>
                                                 </tbody>
                                             </table>
+                                        </form>
                                     </div>
 
                                     <div class="modal-footer">
@@ -491,78 +465,89 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-        <script>
-            var cities = document.getElementById("city");
+        <script th:inline="javascript">
+            var ganDiaChi = document.getElementById("ganDiaChi");
+            var idTinh = document.getElementById("tinhThanhPho").value;
+            var idHuyen = document.getElementById("quanHuyen").value;
+            var idXa = document.getElementById("xaPhuong").value;
+
+
+            console.log(idTinh)
+            console.log(idHuyen)
+            console.log(idXa)
+
+            var citis = document.getElementById("city");
             var districts = document.getElementById("district");
             var wards = document.getElementById("ward");
 
-
-            function getCityValue() {
-                const citySelect = document.getElementById("city");
-
-                // const wardsSelect = document.getElementById("wards");
-
-                // Lấy giá trị của các option đang được chọn
-                const selectedTinh = citySelect.options[citySelect.selectedIndex].text;
-                const selectedQuan = districts.options[districts.selectedIndex].text;
-                const selectedXa = wards.options[wards.selectedIndex].text;
-
-                // Gán giá trị vào các input ẩn
-                document.getElementById("tinhThanhPho").value = selectedTinh;
-                document.getElementById("quanHuyen").value = selectedQuan;
-                document.getElementById("xaPhuong").value = selectedXa;
-
-                console.log("Tỉnh/Thành phố:", selectedTinh);
-                console.log("Quận/Huyện:", selectedQuan);
-                console.log("Xã/Phường:", selectedXa);
-            }
-
-
-
-
-
-            var parameter = {
+            var Parameter = {
                 url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
                 method: "GET",
-                responseType: "json",
+                responseType: "application/json",
             };
 
-            axios(parameter).then(function (result) {
+            axios(Parameter).then(function (result) {
                 renderCity(result.data);
+
+                citis.value = idTinh;
+                citis.dispatchEvent(new Event('change'));
+
+                setTimeout(function () {
+                    districts.value = idHuyen;
+                    districts.dispatchEvent(new Event('change'));
+                }, 300);
+
+                setTimeout(function () {
+                    wards.value = idXa;
+                }, 600);
             });
+            setTimeout(function () {
+                // var citis = document.getElementById("city");
+                // var districts = document.getElementById("district");
+                // var wards = document.getElementById("ward");
+
+                const selectedText = citis.options[citis.selectedIndex].text;
+                const districtsText = districts.options[districts.selectedIndex].text;
+                const wardsText = wards.options[wards.selectedIndex].text;
+                console.log(selectedText)
+                console.log(wardsText)
+                console.log(wardsText)
+
+                // const street = streetInput.value
+                //     ,${street}
+                document.getElementById("ganDiaChi").innerText = `${selectedText}, ${districtsText},${wardsText}`;
+            }, 900);
+
 
             function renderCity(data) {
-                for (const city of data) {
-                    cities.options[cities.options.length] = new Option(city.Name, city.Id);
+                for (const x of data) {
+                    citis.options[citis.options.length] = new Option(x.Name, x.Id);
                 }
-                cities.onchange = function () {
+
+                citis.onchange = function () {
                     districts.length = 1;
                     wards.length = 1;
-                    if (this.value !== "") {
-                        const result = data.find(n => n.Id === this.value);
-                        if (result) {
-                            for (const district of result.Districts) {
-                                districts.options[districts.options.length] = new Option(district.Name, district.Id);
-                            }
+
+                    if (this.value != "") {
+                        const result = data.filter(n => n.Id === this.value);
+                        for (const k of result[0].Districts) {
+                            districts.options[districts.options.length] = new Option(k.Name, k.Id);
                         }
                     }
                 };
 
                 districts.onchange = function () {
                     wards.length = 1;
-                    const selectedCity = data.find(n => n.Id === cities.value);
-                    if (this.value !== "") {
-                        const result = selectedCity.Districts.find(n => n.Id === this.value);
-                        if (result) {
-                            for (const ward of result.Wards) {
-                                wards.options[wards.options.length] = new Option(ward.Name, ward.Id);
-                            }
+                    const dataCity = data.filter((n) => n.Id === citis.value);
+
+                    if (this.value != "") {
+                        const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+                        for (const w of dataWards) {
+                            wards.options[wards.options.length] = new Option(w.Name, w.Id);
                         }
                     }
                 };
             }
-
-
         </script>
     </div>
 </div>
