@@ -1,16 +1,18 @@
 package com.example.datn.service;
 
+import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
+import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +24,6 @@ public interface HoaDonService {
     void delete(Long id);
 
     void saveHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet);
-
 
     Page<HoaDon> findHoaDonAndSortDay(int page, int size);
 
@@ -46,7 +47,16 @@ public interface HoaDonService {
 
     SanPhamChiTiet getIdSPCT(long idSPCT);
 
-    List<HoaDon> getAllHoaDon();
+    void addSpToHoaDonChiTietRequestList(AddSPToHoaDonChiTietRequest request);
+
+    HoaDonChiTiet convertToEntity(AddSPToHoaDonChiTietRequest dto, HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
+
+    List<HoaDonOff> getAllHoaDonOff();
 
     String generateOrderCode();
+
+    Page<HoaDon> getAllHoaDonByLoaiHoaDon(boolean isOnline, Pageable pageable);
+
+    Page<HoaDon> getHoaDonByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable);
+
 }

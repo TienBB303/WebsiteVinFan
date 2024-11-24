@@ -2,6 +2,7 @@ package com.example.datn.repository;
 
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
+import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
@@ -30,4 +32,7 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
 
     @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp WHERE spct.sanPham.id = sp.id")
     List<SanPhamChiTiet> findSanPhamChiTietWithSanPham();
+
+    // Tìm chi tiết hóa đơn theo hóa đơn và sản phẩm chi tiết
+    Optional<HoaDonChiTiet> findByHoaDonAndSanPhamChiTiet(HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
 }

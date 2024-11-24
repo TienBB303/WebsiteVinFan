@@ -248,8 +248,6 @@ public class SanPhamController_backup {
             spTam.setSo_luong(soLuong);
         }
 
-
-
         // confirm
         SanPham sanPham = new SanPham();
         List<SanPhamChiTiet> listSPCT = new ArrayList<>();

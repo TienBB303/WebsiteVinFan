@@ -90,4 +90,9 @@ public class SanPhamImp implements SanPhamService {
     public BigDecimal getSanPhamGiaLonNhat() {
         return spctRepo.findMaxPrice();
     }
+
+    @Override
+    public List<SanPhamChiTiet> timSanPhamTheoTen(String ten) {
+        return spctRepo.timKiemTheoTen(ten);
+    }
 }

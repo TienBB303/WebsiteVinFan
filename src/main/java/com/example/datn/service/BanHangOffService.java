@@ -1,97 +1,101 @@
 package com.example.datn.service;
-import com.example.datn.entity.HoaDon;
-import com.example.datn.entity.HoaDonChiTiet;
+
+import com.example.datn.entity.HoaDonOff;
+import com.example.datn.entity.HoaDonOffChiTiet;
 import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.repository.HoaDonChiTietRepo;
-import com.example.datn.repository.HoaDonRepo;
-import com.example.datn.repository.SPCTRepo;
+import com.example.datn.repository.BanOffRepo.HoaDonOffChiTietRepo;
+import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BanHangOffService {
     @Autowired
-    private HoaDonRepo hoaDonRepository;
+    private HoaDonOffRepo hoaDonOffRepo;
 
     @Autowired
-    private HoaDonChiTietRepo hoaDonChiTietRepository;
+    private HoaDonOffChiTietRepo hoaDonOffChiTietRepo;
 
     @Autowired
-    private SPCTRepo sanPhamChiTietRepository;
+    private SanPhamService sanPhamService;
 
-    private Map<Long, Map<Long, Integer>> carts = new HashMap<>();
-
-    public Long taoHoaDonMoi() {
-        HoaDon hoaDon = new HoaDon();
-        hoaDon = hoaDonRepository.save(hoaDon);
-
-        carts.put(hoaDon.getId(), new HashMap<>());
-        return hoaDon.getId();
+    public HoaDonOff taoHoaDon(){
+        HoaDonOff hoaDonOff = new HoaDonOff();
+        hoaDonOffRepo.save(hoaDonOff);
+        return hoaDonOff;
     }
 
-    public void checkTonTaiGioHang(Long hoaDonId) {
-        if (!carts.containsKey(hoaDonId)) {
-            carts.put(hoaDonId, new HashMap<>());
+    public List<HoaDonOff> findAllHoaDon(){
+        return hoaDonOffRepo.findAll();
+    }
+
+    public Optional<HoaDonOff> findOnceHoaDon(Long hoaDonOffId){
+        return hoaDonOffRepo.findById(hoaDonOffId);
+    }
+
+    public void luuHoaDonOffChiTiet(HoaDonOffChiTiet hoaDonOffChiTiet){
+        hoaDonOffChiTietRepo.save(hoaDonOffChiTiet);
+    }
+
+    public HoaDonOffChiTiet checkTonTaiSanPhamTrongGio(HoaDonOff hoaDonOff, SanPhamChiTiet sanPhamChiTiet) {
+        return hoaDonOffChiTietRepo.findByHoaDonOffAndSanPhamChiTiet(hoaDonOff, sanPhamChiTiet)
+                .orElse(null);
+    }
+
+    public List<HoaDonOffChiTiet> getChiTietByHoaDonId(Long hoaDonOffId) {
+        if (hoaDonOffId == null) {
+            return List.of(); // Trả về danh sách rỗng nếu ID hóa đơn không được cung cấp
+        }
+        return hoaDonOffChiTietRepo.findAllById(hoaDonOffId);
+    }
+
+    public BigDecimal getTongTien(Long hoaDonOffId) {
+        if (hoaDonOffId == null) {
+            return BigDecimal.ZERO; // Trả về 0 nếu ID hóa đơn không được cung cấp
+        }
+        List<HoaDonOffChiTiet> chiTietList = hoaDonOffChiTietRepo.findAllById(hoaDonOffId);
+        return chiTietList.stream()
+                .map(HoaDonOffChiTiet::getThanh_tien)
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Tính tổng tiền
+    }
+
+    public void themSanPhamVaoGio(Long hoaDonOffId, Long sanPhamId, int soLuong) {
+        // Lấy thông tin hóa đơn
+        HoaDonOff hoaDonOff = hoaDonOffRepo.findById(hoaDonOffId).orElseThrow();
+
+        // Lấy thông tin sản phẩm chi tiết
+        SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
+
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        HoaDonOffChiTiet hoaDonOffChiTiet = hoaDonOffChiTietRepo
+                .findByHoaDonOffAndSanPhamChiTiet(hoaDonOff, sanPhamChiTiet)
+                .orElse(null);
+
+        if (hoaDonOffChiTiet != null) {
+            // Nếu sản phẩm đã tồn tại trong giỏ, cập nhật số lượng và thành tiền
+            hoaDonOffChiTiet.setSo_luong(hoaDonOffChiTiet.getSo_luong() + soLuong);
+            hoaDonOffChiTiet.setThanh_tien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(hoaDonOffChiTiet.getSo_luong())));
+
+            // Lưu lại vào cơ sở dữ liệu
+            hoaDonOffChiTietRepo.save(hoaDonOffChiTiet);
+        } else {
+            // Nếu sản phẩm chưa có trong giỏ, tạo mới chi tiết hóa đơn
+            hoaDonOffChiTiet = new HoaDonOffChiTiet(hoaDonOff, sanPhamChiTiet, soLuong);
+            hoaDonOffChiTiet.setThanh_tien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(soLuong)));
+
+            // Lưu lại vào cơ sở dữ liệu
+            hoaDonOffChiTietRepo.save(hoaDonOffChiTiet);
         }
     }
 
-    public void themVaoGio(Long hoaDonId, Long sanPhamChiTietId, int soLuong) {
-        checkTonTaiGioHang(hoaDonId);
-        Map<Long, Integer> cart = carts.get(hoaDonId);
-
-        cart.put(sanPhamChiTietId, cart.getOrDefault(sanPhamChiTietId, 0) + soLuong);
-    }
-
-    public Map<Long, Integer> getCart(Long hoaDonId) {
-        return carts.getOrDefault(hoaDonId, new HashMap<>());
-    }
-
-    public boolean thanhToan(Long hoaDonId) {
-        Map<Long, Integer> cart = getCart(hoaDonId);
-
-        if (cart.isEmpty()) {
-            return false;
-        }
-
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElse(null);
-        if (hoaDon == null) return false;
-
-        for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
-            Long sanPhamChiTietId = entry.getKey();
-            int soLuong = entry.getValue();
-
-            SanPhamChiTiet sanPham = sanPhamChiTietRepository.findById(sanPhamChiTietId).orElse(null);
-            if (sanPham == null || sanPham.getSo_luong() < soLuong) {
-                return false;
-            }
-
-            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-            hoaDonChiTiet.setHoaDon(hoaDon);
-            hoaDonChiTiet.setSanPhamChiTiet(sanPham);
-            hoaDonChiTiet.setSoLuong(soLuong);
-            hoaDonChiTiet.setGia(sanPham.getGia());
-            hoaDonChiTiet.setThanhTien(sanPham.getGia().multiply(BigDecimal.valueOf(soLuong)));
-            hoaDonChiTietRepository.save(hoaDonChiTiet);
-
-            sanPham.setSo_luong(sanPham.getSo_luong() - soLuong);
-            sanPhamChiTietRepository.save(sanPham);
-        }
-
-        carts.remove(hoaDonId);
-        return true;
-    }
-
-    public HoaDon findById(Long id){
-        HoaDon hoaDon = hoaDonRepository.findById(id).orElse(null);
-        return hoaDon;
-    }
-
-    public void xoaHoaDon(HoaDon hoaDon){
-        hoaDonRepository.delete(hoaDon);
+    public void thanhToanHoaDon(Long hoaDonOffId) {
+        HoaDonOff hoaDonOff = hoaDonOffRepo.findById(hoaDonOffId).orElseThrow();
+        hoaDonOffRepo.save(hoaDonOff);
     }
 }
+
 

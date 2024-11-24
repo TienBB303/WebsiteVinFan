@@ -2,9 +2,6 @@ package com.example.datn.controller;
 
 import com.example.datn.dto.request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
-import com.example.datn.repository.GioHangChiTietRepo;
-import com.example.datn.repository.GioHangRepo;
-import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -20,12 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -231,7 +225,7 @@ public class CartController {
 
     @Transactional
     @PostMapping("/process-payment")
-    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session) {
+    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session, Model model) {
         // Lấy giỏ hàng từ session
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
         if (cartItems == null || cartItems.isEmpty()) {
@@ -253,53 +247,49 @@ public class CartController {
             diaChi += ", " + request.getProvince();
         }
         hoaDon.setDiaChi(diaChi);
-
         hoaDon.setNgayTao(LocalDate.now());
         hoaDon.setTrangThai(1); // Trạng thái chờ xác nhận
-        hoaDon.setLoaiHoaDon(request.getPaymentMethod().equalsIgnoreCase("COD"));
+        hoaDon.setLoaiHoaDon(false); // Mặc định là false (tương đương 0)
 
-        // **Fake data bổ sung**
-        hoaDon.setTongTienSauGiamGia(BigDecimal.valueOf(0)); // Giá trị mặc định nếu không có giảm giá
-        hoaDon.setGhiChu("Fake note"); // Ghi chú mặc định
-        hoaDon.setNgaySua(LocalDate.now()); // Ngày sửa mặc định là ngày hiện tại
-        hoaDon.setNguoiTao("system"); // Người tạo mặc định
-        hoaDon.setNguoiSua("system"); // Người sửa mặc định
+        // Kiểm tra và gán giá trị cho ghi chú
+        if (request.getNote() == null || request.getNote().trim().isEmpty()) {
+            hoaDon.setGhiChu("Không có ghi chú"); // Gán mặc định
+        } else {
+            hoaDon.setGhiChu(request.getNote()); // Lưu ghi chú từ request
+        }
 
-        // **Fake ID cho các quan hệ ManyToOne**
-        hoaDon.setKhachHang(entityManager.find(KhachHang.class, 1L)); // ID giả lập cho Khách Hàng
-        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L)); // ID giả lập cho Nhân Viên
-        hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L)); // ID giả lập cho Phiếu Giảm Giá
-        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L)); // ID giả lập cho Hình Thức Thanh Toán
+        // Fake data bổ sung
+        hoaDon.setTongTienSauGiamGia(BigDecimal.valueOf(0));
+        hoaDon.setNgaySua(LocalDate.now());
+        hoaDon.setNguoiTao("system");
+        hoaDon.setNguoiSua("system");
+        hoaDon.setKhachHang(entityManager.find(KhachHang.class, 1L));
+        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
+        hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L));
+        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
 
         // Phí vận chuyển
-        BigDecimal shippingFee = BigDecimal.valueOf(30000); // 30,000 VND
+        BigDecimal shippingFee = BigDecimal.valueOf(30000);
         BigDecimal total = BigDecimal.ZERO;
 
         // Lưu hóa đơn trước
         hoaDonService.save(hoaDon);
-        System.out.println("HoaDon saved with ID: " + hoaDon.getId());
 
         // Tạo chi tiết hóa đơn
         for (CartItem item : cartItems) {
-            // Tìm sản phẩm chi tiết
             SanPhamChiTiet sanPhamChiTiet = entityManager.find(SanPhamChiTiet.class, item.getProductId());
             if (sanPhamChiTiet == null) {
                 return "redirect:/cart/orderinfor?error=ProductNotFound";
             }
-
-            // Tạo chi tiết hóa đơn
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
             hoaDonChiTiet.setHoaDon(hoaDon);
             hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
             hoaDonChiTiet.setSoLuong(item.getQuantity());
             hoaDonChiTiet.setGia(sanPhamChiTiet.getGia());
             hoaDonChiTiet.setThanhTien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(item.getQuantity())));
-            hoaDonChiTiet.setTrangThai(1); // Trạng thái mặc định
-
-            // Cộng dồn tổng tiền
+            hoaDonChiTiet.setTrangThai(1);
             total = total.add(hoaDonChiTiet.getThanhTien());
 
-            // Lưu chi tiết hóa đơn
             hoaDonService.saveHoaDonChiTiet(hoaDonChiTiet);
         }
 
@@ -309,10 +299,16 @@ public class CartController {
         hoaDon.setPhiVanChuyen(shippingFee);
         hoaDonService.save(hoaDon);
 
-        // Xóa giỏ hàng khỏi session
+        // Xóa giỏ hàng khỏi session sau khi thanh toán
         session.removeAttribute("cart");
 
-        return "redirect:/cart/orderinfor?success=OrderPlaced";
-    }
+        // Khởi tạo giỏ hàng trống mới trong trường hợp người dùng quay lại
+        session.setAttribute("cart", new ArrayList<CartItem>());
 
+
+        // Thêm hóa đơn vào model để gửi đến view
+        model.addAttribute("hoaDon", hoaDon);
+
+        return "admin/website/orderSuccess";
+    }
 }
