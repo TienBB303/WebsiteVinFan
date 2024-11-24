@@ -241,11 +241,11 @@
                                     </td>
                                     <td><input type="number" th:value="${spTam.so_luong}" name="so_luong"
                                                class="form-control"/></td>
-                                    <td>
-                                        <button class="btn btn-warning" onclick="deleteSanPhamTam(${spTam.id})">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
+<!--                                    <td>-->
+<!--                                        <button class="btn btn-warning" type="button" onclick="deleteSanPhamTam(${spTam.id})">-->
+<!--                                            <i class="bi bi-trash"></i>-->
+<!--                                        </button>-->
+<!--                                    </td>-->
                                 </tr>
                                 </tbody>
                             </table>
@@ -375,7 +375,7 @@
                                 <td>${item.congSuat.ten}</td>
                                 <td><input type="number" value="${item.gia}" name="gia" class="form-control"/></td>
                                 <td><input type="number" value="${item.so_luong}" name="so_luong" class="form-control"/></td>
-                                <td><button class="btn btn-warning"><i class="bi bi-trash"></i></button></td>
+<!--                                <td><button class="btn btn-warning"><i class="bi bi-trash"></i></button></td>-->
                             </tr>`;
                             tableBody.append(newRow);  // Thêm dòng mới vào bảng
                         });
@@ -384,7 +384,7 @@
                         Swal.fire({
                             toast: true,
                             icon: 'error',
-                            title: xhr.responseText, // Thông báo lỗi từ server
+                            title: xhr.responseText, // trả về thông báo lỗi controller
                             position: 'top-end',
                             showConfirmButton: false,
                             timer: 3000,
@@ -439,42 +439,28 @@
     </script>
 <!--Xóa sp tạm -->
     <script>
-        function deleteSanPhamTam(sanPhamTamId) {
-            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-                $.ajax({
-                    url: '/admin/san-pham/delete-tam',  // Endpoint xử lý xóa sản phẩm tạm
-                    type: 'DELETE',
-                    data: { sanPhamTamId: sanPhamTamId },
-                    success: function(response) {
-                        Swal.fire({
-                            toast: true,
-                            icon: 'success',
-                            title: 'Sản phẩm đã được xóa.',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true
-                        });
+        function deleteSanPhamTam(id) {
+            // Ngăn không cho form gửi
+            event.preventDefault();
 
-                        // Cập nhật lại bảng bằng cách xóa dòng hiện tại
-                        $(`tr[data-id="${sanPhamTamId}"]`).remove();
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            toast: true,
-                            icon: 'error',
-                            title: 'Xóa không thành công. Thử lại sau!',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true
-                        });
+            // Gửi yêu cầu xóa sản phẩm tạm
+            fetch(`/admin/san-pham/delete-tam/${id}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Xóa sản phẩm trong bảng
+                        document.querySelector(`tr[data-id="${id}"]`).remove();
+                    } else {
+                        alert("Lỗi khi xóa sản phẩm tạm!");
                     }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
                 });
-            }
         }
     </script>
-<!--multi select cho các option thêm : màu sắc, công suất, chê sdodoj gió-->
+    <!--multi select cho các option thêm : màu sắc, công suất, chê sdodoj gió-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const colorSelect = new Choices('#sanPhamMauSac', {
