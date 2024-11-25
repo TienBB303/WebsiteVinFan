@@ -67,7 +67,8 @@ public class PhieuGiam {
     @Column(name = "trang_thai")
     private boolean trangThai;
 
-    @ManyToOne
-    @JoinColumn(name = "id_san_pham")
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "id_san_pham", referencedColumnName = "id", nullable = true)
     private SanPham sanPham;
+
 }

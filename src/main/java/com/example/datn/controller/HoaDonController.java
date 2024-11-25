@@ -108,6 +108,15 @@ public class HoaDonController {
         }
         model.addAttribute("hoaDon", hoaDon);
 
+        String chuoi = hoaDon.getDiaChi();
+        String[] mang = chuoi.split(",");
+        model.addAttribute("tinh", mang[0]);
+        model.addAttribute("huyen", mang[1]);
+        model.addAttribute("xa", mang[2]);
+        model.addAttribute("chitietdiachi", mang[3]);
+
+
+
         //Lấy thông tin sp in hoa don
         List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
         model.addAttribute("listSPInHoaDon", list);
