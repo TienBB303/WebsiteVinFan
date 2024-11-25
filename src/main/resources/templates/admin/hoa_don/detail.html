@@ -250,7 +250,8 @@
                         </div>
                         <div class="text-end mt-3">
                             <div class="container">
-                                <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-danger"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#myModal2">
                                     Sửa hóa đơn
                                 </button>
@@ -271,38 +272,41 @@
                                                     <input type="hidden" id="quanHuyen" name="quanHuyen">
                                                     <input type="hidden" id="xaPhuong" name="xaPhuong">
                                                     <div class="mb-2">
-                                                        <input type="text" class="form-control" id="name1" th:name="tenMoi" placeholder="Tên người nhận">
+                                                        <input type="text" class="form-control" id="name1"
+                                                               th:name="tenMoi" placeholder="Tên người nhận">
                                                     </div>
                                                     <div class="mb-2">
                                                         <label class="form-label">Tỉnh/Thành phố</label>
-                                                        <select class="form-control" id="city" >
+                                                        <select class="form-control" id="city">
                                                             <option value="" selected>Chọn tỉnh thành</option>
                                                         </select>
                                                     </div>
                                                     <div class="mb-2">
                                                         <label class="form-label">Quận/Huyện</label>
-                                                        <select class="form-control" id="district" >
+                                                        <select class="form-control" id="district">
                                                             <option value="" selected>Chọn quận huyện</option>
                                                         </select>
                                                     </div>
                                                     <div class="mb-2">
                                                         <label class="form-label">Phường/Xã</label>
-                                                        <select class="form-control" id="ward" >
+                                                        <select class="form-control" id="ward">
                                                             <option value="" selected>Chọn phường xã</option>
                                                         </select>
                                                     </div>
                                                     <div class="mb-2">
                                                         <label class="form-label">Số nhà/ngõ đường</label>
-                                                        <input type="text" class="form-control" id="street" th:name="soNhaNgoDuong">
+                                                        <input type="text" class="form-control" id="street"
+                                                               th:name="soNhaNgoDuong">
                                                     </div>
                                                     <br>
                                                     <div class="mb-2">
-                                                        <input type="text" class="form-control" id="phoneNumber" th:name="soDienThoaiMoi" placeholder="Số điện thoại">
+                                                        <input type="text" class="form-control" id="phoneNumber"
+                                                               th:name="soDienThoaiMoi" placeholder="Số điện thoại">
                                                     </div>
 
-
-
-                                                    <button  type="submit" onclick="getCityValue()" class="btn btn-primary">Sửa</button>
+                                                    <button type="submit" onclick="getCityValue()"
+                                                            class="btn btn-primary">Sửa
+                                                    </button>
                                                 </form>
 
                                             </div>
@@ -320,10 +324,12 @@
                 </div>
             </div>
 
+
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h2><strong>Thông tin sản phẩm</strong></h2>
                 </div>
+
                 <table class="table table-bordered mt-3">
                     <thead>
                     <tr>
@@ -338,28 +344,26 @@
                     <tr th:each="item, iter : ${listHDCT}">
                         <td th:text="${iter.count}"></td>
                         <td th:text="${item.tenSanPham}"></td>
-                        <td th:text="${item.gia}"></td>
+                        <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
                         <td>
                             <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm">-</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-decrease">-</button>
                             <!-- Ô nhập số lượng -->
-                            <input type="number" class="form-control"
+                            <input type="number" class="form-control quantity-input"
                                    th:value="${item.soLuong}"
                                    min="1"
                                    style="width: 60px; text-align: center; display: inline-block;"/>
                             <!-- Nút Tăng -->
-                            <button type="button" class="btn btn-light-secondary btn-sm">+</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase">+</button>
                         </td>
-                        <td th:text="${item.thanhTien}"></td>
-                        <!--                            <td>-->
-                        <!--                                <input type="number" class="form-control" value="1">-->
-                        <!--                            </td>-->
+                        <td class="total" th:text="${#numbers.formatCurrency(item.thanhTien)}"></td>
                     </tr>
                     </tbody>
                 </table>
                 <div class="text-end mt-3">
                     <div class="container">
-                        <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-primary"
+                                data-bs-toggle="modal"
                                 data-bs-target="#myModal">
                             Thêm sản phẩm
                         </button>
@@ -374,46 +378,47 @@
                                                 aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                            <div class="input-group mb-3 ">
-                                                <input type="text" class="form-control" id="name"
-                                                       placeholder="Tìm kiếm sản phẩm">
-                                                <button type="button" class="btn btn-primary">Tìm kiếm</button>
-                                            </div>
+                                        <div class="input-group mb-3 ">
+                                            <input type="text" class="form-control" id="name"
+                                                   placeholder="Tìm kiếm sản phẩm">
+                                            <button type="button" class="btn btn-primary">Tìm kiếm</button>
+                                        </div>
 
-                                            <table class="table table-bordered mt-3">
-                                                <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Tên sản phẩm</th>
-                                                    <th>Màu sắc</th>
-                                                    <th>Công xuất</th>
-                                                    <th>Giá bán</th>
-                                                    <th>Số lượng</th>
-                                                    <th>Thao tác</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
-                                                    <td th:text="${iter.count}"></td>
-                                                    <td th:text="${item.sanPham.ten}"></td>
-                                                    <td th:text="${item.mauSac.ten}"></td>
-                                                    <td th:text="${item.congSuat.ten}"></td>
-                                                    <td th:text="${item.gia}"></td>
-                                                    <td th:text="${item.so_luong}"></td>
-                                                    <td>
-                                                        <form method="post" th:action="@{/hoa-don/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="me-2">
-                                                            <input type="hidden" name="idHD" th:value="${hoaDon.id}">
-                                                            <input type="hidden" name="idSP" th:value="${item.id}">
-                                                            <input type="hidden" name="gia" th:value="${item.gia}">
-                                                            <input type="hidden" name="soLuong" th:value="${item.so_luong}">
-                                                            <button type="submit" class="btn btn-danger">
-                                                                <i class=""></i> ADD
-                                                            </button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
+                                        <table class="table table-bordered mt-3">
+                                            <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Màu sắc</th>
+                                                <th>Công xuất</th>
+                                                <th>Giá bán</th>
+                                                <th>Số lượng</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
+                                                <td th:text="${iter.count}"></td>
+                                                <td th:text="${item.sanPham.ten}"></td>
+                                                <td th:text="${item.mauSac.ten}"></td>
+                                                <td th:text="${item.congSuat.ten}"></td>
+                                                <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
+                                                <td th:text="${item.so_luong}"></td>
+                                                <td>
+                                                    <form method="post" th:action="@{/hoa-don/addSPCT}"
+                                                          th:object="${addSPToHoaDonChiTietRequest}" class="me-2">
+                                                        <input type="hidden" name="idHD" th:value="${hoaDon.id}">
+                                                        <input type="hidden" name="idSP" th:value="${item.id}">
+                                                        <input type="hidden" name="gia" th:text="${#numbers.formatCurrency(item.gia)}">
+                                                        <input type="hidden" name="soLuong" th:value="${item.so_luong}">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class=""></i> ADD
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
 
                                     <div class="modal-footer">
@@ -518,9 +523,6 @@
             }
 
 
-
-
-
             var parameter = {
                 url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
                 method: "GET",
@@ -561,9 +563,8 @@
                     }
                 };
             }
-
-
         </script>
+
     </div>
 </div>
 </body>
