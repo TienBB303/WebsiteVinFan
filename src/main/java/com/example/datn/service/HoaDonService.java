@@ -51,7 +51,17 @@ public interface HoaDonService {
 
     HoaDonChiTiet convertToEntity(AddSPToHoaDonChiTietRequest dto, HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
 
-    List<HoaDonOff> getAllHoaDonOff();
+    boolean xacNhanHoaDon(long id);
+
+    boolean huyHoaDon(long id);
+
+    void updateTongTienHoaDon();
+
+//    void updateSoLuong(Long id, Integer soLuong);
+    //
+
+
+    List<HoaDonOff> getAllHoaDonOff( );
 
     String generateOrderCode();
 

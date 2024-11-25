@@ -234,7 +234,8 @@
                         </div>
                         <div class="text-end mt-3">
                             <div class="container">
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-danger"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#myModal2">
                                     Sửa hóa đơn
                                 </button>
@@ -254,11 +255,13 @@
                                                     <input type="hidden" id="quanHuyen" th:value="${huyen}"/>
                                                     <input type="hidden" id="xaPhuong" th:value="${xa}"/>
                                                     <input type="hidden" name="id" th:value="${hoaDon.id}">
+                                                  
                                                     <div class="mb-3">
                                                         <input type="text" class="form-control" id="name1" th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}" placeholder="Tên người nhận">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Tỉnh/Thành phố</label>
+
                                                         <select class="form-control" id="city" name="tinhThanhPho">
                                                             <option value="" selected>Chọn tỉnh thành</option>
                                                         </select>
@@ -304,10 +307,12 @@
                 </div>
             </div>
 
+
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h2><strong>Thông tin sản phẩm</strong></h2>
                 </div>
+
                 <table class="table table-bordered mt-3">
                     <thead>
                     <tr>
@@ -322,28 +327,26 @@
                     <tr th:each="item, iter : ${listHDCT}">
                         <td th:text="${iter.count}"></td>
                         <td th:text="${item.tenSanPham}"></td>
-                        <td th:text="${item.gia}"></td>
+                        <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
                         <td>
                             <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm" >-</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-decrease">-</button>
                             <!-- Ô nhập số lượng -->
-                            <input type="number" class="form-control"
+                            <input type="number" class="form-control quantity-input"
                                    th:value="${item.soLuong}"
                                    min="1"
                                    style="width: 60px; text-align: center; display: inline-block;" />
                             <!-- Nút Tăng -->
-                            <button type="button" class="btn btn-light-secondary btn-sm">+</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase">+</button>
                         </td>
-                        <td th:text="${item.thanhTien}"></td>
-                        <!--                            <td>-->
-                        <!--                                <input type="number" class="form-control" value="1">-->
-                        <!--                            </td>-->
+                        <td class="total" th:text="${#numbers.formatCurrency(item.thanhTien)}"></td>
                     </tr>
                     </tbody>
                 </table>
                 <div class="text-end mt-3">
                     <div class="container">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-primary"
+                                data-bs-toggle="modal"
                                 data-bs-target="#myModal">
                             Thêm sản phẩm
                         </button>
@@ -358,36 +361,47 @@
                                                 aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form>
-                                            <div class="input-group mb-3 ">
-                                                <input type="text" class="form-control" id="name"
-                                                       placeholder="Tìm kiếm sản phẩm">
-                                                <button type="button" class="btn btn-primary">Tìm kiếm</button>
-                                            </div>
+                                        <div class="input-group mb-3 ">
+                                            <input type="text" class="form-control" id="name"
+                                                   placeholder="Tìm kiếm sản phẩm">
+                                            <button type="button" class="btn btn-primary">Tìm kiếm</button>
+                                        </div>
 
-                                            <table class="table table-bordered mt-3">
-                                                <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Tên sản phẩm</th>
-                                                    <th>Giá bán</th>
-                                                    <th>Số lượng</th>
-                                                    <th>Thao tác</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr th:each="item, iter : ${listSPInHoaDon}">
-                                                    <td th:text="${iter.count}"></td>
-                                                    <td th:text="${item.tenSanPham}"></td>
-                                                    <td th:text="${item.gia}"></td>
-                                                    <td th:text="${item.soLuong}"></td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-primary">ADD</button>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </form>
+                                        <table class="table table-bordered mt-3">
+                                            <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Màu sắc</th>
+                                                <th>Công xuất</th>
+                                                <th>Giá bán</th>
+                                                <th>Số lượng</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
+                                                <td th:text="${iter.count}"></td>
+                                                <td th:text="${item.sanPham.ten}"></td>
+                                                <td th:text="${item.mauSac.ten}"></td>
+                                                <td th:text="${item.congSuat.ten}"></td>
+                                                <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
+                                                <td th:text="${item.so_luong}"></td>
+                                                <td>
+                                                    <form method="post" th:action="@{/hoa-don/addSPCT}"
+                                                          th:object="${addSPToHoaDonChiTietRequest}" class="me-2">
+                                                        <input type="hidden" name="idHD" th:value="${hoaDon.id}">
+                                                        <input type="hidden" name="idSP" th:value="${item.id}">
+                                                        <input type="hidden" name="gia" th:text="${#numbers.formatCurrency(item.gia)}">
+                                                        <input type="hidden" name="soLuong" th:value="${item.so_luong}">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class=""></i> ADD
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
 
                                     <div class="modal-footer">
@@ -471,7 +485,6 @@
             var idHuyen = document.getElementById("quanHuyen").value;
             var idXa = document.getElementById("xaPhuong").value;
 
-
             console.log(idTinh)
             console.log(idHuyen)
             console.log(idXa)
@@ -549,6 +562,7 @@
                 };
             }
         </script>
+
     </div>
 </div>
 </body>

@@ -170,7 +170,7 @@
                                         </td>
 
                                         <td th:text="${item.ngayTao}"></td>
-                                        <td th:text="${item.tongTien}"></td>
+                                        <td th:text="${#numbers.formatCurrency(item.tongTien)}"></td>
 
                                         <!--                                    <td>-->
                                         <!--                                        <li th:each="thanhToan : ${hoaDon.thanhToan}">-->
