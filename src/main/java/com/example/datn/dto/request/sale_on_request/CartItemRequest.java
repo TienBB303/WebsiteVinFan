@@ -1,4 +1,4 @@
-package com.example.datn.entity;
+package com.example.datn.dto.request.sale_on_request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,13 +7,14 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor
 @NoArgsConstructor
-@Getter@Setter
-public class CartItem {
+@AllArgsConstructor
+@Getter
+@Setter
+public class CartItemRequest {
     private Long productId;
     private String name;
-    private Double price;
+    private BigDecimal price;
     private int quantity;
     private BigDecimal discountedPrice;
 }

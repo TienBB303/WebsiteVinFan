@@ -1,8 +1,8 @@
-package com.example.datn.controller;
+package com.example.datn.controller.sale_on_controller;
 
-import com.example.datn.entity.PhieuGiamSanPham;
+import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
 import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.repository.PhieuGiamSanPhamRepo;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
 import com.example.datn.repository.SPCTRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

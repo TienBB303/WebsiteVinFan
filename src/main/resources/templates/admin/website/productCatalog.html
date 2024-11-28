@@ -23,6 +23,7 @@
     .navbar-brand img {
         transition: transform 0.3s;
     }
+
     .navbar-brand img:hover {
         transform: scale(1.1);
     }
@@ -41,6 +42,7 @@
         outline: none;
         transition: border-color 0.3s;
     }
+
     .search-bar input:focus {
         border-color: #007bff;
     }
@@ -58,6 +60,7 @@
         cursor: pointer;
         transition: background-color 0.3s;
     }
+
     .search-bar button:hover {
         background-color: #0056b3;
     }
@@ -75,6 +78,7 @@
         margin-left: 15px;
         transition: color 0.3s;
     }
+
     .icons-section a:hover {
         color: #007bff;
     }
@@ -88,6 +92,7 @@
         border-radius: 12px;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
+
     .carousel-item img {
         object-fit: cover;
         width: 100%;
@@ -103,6 +108,7 @@
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
+
     .product-card:hover {
         transform: scale(1.05);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
@@ -119,11 +125,13 @@
         font-weight: bold;
         color: #e74c3c;
     }
+
     .old-price {
         text-decoration: line-through;
         color: #888;
         margin-right: 10px;
     }
+
     .discount-badge {
         position: absolute;
         top: 10px;
@@ -146,6 +154,7 @@
         border-radius: 8px;
         transition: background-color 0.3s, transform 0.2s;
     }
+
     .btn-primary:hover {
         background-color: #4178c0;
         transform: translateY(-2px);
@@ -161,6 +170,7 @@
         transition: background-color 0.3s, transform 0.2s;
         margin-top: 10px;
     }
+
     .btn-success:hover {
         background-color: #218838;
         transform: translateY(-2px);
@@ -173,13 +183,30 @@
         padding: 20px 0;
         text-align: center;
     }
+
     .footer-info {
         font-size: 14px;
         color: #6c757d;
     }
+
     .footer-info p {
         margin-bottom: 0.5rem;
+
     }
+    /* Giá gốc màu đen */
+    .old-price {
+        color: #333;  /* Màu đen */
+        text-decoration: line-through; /* Gạch bỏ */
+    }
+    .main-price {
+        color: #333;  /* Màu đen */
+    }
+
+    /* Giá giảm màu đỏ */
+    .discount-price {
+        color: #e74c3c;  /* Màu đỏ */
+    }
+
 </style>
 <body>
 <!-- Navigation -->
@@ -215,7 +242,6 @@
                     <a th:href="@{/login}">Đăng nhập</a>
                 </div>
             </div>
-
 
 
             <div class="contact-info me-4">
@@ -308,21 +334,26 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="card product-card h-100">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title product-title" th:text="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
+                            <h5 class="card-title product-title"
+                                th:text="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
 
                             <!-- Hiển thị giảm giá nếu có -->
                             <p class="card-text text-danger" th:if="${phieuGiamSanPham.phieuGiam.giaTriGiam > 0}">
-                                Giảm: <span th:text="'-' + ${#numbers.formatDecimal(phieuGiamSanPham.phieuGiam.giaTriGiam, 1, 1)} + ' đ'">-0đ</span>
+                                Giảm: <span class="discount-price"
+                                            th:text="${#numbers.formatDecimal(phieuGiamSanPham.phieuGiam.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
                             </p>
 
                             <!-- Gạch bỏ giá gốc và hiển thị giá đã giảm -->
                             <p class="card-text">
-                                <span class="old-price text-decoration-line-through" th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}" th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 1)}">0đ</span>
+                                <span class="old-price text-decoration-line-through"
+                                      th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}"
+                                      th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0đ</span>
                             </p>
 
                             <!-- Hiển thị giá sau khi giảm -->
                             <p class="card-text">
-                                <span class="product-price text-danger" th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 1)}">0đ</span>
+                                <span class="main-price product-price"
+                                      th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0đ</span>
                             </p>
 
                             <div class="mt-auto">
@@ -330,10 +361,14 @@
 
                                 <!-- Form thêm vào giỏ hàng -->
                                 <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
-                                    <input type="hidden" name="productId" th:value="${phieuGiamSanPham.sanPhamChiTiet.id}"/>
-                                    <input type="hidden" name="name" th:value="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}"/>
-                                    <input type="hidden" name="price" th:value="${phieuGiamSanPham.sanPhamChiTiet.gia}"/>
-                                    <input type="hidden" name="discountedPrice" th:value="${phieuGiamSanPham.giaSauGiam}"/>
+                                    <input type="hidden" name="productId"
+                                           th:value="${phieuGiamSanPham.sanPhamChiTiet.id}"/>
+                                    <input type="hidden" name="name"
+                                           th:value="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}"/>
+                                    <input type="hidden" name="price"
+                                           th:value="${phieuGiamSanPham.sanPhamChiTiet.gia}"/>
+                                    <input type="hidden" name="discountedPrice"
+                                           th:value="${phieuGiamSanPham.giaSauGiam}"/>
                                     <input type="hidden" name="quantity" value="1"/> <!-- Mặc định số lượng là 1 -->
                                     <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
                                 </form>
@@ -348,11 +383,13 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="card product-card h-100">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
+                            <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản
+                                phẩm</h5>
 
                             <!-- Hiển thị giá bình thường nếu không có giảm giá -->
                             <p class="card-text">
-                                <span class="product-price" th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 1)}">0đ</span>
+                                <span class="product-price main-price"
+                                      th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0đ</span>
                             </p>
 
                             <div class="mt-auto">
@@ -363,7 +400,8 @@
                                     <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
                                     <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
                                     <input type="hidden" name="price" th:value="${sanPhamChiTiet.gia}"/>
-                                    <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/> <!-- Không có giảm giá thì discountedPrice = giá -->
+                                    <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/>
+                                    <!-- Không có giảm giá thì discountedPrice = giá -->
                                     <input type="hidden" name="quantity" value="1"/> <!-- Mặc định số lượng là 1 -->
                                     <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
                                 </form>
@@ -428,6 +466,71 @@
                     });
                 }
             });
+        });
+    });
+</script>
+<script>
+    // Hàm định dạng giá tiền VND
+    function formatCurrency(amount) {
+        const formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
+        });
+        return formatter.format(amount);
+    }
+
+    // Định dạng giá sản phẩm có giảm giá và không có giảm giá
+    document.addEventListener("DOMContentLoaded", function () {
+        // Định dạng các giá tiền
+        const priceElements = document.querySelectorAll('.product-price');  // Tìm tất cả các thẻ có class 'product-price'
+
+        priceElements.forEach(function (element) {
+            // Lấy giá từ thuộc tính th:if hoặc giá trị chứa trong thẻ
+            let priceText = element.innerText.replace('đ', '').replace('₫', '').trim();  // Loại bỏ dấu "đ" hoặc "₫"
+            let price = parseFloat(priceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
+
+            // Nếu giá hợp lệ, định dạng lại giá
+            if (!isNaN(price)) {
+                element.innerText = formatCurrency(price);  // Định dạng giá
+            }
+        });
+
+        // Định dạng giá đã giảm
+        const discountPriceElements = document.querySelectorAll('.old-price');  // Tìm các giá đã giảm
+        discountPriceElements.forEach(function (element) {
+            let discountPriceText = element.innerText.replace('đ', '').replace('₫', '').trim();
+            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());
+
+            if (!isNaN(discountPrice)) {
+                element.innerText = formatCurrency(discountPrice);  // Định dạng giá đã giảm
+            }
+        });
+    });
+</script>
+<script>
+    // Hàm định dạng giá tiền VND
+    function formatCurrency(amount) {
+        const formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
+        });
+        return formatter.format(amount);
+    }
+
+    // Định dạng giá trị giảm giá sau khi tải trang
+    document.addEventListener("DOMContentLoaded", function () {
+        const discountPriceElements = document.querySelectorAll('.discount-price');  // Tìm tất cả các thẻ có class 'discount-price'
+
+        discountPriceElements.forEach(function (element) {
+            let discountPriceText = element.innerText.replace('đ', '').trim();  // Loại bỏ dấu "đ"
+            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
+
+            // Nếu giá trị giảm giá hợp lệ, định dạng lại giá
+            if (!isNaN(discountPrice)) {
+                element.innerText = '-' + formatCurrency(discountPrice);  // Thêm dấu '-' và định dạng giá
+            }
         });
     });
 </script>
