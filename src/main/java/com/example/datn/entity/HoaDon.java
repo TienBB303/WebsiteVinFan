@@ -3,6 +3,7 @@ package com.example.datn.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,12 +41,15 @@ public class HoaDon {
     @Column(name = "sdt_nguoi_nhan")
     String sdtNguoiNhan;
     @Column(name = "tong_tien")
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal tongTien;
     @Column(name = "tong_tien_sau_giam_gia")
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal tongTienSauGiamGia;
     @Column(name = "dia_chi")
     String diaChi;
     @Column(name = "phi_van_chuyen")
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal phiVanChuyen;
     @Column(name = "ghi_chu")
     String ghiChu;
