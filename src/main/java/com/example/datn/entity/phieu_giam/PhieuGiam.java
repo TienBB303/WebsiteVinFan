@@ -1,5 +1,6 @@
-package com.example.datn.entity;
+package com.example.datn.entity.phieu_giam;
 
+import com.example.datn.entity.SanPham;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

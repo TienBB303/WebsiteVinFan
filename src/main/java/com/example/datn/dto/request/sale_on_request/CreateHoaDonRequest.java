@@ -1,6 +1,6 @@
-package com.example.datn.dto.request;
+package com.example.datn.dto.request.sale_on_request;
 
-import com.example.datn.entity.CartItem;
+import com.example.datn.entity.sale_on.CartItem;
 import lombok.*;
 
 import java.util.List;
