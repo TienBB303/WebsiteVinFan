@@ -3,6 +3,8 @@ package com.example.datn.service.Implements;
 
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.thuoc_tinh.CongSuat;
+import com.example.datn.entity.thuoc_tinh.MauSac;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.repository.SanPhamRepo;
 import com.example.datn.service.SanPhamService;
@@ -58,6 +60,16 @@ public class SanPhamImp implements SanPhamService {
     }
 
     @Override
+    public Boolean update(SanPham sanPham) {
+        if (sanPhamRepo.existsById(sanPham.getId())) {
+            sanPhamRepo.save(sanPham);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
     public Boolean delete(Long id) {
         if (spctRepo.existsById(id)) {
             spctRepo.deleteById(id);
@@ -95,4 +107,40 @@ public class SanPhamImp implements SanPhamService {
     public List<SanPhamChiTiet> timSanPhamTheoTen(String ten) {
         return spctRepo.timKiemTheoTen(ten);
     }
+
+    @Override
+    public Boolean tatCaSanPhamTrangThaiOff(Long sanPhamId) {
+        List<SanPhamChiTiet> list = spctRepo.findBySanPhamId(sanPhamId);
+        return list.stream().allMatch(chiTiet -> !chiTiet.getTrang_thai());
+    }
+
+    @Override
+    public Boolean motSanPhamTrangThaiOn(Long sanPhamId) {
+        List<SanPhamChiTiet> list = spctRepo.findBySanPhamId(sanPhamId);
+        return list.stream().anyMatch(SanPhamChiTiet::getTrang_thai);
+    }
+
+    @Override
+    public Boolean checkTrungLap(String ten, CongSuat congSuat, MauSac mauSac) {
+        List<SanPhamChiTiet> listSpct = spctRepo.timKiemTheoTen(ten);
+
+        for (SanPhamChiTiet sp : listSpct) {
+            if (sp.getCongSuat().equals(congSuat) && sp.getMauSac().equals(mauSac)) {
+                return true; // Trùng lặp
+            }
+        }
+        return false; // Không trùng
+    }
+
+    @Override
+    public Boolean checkHetSoLuong(Long sanPhamId) {
+        List<SanPhamChiTiet> listSpct = spctRepo.findBySanPhamId(sanPhamId);
+        for (SanPhamChiTiet sp : listSpct) {
+            if (sp.getSo_luong() <= 0) {
+                return true; // hết hàng
+            }
+        }
+        return false; // Còn hàng
+    }
+
 }

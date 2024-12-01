@@ -2,6 +2,8 @@ package com.example.datn.service;
 
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.thuoc_tinh.CongSuat;
+import com.example.datn.entity.thuoc_tinh.MauSac;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,6 +22,8 @@ public interface SanPhamService {
 
     Boolean update(SanPhamChiTiet sanPhamChiTiet);
 
+    Boolean update(SanPham sanPham);
+
     Boolean delete(Long id);
 
     String taoMaTuDong();
@@ -29,4 +33,13 @@ public interface SanPhamService {
     BigDecimal getSanPhamGiaLonNhat();
 
     List<SanPhamChiTiet> timSanPhamTheoTen(String ten);
+
+    Boolean tatCaSanPhamTrangThaiOff(Long sanPhamId);
+
+    Boolean motSanPhamTrangThaiOn(Long sanPhamId);
+
+    Boolean checkTrungLap(String ten, CongSuat congSuat, MauSac mauSac);
+
+    Boolean checkHetSoLuong(Long sanPhamId);
+
 }

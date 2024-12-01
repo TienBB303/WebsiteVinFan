@@ -1,15 +1,11 @@
-package com.example.datn.repository;
+package com.example.datn.repository.phieu_giam_repo;
 
-import com.example.datn.entity.PhieuGiam;
-import com.example.datn.entity.SanPham;
-import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
