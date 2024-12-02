@@ -2,7 +2,7 @@ package com.example.datn.service;
 
 import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.HoaDonOffChiTiet;
-import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import com.example.datn.repository.BanOffRepo.HoaDonOffChiTietRepo;
 import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
 import org.springframework.beans.factory.annotation.Autowired;

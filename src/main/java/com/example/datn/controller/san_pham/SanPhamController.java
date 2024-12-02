@@ -1,19 +1,18 @@
-package com.example.datn.controller;
+package com.example.datn.controller.san_pham;
 
-import com.example.datn.entity.SanPham;
-import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.entity.SanPhamChiTietTam;
-import com.example.datn.entity.SanPhamTam;
+import com.example.datn.entity.san_pham.SanPham;
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
+import com.example.datn.entity.san_pham.SanPhamChiTietTam;
+import com.example.datn.entity.san_pham.SanPhamTam;
 import com.example.datn.entity.thuoc_tinh.*;
-import com.example.datn.repository.SPCTRepo;
-import com.example.datn.repository.SanPhamRepo;
+import com.example.datn.repository.san_pham_repo.SPCTRepo;
+import com.example.datn.repository.san_pham_repo.SanPhamRepo;
 import com.example.datn.repository.ThuocTinhRepo.*;
 import com.example.datn.service.SanPhamService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -206,7 +205,6 @@ public class SanPhamController {
                     sanPhamChiTietTam.setNgay_tao(new Date());
                     sanPhamChiTietTam.setNguoi_tao("admin");
 
-
                     listSPCTTam.add(sanPhamChiTietTam);
                 }
             }
@@ -245,7 +243,11 @@ public class SanPhamController {
             if (soLuong < 0 || soLuong > 500) {
                 return ResponseEntity.badRequest().body("Số lượng phải nằm trong khoảng 0 - 500.");
             }
-
+            if (soLuong <= 0) {
+                spTam.setTrang_thai(false); // Tắt trạng thái nếu hết hàng
+            } else {
+                spTam.setTrang_thai(true); // Bật trạng thái nếu còn hàng
+            }
             // Cập nhật giá và số lượng
             spTam.setGia(gia);
             spTam.setSo_luong(soLuong);
@@ -282,6 +284,11 @@ public class SanPhamController {
             sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
             sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
 
+            if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
+                sanPham.setTrang_thai(true); // Tắt sản phẩm nếu tất cả biến thể đều tắt
+            } else {
+                sanPham.setTrang_thai(false); // Bật sản phẩm nếu còn ít nhất 1 biến thể bật
+            }
             listSPCT.add(sanPhamChiTiet);
         }
 

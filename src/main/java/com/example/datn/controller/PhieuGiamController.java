@@ -2,12 +2,12 @@ package com.example.datn.controller;
 
 import com.example.datn.entity.PhieuGiam;
 import com.example.datn.entity.PhieuGiamSanPham;
-import com.example.datn.entity.SanPham;
-import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.san_pham.SanPham;
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import com.example.datn.repository.PhieuGiamRepo;
 import com.example.datn.repository.PhieuGiamSanPhamRepo;
-import com.example.datn.repository.SPCTRepo;
-import com.example.datn.repository.SanPhamRepo;
+import com.example.datn.repository.san_pham_repo.SPCTRepo;
+import com.example.datn.repository.san_pham_repo.SanPhamRepo;
 import com.example.datn.service.PhieuGiamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

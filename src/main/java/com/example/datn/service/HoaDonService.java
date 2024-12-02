@@ -8,7 +8,7 @@ import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.HoaDonOff;
-import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

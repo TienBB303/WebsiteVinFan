@@ -1,12 +1,12 @@
 //package com.example.datn.controller;
 //
-//import com.example.datn.entity.SanPham;
-//import com.example.datn.entity.SanPhamChiTiet;
-//import com.example.datn.entity.SanPhamChiTietTam;
-//import com.example.datn.entity.SanPhamTam;
+//import com.example.datn.entity.san_pham;
+//import com.example.datn.entity.san_pham.SanPhamChiTiet;
+//import com.example.datn.entity.san_pham.SanPhamChiTietTam;
+//import com.example.datn.entity.san_pham.SanPhamTam;
 //import com.example.datn.entity.thuoc_tinh.*;
-//import com.example.datn.repository.SPCTRepo;
-//import com.example.datn.repository.SanPhamRepo;
+//import com.example.datn.repository.san_pham_repo.SPCTRepo;
+//import com.example.datn.repository.san_pham_repo.SanPhamRepo;
 //import com.example.datn.repository.ThuocTinhRepo.*;
 //import com.example.datn.service.SanPhamService;
 //import jakarta.servlet.http.HttpSession;
@@ -249,7 +249,7 @@
 //        }
 //
 //        // confirm
-//        SanPham sanPham = new SanPham();
+//        san_pham sanPham = new san_pham();
 //        List<SanPhamChiTiet> listSPCT = new ArrayList<>();
 //
 //        for (SanPhamChiTietTam spTam : sanPhamChiTietTamList) {
@@ -332,7 +332,7 @@
 //                return "redirect:/admin/san-pham";
 //            }
 //
-//            SanPham sanPham = sanPhamChiTiet.getSanPham();
+//            san_pham sanPham = sanPhamChiTiet.getSanPham();
 //            sanPham.setTen(ten);
 //            sanPham.setMo_ta(moTa);
 //            sanPham.setNgay_sua(new Date());

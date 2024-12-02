@@ -1,5 +1,6 @@
 package com.example.datn.entity;
 
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +27,7 @@ public class HoaDonChiTiet {
     @JoinColumn(
             name = "id_san_pham_chi_tiet"
     )
-     SanPhamChiTiet sanPhamChiTiet;
+    SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "so_luong")
      Integer soLuong;

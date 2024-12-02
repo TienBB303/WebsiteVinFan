@@ -1,6 +1,6 @@
-package com.example.datn.repository;
+package com.example.datn.repository.san_pham_repo;
 
-import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

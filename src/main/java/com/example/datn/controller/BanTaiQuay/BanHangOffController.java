@@ -1,28 +1,18 @@
 package com.example.datn.controller.BanTaiQuay;
 
-import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.HoaDonOffChiTiet;
-import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.repository.BanOffRepo.HoaDonOffChiTietRepo;
-import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
-import com.example.datn.repository.SPCTRepo;
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import com.example.datn.service.BanHangOffService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.SanPhamService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/ban-hang-tai-quay")

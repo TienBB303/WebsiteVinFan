@@ -1,10 +1,10 @@
 package com.example.datn.service;
 
-import com.example.datn.entity.SanPham;
-import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.san_pham.SanPham;
+import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import com.example.datn.repository.PhieuGiamRepo;
-import com.example.datn.repository.SPCTRepo;
-import com.example.datn.repository.SanPhamRepo;
+import com.example.datn.repository.san_pham_repo.SPCTRepo;
+import com.example.datn.repository.san_pham_repo.SanPhamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
