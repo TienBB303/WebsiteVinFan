@@ -1,7 +1,7 @@
 package com.example.datn.service;
 
-import com.example.datn.entity.san_pham.SanPham;
-import com.example.datn.entity.san_pham.SanPhamChiTiet;
+import com.example.datn.entity.SanPham;
+import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.entity.thuoc_tinh.CongSuat;
 import com.example.datn.entity.thuoc_tinh.MauSac;
 import org.springframework.data.domain.Page;

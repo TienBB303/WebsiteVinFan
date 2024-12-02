@@ -1,18 +1,19 @@
-package com.example.datn.controller.san_pham;
+package com.example.datn.controller;
 
-import com.example.datn.entity.san_pham.SanPham;
-import com.example.datn.entity.san_pham.SanPhamChiTiet;
-import com.example.datn.entity.san_pham.SanPhamChiTietTam;
-import com.example.datn.entity.san_pham.SanPhamTam;
+import com.example.datn.entity.SanPham;
+import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.SanPhamChiTietTam;
+import com.example.datn.entity.SanPhamTam;
 import com.example.datn.entity.thuoc_tinh.*;
-import com.example.datn.repository.san_pham_repo.SPCTRepo;
-import com.example.datn.repository.san_pham_repo.SanPhamRepo;
+import com.example.datn.repository.SPCTRepo;
+import com.example.datn.repository.SanPhamRepo;
 import com.example.datn.repository.ThuocTinhRepo.*;
 import com.example.datn.service.SanPhamService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

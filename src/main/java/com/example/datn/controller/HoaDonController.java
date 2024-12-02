@@ -9,7 +9,7 @@ import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.LichSuHoaDon;
-import com.example.datn.entity.san_pham.SanPhamChiTiet;
+import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;

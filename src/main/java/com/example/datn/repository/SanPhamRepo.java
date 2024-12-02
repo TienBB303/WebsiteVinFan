@@ -1,6 +1,6 @@
-package com.example.datn.repository.san_pham_repo;
+package com.example.datn.repository;
 
-import com.example.datn.entity.san_pham.SanPham;
+import com.example.datn.entity.SanPham;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

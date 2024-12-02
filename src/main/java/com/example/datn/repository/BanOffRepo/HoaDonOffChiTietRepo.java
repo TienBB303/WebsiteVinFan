@@ -2,7 +2,7 @@ package com.example.datn.repository.BanOffRepo;
 
 import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.HoaDonOffChiTiet;
-import com.example.datn.entity.san_pham.SanPhamChiTiet;
+import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

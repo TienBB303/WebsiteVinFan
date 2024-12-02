@@ -4,7 +4,7 @@ import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
-import com.example.datn.entity.san_pham.SanPhamChiTiet;
+import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

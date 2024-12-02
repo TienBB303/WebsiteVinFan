@@ -2,7 +2,6 @@ package com.example.datn.controller;
 
 import com.example.datn.dto.request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
-import com.example.datn.entity.san_pham.SanPhamChiTiet;
 import com.example.datn.service.HoaDonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;

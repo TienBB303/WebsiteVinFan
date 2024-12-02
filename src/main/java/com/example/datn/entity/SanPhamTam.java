@@ -1,4 +1,4 @@
-package com.example.datn.entity.san_pham;
+package com.example.datn.entity;
 
 import com.example.datn.entity.thuoc_tinh.KieuQuat;
 import jakarta.persistence.JoinColumn;

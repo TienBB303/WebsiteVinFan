@@ -1,9 +1,9 @@
 package com.example.datn.controller;
 
 import com.example.datn.entity.PhieuGiamSanPham;
-import com.example.datn.entity.san_pham.SanPhamChiTiet;
+import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.PhieuGiamSanPhamRepo;
-import com.example.datn.repository.san_pham_repo.SPCTRepo;
+import com.example.datn.repository.SPCTRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
