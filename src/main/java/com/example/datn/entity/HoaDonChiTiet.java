@@ -3,6 +3,7 @@ package com.example.datn.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.math.BigDecimal;
 
@@ -20,20 +21,25 @@ public class HoaDonChiTiet {
 
     @ManyToOne
     @JoinColumn(name = "id_hoa_don")
-     HoaDon hoaDon;
+    HoaDon hoaDon;
 
     @ManyToOne
     @JoinColumn(
             name = "id_san_pham_chi_tiet"
     )
-     SanPhamChiTiet sanPhamChiTiet;
+    SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "so_luong")
-     Integer soLuong;
+    Integer soLuong;
+
     @Column(name = "gia_ban")
-     BigDecimal gia;
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
+    BigDecimal gia;
+
     @Column(name = "thanh_tien")
-     BigDecimal thanhTien;
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
+    BigDecimal thanhTien;
+
     @Column(name = "trang_thai")
-     Integer trangThai;
+    Integer trangThai;
 }

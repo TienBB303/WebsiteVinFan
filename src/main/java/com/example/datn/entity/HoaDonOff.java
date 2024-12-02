@@ -1,5 +1,6 @@
 package com.example.datn.entity;
 
+import com.example.datn.entity.phieu_giam.PhieuGiam;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,15 +1,14 @@
-package com.example.datn.service;
+package com.example.datn.service.phieu_giam_service;
 
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.repository.PhieuGiamRepo;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.repository.SanPhamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
 @Service
 public class PhieuGiamService {
     @Autowired

@@ -199,13 +199,13 @@
             <th:block th:each="item : ${cartItems}">
                 <li>
                     <span class="item-name" th:text="${item.name}">Tên sản phẩm</span>
-                    <span class="item-price" th:text="${item.price}">0</span>
+                    <span class="item-price" th:text="${#numbers.formatDecimal(item.price, 0, '0') + 'đ'}">0</span>
                     <div class="item-quantity">
                         <button class="decrease-quantity" th:attr="data-id=${item.productId}">-</button>
                         <input type="number" min="1" value="1" th:value="${item.quantity}" th:attr="data-id=${item.productId}" class="quantity-input">
                         <button class="increase-quantity" th:attr="data-id=${item.productId}">+</button>
                     </div>
-                    <span class="item-total" th:text="${item.price * item.quantity}">0</span>
+                    <span class="item-total" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, '0')}">0</span>
                     <div class="item-remove">
                         <button class="remove-item" th:attr="data-id=${item.productId}">Xóa</button>
                     </div>
@@ -225,14 +225,29 @@
     const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute("content");
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute("content");
 
+    // Hàm định dạng giá ban đầu khi hiển thị giỏ hàng
+    function formatItemPrices() {
+        document.querySelectorAll('.item-total, .item-price').forEach(totalElement => {
+            let price = parseFloat(totalElement.textContent.replace(/\./g, '').replace(/[^0-9.-]+/g, '')); // Xóa dấu chấm và ký tự không phải số
+            totalElement.textContent = price.toLocaleString('vi-VN'
+                , { style: 'currency', currency: 'VND' });
+        });
+        updateTotalPrice(); // Cập nhật tổng tiền khi giá đã được định dạng
+    }
+
     // Hàm cập nhật tổng tiền
     function updateTotalPrice() {
         let totalPrice = 0;
         document.querySelectorAll('.item-total').forEach(totalElement => {
-            totalPrice += parseFloat(totalElement.textContent.replace(/\./g, ''));
+            totalPrice += parseFloat(totalElement.textContent.replace(/\./g, '').replace(/[^0-9.-]+/g, '')); // Xử lý giá trị để tính tổng
         });
-        document.querySelector('.total-price span').textContent = totalPrice.toLocaleString('vi-VN');
+        document.querySelector('.total-price span').textContent = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
+
+    // Định dạng lại giá khi trang được tải
+    document.addEventListener('DOMContentLoaded', function () {
+        formatItemPrices(); // Định dạng giá ngay khi tải trang
+    });
 
     // Kiểm tra giỏ hàng trống khi nhấn "Thanh toán"
     document.querySelector('.checkout-btn').addEventListener('click', function (event) {
@@ -320,7 +335,7 @@
             }
             let price = parseFloat(this.closest('li').querySelector('.item-price').textContent);
             let totalElement = this.closest('li').querySelector('.item-total');
-            totalElement.textContent = (price * quantity).toLocaleString('vi-VN');
+            totalElement.textContent = (price * quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
             updateTotalPrice();
             updateCartQuantity(this.getAttribute('data-id'), quantity);
         });
