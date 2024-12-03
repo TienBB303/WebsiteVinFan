@@ -5,190 +5,209 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng của bạn</title>
 </head>
-    <style>
-        /* Đặt font chữ và nền tổng thể */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f3f6fa;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
+<style>
+    /* Đặt font chữ và nền tổng thể */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f3f6fa;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
 
-        /* Thiết kế phần chứa giỏ hàng */
-        .cart-container {
-            max-width: 800px;
-            margin: 80px auto;
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
-        }
-        .cart-container:hover {
-            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.15);
-            transform: translateY(-5px);
-        }
+    /* Thiết kế phần chứa giỏ hàng */
+    .cart-container {
+        max-width: 800px;
+        margin: 80px auto;
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .cart-container:hover {
+        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
 
-        /* Tiêu đề chính */
-        h1 {
-            text-align: center;
-            color: #4a90e2;
-            font-size: 2.8rem;
-            margin-bottom: 40px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
+    /* Tiêu đề chính */
+    h1 {
+        text-align: center;
+        color: #4a90e2;
+        font-size: 2.8rem;
+        margin-bottom: 40px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
 
-        /* Phần chứa các sản phẩm trong giỏ hàng */
-        .cart-items {
-            list-style-type: none;
-            padding: 0;
-            margin-bottom: 30px;
-        }
+    /* Phần chứa các sản phẩm trong giỏ hàng */
+    .cart-items {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 30px;
+    }
 
-        /* Mỗi sản phẩm trong giỏ hàng */
+    /* Mỗi sản phẩm trong giỏ hàng */
+    .cart-items li {
+        display: flex;
+        align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+        justify-content: space-between; /* Phân bố không gian giữa các phần tử */
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #e1e4e8;
+        border-radius: 15px;
+        background-color: #f9fbfd;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cart-items li:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(74, 144, 226, 0.15);
+    }
+
+    /* Thiết kế chung cho các chữ */
+    .cart-items li span {
+        font-size: 1.2rem;
+        color: #444;
+    }
+
+    /* Tên sản phẩm */
+    .cart-items li .item-name {
+        font-weight: 600;
+        color: #333;
+        text-transform: capitalize;
+        margin-left: 15px; /* Giảm khoảng cách giữa tên và ảnh */
+    }
+
+    /* Giá sản phẩm và tổng cộng */
+    .cart-items li .item-price,
+    .cart-items li .item-total {
+        color: #3498db;
+        font-weight: 700;
+        font-size: 1.4rem;
+        text-align: right;
+    }
+
+    /* Phần điều chỉnh số lượng */
+    .cart-items li .item-quantity {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Input số lượng sản phẩm */
+    .cart-items li .item-quantity input {
+        width: 50px;
+        padding: 8px;
+        font-size: 1.2rem;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin: 0 10px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+    .cart-items li .item-quantity input:focus {
+        border-color: #3498db;
+    }
+
+    /* Nút điều chỉnh số lượng */
+    .cart-items li .item-quantity button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .cart-items li .item-quantity button:hover {
+        background-color: #2a7bc3;
+        transform: scale(1.1);
+    }
+
+    /* Nút xóa sản phẩm */
+    .cart-items li .item-remove button {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .cart-items li .item-remove button:hover {
+        background-color: #c0392b;
+    }
+
+    /* Tổng tiền */
+    .total-price {
+        font-size: 2.2rem;
+        font-weight: bold;
+        text-align: right;
+        margin-top: 20px;
+        color: #333;
+        padding-top: 20px;
+        border-top: 1px solid #e1e4e8;
+    }
+
+    /* Nút thanh toán */
+    .checkout-btn {
+        display: block;
+        background-color: #4a90e2;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        padding: 18px 35px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        border-radius: 50px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        margin-top: 40px;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 5px 20px rgba(74, 144, 226, 0.3);
+    }
+    .checkout-btn:hover {
+        background-color: #4178c0;
+        transform: translateY(-4px) scale(1.05);
+    }
+
+    /* Chỉnh sửa ảnh sản phẩm */
+    .cart-items li .item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-right: 15px; /* Giảm khoảng cách giữa ảnh và tên sản phẩm */
+    }
+
+    @media (max-width: 768px) {
+        /* Đảm bảo layout thích ứng cho di động */
         .cart-items li {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-            align-items: center;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #e1e4e8;
-            border-radius: 15px;
-            background-color: #f9fbfd;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .cart-items li:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(74, 144, 226, 0.15);
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        /* Thiết kế chung cho các chữ */
-        .cart-items li span {
-            font-size: 1.2rem;
-            color: #444;
-        }
-
-        /* Tên sản phẩm */
         .cart-items li .item-name {
-            font-weight: 600;
-            color: #333;
-            text-transform: capitalize;
+            margin-left: 0;
+            margin-bottom: 10px;
         }
 
-        /* Giá sản phẩm và tổng cộng */
-        .cart-items li .item-price,
-        .cart-items li .item-total {
-            color: #3498db;
-            font-weight: 700;
-            font-size: 1.4rem;
-            text-align: right;
-        }
-
-        /* Phần điều chỉnh số lượng */
-        .cart-items li .item-quantity {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Input số lượng sản phẩm */
-        .cart-items li .item-quantity input {
-            width: 50px;
-            padding: 8px;
-            font-size: 1.2rem;
-            text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin: 0 10px;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-        .cart-items li .item-quantity input:focus {
-            border-color: #3498db;
-        }
-
-        /* Nút điều chỉnh số lượng */
-        .cart-items li .item-quantity button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .cart-items li .item-quantity button:hover {
-            background-color: #2a7bc3;
-            transform: scale(1.1);
-        }
-
-        /* Nút xóa sản phẩm */
-        .cart-items li .item-remove button {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .cart-items li .item-remove button:hover {
-            background-color: #c0392b;
-            transform: scale(1.1);
-        }
-
-        /* Tổng tiền */
-        .total-price {
-            font-size: 2.2rem;
-            font-weight: bold;
-            text-align: right;
-            margin-top: 20px;
-            color: #333;
-            padding-top: 20px;
-            border-top: 1px solid #e1e4e8;
-        }
-
-        /* Nút thanh toán */
         .checkout-btn {
-            display: block;
-            background-color: #4a90e2;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            padding: 18px 35px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            border-radius: 50px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 40px;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.3);
-        }
-        .checkout-btn:hover {
-            background-color: #4178c0;
-            transform: translateY(-4px) scale(1.05);
+            font-size: 1.2rem;
+            padding: 12px 20px;
         }
 
-        @media (max-width: 768px) {
-            /* Đảm bảo layout thích ứng cho di động */
-            .cart-items li {
-                grid-template-columns: 1fr;
-            }
-            .checkout-btn {
-                font-size: 1.2rem;
-                padding: 12px 20px;
-            }
-            .total-price {
-                text-align: center;
-                font-size: 1.8rem;
-            }
+        .total-price {
+            text-align: center;
+            font-size: 1.8rem;
         }
-    </style>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
+    }
+</style>
+<meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 <body>
 <div class="cart-container">
@@ -198,6 +217,9 @@
         <ul class="cart-items">
             <th:block th:each="item : ${cartItems}">
                 <li>
+                    <!-- Di chuyển ảnh vào trong <li> để căn chỉnh cùng các phần tử khác -->
+                    <img src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg" alt="Product Image" class="item-image" />
+                    <!-- Các phần tử khác như tên, giá, số lượng... -->
                     <span class="item-name" th:text="${item.name}">Tên sản phẩm</span>
                     <span class="item-price" th:text="${#numbers.formatDecimal(item.price, 0, '0') + 'đ'}">0</span>
                     <div class="item-quantity">
@@ -229,8 +251,7 @@
     function formatItemPrices() {
         document.querySelectorAll('.item-total, .item-price').forEach(totalElement => {
             let price = parseFloat(totalElement.textContent.replace(/\./g, '').replace(/[^0-9.-]+/g, '')); // Xóa dấu chấm và ký tự không phải số
-            totalElement.textContent = price.toLocaleString('vi-VN'
-                , { style: 'currency', currency: 'VND' });
+            totalElement.textContent = price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
         });
         updateTotalPrice(); // Cập nhật tổng tiền khi giá đã được định dạng
     }
@@ -247,24 +268,6 @@
     // Định dạng lại giá khi trang được tải
     document.addEventListener('DOMContentLoaded', function () {
         formatItemPrices(); // Định dạng giá ngay khi tải trang
-    });
-
-    // Kiểm tra giỏ hàng trống khi nhấn "Thanh toán"
-    document.querySelector('.checkout-btn').addEventListener('click', function (event) {
-        const cartItems = document.querySelectorAll('.cart-items li');
-        if (cartItems.length === 0) {
-            event.preventDefault(); // Ngăn điều hướng đến trang thanh toán
-            Swal.fire({
-                icon: 'warning',
-                title: 'Giỏ hàng trống',
-                text: 'Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán!',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-        }
     });
 
     // Hàm cập nhật số lượng sản phẩm trên server
@@ -288,12 +291,62 @@
                         title: 'Lỗi',
                         text: data.message || 'Không thể cập nhật số lượng sản phẩm.',
                     });
+                } else {
+                    // Nếu thành công, chỉ cần định dạng lại lại giá trị và tổng tiền
+                    formatItemPrices();
+                    updateTotalPrice();  // Cập nhật tổng tiền sau khi thay đổi
                 }
             })
             .catch(error => {
                 console.error('Error updating cart:', error);
             });
     }
+
+    // Xử lý khi người dùng thay đổi số lượng trực tiếp
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('input', function () {
+            let quantity = parseInt(this.value);
+            if (quantity < 1) {
+                this.value = 1;
+                quantity = 1;
+            }
+            let price = parseFloat(this.closest('li').querySelector('.item-price').textContent.replace(/\./g, '').replace(/[^0-9.-]+/g, ''));
+            let totalElement = this.closest('li').querySelector('.item-total');
+            totalElement.textContent = (price * quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            updateTotalPrice();
+            updateCartQuantity(this.getAttribute('data-id'), quantity);  // Cập nhật số lượng trên server
+        });
+    });
+
+    // Xử lý khi người dùng nhấn nút tăng số lượng
+    document.querySelectorAll('.increase-quantity').forEach(button => {
+        button.addEventListener('click', function () {
+            let input = this.closest('li').querySelector('.quantity-input');
+            input.value = parseInt(input.value) + 1;
+            input.dispatchEvent(new Event('input'));  // Kích hoạt sự kiện input để cập nhật giá trị mà không reload trang
+        });
+    });
+
+    // Xử lý khi người dùng nhấn nút giảm số lượng
+    document.querySelectorAll('.decrease-quantity').forEach(button => {
+        button.addEventListener('click', function () {
+            let input = this.closest('li').querySelector('.quantity-input');
+            if (input.value > 1) {
+                input.value = parseInt(input.value) - 1;
+                input.dispatchEvent(new Event('input'));  // Kích hoạt sự kiện input để cập nhật giá trị mà không reload trang
+            }
+        });
+    });
+
+    // Xử lý khi người dùng nhấn nút xóa sản phẩm
+    document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', function () {
+            let productId = this.getAttribute('data-id');
+            this.closest('li').remove();
+            updateTotalPrice();
+            removeCartItem(productId); // Xóa sản phẩm khỏi giỏ hàng trên server
+        });
+    });
 
     // Hàm xóa sản phẩm khỏi giỏ hàng trên server
     function removeCartItem(productId) {
@@ -324,53 +377,8 @@
                 console.error('Error removing item:', error);
             });
     }
-
-    // Xử lý khi người dùng thay đổi số lượng trực tiếp
-    document.querySelectorAll('.quantity-input').forEach(input => {
-        input.addEventListener('input', function () {
-            let quantity = parseInt(this.value);
-            if (quantity < 1) {
-                this.value = 1;
-                quantity = 1;
-            }
-            let price = parseFloat(this.closest('li').querySelector('.item-price').textContent);
-            let totalElement = this.closest('li').querySelector('.item-total');
-            totalElement.textContent = (price * quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-            updateTotalPrice();
-            updateCartQuantity(this.getAttribute('data-id'), quantity);
-        });
-    });
-
-    // Xử lý khi người dùng nhấn nút tăng số lượng
-    document.querySelectorAll('.increase-quantity').forEach(button => {
-        button.addEventListener('click', function () {
-            let input = this.closest('li').querySelector('.quantity-input');
-            input.value = parseInt(input.value) + 1;
-            input.dispatchEvent(new Event('input'));
-        });
-    });
-
-    // Xử lý khi người dùng nhấn nút giảm số lượng
-    document.querySelectorAll('.decrease-quantity').forEach(button => {
-        button.addEventListener('click', function () {
-            let input = this.closest('li').querySelector('.quantity-input');
-            if (input.value > 1) {
-                input.value = parseInt(input.value) - 1;
-                input.dispatchEvent(new Event('input'));
-            }
-        });
-    });
-
-    // Xử lý khi người dùng nhấn nút xóa sản phẩm
-    document.querySelectorAll('.remove-item').forEach(button => {
-        button.addEventListener('click', function () {
-            let productId = this.getAttribute('data-id');
-            this.closest('li').remove();
-            updateTotalPrice();
-            removeCartItem(productId);
-        });
-    });
 </script>
+
 </body>
 </html>
 
