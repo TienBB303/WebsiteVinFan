@@ -193,18 +193,20 @@
         margin-bottom: 0.5rem;
 
     }
+
     /* Giá gốc màu đen */
     .old-price {
-        color: #333;  /* Màu đen */
+        color: #333; /* Màu đen */
         text-decoration: line-through; /* Gạch bỏ */
     }
+
     .main-price {
-        color: #333;  /* Màu đen */
+        color: #333; /* Màu đen */
     }
 
     /* Giá giảm màu đỏ */
     .discount-price {
-        color: #e74c3c;  /* Màu đỏ */
+        color: #e74c3c; /* Màu đỏ */
     }
 
 </style>
@@ -334,6 +336,13 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="card product-card h-100">
                         <div class="card-body d-flex flex-column">
+
+                            <!-- Thêm ảnh giả sản phẩm -->
+                            <img class="card-img-top"
+                                 src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
+                                 alt="Anime Girl"
+                                 style="height: 200px; object-fit: cover;">
+
                             <h5 class="card-title product-title"
                                 th:text="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
 
@@ -383,6 +392,13 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="card product-card h-100">
                         <div class="card-body d-flex flex-column">
+
+                            <!-- Thêm ảnh giả sản phẩm -->
+                            <img class="card-img-top"
+                                 src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
+                                 alt="Anime Girl"
+                                 style="height: 200px; object-fit: cover;">
+
                             <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản
                                 phẩm</h5>
 
