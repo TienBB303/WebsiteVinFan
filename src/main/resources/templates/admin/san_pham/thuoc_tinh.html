@@ -36,9 +36,82 @@
 <!--        dữ liệu thực hiện trong secsion-->
             <section class="row">
                 <div class="card">
+                    <div class="row">
+                        <div class="col-3">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalKieuQuat">
+                                Kiểu quạt
+                            </button>
+                        </div>
+                        <div class="col-3">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Màu sắc
+                            </button>
+                        </div>
+                        <div class="col-3">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Công suất
+                            </button>
+                        </div>
+                        <div class="col-3">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Chế độ gió
+                            </button>
+                        </div>
+                    </div>
 
                 </div>
             </section>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalKieuQuat" tabindex="-1" aria-labelledby="modalKieuQuatLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalKieuQuatLabel">Cập nhật Kiểu Quạt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/admin/thuoc-tinh/addKieuQuat">
+                        <input type="text" class="form-control" name="ten_kieu_quat" placeholder="Nhập kiểu quạt">
+                        <button type="submit" class="btn btn-outline-success">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </form>
+                    <hr>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên Kiểu Quạt</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="kieu, stt : ${listKieuQuat}">
+                            <td th:text="${stt.index + 1}"></td>
+                            <td th:text="${kieu.ten}"></td>
+                            <td>
+                                <button class="btn btn-warning">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-danger">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-warning btn-edit" data-id="${kieu.id}" data-name="${kieu.ten}">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-danger btn-delete" data-id="${kieu.id}">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Footer-->
@@ -49,5 +122,7 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
 </div>
+<script>
+</script>
 </body>
 </html>
