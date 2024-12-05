@@ -1,8 +1,7 @@
-package com.example.datn.repository;
+package com.example.datn.repository.phieu_giam_repo;
 
-import com.example.datn.entity.PhieuGiamSanPham;
+import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
 import com.example.datn.entity.SanPham;
-import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

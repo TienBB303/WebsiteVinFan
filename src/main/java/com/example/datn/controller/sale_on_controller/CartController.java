@@ -1,7 +1,10 @@
-package com.example.datn.controller;
+package com.example.datn.controller.sale_on_controller;
 
-import com.example.datn.dto.request.CreateHoaDonRequest;
+import com.example.datn.dto.request.sale_on_request.CartItemRequest;
+import com.example.datn.dto.request.sale_on_request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
+import com.example.datn.entity.sale_on.CartItem;
 import com.example.datn.service.HoaDonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;

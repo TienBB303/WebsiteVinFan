@@ -1,21 +1,11 @@
 package com.example.datn.controller;
-import com.example.datn.entity.CartItem;
-import com.example.datn.entity.CartItemRequest;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.SPCTRepo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Controller

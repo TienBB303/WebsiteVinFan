@@ -1,14 +1,14 @@
-package com.example.datn.controller;
+package com.example.datn.controller.phieu_giam_gia_controller;
 
-import com.example.datn.entity.PhieuGiam;
-import com.example.datn.entity.PhieuGiamSanPham;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
+import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.repository.PhieuGiamRepo;
-import com.example.datn.repository.PhieuGiamSanPhamRepo;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.repository.SanPhamRepo;
-import com.example.datn.service.PhieuGiamService;
+import com.example.datn.service.phieu_giam_service.PhieuGiamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
