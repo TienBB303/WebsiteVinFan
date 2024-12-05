@@ -328,7 +328,10 @@ public class SanPhamController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            BigDecimal gia = new BigDecimal(giaStr.replaceAll("[^\\d]", ""));
+            String sanitizedInput = giaStr
+                    .replaceAll("[^\\d]", "");
+
+            BigDecimal gia = new BigDecimal(sanitizedInput);
 
             SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
             if (sanPhamChiTiet == null) {

@@ -1,7 +1,9 @@
 package com.example.datn.dto.request;
 
-
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
@@ -10,11 +12,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddSPToHoaDonChiTietRequest {
+public class SPCTRequest {
     Long idSP;
-    Long idHD;
-    String ten;
-    BigDecimal gia;
+    String tenSP;
     Integer soLuong;
-
+    BigDecimal gia;
 }

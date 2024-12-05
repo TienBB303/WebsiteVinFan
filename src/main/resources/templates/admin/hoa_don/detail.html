@@ -54,6 +54,9 @@
                         <div class="d-flex align-items-center justify-content-center" style="height: 70px;">
                             <div>
                                 <div th:switch="${history.trangThai}">
+                                    <div th:case="0" class="arrow-qa bg-primary-qa">
+                                        <span>Hóa đơn chờ</span>
+                                    </div>
                                     <div th:case="1" class="arrow-qa bg-primary-qa">
                                         <span>Chờ xác nhận</span>
                                     </div>
@@ -79,7 +82,7 @@
 
             <div class="card mb-4">
                 <div class="container d-flex justify-content-end">
-                    <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#myModal1">
+                    <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal" data-bs-target="#myModal1">
                         Lịch sử
                     </button>
                     <div class="modal fade" id="myModal1" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -93,7 +96,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <form>
-                                        <table class="table table-bordered mt-3">
+                                        <table class="table table-striped dataTable-table mt-3">
                                             <thead>
                                             <tr>
                                                 <th>STT</th>
@@ -106,6 +109,7 @@
                                             <tr th:each="item, iter : ${listHistory}">
                                                 <td th:text="${iter.count}"></td>
                                                 <td th:switch="${item.trangThai}">
+                                                    <span th:case="0" th:text="'Hóa đơn chờ'"></span>
                                                     <span th:case="1" th:text="'Đang chờ xác nhận'"></span>
                                                     <span th:case="2" th:text="'Đã xác nhận'"></span>
                                                     <span th:case="3" th:text="'Đang giao hàng'"></span>
@@ -120,7 +124,7 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng
                                     </button>
                                 </div>
                             </div>
@@ -134,33 +138,33 @@
                      th:if="${hoaDon.trangThai != 4 && hoaDon.trangThai != 5 }">
 
                     <form method="post" th:action="@{/hoa-don/xac-nhan}"
-                          th:if="${hoaDon.trangThai != 2 && hoaDon.trangThai != 3}" class="me-2">
+                          th:if="${hoaDon.trangThai != 2 && hoaDon.trangThai != 3 && hoaDon.trangThai != 0}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-outline-success">
                             <i class=""></i> Xác Nhận
                         </button>
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/giao-hang}"
-                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1}" class="me-2">
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-warning">
+                        <button type="submit" class="btn btn-outline-warning">
                             <i class=""></i> Đang giao hàng
                         </button>
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/cho-xac-nhan}"
-                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1}" class="me-2">
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-secondary ">
+                        <button type="submit" class="btn btn-outline-secondary ">
                             <i class=""></i>Hoàn tác
                         </button>
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/hoan-thanh}"
-                          th:if="${hoaDon.trangThai == 3}" class="me-2">
+                          th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 3}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-outline-primary">
                             <i class=""></i> Hoàn Thành
                         </button>
                     </form>
@@ -168,7 +172,7 @@
                     <form method="post" th:action="@{/hoa-don/huy}"
                           th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 2}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-outline-danger">
                             <i class=""></i> Hủy
                         </button>
                     </form>
@@ -183,21 +187,37 @@
                     <h2><strong><span>Lịch sử thanh toán</span></strong></h2>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-striped dataTable-table"
+                           th:if="${hoaDon.trangThai != 1 && hoaDon.trangThai != 2
+                           && hoaDon.trangThai != 3
+                           }">
                         <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Mã GD</th>
                             <th>Số tiền</th>
-                            <th>Trạng thái</th>
                             <th>Thời gian</th>
                             <th>Phương thức thanh toán</th>
+                            <th>Loại hóa đơn</th>
+                            <th>Trạng thái</th>
                             <th>Người tạo</th>
-                            <th>Ghi chú</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- Add rows here -->
+                        <tr th:each="item: ${listLSTT}">
+                            <td th:text="${item.tongTien}"></td>
+                            <td th:text="${item.ngayTao}"></td>
+                            <td th:text="${item.hinhThucThanhToan}"></td>
+                            <td th:class="${item.loaiHoaDon ? 'text-danger' : 'text-primary'}"
+                                th:text="${item.loaiHoaDon ? 'Tại quầy' : 'Online'}">
+                            </td>
+                            <td th:switch="${item.trangThai}">
+                                <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
+                                <span th:case="2" class="text-success">Đã xác nhận</span>
+                                <span th:case="3" class="text-warning">Đang giao hàng</span>
+                                <span th:case="4" class="text-primary">Đã giao hàng</span>
+                                <span th:case="5" class="text-danger">Hủy</span>
+                            </td>
+                            <td th:text="${item.nguoiTao}"></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -220,27 +240,27 @@
                                 <span th:case="5" class="text-danger">Hủy</span>
                             </p>
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
-                            <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi"></span></p>
-<!--                            <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi" th:text="${hoaDon.diaChi}"></span></p>-->
+                            <p><strong>Địa chỉ: </strong> <span th:text="${hoaDon.diaChi}"></span></p>
                         </div>
 
                         <div class="col">
                             <div class="col-md-6">
                                 <p><strong>Loại hóa đơn: </strong><span
-                                        th:text="${hoaDon.loaiHoaDon == 1 ? 'Tại quầy' : 'Giao hàng'}"></span></p>
+                                        th:class="${hoaDon.loaiHoaDon ? 'text-danger' : 'text-primary'}"
+                                        th:text="${hoaDon.loaiHoaDon ? 'Tại quầy' : 'Giao hàng'}"></span></p>
                                 <p><strong>Số điện thoại: </strong> <span th:text="${hoaDon.sdtNguoiNhan}"></span></p>
                                 <p><strong>Ngày tạo: </strong><span th:text="${hoaDon.ngayTao}"></span></p>
                             </div>
                         </div>
                         <div class="text-end mt-3">
                             <div class="container">
-                                <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-danger"
+                                <button th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 1}" type="button" class="btn btn-outline-warning"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#myModal2">
+                                        data-bs-target="#modalUpdate">
                                     Sửa hóa đơn
                                 </button>
 
-                                <div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="exampleModalLabel"
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
@@ -249,58 +269,16 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                             </div>
-                                            <div class="modal-body">
-                                                <form method="post" th:action="@{/hoa-don/sua-thong-tin}">
-                                                    <input type="hidden" id="tinhThanhPho" th:value="${tinh}"/>
-                                                    <input type="hidden" id="quanHuyen" th:value="${huyen}"/>
-                                                    <input type="hidden" id="xaPhuong" th:value="${xa}"/>
-                                                    <input type="hidden" name="id" th:value="${hoaDon.id}">
-                                                  
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" id="name1" th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}" placeholder="Tên người nhận">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Tỉnh/Thành phố</label>
-
-                                                        <select class="form-control" id="city" name="tinhThanhPho">
-                                                            <option value="" selected>Chọn tỉnh thành</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Quận/Huyện</label>
-                                                        <select class="form-control" id="district" name="quanHuyen" >
-                                                            <option value="" selected>Chọn quận huyện</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Phường/Xã</label>
-                                                        <select class="form-control" id="ward" name="xaPhuong">
-                                                            <option value="" selected>Chọn phường xã</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Số nhà/ngõ đường</label>
-                                                        <input type="text" class="form-control" id="street" th:value="${chitietdiachi}" th:name="soNhaNgoDuong">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" id="phoneNumber" th:value="${hoaDon.sdtNguoiNhan}" th:name="soDienThoaiMoi" placeholder="Số điện thoại">
-                                                    </div>
-
-                                                    <!-- Input ẩn để lưu địa chỉ hoàn chỉnh -->
-                                                    <input type="hidden" id="fullAddress" name="diaChiMoi">
-
-                                                    <button type="submit" onclick="getCityValue()" class="btn btn-primary">Sửa</button>
-                                                </form>
-
-                                            </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                                     Đóng
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
@@ -313,7 +291,7 @@
                     <h2><strong>Thông tin sản phẩm</strong></h2>
                 </div>
 
-                <table class="table table-bordered mt-3">
+                <table class="table table-striped dataTable-table mt-3">
                     <thead>
                     <tr>
                         <th>STT</th>
@@ -321,148 +299,161 @@
                         <th>Giá bán</th>
                         <th>Số lượng</th>
                         <th>Thành tiền</th>
+                        <th>Hành động</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="item, iter : ${listHDCT}">
                         <td th:text="${iter.count}"></td>
                         <td th:text="${item.tenSanPham}"></td>
-                        <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
+                        <td th:text="${item.gia}"></td>
                         <td>
-                            <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-decrease">-</button>
                             <!-- Ô nhập số lượng -->
                             <input type="number" class="form-control quantity-input"
                                    th:value="${item.soLuong}"
                                    min="1"
-                                   style="width: 60px; text-align: center; display: inline-block;" />
-                            <!-- Nút Tăng -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase">+</button>
+                                   style="width: 60px; text-align: center; display: inline-block;"
+                                   data-item-id="${item.id}"/>
                         </td>
-                        <td class="total" th:text="${#numbers.formatCurrency(item.thanhTien)}"></td>
+                        <td th:text="${item.thanhTien}"></td>
+                        <td><button>X</button></td>
                     </tr>
                     </tbody>
                 </table>
+
+
                 <div class="text-end mt-3">
                     <div class="container">
-                        <button th:if="${hoaDon.trangThai == 1}" type="button" class="btn btn-primary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#myModal">
+                        <!-- Button để mở modal -->
+                        <button th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 1}" type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#myModal">
                             Thêm sản phẩm
                         </button>
 
-                        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                             aria-hidden="true">
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-xl">
                                 <div class="modal-content">
+                                    <!-- Header của modal -->
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Danh sách sản phẩm</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
+
+                                    <!-- Nội dung của modal -->
                                     <div class="modal-body">
-                                        <div class="input-group mb-3 ">
-                                            <input type="text" class="form-control" id="name"
-                                                   placeholder="Tìm kiếm sản phẩm">
-                                            <button type="button" class="btn btn-primary">Tìm kiếm</button>
+                                        <!-- Input tìm kiếm -->
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" id="searchQuery" placeholder="Tìm kiếm sản phẩm...">
+                                            <button type="button" class="btn btn-outline-primary" id="searchButton">Tìm kiếm</button>
+                                        </div>
+                                        <!-- Lọc theo các trường riêng biệt -->
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" id="filterProductName" placeholder="Lọc theo tên sản phẩm...">
+                                            <input type="text" class="form-control" id="filterColor" placeholder="Lọc theo màu sắc...">
+                                            <input type="text" class="form-control" id="filterPower" placeholder="Lọc theo công suất...">
+                                            <input type="text" class="form-control" id="filterPrice" placeholder="Lọc theo giá bán...">
                                         </div>
 
-                                        <table class="table table-bordered mt-3">
-                                            <thead>
+
+                                        <!-- Bảng danh sách sản phẩm -->
+                                        <table class="table table-striped dataTable-table mt-3">
+                                            <thead class="table-light">
                                             <tr>
                                                 <th>STT</th>
                                                 <th>Tên sản phẩm</th>
                                                 <th>Màu sắc</th>
-                                                <th>Công xuất</th>
+                                                <th>Công suất</th>
                                                 <th>Giá bán</th>
                                                 <th>Số lượng</th>
                                                 <th>Thao tác</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="productTable">
+                                            <!-- Sử dụng Thymeleaf để render danh sách sản phẩm ban đầu -->
                                             <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
                                                 <td th:text="${iter.count}"></td>
                                                 <td th:text="${item.sanPham.ten}"></td>
                                                 <td th:text="${item.mauSac.ten}"></td>
                                                 <td th:text="${item.congSuat.ten}"></td>
-                                                <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
+                                                <td th:text="${item.gia}"></td>
                                                 <td th:text="${item.so_luong}"></td>
                                                 <td>
-                                                    <form method="post" th:action="@{/hoa-don/addSPCT}"
-                                                          th:object="${addSPToHoaDonChiTietRequest}" class="me-2">
+                                                    <form method="post" th:action="@{/hoa-don/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
                                                         <input type="hidden" name="idHD" th:value="${hoaDon.id}">
                                                         <input type="hidden" name="idSP" th:value="${item.id}">
-                                                        <input type="hidden" name="gia" th:text="${#numbers.formatCurrency(item.gia)}">
+                                                        <input type="hidden" name="gia" th:value="${item.gia}">
                                                         <input type="hidden" name="soLuong" th:value="${item.so_luong}">
-                                                        <button type="submit" class="btn btn-danger">
-                                                            <i class=""></i> ADD
+                                                        <button type="submit" class="btn btn-outline-success btn-sm">
+                                                            Thêm
                                                         </button>
                                                     </form>
                                                 </td>
                                             </tr>
+                                            <!-- Các sản phẩm sau khi tìm kiếm sẽ được thêm động vào đây -->
                                             </tbody>
                                         </table>
                                     </div>
 
+                                    <!-- Footer của modal -->
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                            Đóng
-                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
             </div>
 
 
             <!-- Discount and Total Section -->
-            <div class="card mb-4">
-                <div class="container-custom">
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <strong>Phiếu giảm giá</strong>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.maPGG}"></span></p>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p>Giá trị:</p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.tenPGG}"></span></p>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p>Tổng tiền hàng:</p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.tongTien}"></span></p>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p>Phí vận chuyển:</p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>
+<!--            <div class="card mb-4">-->
+<!--                <div class="container-custom">-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <strong>Phiếu giảm giá</strong>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end">-->
+<!--                            <p><span th:text="${listPGG.maPGG}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Giá trị:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end">-->
+<!--                            <p><span th:text="${listPGG.tenPGG}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Tổng tiền hàng:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end">-->
+<!--                            <p><span th:text="${listPGG.tongTien}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Phí vận chuyển:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end">-->
+<!--                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>-->
 
-                        </div>
-                    </div>
-                    <div class="row highlight">
-                        <div class="col-md-6">
-                            <p>Tổng tiền:</p>
-                        </div>
-                        <div class="col-md-6 text-end highlight">
-                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row highlight">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Tổng tiền:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end highlight">-->
+<!--                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </main>
         <!-- Footer-->
         <div>
@@ -475,94 +466,136 @@
     <!-- Script -->
     <div>
         <script th:replace="/admin/fragments/script :: script"></script>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-        <script th:inline="javascript">
-            var ganDiaChi = document.getElementById("ganDiaChi");
-            var idTinh = document.getElementById("tinhThanhPho").value;
-            var idHuyen = document.getElementById("quanHuyen").value;
-            var idXa = document.getElementById("xaPhuong").value;
+<!--        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!--        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>-->
+<!--        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>-->
 
-            console.log(idTinh)
-            console.log(idHuyen)
-            console.log(idXa)
-
-            var citis = document.getElementById("city");
-            var districts = document.getElementById("district");
-            var wards = document.getElementById("ward");
-
-            var Parameter = {
-                url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
-                method: "GET",
-                responseType: "application/json",
-            };
-
-            axios(Parameter).then(function (result) {
-                renderCity(result.data);
-
-                citis.value = idTinh;
-                citis.dispatchEvent(new Event('change'));
-
-                setTimeout(function () {
-                    districts.value = idHuyen;
-                    districts.dispatchEvent(new Event('change'));
-                }, 300);
-
-                setTimeout(function () {
-                    wards.value = idXa;
-                }, 600);
+        <script>
+            document.querySelectorAll('.giaVND').forEach(element => {
+                const originalValue = parseFloat(element.innerText);
+                element.innerText = originalValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
             });
-            setTimeout(function () {
-                // var citis = document.getElementById("city");
-                // var districts = document.getElementById("district");
-                // var wards = document.getElementById("ward");
-
-                const selectedText = citis.options[citis.selectedIndex].text;
-                const districtsText = districts.options[districts.selectedIndex].text;
-                const wardsText = wards.options[wards.selectedIndex].text;
-                console.log(selectedText)
-                console.log(wardsText)
-                console.log(wardsText)
-
-                // const street = streetInput.value
-                //     ,${street}
-                document.getElementById("ganDiaChi").innerText = `${selectedText}, ${districtsText},${wardsText}`;
-            }, 900);
-
-//
-            function renderCity(data) {
-                for (const x of data) {
-                    citis.options[citis.options.length] = new Option(x.Name, x.Id);
-                }
-
-                citis.onchange = function () {
-                    districts.length = 1;
-                    wards.length = 1;
-
-                    if (this.value != "") {
-                        const result = data.filter(n => n.Id === this.value);
-                        for (const k of result[0].Districts) {
-                            districts.options[districts.options.length] = new Option(k.Name, k.Id);
-                        }
-                    }
-                };
-
-                districts.onchange = function () {
-                    wards.length = 1;
-                    const dataCity = data.filter((n) => n.Id === citis.value);
-
-                    if (this.value != "") {
-                        const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
-                        for (const w of dataWards) {
-                            wards.options[wards.options.length] = new Option(w.Name, w.Id);
-                        }
-                    }
-                };
-            }
         </script>
 
+        <script>
+            document.getElementById('searchButton').addEventListener('click', function () {
+                const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
+                const rows = document.querySelectorAll('#productTable tr');
+
+                rows.forEach(function(row) {
+                    const cells = row.getElementsByTagName('td');
+                    if (cells.length === 0) return;
+
+                    const productName = cells[1].textContent.toLowerCase();
+                    const color = cells[2].textContent.toLowerCase();
+                    const power = cells[3].textContent.toLowerCase();
+                    const price = cells[4].textContent.toLowerCase();
+
+                    if (productName.includes(searchQuery) || color.includes(searchQuery) || power.includes(searchQuery) || price.includes(searchQuery)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        </script>
+
+
+        <script>
+            // Hàm loại bỏ dấu tiếng Việt
+            function removeDiacritics(str) {
+                const map = {
+                    'á': 'a', 'à': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a', 'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+                    'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+                    'é': 'e', 'è': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e', 'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+                    'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+                    'ó': 'o', 'ò': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o', 'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o', 'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+                    'ú': 'u', 'ù': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u', 'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+                    'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+                    'đ': 'd',
+                    // Thêm các ký tự có dấu khác nếu cần
+                };
+
+                return str.replace(/[áàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ]/g, match => map[match] || match);
+            }
+
+            // Hàm lọc sản phẩm
+            function filterProducts() {
+                // Lấy giá trị từ các ô lọc và chuyển thành chữ thường, bỏ dấu
+                const productNameFilter = removeDiacritics(document.getElementById('filterProductName').value.toLowerCase());
+                const colorFilter = removeDiacritics(document.getElementById('filterColor').value.toLowerCase());
+                const powerFilter = removeDiacritics(document.getElementById('filterPower').value.toLowerCase());
+                const priceFilter = removeDiacritics(document.getElementById('filterPrice').value.toLowerCase());
+
+                // Lấy tất cả các dòng trong bảng
+                const rows = document.querySelectorAll('#productTable tr');
+
+                // Duyệt qua từng dòng trong bảng
+                rows.forEach(function(row) {
+                    // Lấy tất cả các ô trong dòng
+                    const cells = row.getElementsByTagName('td');
+
+                    // Nếu không có dữ liệu (dòng không phải sản phẩm hợp lệ)
+                    if (cells.length === 0) return;
+
+                    // Lấy các giá trị cần lọc: Tên sản phẩm, Màu sắc, Công suất, Giá bán và loại bỏ dấu, chuyển thành chữ thường
+                    const productName = removeDiacritics(cells[1].textContent.toLowerCase());
+                    const color = removeDiacritics(cells[2].textContent.toLowerCase());
+                    const power = removeDiacritics(cells[3].textContent.toLowerCase());
+                    const price = removeDiacritics(cells[4].textContent.toLowerCase());
+
+                    // Kiểm tra xem các trường có chứa từ khóa lọc không
+                    const matchesProductName = productName.includes(productNameFilter);
+                    const matchesColor = color.includes(colorFilter);
+                    const matchesPower = power.includes(powerFilter);
+                    const matchesPrice = price.includes(priceFilter);
+
+                    // Hiển thị dòng nếu tất cả các trường lọc đều khớp
+                    if (matchesProductName && matchesColor && matchesPower && matchesPrice) {
+                        row.style.display = ''; // Hiển thị dòng nếu có kết quả lọc
+                    } else {
+                        row.style.display = 'none'; // Ẩn dòng nếu không có kết quả
+                    }
+                });
+            }
+
+            // Lắng nghe sự kiện lọc
+            document.getElementById('filterProductName').addEventListener('input', filterProducts);
+            document.getElementById('filterColor').addEventListener('input', filterProducts);
+            document.getElementById('filterPower').addEventListener('input', filterProducts);
+            document.getElementById('filterPrice').addEventListener('input', filterProducts);
+
+
+        </script>
+
+
+        <script>
+            // Lắng nghe sự kiện tăng và giảm số lượng
+            document.addEventListener('DOMContentLoaded', function() {
+                // Nút giảm số lượng
+                const decreaseButtons = document.querySelectorAll('.btn-decrease');
+                decreaseButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const input = button.nextElementSibling; // Lấy input sau nút
+                        let quantity = parseInt(input.value);
+                        if (quantity > 1) {
+                            input.value = quantity - 1; // Giảm số lượng
+                        }
+                    });
+                });
+
+                // Nút tăng số lượng
+                const increaseButtons = document.querySelectorAll('.btn-increase');
+                increaseButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const input = button.previousElementSibling; // Lấy input trước nút
+                        let quantity = parseInt(input.value);
+                        input.value = quantity + 1; // Tăng số lượng
+                    });
+                });
+            });
+
+        </script>
     </div>
 </div>
 </body>
