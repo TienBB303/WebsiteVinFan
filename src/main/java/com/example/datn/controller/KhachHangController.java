@@ -7,7 +7,6 @@ import com.example.datn.entity.KhachHang;
 import com.example.datn.repository.DiaChiRepository;
 import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.service.EmailService;
-import com.example.datn.service.KhachHangService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -39,8 +38,7 @@ public class KhachHangController {
     @Autowired
     private DiaChiRepository diaChiRepository;
 
-    @Autowired
-    private KhachHangService khachHangService;
+
 
     @GetMapping("/index")
     public String loadTable(

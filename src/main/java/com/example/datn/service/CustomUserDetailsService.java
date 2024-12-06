@@ -37,7 +37,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<NhanVien> nhanVienOpt = nhanVienRepository.findByEmail(email);
         if (nhanVienOpt.isPresent()) {
             NhanVien nhanVien = nhanVienOpt.get();
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(nhanVien.getChucVu().getViTri()));
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(nhanVien.getChucVu().getViTri().trim()));
+
             return new User(nhanVien.getEmail(), nhanVien.getMatKhau(), authorities);
         }
 
