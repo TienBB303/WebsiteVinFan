@@ -1,13 +1,11 @@
 package com.example.datn.controller;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.request.SearchSanPhamChiTietRequest;
 import com.example.datn.dto.request.TrangThaiHoaDonRequest;
-import com.example.datn.dto.request.UpdateQuantityRequest;
+import com.example.datn.dto.request.UpdateSoLuongRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 
-import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.LichSuHoaDon;
@@ -250,21 +248,6 @@ public class HoaDonController {
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
 
-    @PostMapping("/update-quantity")
-    public ResponseEntity<Map<String, Object>> updateQuantity(@RequestBody UpdateQuantityRequest request) {
-        Map<String, Object> response = new HashMap<>();
-
-        // Giả sử bạn có một service để xử lý việc cập nhật số lượng
-        boolean isUpdated = hoaDonService.updateQuantity(request.getItemId(), request.getQuantity());
-
-        if (isUpdated) {
-            response.put("success", true);
-            return ResponseEntity.ok(response);
-        } else {
-            response.put("success", false);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
 
 
 }

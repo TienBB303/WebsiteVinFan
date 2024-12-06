@@ -306,7 +306,7 @@
                     <tr th:each="item, iter : ${listHDCT}">
                         <td th:text="${iter.count}"></td>
                         <td th:text="${item.tenSanPham}"></td>
-                        <td th:text="${item.gia}"></td>
+                        <td class="giaVND" th:text="${item.gia}"></td>
                         <td>
                             <!-- Ô nhập số lượng -->
                             <input type="number" class="form-control quantity-input"
@@ -315,7 +315,7 @@
                                    style="width: 60px; text-align: center; display: inline-block;"
                                    data-item-id="${item.id}"/>
                         </td>
-                        <td th:text="${item.thanhTien}"></td>
+                        <td class="giaVND" th:text="${item.thanhTien}"></td>
                         <td><button>X</button></td>
                     </tr>
                     </tbody>
@@ -369,19 +369,18 @@
                                             </tr>
                                             </thead>
                                             <tbody id="productTable">
-                                            <!-- Sử dụng Thymeleaf để render danh sách sản phẩm ban đầu -->
                                             <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
                                                 <td th:text="${iter.count}"></td>
                                                 <td th:text="${item.sanPham.ten}"></td>
                                                 <td th:text="${item.mauSac.ten}"></td>
                                                 <td th:text="${item.congSuat.ten}"></td>
-                                                <td th:text="${item.gia}"></td>
+                                                <td class="giaVND" th:text="${item.gia}"></td>
                                                 <td th:text="${item.so_luong}"></td>
                                                 <td>
                                                     <form method="post" th:action="@{/hoa-don/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
                                                         <input type="hidden" name="idHD" th:value="${hoaDon.id}">
                                                         <input type="hidden" name="idSP" th:value="${item.id}">
-                                                        <input type="hidden" name="gia" th:value="${item.gia}">
+                                                        <input class="giaVND" type="hidden" name="gia" th:value="${item.gia}">
                                                         <input type="hidden" name="soLuong" th:value="${item.so_luong}">
                                                         <button type="submit" class="btn btn-outline-success btn-sm">
                                                             Thêm
@@ -389,7 +388,6 @@
                                                     </form>
                                                 </td>
                                             </tr>
-                                            <!-- Các sản phẩm sau khi tìm kiếm sẽ được thêm động vào đây -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -473,7 +471,11 @@
         <script>
             document.querySelectorAll('.giaVND').forEach(element => {
                 const originalValue = parseFloat(element.innerText);
-                element.innerText = originalValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                element.innerText = originalValue.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+                });
             });
         </script>
 

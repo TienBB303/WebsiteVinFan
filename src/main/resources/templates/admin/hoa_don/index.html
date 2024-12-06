@@ -182,7 +182,7 @@
                                         </td>
 
                                         <td th:text="${item.ngayTao}"></td>
-                                        <td th:text="${item.tongTien}"></td>
+                                        <td class="giaVND" th:text="${item.tongTien}"></td>
 
                                         <!--                                    <td>-->
                                         <!--                                        <li th:each="thanhToan : ${hoaDon.thanhToan}">-->
@@ -263,9 +263,19 @@
 <!-- Script -->
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+<!--    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>-->
+<!--    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>-->
+    <script>
+        document.querySelectorAll('.giaVND').forEach(element => {
+            const originalValue = parseFloat(element.innerText);
+            element.innerText = originalValue.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+            });
+        });
+    </script>
 </div>
 
 </body>
