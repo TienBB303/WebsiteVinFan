@@ -28,7 +28,7 @@
         <div class="text-end mt-6">
             <div class="container">
                 <!-- Button để mở modal -->
-                <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal"
+                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
                         data-bs-target="#modalAddSP">
                     Thêm sản phẩm
                 </button>
@@ -138,14 +138,10 @@
                         <div th:text="${item.tenSanPham}"></div>
                     </td>
                     <td>
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-sm btn-outline-secondary">-</button>
-                            <input type="number" class="form-control form-control-sm mx-2" th:value="${item.soLuong}"
-                                   style="width: 50px;">
-                            <button class="btn btn-sm btn-outline-secondary">+</button>
-                        </div>
+                        <input type="number" class="form-control form-control-sm mx-2" th:value="${item.soLuong}"
+                               style="width: 75px;">
                     </td>
-                    <td th:text="${item.gia}"></td>
+                    <td th:text="${item.thanhTien}"></td>
                     <td>
                         <button class="btn btn-outline-danger btn-sm">Xóa</button>
                     </td>
@@ -159,12 +155,93 @@
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h1 class="h5 mb-0">Tài khoản</h1>
-                    <button class="btn btn-outline-primary btn-sm">Chọn tài khoản</button>
+                    <div class="ms-auto d-flex gap-2">
+                        <button type="button" class="btn btn-outline-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalKH">
+                            Thêm khách hàng
+                        </button>
+                        <button type="button" class="btn btn-outline-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalTaiKhoan">
+                            Chọn tài khoản
+                        </button>
+                    </div>
                 </div>
-                <div class="card-body mt-3">
-                    <div class="d-flex align-items-center" th:if="${khachHang != null}">
-                        <label class="me-2 fw-bold">Tên khách hàng:</label>
+                <div class="modal fade" id="modalTaiKhoan" tabindex="-1" aria-labelledby="exampleModalLabelTaiKhoan"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabelTaiKhoan">Thông tin tài khoản</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="searchKH"
+                                           placeholder="Tìm kiếm theo tên, số điện thoại khách hàng">
+                                    <button type="button" class="btn btn-outline-primary" id="searchButtonKH">Tìm kiếm
+                                    </button>
+                                </div>
+                                <!-- Bảng danh sách sản phẩm -->
+                                <table class="table table-striped dataTable-table mt-3">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Email</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="modalKH" tabindex="-1" aria-labelledby="exampleModalLabelKH"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabelKH">Thêm mới khách hàng</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!--                                -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body mt-3" th:if="${khachHang != null}">
+                    <div class="d-flex align-items-center" style="gap: 124px;">
+                        <label class=" fw-bold">Tên khách hàng:</label>
                         <span class="badge bg-secondary" th:text="${khachHang.ten}"></span>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap: 212px;">
+                        <label class="fw-bold">SDT:</label>
+                        <span class="badge bg-secondary" th:text="${khachHang.soDienThoai}"></span>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap: 200px;">
+                        <label class="fw-bold">Email:</label>
+                        <span class="badge bg-secondary" th:text="${khachHang.email}"></span>
                     </div>
                 </div>
             </div>
@@ -176,15 +253,37 @@
                 <div class="col">
                     <h4>Khách hàng</h4>
                 </div>
+                <!-- Button trigger modal -->
                 <div class="col text-end">
-                    <button class="btn btn-outline-primary">Chọn địa chỉ</button>
+                    <button type="button" class="btn btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalDiaChi">
+                        Chọn địa chỉ
+                    </button>
+                </div>
+                <div class="modal fade" id="modalDiaChi" tabindex="-1" aria-labelledby="exampleModalLabelDiaChi"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabelDiaChi">Thay đổi thông tin</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <hr>
         <!-- Form thông tin khách hàng -->
         <div class="row mb-3 mb-md-5">
-            <div  class="col-6" id="deliveryForm" style="visibility: hidden;">
+            <div class="col-6" id="deliveryForm" style="visibility: hidden;">
                 <div class="form-section">
                     <input type="text" class="form-control" placeholder="Nguyễn Hà Nhật Nam">
                 </div>
@@ -286,7 +385,6 @@
             </div>
         </div>
 
-
     </div>
 </div>
 
@@ -294,7 +392,16 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
-
+    <script>
+        document.querySelectorAll('.giaVND').forEach(element => {
+            const originalValue = parseFloat(element.innerText);
+            element.innerText = originalValue.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+            });
+        });
+    </script>
     <script>
         document.getElementById('searchButton').addEventListener('click', function () {
             const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
@@ -443,7 +550,7 @@
     </script>
 
     <script>
-        document.getElementById('toggleForm').addEventListener('change', function() {
+        document.getElementById('toggleForm').addEventListener('change', function () {
             const form = document.getElementById('deliveryForm');
             if (this.checked) {
                 form.style.visibility = 'visible';

@@ -2,6 +2,7 @@ package com.example.datn.service;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.request.SearchSanPhamChiTietRequest;
+import com.example.datn.dto.request.UpdateSoLuongRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
@@ -60,8 +61,6 @@ public interface HoaDonService {
     boolean huyHoaDon(long id);
 
     void updateTongTienHoaDon();
-
-    boolean updateQuantity(Long itemId, int quantity);
 
     List<HoaDonOff> getAllHoaDonOff( );
 

@@ -327,7 +327,7 @@
                     <tr th:each="item, iter : ${listHDCT}">
                         <td th:text="${iter.count}"></td>
                         <td th:text="${item.tenSanPham}"></td>
-                        <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
+                        <td class="giaVND" th:text="${item.gia}"></td>
                         <td>
                             <!-- Nút Giảm -->
                             <button type="button" class="btn btn-light-secondary btn-sm btn-decrease">-</button>
@@ -339,7 +339,8 @@
                             <!-- Nút Tăng -->
                             <button type="button" class="btn btn-light-secondary btn-sm btn-increase">+</button>
                         </td>
-                        <td class="total" th:text="${#numbers.formatCurrency(item.thanhTien)}"></td>
+                        <td class="giaVND" th:text="${item.thanhTien}"></td>
+                        <td><button>X</button></td>
                     </tr>
                     </tbody>
                 </table>
@@ -379,20 +380,20 @@
                                                 <th>Thao tác</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="productTable">
                                             <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
                                                 <td th:text="${iter.count}"></td>
                                                 <td th:text="${item.sanPham.ten}"></td>
                                                 <td th:text="${item.mauSac.ten}"></td>
                                                 <td th:text="${item.congSuat.ten}"></td>
-                                                <td th:text="${#numbers.formatCurrency(item.gia)}"></td>
+                                                <td class="giaVND" th:text="${item.gia}"></td>
                                                 <td th:text="${item.so_luong}"></td>
                                                 <td>
                                                     <form method="post" th:action="@{/hoa-don/addSPCT}"
                                                           th:object="${addSPToHoaDonChiTietRequest}" class="me-2">
                                                         <input type="hidden" name="idHD" th:value="${hoaDon.id}">
                                                         <input type="hidden" name="idSP" th:value="${item.id}">
-                                                        <input type="hidden" name="gia" th:text="${#numbers.formatCurrency(item.gia)}">
+                                                        <input class="giaVND" type="hidden" name="gia" th:value="${item.gia}">
                                                         <input type="hidden" name="soLuong" th:value="${item.so_luong}">
                                                         <button type="submit" class="btn btn-danger">
                                                             <i class=""></i> ADD

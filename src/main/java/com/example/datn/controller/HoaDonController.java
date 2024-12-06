@@ -5,7 +5,6 @@ import com.example.datn.dto.request.TrangThaiHoaDonRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 
-import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.LichSuHoaDon;
@@ -250,7 +249,6 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
-
 
     @PostMapping("/sua-thong-tin")
     public String updateThongTinNguoiNhan(@RequestParam("tenMoi") String tenNguoiNhanMoi,
