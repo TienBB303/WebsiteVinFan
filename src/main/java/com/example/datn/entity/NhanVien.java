@@ -82,4 +82,7 @@ public class NhanVien {
 
     @Column(name = "trang_thai")
     private Boolean trangThai;
+
+    @Column(name = "reset_token")
+    private String resetToken;
 }
