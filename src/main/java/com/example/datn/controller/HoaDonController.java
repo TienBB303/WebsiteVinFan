@@ -1,9 +1,7 @@
 package com.example.datn.controller;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.request.SearchSanPhamChiTietRequest;
 import com.example.datn.dto.request.TrangThaiHoaDonRequest;
-import com.example.datn.dto.request.UpdateQuantityRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 
@@ -15,24 +13,19 @@ import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
-import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -43,7 +36,6 @@ public class HoaDonController {
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
     private final HoaDonChiTietRepo hoaDonChiTietRepo;
-    private final SPCTRepo spctRepo;
 
     @Autowired
     HoaDonRepo hoaDonRespo;
@@ -95,7 +87,7 @@ public class HoaDonController {
         // Gán dữ liệu vào Model
         model.addAttribute("list", list);
         model.addAttribute("query", query);
-        model.addAttribute("status", trangThai != null ? trangThai : 6);
+        model.addAttribute("status", trangThai != null ? trangThai : 0);
         model.addAttribute("method", method);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
@@ -116,10 +108,18 @@ public class HoaDonController {
         }
         model.addAttribute("hoaDon", hoaDon);
 
+        String chuoi = hoaDon.getDiaChi();
+        String[] mang = chuoi.split(",");
+        model.addAttribute("tinh", mang[0]);
+        model.addAttribute("huyen", mang[1]);
+        model.addAttribute("xa", mang[2]);
+        model.addAttribute("chitietdiachi", mang[3]);
+
+
 
         //Lấy thông tin sp in hoa don
-//        List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
-//        model.addAttribute("listSPInHoaDon", list);
+        List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
+        model.addAttribute("listSPInHoaDon", list);
 
         //Lấy thông tin sp theo id hóa đơn
         List<ListSanPhamInHoaDonChiTietResponse> listHDCT = this.hoaDonService.getSanPhamCTByHoaDonId(id);
@@ -236,6 +236,7 @@ public class HoaDonController {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
             lichSuHoaDon.setNgayTao(LocalDate.now());
+
             lichSuHoaDonRepo.save(lichSuHoaDon);
         }
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
@@ -250,21 +251,25 @@ public class HoaDonController {
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
 
-    @PostMapping("/update-quantity")
-    public ResponseEntity<Map<String, Object>> updateQuantity(@RequestBody UpdateQuantityRequest request) {
-        Map<String, Object> response = new HashMap<>();
 
-        // Giả sử bạn có một service để xử lý việc cập nhật số lượng
-        boolean isUpdated = hoaDonService.updateQuantity(request.getItemId(), request.getQuantity());
-
-        if (isUpdated) {
-            response.put("success", true);
-            return ResponseEntity.ok(response);
-        } else {
-            response.put("success", false);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    @PostMapping("/sua-thong-tin")
+    public String updateThongTinNguoiNhan(@RequestParam("tenMoi") String tenNguoiNhanMoi,
+                                          @RequestParam("soDienThoaiMoi") String sdtNguoiNhanMoi,
+                                          @RequestParam("tinhThanhPho") String tinhThanhPho,
+                                          @RequestParam("quanHuyen") String quanHuyen,
+                                          @RequestParam("xaPhuong") String xaPhuong,
+                                          @RequestParam("soNhaNgoDuong") String soNhaNgoDuong,
+                                          @RequestParam("id") long id) {
+        Optional<HoaDon> hoaDonOpt = hoaDonRespo.findById(id);
+        String diaChiMoi = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + soNhaNgoDuong;
+        if (hoaDonOpt.isPresent()) {
+            HoaDon hoaDon = hoaDonOpt.get();
+            hoaDon.setTenNguoiNhan(tenNguoiNhanMoi);
+            hoaDon.setSdtNguoiNhan(sdtNguoiNhanMoi);
+            hoaDon.setDiaChi(diaChiMoi);
+            hoaDonRespo.save(hoaDon);
         }
+        return "redirect:/hoa-don/detail?id=" + id;
     }
-
 
 }

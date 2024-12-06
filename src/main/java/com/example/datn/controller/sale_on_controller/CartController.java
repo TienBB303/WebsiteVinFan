@@ -228,7 +228,12 @@ public class CartController {
 
     @Transactional
     @PostMapping("/process-payment")
-    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session, Model model) {
+    public String processPayment(@RequestParam("tinhThanhPho") String tinh,
+                                 @RequestParam("quanHuyen") String huyen,
+                                 @RequestParam("xaPhuong") String xa,
+                                 @RequestParam("soNhaNgoDuong") String chiTietDiaChi,
+                                 @ModelAttribute CreateHoaDonRequest request,
+                                 HttpSession session, Model model) {
         // Lấy giỏ hàng từ session
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
         if (cartItems == null || cartItems.isEmpty()) {
@@ -242,13 +247,8 @@ public class CartController {
         hoaDon.setSdtNguoiNhan(request.getPhone());
 
         // Ghép địa chỉ
-        String diaChi = request.getAddress();
-        if (request.getDistrict() != null && !request.getDistrict().isEmpty()) {
-            diaChi += ", " + request.getDistrict();
-        }
-        if (request.getProvince() != null && !request.getProvince().isEmpty()) {
-            diaChi += ", " + request.getProvince();
-        }
+        String diaChi = tinh + "," + huyen + "," + xa + "," + chiTietDiaChi;
+        System.out.println(diaChi);
         hoaDon.setDiaChi(diaChi);
         hoaDon.setNgayTao(LocalDate.now());
         hoaDon.setTrangThai(1); // Trạng thái chờ xác nhận

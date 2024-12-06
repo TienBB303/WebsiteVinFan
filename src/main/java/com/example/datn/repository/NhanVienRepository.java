@@ -30,6 +30,8 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
             Pageable pageable
     );
     Optional<NhanVien> findByEmail(String email);
+    Optional<NhanVien> findByResetToken(String resetToken);
+
 
     default NhanVien profileNhanVien() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
