@@ -5,6 +5,7 @@ import com.example.datn.dto.request.TrangThaiHoaDonRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 
+import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.LichSuHoaDon;
@@ -86,7 +87,7 @@ public class HoaDonController {
         // Gán dữ liệu vào Model
         model.addAttribute("list", list);
         model.addAttribute("query", query);
-        model.addAttribute("status", trangThai != null ? trangThai : 0);
+        model.addAttribute("status", trangThai != null ? trangThai : 6);
         model.addAttribute("method", method);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
