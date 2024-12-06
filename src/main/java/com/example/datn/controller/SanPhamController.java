@@ -206,7 +206,6 @@ public class SanPhamController {
                     sanPhamChiTietTam.setNgay_tao(new Date());
                     sanPhamChiTietTam.setNguoi_tao("admin");
 
-
                     listSPCTTam.add(sanPhamChiTietTam);
                 }
             }
@@ -245,7 +244,11 @@ public class SanPhamController {
             if (soLuong < 0 || soLuong > 500) {
                 return ResponseEntity.badRequest().body("Số lượng phải nằm trong khoảng 0 - 500.");
             }
-
+            if (soLuong <= 0) {
+                spTam.setTrang_thai(false); // Tắt trạng thái nếu hết hàng
+            } else {
+                spTam.setTrang_thai(true); // Bật trạng thái nếu còn hàng
+            }
             // Cập nhật giá và số lượng
             spTam.setGia(gia);
             spTam.setSo_luong(soLuong);
@@ -282,6 +285,11 @@ public class SanPhamController {
             sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
             sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
 
+            if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
+                sanPham.setTrang_thai(true); // Tắt sản phẩm nếu tất cả biến thể đều tắt
+            } else {
+                sanPham.setTrang_thai(false); // Bật sản phẩm nếu còn ít nhất 1 biến thể bật
+            }
             listSPCT.add(sanPhamChiTiet);
         }
 
@@ -328,7 +336,10 @@ public class SanPhamController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            BigDecimal gia = new BigDecimal(giaStr.replaceAll("[^\\d]", ""));
+            String sanitizedInput = giaStr
+                    .replaceAll("[^\\d]", "");
+
+            BigDecimal gia = new BigDecimal(sanitizedInput);
 
             SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
             if (sanPhamChiTiet == null) {

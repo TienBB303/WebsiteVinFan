@@ -75,7 +75,6 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_hinh_anh")
     HinhAnh hinhAnh;
 
-    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal gia;
 
     Integer so_luong;

@@ -41,15 +41,6 @@
                         <form th:action="@{/admin/san-pham/update}" th:object="${spUpdate}" method="post" enctype="multipart/form-data">
 
                             <input type="text" class="form-control" id="sanPhamid" th:field="*{id}" hidden>
-
-<!--                            <div class="row mb-3">-->
-<!--                                &lt;!&ndash; Ảnh sản phẩm &ndash;&gt;-->
-<!--                                <div class="col-md-4">-->
-<!--                                    <div class="card">-->
-<!--                                        <img class="card-img-top" id="productImagePreview" th:src="@{'/static/admin/images/' + ${hinhAnhHienTai}}" alt="Hình ảnh sản phẩm" width="200"/>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
                             <div class="row">
                                 <div class="col-sm-6">
                                     <!-- Phần kiểu quạt -->
@@ -83,7 +74,7 @@
 <!--                                    </div>-->
                                     <div class="mb-3">
                                         <label for="sanPhamPrice">Giá bán <b style="color: red">*</b></label>
-                                        <input type="text" class="form-control" id="sanPhamPrice" th:field="*{gia}" placeholder="Nhập giá bán" required>
+                                        <input type="text" class="form-control" id="sanPhamPrice" th:field="*{gia}"  placeholder="Nhập giá bán" required>
                                     </div>
                                     <!-- Phần số lượng -->
                                     <div class="mb-3">

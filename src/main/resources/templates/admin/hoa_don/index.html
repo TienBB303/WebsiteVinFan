@@ -68,30 +68,41 @@
                                         <div class="col-12 col-lg-2">
                                             <select class="form-select" id="method" name="method">
                                                 <option value="all" th:selected="${method == 'all'}">Tất cả</option>
-                                                <option value="1" th:selected="${method == '1'}">Tại quầy</option>
-                                                <option value="0" th:selected="${method == '0'}">Online</option>
+                                                <option value="1" th:selected="${method == true}">Tại quầy</option>
+                                                <option value="0" th:selected="${method == false}">Online</option>
                                             </select>
                                         </div>
                                         <div class="col-12 col-lg-2">
-                                            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                                            <button class="btn btn-outline-primary" type="submit" style="width: 100px; margin-right: 10px">
+                                                <i class="bi bi-search"></i>
+                                            </button>
                                         </div>
                                         <div class="col-12 col-lg-2">
-                                            <a class="btn btn-warning" href="/hoa-don/index">Reset</a>
+                                            <a class="btn btn-outline-warning" href="/hoa-don/index">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
                             </div>
+
                             <div class="dataTable-container">
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item2">
-                                        <a class="nav-link" th:classappend="${status == 0} ? 'active'"
+                                        <a class="nav-link" th:classappend="${status == 6} ? 'active'"
                                            th:href="@{/hoa-don/index}">Tất cả</a>
                                     </li>
                                     <li class="nav-item2">
                                         <a class="nav-link"
+                                           th:classappend="${status == trangThaiHoaDon.hoaDonCho} ? 'active'"
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.hoaDonCho})}">Đang treo
+                                        </a>
+                                    </li>
+                                    <li class="nav-item2">
+                                        <a class="nav-link"
                                            th:classappend="${status == trangThaiHoaDon.choXacNhan} ? 'active'"
-                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.choXacNhan})}">Chờ xác
-                                            nhận</a>
+                                           th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.choXacNhan})}">Chờ xác nhận
+                                        </a>
                                     </li>
                                     <li class="nav-item2">
                                         <a class="nav-link"
@@ -117,6 +128,7 @@
                                     </li>
                                 </ul>
                             </div>
+
                             <div class="dataTable-container">
                                 <table class="table table-striped dataTable-table" id="table1">
                                     <thead>
@@ -128,12 +140,12 @@
                                             <a href="#" class="dataTable-sorter">Mã hóa đơn</a>
                                         </th>
 
-                                        <th data-sortable="">
-                                            <a href="#" class="dataTable-sorter">Mã nhân viên</a>
-                                        </th>
-                                        <th data-sortable="">
-                                            <a href="#" class="dataTable-sorter">Mã khách hàng</a>
-                                        </th>
+<!--                                        <th data-sortable="">-->
+<!--                                            <a href="#" class="dataTable-sorter">Mã nhân viên</a>-->
+<!--                                        </th>-->
+<!--                                        <th data-sortable="">-->
+<!--                                            <a href="#" class="dataTable-sorter">Mã khách hàng</a>-->
+<!--                                        </th>-->
                                         <th data-sortable="">
                                             <a href="#" class="dataTable-sorter">Tên khách hàng</a>
                                         </th>
@@ -161,8 +173,8 @@
                                     <tr th:each="item, iterStat : ${list}">
                                         <td th:text="${iterStat.count}"></td>
                                         <td th:text="${item.ma}"></td>
-                                        <td th:text="${item.nhanVien.ma}"></td>
-                                        <td th:text="${item.khachHang.ma}"></td>
+<!--                                        <td th:text="${item.nhanVien.ma}"></td>-->
+<!--                                        <td th:text="${item.khachHang.ma}"></td>-->
                                         <td th:text="${item.tenNguoiNhan}"></td>
                                         <td th:text="${item.sdtNguoiNhan}"></td>
                                         <td th:class="${item.loaiHoaDon ? 'text-danger' : 'text-primary'}"
@@ -170,7 +182,7 @@
                                         </td>
 
                                         <td th:text="${item.ngayTao}"></td>
-                                        <td th:text="${#numbers.formatCurrency(item.tongTien)}"></td>
+                                        <td th:text="${item.tongTien}"></td>
 
                                         <!--                                    <td>-->
                                         <!--                                        <li th:each="thanhToan : ${hoaDon.thanhToan}">-->
@@ -178,6 +190,7 @@
                                         <!--                                        </li>-->
                                         <!--                                    </td>-->
                                         <td th:switch="${item.trangThai}">
+                                            <span th:case="0" class="text-success-emphasis">Đang treo</span>
                                             <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
                                             <span th:case="2" class="text-success">Đã xác nhận</span>
                                             <span th:case="3" class="text-warning">Đang giao hàng</span>
@@ -190,7 +203,7 @@
                                             <!--                                                <i class="bi bi-pencil-square"></i>-->
                                             <!--                                            </a>-->
                                             <a th:href="@{/hoa-don/detail(id=${item.id})}" type="button"
-                                               class="btn btn-warning">
+                                               class="btn btn-outline-warning">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <!-- Hoặc sử dụng nút -->

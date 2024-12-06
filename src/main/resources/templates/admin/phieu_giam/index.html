@@ -111,7 +111,6 @@
                                         <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                                     </div>
                                 </form>
-
                             </div>
                             <div class="dataTable-container">
                                 <table class="table table-striped">
@@ -134,7 +133,7 @@
                                         <td th:text="${pgg.loaiPhieuGiam }== true ? 'Giảm giá hóa đơn' : 'Giảm sản phẩm'">Loại phiếu giảm</td>
                                         <td th:text="${pgg.ngayBD}">Ngày bắt đầu</td>
                                         <td th:text="${pgg.ngayKT}">Ngày kết thúc</td>
-                                        <td th:text="${pgg.giaTriGiam}">Số lượng</td>
+                                        <td id="giaTriGiam" th:text="${pgg.giaTriGiam}">Gía trị giảm</td>
                                         <td th:text="${pgg.trangThai} == true ? 'Áp dụng' : 'Ngừng áp dụng'"></td>
                                         <td>
                                             <a class="btn btn-info"
@@ -176,5 +175,18 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
 <script th:replace="/admin/fragments/script :: script"></script>
+
+<script>
+    // Định dạng số thành tiền VNĐ
+    function formatCurrency(amount) {
+        return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    }
+
+    // Áp dụng định dạng tiền cho các ô có giá trị giảm
+    document.querySelectorAll('#giaTriGiam').forEach(function(element) {
+        var amount = parseInt(element.innerText);
+        element.innerText = formatCurrency(amount);
+    });
+</script>
 </body>
 </html>

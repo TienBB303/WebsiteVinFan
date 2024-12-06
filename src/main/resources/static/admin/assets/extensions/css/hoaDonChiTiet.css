@@ -50,6 +50,14 @@ table thead, table tbody tr {
     overflow-x: auto;          /* Thêm thanh cuộn ngang nếu không vừa màn hình */
 }
 
+.input-group input {
+    margin-right: 10px;
+    width: 22%;
+}
+
+.input-group .form-control {
+    height: 40px;
+}
 
 
 

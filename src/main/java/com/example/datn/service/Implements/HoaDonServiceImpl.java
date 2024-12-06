@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -41,6 +40,12 @@ public class HoaDonServiceImpl implements HoaDonService {
     public Page<HoaDon> findAll(Pageable pageable) {
         return hoaDonRepo.findAll(pageable);
     }
+
+    @Override
+    public List<HoaDon> getAll() {
+        return hoaDonRepo.findAll();
+    }
+
 
     @Override
     public void save(HoaDon hoaDon) {
@@ -246,6 +251,20 @@ public class HoaDonServiceImpl implements HoaDonService {
     public void updateTongTienHoaDon() {
         hoaDonRepo.updateTongTienHoaDon();
     }
+
+    @Override
+    public boolean updateQuantity(Long itemId, int quantity) {
+        Optional<HoaDonChiTiet> hoaDonChiTiet = hoaDonChiTietRepo.findById(itemId);
+
+        if (hoaDonChiTiet.isPresent()) {
+            HoaDonChiTiet item = hoaDonChiTiet.get();
+            item.setSoLuong(quantity);
+            hoaDonChiTietRepo.save(item);
+            return true;
+        }
+        return false;
+    }
+
 
 //    @Override
 //    @Transactional
