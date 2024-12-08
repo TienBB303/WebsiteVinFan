@@ -1,13 +1,9 @@
 package com.example.datn.service;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.response.LichSuThanhToanResponse;
-import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-import com.example.datn.dto.response.PggInHoaDonResponse;
-import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
+import com.example.datn.dto.response.*;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
-import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +14,8 @@ import java.util.Optional;
 
 public interface HoaDonService {
     Page<HoaDon> findAll(Pageable pageable);
+
+    List<HoaDon> getAll();
 
     void save(HoaDon hoaDon);
 
@@ -57,11 +55,7 @@ public interface HoaDonService {
 
     void updateTongTienHoaDon();
 
-//    void updateSoLuong(Long id, Integer soLuong);
-    //
-
-
-    List<HoaDonOff> getAllHoaDonOff( );
+    HinhThucThanhToanResponse getHinhThucThanhToan();
 
     String generateOrderCode();
 

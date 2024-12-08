@@ -19,15 +19,16 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     Page<HoaDon> findHoaDonAndSortDay(Pageable pageable);
 
     @Query("SELECT hd FROM HoaDon hd " +
-            "JOIN hd.khachHang kh " +
-            "join hd.nhanVien nv " +
-            "WHERE (LOWER(kh.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(kh.ma) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(kh.soDienThoai) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(nv.ma) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(hd.ma) LIKE LOWER(CONCAT('%', :query, '%')))"
+            "LEFT JOIN hd.khachHang kh " +
+            "LEFT JOIN hd.nhanVien nv " +
+            "WHERE (LOWER(COALESCE(kh.ten, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(kh.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(kh.soDienThoai, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(nv.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(hd.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')))"
     )
     Page<HoaDon> searchHoaDon(String query, Pageable pageable);
+
 
     @Query("SELECT new com.example.datn.dto.response.PggInHoaDonResponse(" +
             "pgg.ma , pgg.ten, hd.tongTien, hd.tongTienSauGiamGia, hd.phiVanChuyen) " +
@@ -37,9 +38,8 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     PggInHoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") long hoaDonId);
 
     @Query("SELECT new com.example.datn.dto.response.LichSuThanhToanResponse(" +
-            "hd.tongTien , hd.ngayTao, hd.loaiHoaDon,httt.hinhThucThanhToan, hd.trangThai, hd.nguoiTao) " +
+            "hd.tongTien , hd.ngayTao, hd.loaiHoaDon,hd.hinhThucThanhToan, hd.trangThai, hd.nguoiTao) " +
             "FROM HoaDon hd " +
-            "join hd.hinhThucThanhToan httt " +
             "where hd.id =:hoaDonId")
     LichSuThanhToanResponse findThanhToanHoaDonId(@Param("hoaDonId") long hoaDonId);
 

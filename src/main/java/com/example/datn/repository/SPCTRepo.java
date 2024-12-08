@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 
@@ -31,4 +32,16 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 
     @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham.ten LIKE %:ten%")
     List<SanPhamChiTiet> timKiemTheoTen(String ten);
+
+    //qanh
+    @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp " +
+            "WHERE (LOWER(sp.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(spct.mauSac.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(spct.congSuat.ten) LIKE LOWER(CONCAT('%', :query, '%')))")
+    List<SanPhamChiTiet> searchSPCTInHDCT(String query);
+
+    //khoi
+    @Query("SELECT sp FROM SanPhamChiTiet sp JOIN sp.sanPham s WHERE sp.id = :productId")
+    Optional<SanPhamChiTiet> findChiTietById(@Param("productId") Long productId);
+
 }

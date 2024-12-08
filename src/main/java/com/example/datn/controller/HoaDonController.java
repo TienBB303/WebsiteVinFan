@@ -87,7 +87,7 @@ public class HoaDonController {
         // Gán dữ liệu vào Model
         model.addAttribute("list", list);
         model.addAttribute("query", query);
-        model.addAttribute("status", trangThai != null ? trangThai : 0);
+        model.addAttribute("status", trangThai != null ? trangThai : 6);
         model.addAttribute("method", method);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
@@ -109,11 +109,16 @@ public class HoaDonController {
         model.addAttribute("hoaDon", hoaDon);
 
         String chuoi = hoaDon.getDiaChi();
+        if (chuoi == null || chuoi.isEmpty()) {
+            // Cung cấp giá trị mặc định nếu chuoi là null hoặc rỗng
+            chuoi = "N/A,N/A,N/A,N/A";
+        }
+
         String[] mang = chuoi.split(",");
-        model.addAttribute("tinh", mang[0]);
-        model.addAttribute("huyen", mang[1]);
-        model.addAttribute("xa", mang[2]);
-        model.addAttribute("chitietdiachi", mang[3]);
+        model.addAttribute("tinh", mang.length > 0 ? mang[0] : "N/A");
+        model.addAttribute("huyen", mang.length > 1 ? mang[1] : "N/A");
+        model.addAttribute("xa", mang.length > 2 ? mang[2] : "N/A");
+        model.addAttribute("chitietdiachi", mang.length > 3 ? mang[3] : "N/A");
 
 
 
@@ -250,7 +255,6 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
-
 
     @PostMapping("/sua-thong-tin")
     public String updateThongTinNguoiNhan(@RequestParam("tenMoi") String tenNguoiNhanMoi,

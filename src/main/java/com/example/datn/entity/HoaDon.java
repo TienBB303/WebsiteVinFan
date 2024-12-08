@@ -42,16 +42,15 @@ public class HoaDon {
     @Column(name = "sdt_nguoi_nhan")
     String sdtNguoiNhan;
     @Column(name = "tong_tien")
-    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal tongTien;
     @Column(name = "tong_tien_sau_giam_gia")
-    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal tongTienSauGiamGia;
     @Column(name = "dia_chi")
     String diaChi;
     @Column(name = "phi_van_chuyen")
-    @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal phiVanChuyen;
+    @Column(name = "hinh_thuc_thanh_toan")
+    String hinhThucThanhToan;
     @Column(name = "ghi_chu")
     String ghiChu;
     @Column(name = "loai_hoa_don")
@@ -70,9 +69,9 @@ public class HoaDon {
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_hinh_thuc_thanh_toan", nullable = true)
-    HinhThucThanhToan hinhThucThanhToan;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_hinh_thuc_thanh_toan", nullable = true)
+//    HinhThucThanhToan hinhThucThanhToan;
 
 
 }

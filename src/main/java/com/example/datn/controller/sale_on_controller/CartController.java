@@ -5,7 +5,9 @@ import com.example.datn.dto.request.sale_on_request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.entity.sale_on.CartItem;
+import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
+import com.example.datn.service.SanPhamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -32,6 +34,11 @@ public class CartController {
     private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // Lưu trong 7 ngày
     @Autowired
     private HoaDonService hoaDonService;
+    @Autowired
+    private SPCTRepo spctRepo;
+
+    @Autowired
+    private SanPhamService sanPhamService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -90,13 +97,27 @@ public class CartController {
             }
         }
 
+        // Tạo một Map để lưu trữ số lượng tồn kho cho từng sản phẩm
+        Map<Long, Integer> stockMap = new HashMap<>();
+
+        // Lấy số lượng tồn kho từ SanPhamChiTiet và lưu vào Map
+        for (CartItem item : cart) {
+            Optional<SanPhamChiTiet> sanPhamChiTietOpt = spctRepo.findById(item.getProductId());
+
+            if (sanPhamChiTietOpt.isPresent()) {
+                SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietOpt.get();
+                // Thêm số lượng tồn kho vào Map với key là productId
+                stockMap.put(item.getProductId(), sanPhamChiTiet.getSo_luong());
+            }
+        }
+
         double totalPrice = cart.stream().mapToDouble(item -> item.getPrice() * item.getQuantity()).sum();
         model.addAttribute("cartItems", cart);
         model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("stockMap", stockMap);  // Thêm stockMap vào model
 
         return "admin/website/viewCart";
     }
-
     // Lấy giỏ hàng từ session
     private List<CartItem> getCartFromSession(HttpSession session) {
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
@@ -269,7 +290,7 @@ public class CartController {
         hoaDon.setKhachHang(entityManager.find(KhachHang.class, 1L));
         hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
         hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L));
-        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
+//        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
 
         // Phí vận chuyển
         BigDecimal shippingFee = BigDecimal.valueOf(30000);
@@ -313,5 +334,39 @@ public class CartController {
         model.addAttribute("hoaDon", hoaDon);
 
         return "admin/website/orderSuccess";
+    }
+    @PostMapping("/check-stock")
+    public ResponseEntity<Map<String, Object>> checkStock(@RequestBody List<CartItemRequest> cartItems) {
+        Map<String, Object> response = new HashMap<>();
+        boolean allInStock = true;
+        StringBuilder message = new StringBuilder();
+
+        for (CartItemRequest item : cartItems) {
+            SanPhamChiTiet productDetails = sanPhamService.getProductDetails(item.getProductId());
+            if (productDetails != null) {
+                int availableStock = productDetails.getSo_luong();
+                if (item.getQuantity() > availableStock) {
+                    allInStock = false;
+                    message.append("Sản phẩm ")
+                            .append(productDetails.getSanPham().getTen())
+                            .append(" không đủ tồn kho. ");
+                }
+            } else {
+                allInStock = false;
+                message.append("Sản phẩm với ID ")
+                        .append(item.getProductId())
+                        .append(" không tìm thấy. ");
+            }
+        }
+
+        if (allInStock) {
+            response.put("success", true);
+            response.put("message", "Tất cả sản phẩm có đủ tồn kho.");
+        } else {
+            response.put("success", false);
+            response.put("message", message.toString());
+        }
+
+        return ResponseEntity.ok(response);
     }
 }
