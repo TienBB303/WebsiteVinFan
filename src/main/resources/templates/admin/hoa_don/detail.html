@@ -193,30 +193,28 @@
                            }">
                         <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Mã GD</th>
-                            <th>Số tiền</th>
+                            <th>Tổng tiền</th>
                             <th>Trạng thái</th>
                             <th>Thời gian</th>
                             <th>Phương thức thanh toán</th>
+                            <th>Loại hóa đơn</th>
                             <th>Người tạo</th>
-                            <th>Ghi chú</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="item: ${listLSTT}">
-                            <td th:text="${item.tongTien}"></td>
-                            <td th:text="${item.ngayTao}"></td>
-                            <td th:text="${item.hinhThucThanhToan}"></td>
-                            <td th:class="${item.loaiHoaDon ? 'text-danger' : 'text-primary'}"
-                                th:text="${item.loaiHoaDon ? 'Tại quầy' : 'Online'}">
-                            </td>
+                            <td class="giaVND" th:text="${item.tongTien}"></td>
                             <td th:switch="${item.trangThai}">
                                 <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
                                 <span th:case="2" class="text-success">Đã xác nhận</span>
                                 <span th:case="3" class="text-warning">Đang giao hàng</span>
                                 <span th:case="4" class="text-primary">Đã giao hàng</span>
                                 <span th:case="5" class="text-danger">Hủy</span>
+                            </td>
+                            <td th:text="${item.ngayTao}"></td>
+                            <td th:text="${item.hinhThucThanhToan}"></td>
+                            <td th:class="${item.loaiHoaDon ? 'text-danger' : 'text-primary'}"
+                                th:text="${item.loaiHoaDon ? 'Tại quầy' : 'Online'}">
                             </td>
                             <td th:text="${item.nguoiTao}"></td>
                         </tr>
