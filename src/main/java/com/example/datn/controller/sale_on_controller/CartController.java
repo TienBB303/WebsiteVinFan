@@ -290,7 +290,7 @@ public class CartController {
         hoaDon.setKhachHang(entityManager.find(KhachHang.class, 1L));
         hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
         hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L));
-        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
+//        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
 
         // Phí vận chuyển
         BigDecimal shippingFee = BigDecimal.valueOf(30000);
