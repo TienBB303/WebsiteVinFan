@@ -138,8 +138,17 @@
                         <div th:text="${item.tenSanPham}"></div>
                     </td>
                     <td>
-                        <input type="number" class="form-control form-control-sm mx-2" th:value="${item.soLuong}"
-                               style="width: 75px;">
+                        <div style="display: flex; align-items: center;">
+                            <!-- Nút giảm -->
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="decreaseQuantity(this)">-</button>
+
+                            <!-- Ô nhập số -->
+                            <input type="number" class="form-control form-control-sm mx-2" value="1" min="0"
+                                   style="width: 75px; text-align: center;">
+
+                            <!-- Nút tăng -->
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="increaseQuantity(this)">+</button>
+                        </div>
                     </td>
                     <td class="giaVND" th:text="${item.thanhTien}"></td>
                     <td>
@@ -392,6 +401,7 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+<!--    format giá-->
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
             const originalValue = parseFloat(element.innerText);
@@ -402,6 +412,7 @@
             });
         });
     </script>
+<!--    tìm kiếm sản phẩm-->
     <script>
         document.getElementById('searchButton').addEventListener('click', function () {
             const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
@@ -548,7 +559,7 @@
         document.getElementById('filterPower').addEventListener('input', filterProducts);
         document.getElementById('filterPrice').addEventListener('input', filterProducts);
     </script>
-
+<!--ẩn form thông tin giao hàng-->
     <script>
         document.getElementById('toggleForm').addEventListener('change', function () {
             const form = document.getElementById('deliveryForm');
@@ -558,6 +569,20 @@
                 form.style.visibility = 'hidden';
             }
         });
+    </script>
+<!--tăng giảm số lượng-->
+    <script>
+        function decreaseQuantity(button) {
+            const input = button.nextElementSibling; // Tìm ô input liền sau nút giảm
+            const currentValue = parseInt(input.value) || 0; // Lấy giá trị hiện tại
+            if (currentValue > 0) input.value = currentValue - 1; // Giảm nếu lớn hơn 0
+        }
+
+        function increaseQuantity(button) {
+            const input = button.previousElementSibling; // Tìm ô input liền trước nút tăng
+            const currentValue = parseInt(input.value) || 0; // Lấy giá trị hiện tại
+            input.value = currentValue + 1; // Tăng giá trị
+        }
     </script>
 
 
