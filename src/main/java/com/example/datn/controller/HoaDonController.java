@@ -87,7 +87,7 @@ public class HoaDonController {
         // Gán dữ liệu vào Model
         model.addAttribute("list", list);
         model.addAttribute("query", query);
-        model.addAttribute("status", trangThai != null ? trangThai : 0);
+        model.addAttribute("status", trangThai != null ? trangThai : 6);
         model.addAttribute("method", method);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
@@ -250,7 +250,6 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
-
 
     @PostMapping("/sua-thong-tin")
     public String updateThongTinNguoiNhan(@RequestParam("tenMoi") String tenNguoiNhanMoi,

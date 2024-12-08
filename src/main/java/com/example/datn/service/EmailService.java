@@ -11,7 +11,7 @@ public class EmailService {
 
     public void sendEmail(String to, String subject, String username, String password, String linkweb) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("pt0932464@gmail.com");
+        message.setFrom("famumintouan@gmail.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText("Tên tài khoản: " + username + "\n" +
@@ -19,6 +19,14 @@ public class EmailService {
                 "Đô nết cho mình nhé: " + linkweb);
 
         mailSender.send(message);
-        System.out.println("fgrergrgrgr");
     }
+    public void sendEmailQuenMatKhau(String to, String subject,String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("famumintouan@gmail.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
+    }
+
 }

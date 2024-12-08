@@ -1,12 +1,78 @@
-#productList {
-    display: flex;
-    flex-wrap: wrap;
-    list-style-type: none;
-    padding: 0;
+/**/
+table tbody {
+    display: block;
+    max-height: 350px; /* Thay đổi chiều cao tối đa của tbody */
+    overflow-y: auto;
+    width: 100%;
 }
 
-#productList .list-group-item {
-    flex: 1 0 30%; /* Đặt chiều rộng của mỗi phần tử là 30% */
-    margin: 10px; /* Khoảng cách giữa các phần tử */
-    box-sizing: border-box; /* Đảm bảo padding và border không ảnh hưởng đến kích thước */
+table thead, table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+.custom-tabs .nav-link.active {
+    background-color: #ededef !important;
+    color: white !important;
+    border-radius: 5px;
+}
+.form-section {
+    margin-bottom: 20px;
+}
+.total-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
+}
+.confirm-btn {
+    font-weight: bold;
+}
+
+/* Kiểu dáng cho công tắc */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+
+/* Thanh nền */
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 25px;
+}
+
+/* Vòng tròn bên trong */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* Khi được bật */
+input:checked + .slider {
+    background-color: #007bff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(25px);
 }

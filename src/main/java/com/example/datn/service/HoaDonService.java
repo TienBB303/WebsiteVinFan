@@ -1,6 +1,8 @@
 package com.example.datn.service;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
+import com.example.datn.dto.request.SearchSanPhamChiTietRequest;
+import com.example.datn.dto.request.UpdateSoLuongRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
 import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
@@ -13,11 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 public interface HoaDonService {
     Page<HoaDon> findAll(Pageable pageable);
+
+    List<HoaDon> getAll();
 
     void save(HoaDon hoaDon);
 
@@ -56,10 +61,6 @@ public interface HoaDonService {
     boolean huyHoaDon(long id);
 
     void updateTongTienHoaDon();
-
-//    void updateSoLuong(Long id, Integer soLuong);
-    //
-
 
     List<HoaDonOff> getAllHoaDonOff( );
 
