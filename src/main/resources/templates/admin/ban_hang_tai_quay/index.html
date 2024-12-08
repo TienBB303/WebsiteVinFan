@@ -85,7 +85,7 @@
                                         <td th:text="${item.sanPham.ten}"></td>
                                         <td th:text="${item.mauSac.ten}"></td>
                                         <td th:text="${item.congSuat.ten}"></td>
-                                        <td th:text="${item.gia}"></td>
+                                        <td class="giaVND" th:text="${item.gia}"></td>
                                         <td th:text="${item.so_luong}"></td>
                                         <td>
                                             <form method="post" th:action="@{/ban-hang-tai-quay/addSPCT}"
@@ -93,7 +93,7 @@
                                                   class="d-inline">
                                                 <input type="hidden" name="idHD" th:value="${idHD}">
                                                 <input type="hidden" name="idSP" th:value="${item.id}">
-                                                <input type="hidden" name="gia" th:value="${item.gia}">
+                                                <input type="hidden" name="gia" class="giaVND" th:value="${item.gia}">
                                                 <input type="hidden" name="soLuong" th:value="${item.so_luong}">
                                                 <button type="submit" class="btn btn-outline-success btn-sm">
                                                     Thêm
@@ -141,7 +141,7 @@
                         <input type="number" class="form-control form-control-sm mx-2" th:value="${item.soLuong}"
                                style="width: 75px;">
                     </td>
-                    <td th:text="${item.thanhTien}"></td>
+                    <td class="giaVND" th:text="${item.thanhTien}"></td>
                     <td>
                         <button class="btn btn-outline-danger btn-sm">Xóa</button>
                     </td>
@@ -377,7 +377,7 @@
                 <!-- Tổng tiền -->
                 <div class="form-section d-flex align-items-center mb-3">
                     <label class="form-label me-3">Tổng tiền:</label>
-                    <p class="total-price mb-0 text-danger fw-bold" th:text="${tongTien}"></p>
+                    <p class="total-price mb-0 text-danger fw-bold giaVND"  th:text="${tongTien}"></p>
                 </div>
 
                 <!-- Nút xác nhận -->
