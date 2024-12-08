@@ -52,15 +52,28 @@
                                     </div>
 
                                     <!-- Phần kiểu quạt -->
+<!--                                    <div class="mb-3">-->
+<!--                                        <label for="sanPhamKieuQuat" class="form-label">Kiểu quạt <span-->
+<!--                                                class="text-danger">*</span></label>-->
+<!--                                        <div class="d-flex align-items-center">-->
+<!--                                            <select class="form-select me-2" id="sanPhamKieuQuat"-->
+<!--                                                    name="sanPham.kieuQuat.id" >-->
+<!--                                                <option value="" selected>Chọn kiểu quạt</option>-->
+<!--                                                <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}"-->
+<!--                                                        th:text="${kieuQuat.ten}"></option>-->
+<!--                                            </select>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                     <div class="mb-3">
-                                        <label for="sanPhamKieuQuat" class="form-label">Kiểu quạt <span
-                                                class="text-danger">*</span></label>
+                                        <label for="sanPhamKieuQuat" class="form-label">Kiểu quạt <span class="text-danger">*</span></label>
                                         <div class="d-flex align-items-center">
-                                            <select class="form-select me-2" id="sanPhamKieuQuat"
-                                                    name="sanPham.kieuQuat.id" >
+                                            <select class="form-select me-2" id="sanPhamKieuQuat" name="sanPham.kieuQuat.id">
                                                 <option value="" selected>Chọn kiểu quạt</option>
-                                                <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}"
-                                                        th:text="${kieuQuat.ten}"></option>
+                                                <option th:each="kieuQuat : ${listKieuQuat}"
+                                                        th:value="${kieuQuat.id}"
+                                                        th:text="${kieuQuat.ten}"
+                                                        th:if="${kieuQuat.trang_thai}"> <!-- Chỉ hiển thị kiểu quạt có trang_thai là true -->
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
