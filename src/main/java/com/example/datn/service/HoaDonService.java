@@ -1,10 +1,7 @@
 package com.example.datn.service;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.response.LichSuThanhToanResponse;
-import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-import com.example.datn.dto.response.PggInHoaDonResponse;
-import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
+import com.example.datn.dto.response.*;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.SanPhamChiTiet;
@@ -58,6 +55,7 @@ public interface HoaDonService {
 
     void updateTongTienHoaDon();
 
+    HinhThucThanhToanResponse getHinhThucThanhToan();
 
     String generateOrderCode();
 

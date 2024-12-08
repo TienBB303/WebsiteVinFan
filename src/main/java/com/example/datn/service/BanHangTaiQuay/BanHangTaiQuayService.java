@@ -20,6 +20,5 @@ public interface BanHangTaiQuayService {
 
     KhachHang getKhachHangLe(Long id);
 
-    HinhThucThanhToanResponse getHinhThucThanhToan();
 
 }

@@ -1,10 +1,7 @@
 package com.example.datn.service.Implements;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.response.LichSuThanhToanResponse;
-import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-import com.example.datn.dto.response.PggInHoaDonResponse;
-import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
+import com.example.datn.dto.response.*;
 import com.example.datn.entity.*;
 import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
@@ -225,6 +222,12 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Transactional
     public void updateTongTienHoaDon() {
         hoaDonRepo.updateTongTienHoaDon();
+    }
+
+    @Override
+    public HinhThucThanhToanResponse getHinhThucThanhToan() {
+        HinhThucThanhToanResponse hinhThucThanhToan = new HinhThucThanhToanResponse("Thanh Toán Khi Nhận Hàng", "Chuyển Khoản", "Tiền Mặt");
+        return hinhThucThanhToan;
     }
 
 

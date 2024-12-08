@@ -44,7 +44,7 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
             KhachHang khachHang = getKhachHangLe(1L);
             hoaDon.setKhachHang(khachHang);
             hoaDon.setTenNguoiNhan(khachHang.getTen());
-            HinhThucThanhToanResponse hinhThucThanhToanResponse = getHinhThucThanhToan();
+            HinhThucThanhToanResponse hinhThucThanhToanResponse = hoaDonService.getHinhThucThanhToan();
             hoaDon.setHinhThucThanhToan(hinhThucThanhToanResponse.getTienMat());
             hoaDonRepo.saveAndFlush(hoaDon);
 
@@ -116,11 +116,7 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
         return khachHangRepo.findById(id).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
     }
 
-    @Override
-    public HinhThucThanhToanResponse getHinhThucThanhToan() {
-        HinhThucThanhToanResponse hinhThucThanhToan = new HinhThucThanhToanResponse("Thanh Toán Khi Nhận Hàng", "Chuyển Khoản", "Tiền Mặt");
-        return hinhThucThanhToan;
-    }
+
 
 
 }
