@@ -257,7 +257,7 @@
                         </div>
                         <div class="text-end mt-3">
                             <div class="container">
-                                <button th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 1}" type="button" class="btn btn-outline-warning"
+                                <button th:if="${hoaDon.trangThai == 0 && hoaDon.diaChi != null || hoaDon.trangThai == 1 }" type="button" class="btn btn-outline-warning"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalUpdate">
                                     Sửa hóa đơn
@@ -311,8 +311,7 @@
 
                                                     <!-- Input ẩn để lưu địa chỉ hoàn chỉnh -->
                                                     <input type="hidden" id="fullAddress" name="diaChiMoi">
-
-                                                    <button type="submit" onclick="getCityValue()" class="btn btn-primary">Sửa</button>
+                                                    <button type="submit" onclick="getCityValue()" class="btn btn-outline-warning">Sửa</button>
                                                 </form>
 
                                             </div>
@@ -454,52 +453,53 @@
             </div>
 
 
-            <!-- Discount and Total Section -->
-            <div class="card mb-4">
-                <div class="container-custom">
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <strong>Phiếu giảm giá</strong>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.maPGG}"></span></p>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p>Giá trị:</p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.tenPGG}"></span></p>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p>Tổng tiền hàng:</p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.tongTien}"></span></p>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p>Phí vận chuyển:</p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>
+<!--            &lt;!&ndash; Discount and Total Section &ndash;&gt;-->
+<!--            <div class="card mb-4">-->
+<!--                <div class="container-custom">-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <strong>Phiếu giảm giá</strong>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end">-->
+<!--                            <p><span th:text="${listPGG.maPGG}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Giá trị:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end">-->
+<!--                            <p><span th:text="${listPGG.tenPGG}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Tổng tiền hàng:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end giaVND" >-->
+<!--                            <p><span th:text="${listPGG.tongTien}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row mb-2">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Phí vận chuyển:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end giaVND">-->
+<!--                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>-->
 
-                        </div>
-                    </div>
-                    <div class="row highlight">
-                        <div class="col-md-6">
-                            <p>Tổng tiền:</p>
-                        </div>
-                        <div class="col-md-6 text-end highlight">
-                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row highlight">-->
+<!--                        <div class="col-md-6">-->
+<!--                            <p>Tổng tiền:</p>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-6 text-end highlight giaVND">-->
+<!--                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
         </main>
         <!-- Footer-->
         <div>
@@ -718,6 +718,16 @@
                 });
             });
 
+        </script>
+        <script>
+            document.querySelectorAll('.giaVND').forEach(element => {
+                const originalValue = parseFloat(element.innerText);
+                element.innerText = originalValue.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+                });
+            });
         </script>
 
     </div>
