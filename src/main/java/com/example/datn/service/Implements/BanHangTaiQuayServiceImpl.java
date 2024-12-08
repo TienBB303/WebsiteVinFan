@@ -1,6 +1,7 @@
 package com.example.datn.service.Implements;
 
 import com.example.datn.dto.request.SPCTRequest;
+import com.example.datn.dto.response.HinhThucThanhToanResponse;
 import com.example.datn.entity.*;
 import com.example.datn.repository.*;
 import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
@@ -43,7 +44,8 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
             KhachHang khachHang = getKhachHangLe(1L);
             hoaDon.setKhachHang(khachHang);
             hoaDon.setTenNguoiNhan(khachHang.getTen());
-
+            HinhThucThanhToanResponse hinhThucThanhToanResponse = getHinhThucThanhToan();
+            hoaDon.setHinhThucThanhToan(hinhThucThanhToanResponse.getTienMat());
             hoaDonRepo.saveAndFlush(hoaDon);
 
             //tao lich su hoa don
@@ -53,7 +55,6 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
             lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
             lichSuHoaDonRepo.save(lichSuHoaDon);
 
-//            hoaDonCho.put(hoaDon.getId(), new ArrayList<>());
         }
     }
 
@@ -113,6 +114,12 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
     @Override
     public KhachHang getKhachHangLe(Long id) {
         return khachHangRepo.findById(id).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+    }
+
+    @Override
+    public HinhThucThanhToanResponse getHinhThucThanhToan() {
+        HinhThucThanhToanResponse hinhThucThanhToan = new HinhThucThanhToanResponse("Thanh Toán Khi Nhận Hàng", "Chuyển Khoản", "Tiền Mặt");
+        return hinhThucThanhToan;
     }
 
 
