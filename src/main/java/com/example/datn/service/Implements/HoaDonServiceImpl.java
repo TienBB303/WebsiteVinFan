@@ -1,13 +1,8 @@
 package com.example.datn.service.Implements;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.request.UpdateSoLuongRequest;
-import com.example.datn.dto.response.LichSuThanhToanResponse;
-import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-import com.example.datn.dto.response.PggInHoaDonResponse;
-import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
+import com.example.datn.dto.response.*;
 import com.example.datn.entity.*;
-import com.example.datn.repository.BanOffRepo.HoaDonOffRepo;
 import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
@@ -25,7 +20,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +29,6 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final SPCTRepo spctRepo;
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
-    private final HoaDonOffRepo hoaDonOffRepo;
 
 
     @Override
@@ -232,9 +225,11 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public List<HoaDonOff> getAllHoaDonOff() {
-        return hoaDonOffRepo.findAll();
+    public HinhThucThanhToanResponse getHinhThucThanhToan() {
+        HinhThucThanhToanResponse hinhThucThanhToan = new HinhThucThanhToanResponse("Thanh Toán Khi Nhận Hàng", "Chuyển Khoản", "Tiền Mặt");
+        return hinhThucThanhToan;
     }
+
 
     //khoi
     @Override
