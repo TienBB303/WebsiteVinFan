@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateSoLuongRequest {
-    Long idSP;
-    int soLuong;
+public class UpdateQuantityRequest {
+    private Long id;
+    private Integer soLuong;
 }

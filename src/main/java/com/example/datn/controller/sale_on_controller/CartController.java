@@ -5,9 +5,11 @@ import com.example.datn.dto.request.sale_on_request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.entity.sale_on.CartItem;
+import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.SanPhamService;
+import com.example.datn.service.TrangThaiHoaDonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -36,6 +38,12 @@ public class CartController {
     private HoaDonService hoaDonService;
     @Autowired
     private SPCTRepo spctRepo;
+
+    @Autowired
+    private LichSuHoaDonRepo lichSuHoaDonRepo;
+
+    @Autowired
+    private TrangThaiHoaDonService trangThaiHoaDonService;
 
     @Autowired
     private SanPhamService sanPhamService;
@@ -316,6 +324,12 @@ public class CartController {
 
             hoaDonService.saveHoaDonChiTiet(hoaDonChiTiet);
         }
+        //lịch sử hóa đơn
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setHoaDon(hoaDon);
+        lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
+        lichSuHoaDon.setNgayTao(LocalDate.now());
+        lichSuHoaDonRepo.save(lichSuHoaDon);
 
         // Cập nhật tổng tiền và phí vận chuyển cho hóa đơn
         total = total.add(shippingFee);

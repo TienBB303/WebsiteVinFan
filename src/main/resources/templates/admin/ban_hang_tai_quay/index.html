@@ -137,18 +137,11 @@
                     <td>
                         <div th:text="${item.tenSanPham}"></div>
                     </td>
-                    <td>
-                        <div style="display: flex; align-items: center;">
-                            <!-- Nút giảm -->
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="decreaseQuantity(this)">-</button>
-
-                            <!-- Ô nhập số -->
-                            <input type="number" class="form-control form-control-sm mx-2" value="1" min="0"
-                                   style="width: 75px; text-align: center;">
-
-                            <!-- Nút tăng -->
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="increaseQuantity(this)">+</button>
-                        </div>
+                    <td style="display: flex; align-items: center;">
+                        <input type="number" class="form-control form-control-sm mx-2"
+                               th:value="${item.soLuong}" min="0" style="width: 75px; text-align: center"
+                               id="quantityInput_${item.id}" data-item-id="${item.id}"
+                               onchange="updateQuantity(this)">
                     </td>
                     <td class="giaVND" th:text="${item.thanhTien}"></td>
                     <td>
@@ -401,6 +394,27 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script>
+        // Giả sử bạn có một input cho số lượng sản phẩm và sự kiện onchange
+        $(document).on('change', '.soLuongInput', function() {
+            var idHDCT = $(this).data('id'); // Lấy id của chi tiết hóa đơn từ data-id
+            var newSoLuong = $(this).val(); // Lấy số lượng mới từ input
+
+            // Gửi yêu cầu PUT tới server
+            $.ajax({
+                url: '/ban-hang-tai-quay/update-so-luong/' + idHDCT,
+                type: 'PUT',
+                data: { newSoLuong: newSoLuong },
+                success: function(response) {
+                    // Cập nhật lại giao diện hoặc làm gì đó sau khi thành công
+                    location.reload(); // Reload trang để cập nhật dữ liệu mới
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    </script>
 <!--    format giá-->
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
