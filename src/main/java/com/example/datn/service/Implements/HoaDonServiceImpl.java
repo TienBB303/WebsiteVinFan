@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +62,13 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public List<ListSanPhamInHoaDonChiTietResponse> getSanPhamCTByHoaDonId(Long hoaDonId) {
         return hoaDonChiTietRepo.findSanPhamByHoaDonId(hoaDonId);
+    }
+
+    @Override
+    public List<HoaDonChiTiet> timSanPhamChiTietTheoHoaDon(Long idHoaDon) {
+        // Lấy danh sách HoaDonChiTiet theo idHoaDon
+        List<HoaDonChiTiet> hoaDonChiTiet = hoaDonChiTietRepo.findByHoaDon_Id(idHoaDon);
+        return hoaDonChiTiet;
     }
 
     @Override
@@ -225,11 +233,16 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
+    public void deleteSPInHD(Long idSanPhamChiTiet, Long idHoaDon) {
+        hoaDonChiTietRepo.deleteByHoaDon_IdAndSanPhamChiTiet_Id(idHoaDon,idSanPhamChiTiet);
+    }
+
+
+    @Override
     public HinhThucThanhToanResponse getHinhThucThanhToan() {
         HinhThucThanhToanResponse hinhThucThanhToan = new HinhThucThanhToanResponse("Thanh Toán Khi Nhận Hàng", "Chuyển Khoản", "Tiền Mặt");
         return hinhThucThanhToan;
     }
-
 
     //khoi
     @Override

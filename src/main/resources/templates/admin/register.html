@@ -5,34 +5,67 @@
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
           crossorigin="anonymous">
+
     <style>
         body {
-            background: linear-gradient(to bottom right, rgba(255, 182, 193, 0.6), rgba(255, 105, 180, 0.6));
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-family: Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
         }
-        .registration-form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .registration-container {
+            max-width: 600px;
             width: 100%;
-            max-width: 400px;
+            border-radius: 15px;
+            overflow: hidden;
+            padding: 40px;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .registration-title {
-            text-align: center;
+            font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #ff69b4;
-            font-size: 24px;
+            text-align: center;
+            color: black;
+        }
+        .form-label {
+            color: black;
+        }
+        .form-control {
+            border-radius: 10px;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #333;
+        }
+        .btn-black {
+            background-color: black;
+            color: white;
+            border-radius: 20px;
+            border: none;
+            padding: 10px 20px;
+            transition: background-color 0.3s;
+        }
+        .btn-black:hover {
+            background-color: #333;
+        }
+        .text-danger {
+            font-size: 14px;
+        }
+        select.form-control {
+            background: #f8f8f8;
         }
     </style>
 </head>
 <body>
-<div class="registration-form">
+
+<div class="registration-container">
     <div class="registration-title">Đăng Ký Tài Khoản</div>
     <form th:action="@{/register}" method="post">
         <div class="mb-3">
@@ -82,9 +115,10 @@
             <input type="text" class="form-control" name="soNhaNgoDuong" placeholder="Số nhà/ngõ đường">
         </div>
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Thêm</button>
+            <button type="submit" class="btn btn-black">Đăng Ký</button>
         </div>
     </form>
+
 </div>
 </body>
 </html>

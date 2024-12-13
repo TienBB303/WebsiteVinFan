@@ -67,7 +67,7 @@
                                         <span>Đang vận chuyển</span>
                                     </div>
                                     <div th:case="4" class="arrow-qa">
-                                        <span>Đã giao hàng</span>
+                                        <span>Hoàn thành</span>
                                     </div>
                                     <div th:case="5" class="arrow-qa">
                                         <span>Hủy</span>
@@ -113,7 +113,7 @@
                                                     <span th:case="1" th:text="'Đang chờ xác nhận'"></span>
                                                     <span th:case="2" th:text="'Đã xác nhận'"></span>
                                                     <span th:case="3" th:text="'Đang giao hàng'"></span>
-                                                    <span th:case="4" th:text="'Đã giao hàng'"></span>
+                                                    <span th:case="4" th:text="'Hoàn thành'"></span>
                                                     <span th:case="5" th:text="'Hủy'"></span>
                                                 </td>
                                                 <td th:text="${item.ngayTao}"></td>
@@ -187,7 +187,9 @@
                     <h2><strong><span>Lịch sử thanh toán</span></strong></h2>
                 </div>
                 <div class="card-body">
-                    <table class="table table-striped dataTable-table">
+                    <table class="table table-striped dataTable-table"
+                           th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 2 &&
+                           hoaDon.trangThai != 0 && hoaDon.trangThai != 1}">
                         <thead>
                         <tr>
                             <th>Tổng tiền</th>
@@ -202,10 +204,11 @@
                         <tr th:each="item: ${listLSTT}">
                             <td class="giaVND" th:text="${item.tongTien}"></td>
                             <td th:switch="${item.trangThai}">
+                                <span th:case="0" class="text-secondary-emphasis">Đang treo</span>
                                 <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
                                 <span th:case="2" class="text-success">Đã xác nhận</span>
                                 <span th:case="3" class="text-warning">Đang giao hàng</span>
-                                <span th:case="4" class="text-primary">Đã giao hàng</span>
+                                <span th:case="4" class="text-primary">Hoàn thành</span>
                                 <span th:case="5" class="text-danger">Hủy</span>
                             </td>
                             <td th:text="${item.ngayTao}"></td>
@@ -233,7 +236,7 @@
                                 <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
                                 <span th:case="2" class="text-success">Đã xác nhận</span>
                                 <span th:case="3" class="text-warning">Đang giao hàng</span>
-                                <span th:case="4" class="text-primary">Đã giao hàng</span>
+                                <span th:case="4" class="text-primary">Hoàn thành</span>
                                 <span th:case="5" class="text-danger">Hủy</span>
                             </p>
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
