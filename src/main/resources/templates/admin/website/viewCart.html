@@ -84,7 +84,6 @@
         max-width: 200px;        /* Giới hạn chiều rộng để tránh tràn ra ngoài */
     }
 
-
     /* Giá sản phẩm và tổng cộng */
     .cart-items li .item-price,
     .cart-items li .item-total {
@@ -283,6 +282,18 @@
             let quantity = parseInt(item.querySelector('.item-quantity input').value);
             cartItems.push({ productId, quantity });
         });
+        // Kiểm tra nếu giỏ hàng trống
+        if (cartItems.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Giỏ hàng trống',
+                text: 'Bạn chưa thêm sản phẩm nào vào giỏ hàng.',
+                customClass: {
+                    popup: 'swal-custom-font'
+                }
+            });
+            return; // Dừng tiến trình nếu giỏ hàng trống
+        }
 
         // Kiểm tra số lượng tồn kho
         checkStockAvailability(cartItems);
