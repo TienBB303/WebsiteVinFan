@@ -336,8 +336,7 @@ public class SanPhamController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            String sanitizedInput = giaStr
-                    .replaceAll("[^\\d]", "");
+            String sanitizedInput = giaStr.replaceAll("[^\\d]", "");
 
             BigDecimal gia = new BigDecimal(sanitizedInput);
 
@@ -367,16 +366,13 @@ public class SanPhamController {
             sanPhamChiTiet.setCheDoGio(new CheDoGio(cheDoGioId));
             sanPhamChiTiet.setDieuKhienTuXa(new DieuKhienTuXa(dieuKhienTuXaId));
             sanPhamChiTiet.setNgay_sua(new Date());
-            sanPhamChiTiet.setTrang_thai(trangThai);
-
+            if (soLuong <= 0 ) {
+                sanPhamChiTiet.setTrang_thai(false);
+            } else {
+                sanPhamChiTiet.setTrang_thai(trangThai);
+            }
             sanPhamChiTiet.setNguoi_sua("admin");
             sanPhamService.update(sanPhamChiTiet);
-
-            if (soLuong <= 0) {
-                sanPhamChiTiet.setTrang_thai(false); // Tắt trạng thái nếu hết hàng
-            } else {
-                sanPhamChiTiet.setTrang_thai(true); // Bật trạng thái nếu còn hàng
-            }
 
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
                 sanPham.setTrang_thai(true); // Tắt sản phẩm nếu tất cả biến thể đều tắt
