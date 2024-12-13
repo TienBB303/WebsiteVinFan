@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,8 +53,8 @@ public class KieuQuatController {
     }
 
 
-    @GetMapping("/doi-trang-thai/{id}")
-    public Object doiTrangThai(@PathVariable("id") Integer id) {
+    @PostMapping("/doi-trang-thai/{id}")
+    public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         KieuQuat kieuQuat = kieuQuatRepo.findById(id).orElse(null);
         if (kieuQuat != null) {
             if (kieuQuat.getTrang_thai() == true) {
@@ -69,16 +70,47 @@ public class KieuQuatController {
     }
 
     @PostMapping("/addKieuQuat")
-    public Object themMoi(@RequestParam("ten_kieu_quat") String ten_kieu){
-        Optional<KieuQuat> checkTonTai = kieuQuatRepo.findByTen(ten_kieu);
-        if(checkTonTai.isPresent()){
+    public ResponseEntity<?> themMoi(@RequestParam("ten_kieu_quat") String tenKieu) {
+        if (tenKieu == null || tenKieu.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Tên kiểu quạt không được để trống.");
+        }
+        Optional<KieuQuat> checkTonTai = kieuQuatRepo.findByTen(tenKieu.trim());
+        if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại kiểu quạt.");
-        }else{
+        } else {
             KieuQuat kieuQuat = new KieuQuat();
-            kieuQuat.setTen(ten_kieu);
+            kieuQuat.setTen(tenKieu.trim());
             kieuQuat.setTrang_thai(true);
             kieuQuatRepo.save(kieuQuat);
             return ResponseEntity.ok("Kiểu quạt thêm mới thành công.");
+        }
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> thongTin(@PathVariable("id") Integer id) {
+        Optional<KieuQuat> kieuQuat = kieuQuatRepo.findById(id);
+        if (kieuQuat.isPresent()) {
+            System.out.println("Found KieuQuat: " + kieuQuat.get());
+            return ResponseEntity.ok(kieuQuat.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tồn tại kiểu quạt.");
+        }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateKieuQuat(@RequestParam("id") Integer id, @RequestParam("ten_kieu_quat_update") String tenKieu) {
+        if (tenKieu == null || tenKieu.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Tên kiểu quạt không được để trống.");
+        }
+
+        Optional<KieuQuat> kieuQuatOptional = kieuQuatRepo.findById(id);
+        if (kieuQuatOptional.isPresent()) {
+            KieuQuat kieuQuat = kieuQuatOptional.get();
+            kieuQuat.setTen(tenKieu);
+            kieuQuatRepo.save(kieuQuat);
+            return ResponseEntity.ok("Cập nhật kiểu quạt thành công.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy kiểu quạt.");
         }
     }
 }
