@@ -131,33 +131,36 @@
                     <th>Hành động</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="item, iter : ${listHDCT}">
+                <tbody th:each="item, iter : ${listHDCT}">
+                <tr >
                     <td th:text="${iter.count}"></td>
                     <td>
-                        <div th:text="${item.tenSanPham}"></div>
+                        <div th:text="${item.sanPhamChiTiet.sanPham.ten}"></div>
                     </td>
                     <td>
                         <div style="display: flex; align-items: center;">
                             <!-- Nút giảm -->
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="decreaseQuantity(this)">-</button>
-
+                            <button type="button" class="btn btn-sm btn-outline-secondary">-</button>
                             <!-- Ô nhập số -->
-                            <input type="number" class="form-control form-control-sm mx-2" value="1" min="0"
-                                   style="width: 75px; text-align: center;">
-
+                            <input type="number" class="form-control form-control-sm mx-2" th:value="${item.soLuong}"
+                                   min="0" style="width: 75px; text-align: center;">
                             <!-- Nút tăng -->
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="increaseQuantity(this)">+</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">+</button>
                         </div>
                     </td>
+
                     <td class="giaVND" th:text="${item.thanhTien}"></td>
+
                     <td>
-                        <button class="btn btn-outline-danger btn-sm">Xóa</button>
+                        <form th:action="@{/ban-hang-tai-quay/xoa(idHD=${item.hoaDon.id}, idSP=${item.sanPhamChiTiet.id})}"
+                              method="post">
+                            <input type="hidden" name="_method" value="DELETE"/>
+                            <button type="submit">Xóa</button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
             </table>
-
         </div>
 
         <div class="container mt-5">
@@ -386,7 +389,7 @@
                 <!-- Tổng tiền -->
                 <div class="form-section d-flex align-items-center mb-3">
                     <label class="form-label me-3">Tổng tiền:</label>
-                    <p class="total-price mb-0 text-danger fw-bold giaVND"  th:text="${tongTien}"></p>
+                    <p class="total-price mb-0 text-danger fw-bold giaVND" th:text="${tongTien}"></p>
                 </div>
 
                 <!-- Nút xác nhận -->
@@ -401,7 +404,7 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
-<!--    format giá-->
+    <!--    format giá-->
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
             const originalValue = parseFloat(element.innerText);
@@ -412,7 +415,7 @@
             });
         });
     </script>
-<!--    tìm kiếm sản phẩm-->
+    <!--    tìm kiếm sản phẩm-->
     <script>
         document.getElementById('searchButton').addEventListener('click', function () {
             const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
@@ -559,7 +562,7 @@
         document.getElementById('filterPower').addEventListener('input', filterProducts);
         document.getElementById('filterPrice').addEventListener('input', filterProducts);
     </script>
-<!--ẩn form thông tin giao hàng-->
+    <!--ẩn form thông tin giao hàng-->
     <script>
         document.getElementById('toggleForm').addEventListener('change', function () {
             const form = document.getElementById('deliveryForm');
@@ -569,20 +572,6 @@
                 form.style.visibility = 'hidden';
             }
         });
-    </script>
-<!--tăng giảm số lượng-->
-    <script>
-        function decreaseQuantity(button) {
-            const input = button.nextElementSibling; // Tìm ô input liền sau nút giảm
-            const currentValue = parseInt(input.value) || 0; // Lấy giá trị hiện tại
-            if (currentValue > 0) input.value = currentValue - 1; // Giảm nếu lớn hơn 0
-        }
-
-        function increaseQuantity(button) {
-            const input = button.previousElementSibling; // Tìm ô input liền trước nút tăng
-            const currentValue = parseInt(input.value) || 0; // Lấy giá trị hiện tại
-            input.value = currentValue + 1; // Tăng giá trị
-        }
     </script>
 
 
