@@ -27,6 +27,8 @@ public interface HoaDonService {
 
     List<ListSanPhamInHoaDonChiTietResponse> getSanPhamCTByHoaDonId(Long hoaDonId);
 
+    List<HoaDonChiTiet> timSanPhamChiTietTheoHoaDon(Long idHoaDon);
+
     List<ListSpNewInHoaDonResponse> getSanPhamInHoaDon();
 
     PggInHoaDonResponse getPGGbyHoaDonId(Long hoaDonId);
@@ -54,6 +56,8 @@ public interface HoaDonService {
     boolean huyHoaDon(long id);
 
     void updateTongTienHoaDon();
+
+    void deleteSPInHD(Long idHoaDon, Long idSanPhamChiTiet);
 
     HinhThucThanhToanResponse getHinhThucThanhToan();
 
