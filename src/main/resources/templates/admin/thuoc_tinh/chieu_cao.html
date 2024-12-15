@@ -15,7 +15,7 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-12 col-md-6 order-md-1 order-last">
-                        <h3>Kiểu quạt</h3>
+                        <h3>Chiều cao</h3>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -27,15 +27,15 @@
             </div>
         </div>
         <div class="page-content">
-            <!--        dữ liệu thực hiện trong secsion-->
+            <!--        dữ liệu thực hiện trong seccion-->
             <section class="row">
                 <div class="card">
                     <div class="card-header">
-                        <form method="get" action="/admin/thuoc-tinh/kieu-quat/view" th:object="${listKieuQuat}" style="padding-bottom: 20px">
+                        <form method="get" action="/admin/thuoc-tinh/chieu-cao/view" th:object="${listChieuCao}" style="padding-bottom: 20px">
                             <div class="row">
                                 <div class="col-5">
-                                    <input type="text" id="searchInput" class="form-control" name="ten_kieu"
-                                           placeholder="Nhập kiểu quạt..." th:value="${param.ten_kieu}">
+                                    <input type="text" id="searchInput" class="form-control" name="ten_chieu_cao"
+                                           placeholder="Nhập chiều cao..." th:value="${param.ten_chieu_cao}">
                                 </div>
                                 <div class="col-5">
                                     <select id="trangThai" name="trang_thai" class="form-select">
@@ -63,7 +63,7 @@
                                     <a href="#" class="dataTable-sorter">STT</a>
                                 </th>
                                 <th data-sortable="" style="width: 30%;">
-                                    <a href="#" class="dataTable-sorter">Tên Kiểu Quạt</a>
+                                    <a href="#" class="dataTable-sorter">Tên Chiều cao</a>
                                 </th>
                                 <th data-sortable="" style="width: 30%;">
                                     <a href="#" class="dataTable-sorter">Trạng thái</a>
@@ -74,18 +74,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="kq, iter : ${listKQ.content}" th:data-id="${kq.id}">
-                                <td style="text-align: center" th:text="${(listKQ.number * listKQ.size) + iter.index + 1}"></td>
-                                <td th:text="${kq.ten}"></td>
+                            <tr th:each="cc, iter : ${listCC.content}" th:data-id="${cc.id}">
+                                <td style="text-align: center" th:text="${(listCC.number * listCC.size) + iter.index + 1}"></td>
+                                <td th:text="${cc.ten}"></td>
                                 <td style="text-align: center">
-                                    <span th:if="${kq.trang_thai}" class="badge bg-light-success">Hoạt động</span>
-                                    <span th:unless="${kq.trang_thai}" class="badge bg-light-danger"> Không hoạt động</span>
+                                    <span th:if="${cc.trang_thai}" class="badge bg-light-success">Hoạt động</span>
+                                    <span th:unless="${cc.trang_thai}" class="badge bg-light-danger"> Không hoạt động</span>
                                 </td>
                                 <td style="text-align: center">
-                                    <button class="btn btn-primary thayDoiTrangThai" th:attr="data-id=${kq.id}">
+                                    <button class="btn btn-primary thayDoiTrangThai" th:attr="data-id=${cc.id}">
                                         <i class="bi bi-arrow-left-right"></i>
                                     </button>
-                                    <button class="btn btn-warning hienThiThongTinModal" th:attr="data-id=${kq.id}" data-bs-toggle="modal" data-bs-target="#modalChinhSua">
+                                    <button class="btn btn-warning hienThiThongTinModal" th:attr="data-id=${cc.id}" data-bs-toggle="modal" data-bs-target="#modalChinhSua">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                 </td>
@@ -97,44 +97,44 @@
                         <nav aria-label="Page navigation">
                             <ul class="pagination justify-content-center">
                                 <!-- Nút Trang đầu -->
-                                <li class="page-item" th:classappend="${listKQ.first ? 'disabled' : ''}">
+                                <li class="page-item" th:classappend="${listCC.first ? 'disabled' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/kieu-quat/view?page=0&ten_kieu=' + ${ten_kieu} + '&trang_thai=' + ${trang_thai} + '&maxPrice=' + ${maxPrice}}"
+                                       th:href="@{'/admin/thuoc-tinh/chieu-cao/view?page=0&ten_chieu_cao=' + ${ten_chieu_cao} + '&trang_thai=' + ${trang_thai} + '&maxPrice=' + ${maxPrice}}"
                                        aria-label="Trang đầu">
                                         <span aria-hidden="true">««</span>
                                         <span class="sr-only">Trang đầu</span>
                                     </a>
                                 </li>
                                 <!-- trang trước -->
-                                <li class="page-item" th:classappend="${listKQ.first ? 'disabled' : ''}">
+                                <li class="page-item" th:classappend="${listCC.first ? 'disabled' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/kieu-quat/view?page=' + ${listKQ.number - 1} + '&ten_kieu=' + ${ten_kieu} + '&trang_thai=' + ${trang_thai}}"
-                                       aria-label="Previous" th:if="${!listKQ.first}">
+                                       th:href="@{'/admin/thuoc-tinh/chieu-cao/view?page=' + ${listCC.number - 1} + '&ten_chieu_cao=' + ${ten_chieu_cao} + '&trang_thai=' + ${trang_thai}}"
+                                       aria-label="Previous" th:if="${!listCC.first}">
                                         <span aria-hidden="true">&laquo;</span>
                                         <span class="sr-only">Trang trước</span>
                                     </a>
                                 </li>
                                 <!-- số trang -->
                                 <li class="page-item"
-                                    th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listKQ.number - 2), T(java.lang.Math).min(listKQ.totalPages - 1, listKQ.number + 2))}"
-                                    th:classappend="${i == listKQ.number ? 'active' : ''}">
+                                    th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listCC.number - 2), T(java.lang.Math).min(listCC.totalPages - 1, listCC.number + 2))}"
+                                    th:classappend="${i == listCC.number ? 'active' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/kieu-quat/view?page=' + ${i} + '&ten_kieu=' + ${ten_kieu} + '&trang_thai=' + ${trang_thai}}"
+                                       th:href="@{'/admin/thuoc-tinh/chieu-cao/view?page=' + ${i} + '&ten_chieu_cao=' + ${ten_chieu_cao} + '&trang_thai=' + ${trang_thai}}"
                                        th:text="${i + 1}"></a>
                                 </li>
                                 <!-- trang sau -->
-                                <li class="page-item" th:classappend="${listKQ.last ? 'disabled' : ''}">
+                                <li class="page-item" th:classappend="${listCC.last ? 'disabled' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/kieu-quat/view?page=' + ${listKQ.number + 1} + '&ten_kieu=' + ${ten_kieu} + '&trang_thai=' + ${trang_thai}}"
-                                       aria-label="Next" th:if="${!listKQ.last}">
+                                       th:href="@{'/admin/thuoc-tinh/chieu-cao/view?page=' + ${listCC.number + 1} + '&ten_chieu_cao=' + ${ten_chieu_cao} + '&trang_thai=' + ${trang_thai}}"
+                                       aria-label="Next" th:if="${!listCC.last}">
                                         <span aria-hidden="true">&raquo;</span>
                                         <span class="sr-only">Trang sau</span>
                                     </a>
                                 </li>
                                 <!-- Trang cuối -->
-                                <li class="page-item" th:classappend="${listKQ.last ? 'disabled' : ''}">
+                                <li class="page-item" th:classappend="${listCC.last ? 'disabled' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/kieu-quat/view?page=' + ${listKQ.totalPages - 1} + '&ten_kieu=' + ${ten_kieu} + '&trang_thai=' + ${trang_thai}}"
+                                       th:href="@{'/admin/thuoc-tinh/chieu-cao/view?page=' + ${listCC.totalPages - 1} + '&ten_chieu_cao=' + ${ten_chieu_cao} + '&trang_thai=' + ${trang_thai}}"
                                        aria-label="Trang cuối">
                                         <span aria-hidden="true">»»</span>
                                         <span class="sr-only">Trang cuối</span>
@@ -147,18 +147,18 @@
             </section>
         </div>
     </div>
-<!--    thêm-->
+    <!--    thêm-->
     <div class="modal fade" id="modalThemMoi" tabindex="-1" aria-labelledby="modalThemMoiLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Kiểu Quạt</h5>
+                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Chiều cao</h5>
                 </div>
                 <div class="modal-body">
-                    <form id="addKieuQuat" method="post" action="/admin/thuoc-tinh/kieu-quat/addKieuQuat">
+                    <form id="addChieuCao" method="post" action="/admin/thuoc-tinh/chieu-cao/addChieuCao">
                         <div class="mb-3">
-                            <label for="tenKieuQuat" class="form-label">Tên kiểu quạt</label>
-                            <input type="text" class="form-control" id="tenKieuQuat" name="ten_kieu_quat" placeholder="Nhập tên kiểu quạt">
+                            <label for="ten_chieu_cao" class="form-label">Tên chiều cao</label>
+                            <input type="text" class="form-control" id="ten_chieu_cao" name="ten_chieu_cao" placeholder="Nhập tên chiều cao">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
@@ -173,19 +173,19 @@
             </div>
         </div>
     </div>
-<!--    chỉnh sửa-->
+    <!--    chỉnh sửa-->
     <div class="modal fade" id="modalChinhSua" tabindex="-1" aria-labelledby="modalChinhSuaLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa kiểu quạt</h5>
+                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa chiều cao</h5>
                 </div>
                 <div class="modal-body">
-                    <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/kieu-quat/update">
-                        <input type="hidden" id="kieuQuatId" name="id">
+                    <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/chieu-cao/update">
+                        <input type="hidden" id="mauSacId" name="id">
                         <div class="mb-3">
-                            <label for="tenKieuQuatUpdate" class="form-label">Tên kiểu quạt</label>
-                            <input type="text" class="form-control" id="tenKieuQuatUpdate" name="ten_kieu_quat_update" placeholder="Nhập tên kiểu quạt mới">
+                            <label for="ten_chieu_caoUpdate" class="form-label">Tên chiều cao</label>
+                            <input type="text" class="form-control" id="ten_chieu_caoUpdate" name="ten_chieu_cao_update" placeholder="Nhập tên chiều cao mới">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
@@ -208,14 +208,14 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
-<!--    đổi trạng thái-->
+    <!--    đổi trạng thái-->
     <script>
         $(document).on('click', '.thayDoiTrangThai', function () {
             const id = $(this).data('id');
 
             Swal.fire({
                 title: 'Bạn có chắc muốn đổi trạng thái?',
-                text: "Thao tác này sẽ thay đổi trạng thái kiểu quạt!",
+                text: "Thao tác này sẽ thay đổi trạng thái chiều cao!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -225,13 +225,13 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/admin/thuoc-tinh/kieu-quat/doi-trang-thai/${id}`,
+                        url: `/admin/thuoc-tinh/chieu-cao/doi-trang-thai/${id}`,
                         type: 'POST',
                         success: function () {
                             Swal.fire({
                                 toast: true,
                                 icon: 'success',
-                                title: 'Kiểu quạt thay đổi trạng thái thành công.',
+                                title: 'Chiều cao thay đổi trạng thái thành công.',
                                 position: 'top-end',
                                 showConfirmButton: false,
                                 timer: 1000,
@@ -256,17 +256,17 @@
             });
         });
     </script>
-<!--    THông báo thêm-->
+    <!--    THông báo thêm-->
     <script>
-        $('#addKieuQuat').on('submit', function (e) {
+        $('#addChieuCao').on('submit', function (e) {
             e.preventDefault(); // Ngăn form thực hiện submit mặc định
 
-            const tenKieuQuat = $('#tenKieuQuat').val();
+            const ten_chieu_cao = $('#ten_chieu_cao').val();
 
             $.ajax({
-                url: '/admin/thuoc-tinh/kieu-quat/addKieuQuat',
+                url: '/admin/thuoc-tinh/chieu-cao/addChieuCao',
                 type: 'POST',
-                data: { ten_kieu_quat: tenKieuQuat },
+                data: { ten_chieu_cao: ten_chieu_cao },
                 success: function (response) {
                     Swal.fire({
                         toast: true,
@@ -294,45 +294,45 @@
             });
         });
     </script>
-<!--    lấy thoogn tin để cập nhật-->
+    <!--    lấy thoogn tin để cập nhật-->
     <script>
         $(document).on('click', '.hienThiThongTinModal', function () {
             const id = $(this).data('id');
             console.log("ID lấy được:", id);
-            $('#kieuQuatId').val(id); // Gắn ID vào input ẩn trong form
+            $('#mauSacId').val(id); // Gắn ID vào input ẩn trong form
 
             $.ajax({
-                url: `/admin/thuoc-tinh/kieu-quat/detail/${id}`,
+                url: `/admin/thuoc-tinh/chieu-cao/detail/${id}`,
                 type: 'GET',
                 success: function (response) {
                     console.log("Response:", response);
-                    $('#kieuQuatId').val(response.id);
-                    $('#tenKieuQuatUpdate').val(response.ten);
+                    $('#mauSacId').val(response.id);
+                    $('#ten_chieu_caoUpdate').val(response.ten);
                 },
                 error: function (xhr) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Không thể lấy thông tin chi tiết kiểu quạt.',
+                        title: 'Không thể lấy thông tin chi tiết chiều cao.',
                         text: xhr.responseText
                     });
                 }
             });
         });
     </script>
-<!--    cap nhật-->
+    <!--    cap nhật-->
     <script>
         $('#updateKieuQuat').on('submit', function (e) {
             e.preventDefault(); // Ngăn submit mặc định của form
 
-            const kieuQuatId = $('#kieuQuatId').val();
-            const tenKieuQuat = $('#tenKieuQuatUpdate').val();
+            const mauSacId = $('#mauSacId').val();
+            const ten_chieu_cao = $('#ten_chieu_caoUpdate').val();
 
             $.ajax({
-                url: `/admin/thuoc-tinh/kieu-quat/update`,
+                url: `/admin/thuoc-tinh/chieu-cao/update`,
                 type: 'POST',
                 data: {
-                    id: kieuQuatId,
-                    ten_kieu_quat_update: tenKieuQuat
+                    id: mauSacId,
+                    ten_chieu_cao_update: ten_chieu_cao
                 },
                 success: function (response) {
                     Swal.fire({
