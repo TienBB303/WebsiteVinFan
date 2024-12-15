@@ -1,6 +1,7 @@
 package com.example.datn.controller.ThuocTinhController;
 
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.thuoc_tinh.CongSuat;
 import com.example.datn.entity.thuoc_tinh.KieuQuat;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
 import com.example.datn.service.thuoc_tinh_service.KieuQuatService;
@@ -103,6 +104,10 @@ public class KieuQuatController {
             return ResponseEntity.badRequest().body("Tên kiểu quạt không được để trống.");
         }
 
+        Optional<KieuQuat> checkTonTai = kieuQuatRepo.findByTen(tenKieu.trim());
+        if (checkTonTai.isPresent()) {
+            return ResponseEntity.badRequest().body("Đã tồn tại kiểu quạt.");
+        }
         Optional<KieuQuat> kieuQuatOptional = kieuQuatRepo.findById(id);
         if (kieuQuatOptional.isPresent()) {
             KieuQuat kieuQuat = kieuQuatOptional.get();
