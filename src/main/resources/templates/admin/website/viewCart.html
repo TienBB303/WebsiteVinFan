@@ -246,6 +246,7 @@
                     <td>
                         <!-- Tên sản phẩm và số lượng tồn kho hiển thị bên cạnh -->
                         <span class="item-name" th:text="${item.name}">Tên sản phẩm</span>
+                        <br>
                         <span class="stock-quantity" th:text="'(Còn ' + ${stockMap[item.productId]} + ')'">Số lượng tồn kho</span>
                     </td>
                     <span class="item-price" th:text="${#numbers.formatDecimal(item.price, 0, '0') + 'đ'}">0</span>

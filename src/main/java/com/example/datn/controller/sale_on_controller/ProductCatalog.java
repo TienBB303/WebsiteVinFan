@@ -2,6 +2,7 @@ package com.example.datn.controller.sale_on_controller;
 
 import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
 import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
 import com.example.datn.repository.SPCTRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -25,42 +30,78 @@ public class ProductCatalog {
     private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
     @Autowired
     private SPCTRepo spctRepo;
+    @Autowired
+    private KieuQuatRepo kieuQuatRepo;
 
     @GetMapping("/product-catalog")
-    public String productCatalog(Model model) {
+    public String productCatalog(
+            Model model,
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "kieuQuatId", required = false) Integer kieuQuatId) {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // Lấy danh sách sản phẩm chi tiết chưa áp dụng giảm giá
-        List<SanPhamChiTiet> sanPhamKhongGiamGia = spctRepo.findByIdNotIn(
-                phieuGiamSanPhamRepo.findAllSanPhamChiTietIds());
 
-        if (sanPhamKhongGiamGia == null) {
-            sanPhamKhongGiamGia = new ArrayList<>();  // Gán giá trị rỗng nếu không tìm thấy sản phẩm
+        List<SanPhamChiTiet> sanPhamKhongGiamGia;
+        List<PhieuGiamSanPham> sanPhamGiamGia;
+
+        if (query != null && !query.trim().isEmpty()) {
+            sanPhamGiamGia = phieuGiamSanPhamRepo.timKiemSanPhamCoGiamGia(query);
+            List<Long> sanPhamCoGiamGiaIds = sanPhamGiamGia.stream()
+                    .map(p -> p.getSanPhamChiTiet().getId())
+                    .collect(Collectors.toList());
+
+            sanPhamKhongGiamGia = spctRepo.timKiemTheoTen(query)
+                    .stream()
+                    .filter(sp -> !sanPhamCoGiamGiaIds.contains(sp.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            List<Long> sanPhamCoGiamGiaIds = phieuGiamSanPhamRepo.findAllSanPhamChiTietIds();
+            sanPhamKhongGiamGia = spctRepo.findByIdNotIn(sanPhamCoGiamGiaIds);
+            sanPhamGiamGia = phieuGiamSanPhamRepo.findAll();
         }
 
-        // Lấy danh sách sản phẩm chi tiết có áp dụng giảm giá
-        List<PhieuGiamSanPham> sanPhamGiamGia = phieuGiamSanPhamRepo.findAll();
+        // Lọc theo kiểu quạt nếu có
+        if (kieuQuatId != null) {
+            sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream()
+                    .filter(sp -> sp.getSanPham().getKieuQuat().getId().equals(kieuQuatId))
+                    .collect(Collectors.toList());
 
-        if (sanPhamGiamGia == null) {
-            sanPhamGiamGia = new ArrayList<>();  // Gán giá trị rỗng nếu không tìm thấy sản phẩm giảm giá
+            sanPhamGiamGia = sanPhamGiamGia.stream()
+                    .filter(pg -> pg.getSanPhamChiTiet().getSanPham().getKieuQuat().getId().equals(kieuQuatId))
+                    .collect(Collectors.toList());
         }
 
-        // Tính toán giá sau khi giảm cho các sản phẩm có giảm giá
-        for (PhieuGiamSanPham phieuGiamSanPham : sanPhamGiamGia) {
-            if (phieuGiamSanPham.getSanPhamChiTiet() != null) {  // Kiểm tra tránh null
-                BigDecimal giaGoc = phieuGiamSanPham.getSanPhamChiTiet().getGia();
-                BigDecimal giaTriGiam = phieuGiamSanPham.getPhieuGiam().getGiaTriGiam();
-                BigDecimal giaSauGiam = giaGoc.subtract(giaTriGiam);
-                phieuGiamSanPham.setGiaSauGiam(giaSauGiam);  // Cập nhật giá sau khi giảm
-            }
-        }
-
-        // Đưa danh sách sản phẩm chi tiết vào model
         model.addAttribute("sanPhamKhongGiamGia", sanPhamKhongGiamGia);
         model.addAttribute("sanPhamGiamGia", sanPhamGiamGia);
-        String currentPrincipalName = authentication.getName();
+        model.addAttribute("query", query);
+        model.addAttribute("kieuQuatId", kieuQuatId);
+        model.addAttribute("kieuQuats", kieuQuatRepo.findAll()); // Lấy danh sách kiểu quạt để hiển thị lọc
 
+        String currentPrincipalName = authentication.getName();
         model.addAttribute("currentPrincipalName", currentPrincipalName);
 
         return "/admin/website/productCatalog";
+    }
+    @GetMapping("/detail/{id}")
+    public String getProductDetail(@PathVariable Long id, Model model) {
+        // Lấy chi tiết sản phẩm theo id
+        Optional<SanPhamChiTiet> sanPhamChiTietOptional = spctRepo.findById(id);
+
+        if (sanPhamChiTietOptional.isPresent()) {
+            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietOptional.get();
+
+            // Kiểm tra sản phẩm có thuộc danh sách giảm giá hay không
+            Optional<PhieuGiamSanPham> phieuGiamOptional = phieuGiamSanPhamRepo
+                    .findBySanPhamChiTietId(id); // Phương thức này cần được định nghĩa trong repository
+
+            model.addAttribute("product", sanPhamChiTiet);  // Đối tượng sanPhamChiTiet được gửi vào model
+            if (phieuGiamOptional.isPresent()) {
+                PhieuGiamSanPham phieuGiamSanPham = phieuGiamOptional.get();
+                model.addAttribute("phieuGiam", phieuGiamSanPham);  // Đối tượng phieuGiam được gửi vào model nếu có
+            }
+            return "admin/website/detailSP";  // Chuyển đến view chi tiết sản phẩm
+        }
+        // Nếu không tìm thấy sản phẩm, chuyển hướng về trang danh sách sản phẩm
+        return "redirect:/admin/product-catalog";
     }
 }
