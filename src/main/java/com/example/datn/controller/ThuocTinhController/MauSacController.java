@@ -1,5 +1,6 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.thuoc_tinh.CongSuat;
 import com.example.datn.entity.thuoc_tinh.MauSac;
 import com.example.datn.repository.ThuocTinhRepo.MauSacRepo;
 import com.example.datn.repository.ThuocTinhRepo.MauSacRepo;
@@ -100,6 +101,10 @@ public class MauSacController {
             return ResponseEntity.badRequest().body("Tên màu sắc không được để trống.");
         }
 
+        Optional<MauSac> checkTonTai = mauSacRepo.findByTen(tenMauSac.trim());
+        if (checkTonTai.isPresent()) {
+            return ResponseEntity.badRequest().body("Đã tồn tại màu sắc.");
+        }
         Optional<MauSac> mauSacOptional = mauSacRepo.findById(id);
         if (mauSacOptional.isPresent()) {
             MauSac mauSac = mauSacOptional.get();
