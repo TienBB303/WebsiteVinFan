@@ -82,7 +82,8 @@
 
             <div class="card mb-4">
                 <div class="container d-flex justify-content-end">
-                    <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal" data-bs-target="#myModal1">
+                    <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal"
+                            data-bs-target="#myModal1">
                         Lịch sử
                     </button>
                     <div class="modal fade" id="myModal1" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -138,7 +139,8 @@
                      th:if="${hoaDon.trangThai != 4 && hoaDon.trangThai != 5 }">
 
                     <form method="post" th:action="@{/hoa-don/xac-nhan}"
-                          th:if="${hoaDon.trangThai != 2 && hoaDon.trangThai != 3 && hoaDon.trangThai != 0}" class="me-2">
+                          th:if="${hoaDon.trangThai != 2 && hoaDon.trangThai != 3 && hoaDon.trangThai != 0}"
+                          class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-outline-success">
                             <i class=""></i> Xác Nhận
@@ -146,7 +148,8 @@
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/giao-hang}"
-                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}" class="me-2">
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}"
+                          class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-outline-warning">
                             <i class=""></i> Đang giao hàng
@@ -154,7 +157,8 @@
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/cho-xac-nhan}"
-                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}" class="me-2">
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}"
+                          class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-outline-secondary ">
                             <i class=""></i>Hoàn tác
@@ -241,7 +245,7 @@
                             </p>
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
                             <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi"></span></p>
-<!--                            <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi" th:text="${hoaDon.diaChi}"></span></p>-->
+                            <!--                            <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi" th:text="${hoaDon.diaChi}"></span></p>-->
                         </div>
 
                         <div class="col">
@@ -255,13 +259,15 @@
                         </div>
                         <div class="text-end mt-3">
                             <div class="container">
-                                <button th:if="${hoaDon.trangThai == 0 && hoaDon.diaChi != null || hoaDon.trangThai == 1 }" type="button" class="btn btn-outline-warning"
+                                <button th:if="${hoaDon.trangThai == 0 && hoaDon.diaChi != null || hoaDon.trangThai == 1 }"
+                                        type="button" class="btn btn-outline-warning"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalUpdate">
                                     Sửa hóa đơn
                                 </button>
 
-                                <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                <div class="modal fade" id="modalUpdate" tabindex="-1"
+                                     aria-labelledby="exampleModalLabel"
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
@@ -278,7 +284,9 @@
                                                     <input type="hidden" name="id" th:value="${hoaDon.id}">
 
                                                     <div class="mb-3">
-                                                        <input type="text" class="form-control" id="name1" th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}" placeholder="Tên người nhận">
+                                                        <input type="text" class="form-control" id="name1"
+                                                               th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}"
+                                                               placeholder="Tên người nhận">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Tỉnh/Thành phố</label>
@@ -289,7 +297,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Quận/Huyện</label>
-                                                        <select class="form-control" id="district" name="quanHuyen" >
+                                                        <select class="form-control" id="district" name="quanHuyen">
                                                             <option value="" selected>Chọn quận huyện</option>
                                                         </select>
                                                     </div>
@@ -301,20 +309,26 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Số nhà/ngõ đường</label>
-                                                        <input type="text" class="form-control" id="street" th:value="${chitietdiachi}" th:name="soNhaNgoDuong">
+                                                        <input type="text" class="form-control" id="street"
+                                                               th:value="${chitietdiachi}" th:name="soNhaNgoDuong">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <input type="text" class="form-control" id="phoneNumber" th:value="${hoaDon.sdtNguoiNhan}" th:name="soDienThoaiMoi" placeholder="Số điện thoại">
+                                                        <input type="text" class="form-control" id="phoneNumber"
+                                                               th:value="${hoaDon.sdtNguoiNhan}"
+                                                               th:name="soDienThoaiMoi" placeholder="Số điện thoại">
                                                     </div>
 
                                                     <!-- Input ẩn để lưu địa chỉ hoàn chỉnh -->
                                                     <input type="hidden" id="fullAddress" name="diaChiMoi">
-                                                    <button type="submit" onclick="getCityValue()" class="btn btn-outline-warning">Sửa</button>
+                                                    <button type="submit" onclick="getCityValue()"
+                                                            class="btn btn-outline-warning">Sửa
+                                                    </button>
                                                 </form>
 
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                        data-bs-dismiss="modal">
                                                     Đóng
                                                 </button>
                                             </div>
@@ -347,7 +361,7 @@
                     <tbody>
                     <tr th:each="item, iter : ${listHDCT}">
                         <td th:text="${iter.count}"></td>
-                        <td th:text="${item.tenSanPham}"></td>
+                        <td th:text="${item.sanPhamChiTiet.sanPham.ten}"></td>
                         <td class="giaVND" th:text="${item.gia}"></td>
                         <td>
                             <!-- Nút Giảm -->
@@ -356,12 +370,26 @@
                             <input type="number" class="form-control quantity-input"
                                    th:value="${item.soLuong}"
                                    min="1"
-                                   style="width: 60px; text-align: center; display: inline-block;" />
+                                   style="width: 60px; text-align: center; display: inline-block;"/>
                             <!-- Nút Tăng -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase">+</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
+                                    th:data-id-hoa-don="${item.hoaDon.id}"
+                                    th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
+                                +
+                            </button>
+
                         </td>
                         <td class="giaVND" th:text="${item.thanhTien}"></td>
-                        <td><button>X</button></td>
+                        <td>
+                            <form th:action="@{/hoa-don/xoa}" method="post" >
+                                <input type="hidden" name="_method" value="DELETE"/>
+                                <input type="hidden" name="idHD" th:value="${item.hoaDon.id}"/>
+                                <input type="hidden" name="idSP" th:value="${item.sanPhamChiTiet.id}"/>
+                                <button type="submit" class="btn btn-outline-danger" th:disabled="${hoaDon.trangThai != 1}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -370,33 +398,43 @@
                 <div class="text-end mt-3">
                     <div class="container">
                         <!-- Button để mở modal -->
-                        <button th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 1}" type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#myModal">
+                        <button th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 1}" type="button"
+                                class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#myModal">
                             Thêm sản phẩm
                         </button>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
                             <div class="modal-dialog modal-xl">
                                 <div class="modal-content">
                                     <!-- Header của modal -->
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Danh sách sản phẩm</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
 
                                     <!-- Nội dung của modal -->
                                     <div class="modal-body">
                                         <!-- Input tìm kiếm -->
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" id="searchQuery" placeholder="Tìm kiếm sản phẩm...">
-                                            <button type="button" class="btn btn-outline-primary" id="searchButton">Tìm kiếm</button>
+                                            <input type="text" class="form-control" id="searchQuery"
+                                                   placeholder="Tìm kiếm sản phẩm...">
+                                            <button type="button" class="btn btn-outline-primary" id="searchButton">Tìm
+                                                kiếm
+                                            </button>
                                         </div>
                                         <!-- Lọc theo các trường riêng biệt -->
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" id="filterProductName" placeholder="Lọc theo tên sản phẩm...">
-                                            <input type="text" class="form-control" id="filterColor" placeholder="Lọc theo màu sắc...">
-                                            <input type="text" class="form-control" id="filterPower" placeholder="Lọc theo công suất...">
-                                            <input type="text" class="form-control" id="filterPrice" placeholder="Lọc theo giá bán...">
+                                            <input type="text" class="form-control" id="filterProductName"
+                                                   placeholder="Lọc theo tên sản phẩm...">
+                                            <input type="text" class="form-control" id="filterColor"
+                                                   placeholder="Lọc theo màu sắc...">
+                                            <input type="text" class="form-control" id="filterPower"
+                                                   placeholder="Lọc theo công suất...">
+                                            <input type="text" class="form-control" id="filterPrice"
+                                                   placeholder="Lọc theo giá bán...">
                                         </div>
 
 
@@ -422,10 +460,12 @@
                                                 <td class="giaVND" th:text="${item.gia}"></td>
                                                 <td th:text="${item.so_luong}"></td>
                                                 <td>
-                                                    <form method="post" th:action="@{/hoa-don/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
+                                                    <form method="post" th:action="@{/hoa-don/addSPCT}"
+                                                          th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
                                                         <input type="hidden" name="idHD" th:value="${hoaDon.id}">
                                                         <input type="hidden" name="idSP" th:value="${item.id}">
-                                                        <input class="giaVND" type="hidden" name="gia" th:value="${item.gia}">
+                                                        <input class="giaVND" type="hidden" name="gia"
+                                                               th:value="${item.gia}">
                                                         <input type="hidden" name="soLuong" th:value="${item.so_luong}">
                                                         <button type="submit" class="btn btn-outline-success btn-sm">
                                                             Thêm
@@ -439,7 +479,9 @@
 
                                     <!-- Footer của modal -->
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                            Đóng
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -451,52 +493,52 @@
             </div>
 
 
-<!--            &lt;!&ndash; Discount and Total Section &ndash;&gt;-->
-<!--            <div class="card mb-4">-->
-<!--                <div class="container-custom">-->
-<!--                    <div class="row mb-2">-->
-<!--                        <div class="col-md-6">-->
-<!--                            <strong>Phiếu giảm giá</strong>-->
-<!--                        </div>-->
-<!--                        <div class="col-md-6 text-end">-->
-<!--                            <p><span th:text="${listPGG.maPGG}"></span></p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="row mb-2">-->
-<!--                        <div class="col-md-6">-->
-<!--                            <p>Giá trị:</p>-->
-<!--                        </div>-->
-<!--                        <div class="col-md-6 text-end">-->
-<!--                            <p><span th:text="${listPGG.tenPGG}"></span></p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="row mb-2">-->
-<!--                        <div class="col-md-6">-->
-<!--                            <p>Tổng tiền hàng:</p>-->
-<!--                        </div>-->
-<!--                        <div class="col-md-6 text-end giaVND" >-->
-<!--                            <p><span th:text="${listPGG.tongTien}"></span></p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="row mb-2">-->
-<!--                        <div class="col-md-6">-->
-<!--                            <p>Phí vận chuyển:</p>-->
-<!--                        </div>-->
-<!--                        <div class="col-md-6 text-end giaVND">-->
-<!--                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>-->
+            <!--            &lt;!&ndash; Discount and Total Section &ndash;&gt;-->
+            <!--            <div class="card mb-4">-->
+            <!--                <div class="container-custom">-->
+            <!--                    <div class="row mb-2">-->
+            <!--                        <div class="col-md-6">-->
+            <!--                            <strong>Phiếu giảm giá</strong>-->
+            <!--                        </div>-->
+            <!--                        <div class="col-md-6 text-end">-->
+            <!--                            <p><span th:text="${listPGG.maPGG}"></span></p>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="row mb-2">-->
+            <!--                        <div class="col-md-6">-->
+            <!--                            <p>Giá trị:</p>-->
+            <!--                        </div>-->
+            <!--                        <div class="col-md-6 text-end">-->
+            <!--                            <p><span th:text="${listPGG.tenPGG}"></span></p>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="row mb-2">-->
+            <!--                        <div class="col-md-6">-->
+            <!--                            <p>Tổng tiền hàng:</p>-->
+            <!--                        </div>-->
+            <!--                        <div class="col-md-6 text-end giaVND" >-->
+            <!--                            <p><span th:text="${listPGG.tongTien}"></span></p>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="row mb-2">-->
+            <!--                        <div class="col-md-6">-->
+            <!--                            <p>Phí vận chuyển:</p>-->
+            <!--                        </div>-->
+            <!--                        <div class="col-md-6 text-end giaVND">-->
+            <!--                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>-->
 
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="row highlight">-->
-<!--                        <div class="col-md-6">-->
-<!--                            <p>Tổng tiền:</p>-->
-<!--                        </div>-->
-<!--                        <div class="col-md-6 text-end highlight giaVND">-->
-<!--                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="row highlight">-->
+            <!--                        <div class="col-md-6">-->
+            <!--                            <p>Tổng tiền:</p>-->
+            <!--                        </div>-->
+            <!--                        <div class="col-md-6 text-end highlight giaVND">-->
+            <!--                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
 
         </main>
         <!-- Footer-->
@@ -566,7 +608,7 @@
                 document.getElementById("ganDiaChi").innerText = `${selectedText}, ${districtsText},${wardsText}`;
             }, 900);
 
-//
+            //
             function renderCity(data) {
                 for (const x of data) {
                     citis.options[citis.options.length] = new Option(x.Name, x.Id);
@@ -603,7 +645,7 @@
                 const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
                 const rows = document.querySelectorAll('#productTable tr');
 
-                rows.forEach(function(row) {
+                rows.forEach(function (row) {
                     const cells = row.getElementsByTagName('td');
                     if (cells.length === 0) return;
 
@@ -626,13 +668,72 @@
             // Hàm loại bỏ dấu tiếng Việt
             function removeDiacritics(str) {
                 const map = {
-                    'á': 'a', 'à': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a', 'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
-                    'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
-                    'é': 'e', 'è': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e', 'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
-                    'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
-                    'ó': 'o', 'ò': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o', 'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o', 'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
-                    'ú': 'u', 'ù': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u', 'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
-                    'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+                    'á': 'a',
+                    'à': 'a',
+                    'ả': 'a',
+                    'ã': 'a',
+                    'ạ': 'a',
+                    'ă': 'a',
+                    'ằ': 'a',
+                    'ắ': 'a',
+                    'ẳ': 'a',
+                    'ẵ': 'a',
+                    'ặ': 'a',
+                    'â': 'a',
+                    'ầ': 'a',
+                    'ấ': 'a',
+                    'ẩ': 'a',
+                    'ẫ': 'a',
+                    'ậ': 'a',
+                    'é': 'e',
+                    'è': 'e',
+                    'ẻ': 'e',
+                    'ẽ': 'e',
+                    'ẹ': 'e',
+                    'ê': 'e',
+                    'ề': 'e',
+                    'ế': 'e',
+                    'ể': 'e',
+                    'ễ': 'e',
+                    'ệ': 'e',
+                    'í': 'i',
+                    'ì': 'i',
+                    'ỉ': 'i',
+                    'ĩ': 'i',
+                    'ị': 'i',
+                    'ó': 'o',
+                    'ò': 'o',
+                    'ỏ': 'o',
+                    'õ': 'o',
+                    'ọ': 'o',
+                    'ô': 'o',
+                    'ồ': 'o',
+                    'ố': 'o',
+                    'ổ': 'o',
+                    'ỗ': 'o',
+                    'ộ': 'o',
+                    'ơ': 'o',
+                    'ờ': 'o',
+                    'ớ': 'o',
+                    'ở': 'o',
+                    'ỡ': 'o',
+                    'ợ': 'o',
+                    'ú': 'u',
+                    'ù': 'u',
+                    'ủ': 'u',
+                    'ũ': 'u',
+                    'ụ': 'u',
+                    'ư': 'u',
+                    'ừ': 'u',
+                    'ứ': 'u',
+                    'ử': 'u',
+                    'ữ': 'u',
+                    'ự': 'u',
+                    'ý': 'y',
+                    'ỳ': 'y',
+                    'ỷ': 'y',
+                    'ỹ': 'y',
+                    'ỵ': 'y',
                     'đ': 'd',
                     // Thêm các ký tự có dấu khác nếu cần
                 };
@@ -652,7 +753,7 @@
                 const rows = document.querySelectorAll('#productTable tr');
 
                 // Duyệt qua từng dòng trong bảng
-                rows.forEach(function(row) {
+                rows.forEach(function (row) {
                     // Lấy tất cả các ô trong dòng
                     const cells = row.getElementsByTagName('td');
 
@@ -692,11 +793,11 @@
 
         <script>
             // Lắng nghe sự kiện tăng và giảm số lượng
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 // Nút giảm số lượng
                 const decreaseButtons = document.querySelectorAll('.btn-decrease');
                 decreaseButtons.forEach(button => {
-                    button.addEventListener('click', function() {
+                    button.addEventListener('click', function () {
                         const input = button.nextElementSibling; // Lấy input sau nút
                         let quantity = parseInt(input.value);
                         if (quantity > 1) {
@@ -708,7 +809,7 @@
                 // Nút tăng số lượng
                 const increaseButtons = document.querySelectorAll('.btn-increase');
                 increaseButtons.forEach(button => {
-                    button.addEventListener('click', function() {
+                    button.addEventListener('click', function () {
                         const input = button.previousElementSibling; // Lấy input trước nút
                         let quantity = parseInt(input.value);
                         input.value = quantity + 1; // Tăng số lượng
@@ -724,6 +825,34 @@
                     style: 'currency',
                     currency: 'VND',
                     currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+                });
+            });
+        </script>
+
+        <script>
+            document.querySelectorAll('.btn-increase').forEach(button => {
+                button.addEventListener('click', function () {
+                    const idHoaDon = button.getAttribute('data-id-hoa-don');
+                    const idSanPhamChiTiet = button.getAttribute('data-id-san-pham-chi-tiet');
+
+                    fetch('/hoa-don/tang-so-luong', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            idHoaDon: idHoaDon,
+                            idSanPhamChiTiet: idSanPhamChiTiet
+                        })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                location.reload(); // Reload trang hoặc cập nhật giao diện
+                            } else {
+                                alert('Có lỗi xảy ra khi tăng số lượng!');
+                            }
+                        })
+                        .catch(error => console.log('Error:', error));
                 });
             });
         </script>
