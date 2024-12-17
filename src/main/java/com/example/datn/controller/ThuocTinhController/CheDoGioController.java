@@ -70,12 +70,26 @@ public class CheDoGioController {
         if (tenCheDoGio == null || tenCheDoGio.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Tên chế độ gió không được để trống.");
         }
-        Optional<CheDoGio> checkTonTai = cheDoGioRepo.findByTen(tenCheDoGio.trim());
+        Integer cheDoGioInt;
+        try {
+            cheDoGioInt = Integer.parseInt(tenCheDoGio.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Chế độ gió không hợp lệ.");
+        }
+
+        if (cheDoGioInt < 0) {
+            return ResponseEntity.badRequest().body("Chế độ gió không nhỏ hơn 0");
+        } else if (cheDoGioInt > 20) {
+            return ResponseEntity.badRequest().body("Lớn nhất là 20 chế độ");
+        }
+
+        String tenCDGStr = cheDoGioInt + " chế độ";
+        Optional<CheDoGio> checkTonTai = cheDoGioRepo.findByTen(tenCDGStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại chế độ gió.");
         } else {
             CheDoGio cheDoGio = new CheDoGio();
-            cheDoGio.setTen(tenCheDoGio.trim());
+            cheDoGio.setTen(tenCDGStr.trim());
             cheDoGio.setTrang_thai(true);
             cheDoGioRepo.save(cheDoGio);
             return ResponseEntity.ok("Chế độ gió thêm mới thành công.");
@@ -98,14 +112,28 @@ public class CheDoGioController {
         if (tenCheDoGio == null || tenCheDoGio.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Tên chế độ gió không được để trống.");
         }
-        Optional<CheDoGio> checkTonTai = cheDoGioRepo.findByTen(tenCheDoGio.trim());
+        Integer cheDoGioInt;
+        try {
+            cheDoGioInt = Integer.parseInt(tenCheDoGio.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Chế độ gió không hợp lệ.");
+        }
+
+        if (cheDoGioInt < 0) {
+            return ResponseEntity.badRequest().body("Chế độ gió không nhỏ hơn 0");
+        } else if (cheDoGioInt > 20) {
+            return ResponseEntity.badRequest().body("Lớn nhất là 20 chế độ");
+        }
+
+        String tenCDGStr = cheDoGioInt + " chế độ";
+        Optional<CheDoGio> checkTonTai = cheDoGioRepo.findByTen(tenCDGStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại chế độ gió.");
         }
         Optional<CheDoGio> cheDoGioOptional = cheDoGioRepo.findById(id);
         if (cheDoGioOptional.isPresent()) {
             CheDoGio cheDoGio = cheDoGioOptional.get();
-            cheDoGio.setTen(tenCheDoGio);
+            cheDoGio.setTen(tenCDGStr);
             cheDoGioRepo.save(cheDoGio);
             return ResponseEntity.ok("Cập nhật chế độ gió thành công.");
         } else {
