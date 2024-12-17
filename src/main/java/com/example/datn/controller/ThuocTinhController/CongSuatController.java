@@ -70,12 +70,27 @@ public class CongSuatController {
         if (tenCongSuat == null || tenCongSuat.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Tên công suất không được để trống.");
         }
-        Optional<CongSuat> checkTonTai = congSuatRepo.findByTen(tenCongSuat.trim());
+        Integer congSuatInt;
+        try {
+            congSuatInt = Integer.parseInt(tenCongSuat.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Công suất không hợp lệ.");
+        }
+
+        if (congSuatInt < 30) {
+            return ResponseEntity.badRequest().body("Công suất nhỏ nhất là 30W");
+        } else if (congSuatInt > 500) {
+            return ResponseEntity.badRequest().body("Công suất lớn nhất là 500W");
+        }
+
+        String tenCSStr = congSuatInt + "W";
+
+        Optional<CongSuat> checkTonTai = congSuatRepo.findByTen(tenCSStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại công suất.");
         } else {
             CongSuat congSuat = new CongSuat();
-            congSuat.setTen(tenCongSuat.trim());
+            congSuat.setTen(tenCSStr.trim());
             congSuat.setTrang_thai(true);
             congSuatRepo.save(congSuat);
             return ResponseEntity.ok("Công suất thêm mới thành công.");
@@ -99,14 +114,28 @@ public class CongSuatController {
             return ResponseEntity.badRequest().body("Tên công suất không được để trống.");
         }
 
-        Optional<CongSuat> checkTonTai = congSuatRepo.findByTen(tenCongSuat.trim());
+        Integer congSuatInt;
+        try {
+            congSuatInt = Integer.parseInt(tenCongSuat.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Công suất không hợp lệ.");
+        }
+
+        if (congSuatInt < 30) {
+            return ResponseEntity.badRequest().body("Công suất nhỏ nhất là 30W");
+        } else if (congSuatInt > 500) {
+            return ResponseEntity.badRequest().body("Công suất lớn nhất là 500W");
+        }
+
+        String tenCSStr = congSuatInt + "W";
+        Optional<CongSuat> checkTonTai = congSuatRepo.findByTen(tenCSStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại công suất.");
         }
         Optional<CongSuat> congSuatOptional = congSuatRepo.findById(id);
         if (congSuatOptional.isPresent()) {
             CongSuat congSuat = congSuatOptional.get();
-            congSuat.setTen(tenCongSuat);
+            congSuat.setTen(tenCSStr);
             congSuatRepo.save(congSuat);
             return ResponseEntity.ok("Cập nhật công suất thành công.");
         } else {

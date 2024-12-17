@@ -34,7 +34,7 @@
                         <form method="get" action="/admin/thuoc-tinh/chieu-cao/view" th:object="${listChieuCao}" style="padding-bottom: 20px">
                             <div class="row">
                                 <div class="col-5">
-                                    <input type="text" id="searchInput" class="form-control" name="ten_chieu_cao"
+                                    <input type="number" id="searchInput" class="form-control" name="ten_chieu_cao"
                                            placeholder="Nhập chiều cao..." th:value="${param.ten_chieu_cao}">
                                 </div>
                                 <div class="col-5">
@@ -152,13 +152,12 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Chiều cao</h5>
+                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Chiều cao (cm)</h5>
                 </div>
                 <div class="modal-body">
                     <form id="addChieuCao" method="post" action="/admin/thuoc-tinh/chieu-cao/addChieuCao">
                         <div class="mb-3">
-                            <label for="ten_chieu_cao" class="form-label">Tên chiều cao</label>
-                            <input type="text" class="form-control" id="ten_chieu_cao" name="ten_chieu_cao" placeholder="Nhập tên chiều cao">
+                            <input type="number" class="form-control" id="ten_chieu_cao" name="ten_chieu_cao" placeholder="Nhập chiều cao">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
@@ -178,14 +177,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa chiều cao</h5>
+                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa chiều cao (cm)</h5>
                 </div>
                 <div class="modal-body">
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/chieu-cao/update">
                         <input type="hidden" id="mauSacId" name="id">
                         <div class="mb-3">
-                            <label for="ten_chieu_caoUpdate" class="form-label">Tên chiều cao</label>
-                            <input type="text" class="form-control" id="ten_chieu_caoUpdate" name="ten_chieu_cao_update" placeholder="Nhập tên chiều cao mới">
+                            <input type="number" class="form-control" id="ten_chieu_caoUpdate" name="ten_chieu_cao_update" placeholder="Nhập chiều cao mới">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">

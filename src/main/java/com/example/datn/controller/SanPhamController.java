@@ -151,8 +151,8 @@ public class SanPhamController {
             @RequestParam("sanPham.ten") String ten,
             @RequestParam("sanPham.kieuQuat.id") Integer kieuQuatId,
             @RequestParam("mauSac.id") List<Integer> mauSacIds,
-            @RequestParam("cheDoGio.id") List<Integer> cheDoGioIds,
             @RequestParam("congSuat.id") List<Integer> congSuatIds,
+            @RequestParam("cheDoGio.id") Integer cheDoGioId,
             @RequestParam("nutBam.id") Integer nutBamId,
             @RequestParam("chatLieuCanh.id") Integer chatLieuCanhId,
             @RequestParam("duongKinhCanh.id") Integer duongKinhCanhId,
@@ -178,9 +178,7 @@ public class SanPhamController {
             MauSac mauSac = mauSacRepo.findById(mauSacId).orElse(null);
             for (Integer congSuatId : congSuatIds) {
                 CongSuat congSuat = congSuatRepo.findById(congSuatId).orElse(null);
-                for (Integer cheDoGioId : cheDoGioIds) {
-                    CheDoGio cheDoGio = cheDoGioRepo.findById(cheDoGioId).orElse(null);
-                    // check trung thuộc tính, cho phép trùng tên
+                    // check trùng thuộc tính, cho phép trùng tên
                     if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
                         return ResponseEntity.badRequest().body(
                                 "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
@@ -190,7 +188,7 @@ public class SanPhamController {
                     sanPhamChiTietTam.setSanPhamTam(sanPhamTam);
                     sanPhamChiTietTam.setMauSac(mauSac);
                     sanPhamChiTietTam.setCongSuat(congSuat);
-                    sanPhamChiTietTam.setCheDoGio(cheDoGio);
+                    sanPhamChiTietTam.setCheDoGio(cheDoGioRepo.findById(cheDoGioId).orElse(null));
                     sanPhamChiTietTam.setNutBam(nutBamRepo.findById(nutBamId).orElse(null));
                     sanPhamChiTietTam.setChatLieuCanh(chatLieuCanhRepo.findById(chatLieuCanhId).orElse(null));
                     sanPhamChiTietTam.setDuongKinhCanh(duongKinhCanhRepo.findById(duongKinhCanhId).orElse(null));
@@ -207,7 +205,6 @@ public class SanPhamController {
                     sanPhamChiTietTam.setNguoi_tao("admin");
 
                     listSPCTTam.add(sanPhamChiTietTam);
-                }
             }
         }
 

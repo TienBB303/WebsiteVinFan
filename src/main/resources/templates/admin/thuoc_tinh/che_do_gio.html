@@ -34,7 +34,7 @@
                         <form method="get" action="/admin/thuoc-tinh/che-do-gio/view" th:object="${listChatLieukhung}" style="padding-bottom: 20px">
                             <div class="row">
                                 <div class="col-5">
-                                    <input type="text" id="searchInput" class="form-control" name="ten_che_do_gio"
+                                    <input type="number" id="searchInput" class="form-control" name="ten_che_do_gio"
                                            placeholder="Nhập chế độ gió..." th:value="${param.ten_che_do_gio}">
                                 </div>
                                 <div class="col-5">
@@ -157,8 +157,7 @@
                 <div class="modal-body">
                     <form id="addCheDoGio" method="post" action="/admin/thuoc-tinh/che-do-gio/addCheDoGio">
                         <div class="mb-3">
-                            <label for="ten_che_do_gio" class="form-label">Tên chế độ gió</label>
-                            <input type="text" class="form-control" id="ten_che_do_gio" name="ten_che_do_gio" placeholder="Nhập tên chế độ gió">
+                            <input type="number" class="form-control" id="ten_che_do_gio" name="ten_che_do_gio" placeholder="Nhập tên chế độ gió">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
@@ -184,8 +183,7 @@
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/che-do-gio/update">
                         <input type="hidden" id="mauSacId" name="id">
                         <div class="mb-3">
-                            <label for="ten_che_do_gioUpdate" class="form-label">Tên chế độ gió</label>
-                            <input type="text" class="form-control" id="ten_che_do_gioUpdate" name="ten_che_do_gio_update" placeholder="Nhập tên chế độ gió mới">
+                            <input type="number" class="form-control" id="ten_che_do_gioUpdate" name="ten_che_do_gio_update" placeholder="Nhập tên chế độ gió mới">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">

@@ -34,7 +34,7 @@
                         <form method="get" action="/admin/thuoc-tinh/cong-suat/view" th:object="${listCongSuat}" style="padding-bottom: 20px">
                             <div class="row">
                                 <div class="col-5">
-                                    <input type="text" id="searchInput" class="form-control" name="ten_cong_suat"
+                                    <input type="number" id="searchInput" class="form-control" name="ten_cong_suat"
                                            placeholder="Nhập công suất..." th:value="${param.ten_cong_suat}">
                                 </div>
                                 <div class="col-5">
@@ -152,13 +152,12 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Công suất</h5>
+                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Công suất (W)</h5>
                 </div>
                 <div class="modal-body">
                     <form id="addCongSuat" method="post" action="/admin/thuoc-tinh/cong-suat/addCongSuat">
                         <div class="mb-3">
-                            <label for="ten_cong_suat" class="form-label">Tên công suất</label>
-                            <input type="text" class="form-control" id="ten_cong_suat" name="ten_cong_suat" placeholder="Nhập tên công suất">
+                            <input type="number" class="form-control" id="ten_cong_suat" name="ten_cong_suat" placeholder="Nhập tên công suất">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
@@ -178,14 +177,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa công suất</h5>
+                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa công suất (W)</h5>
                 </div>
                 <div class="modal-body">
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/cong-suat/update">
                         <input type="hidden" id="mauSacId" name="id">
                         <div class="mb-3">
-                            <label for="ten_cong_suatUpdate" class="form-label">Tên công suất</label>
-                            <input type="text" class="form-control" id="ten_cong_suatUpdate" name="ten_cong_suat_update" placeholder="Nhập tên công suất mới">
+                            <input type="number" class="form-control" id="ten_cong_suatUpdate" name="ten_cong_suat_update" placeholder="Nhập tên công suất mới">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
