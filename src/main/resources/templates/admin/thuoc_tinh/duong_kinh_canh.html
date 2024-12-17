@@ -34,7 +34,7 @@
                         <form method="get" action="/admin/thuoc-tinh/duong-kinh-canh/view" th:object="${listDuongKinhCanh}" style="padding-bottom: 20px">
                             <div class="row">
                                 <div class="col-5">
-                                    <input type="text" id="searchInput" class="form-control" name="ten_duong_kinh_canh"
+                                    <input type="number" id="searchInput" class="form-control" name="ten_duong_kinh_canh"
                                            placeholder="Nhập đường kính cánh..." th:value="${param.ten_duong_kinh_canh}">
                                 </div>
                                 <div class="col-5">
@@ -152,13 +152,12 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Đường kính cánh</h5>
+                    <h5 class="modal-title" id="modalThemMoiLabel">Thêm Mới Đường kính cánh (cm)</h5>
                 </div>
                 <div class="modal-body">
                     <form id="addDuongKinhCanh" method="post" action="/admin/thuoc-tinh/duong-kinh-canh/addDuongKinhCanh">
                         <div class="mb-3">
-                            <label for="ten_duong_kinh_canh" class="form-label">Tên đường kính cánh</label>
-                            <input type="text" class="form-control" id="ten_duong_kinh_canh" name="ten_duong_kinh_canh" placeholder="Nhập tên đường kính cánh">
+                            <input type="number" class="form-control" id="ten_duong_kinh_canh" name="ten_duong_kinh_canh" placeholder="Nhập số đường kính cánh">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
@@ -178,14 +177,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa đường kính cánh</h5>
+                    <h5 class="modal-title" id="modalChinhSuaLabel">Chỉnh sửa đường kính cánh (cm)</h5>
                 </div>
                 <div class="modal-body">
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/duong-kinh-canh/update">
                         <input type="hidden" id="mauSacId" name="id">
                         <div class="mb-3">
-                            <label for="ten_duong_kinh_canhUpdate" class="form-label">Tên đường kính cánh</label>
-                            <input type="text" class="form-control" id="ten_duong_kinh_canhUpdate" name="ten_duong_kinh_canh_update" placeholder="Nhập tên đường kính cánh mới">
+                            <input type="number" class="form-control" id="ten_duong_kinh_canhUpdate" name="ten_duong_kinh_canh_update" placeholder="Nhập số đường kính cánh mới">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success">
@@ -259,7 +257,7 @@
     <!--    THông báo thêm-->
     <script>
         $('#addDuongKinhCanh').on('submit', function (e) {
-            e.preventDefault(); // Ngăn form thực hiện submit mặc định
+            e.preventDefault();
 
             const ten_duong_kinh_canh = $('#ten_duong_kinh_canh').val();
 

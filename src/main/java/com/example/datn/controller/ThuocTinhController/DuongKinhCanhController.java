@@ -70,14 +70,30 @@ public class DuongKinhCanhController {
     @PostMapping("/addDuongKinhCanh")
     public ResponseEntity<?> themMoi(@RequestParam("ten_duong_kinh_canh") String tenDuongKinhCanh) {
         if (tenDuongKinhCanh == null || tenDuongKinhCanh.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Tên đường kính cánh không được để trống.");
+            return ResponseEntity.badRequest().body("Đường kính cánh không được để trống.");
         }
-        Optional<DuongKinhCanh> checkTonTai = ttRepo.findByTen(tenDuongKinhCanh.trim());
+
+        Integer duongKinh;
+        try {
+            duongKinh = Integer.parseInt(tenDuongKinhCanh.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Đường kính cánh không hợp lệ.");
+        }
+
+        if (duongKinh < 30) {
+            return ResponseEntity.badRequest().body("Đường kính cánh không nhỏ hơn 30 cm.");
+        } else if (duongKinh > 300) {
+            return ResponseEntity.badRequest().body("Đường kính cánh không vượt quá 300 cm.");
+        }
+
+        String tenDKCStr = duongKinh + " cm";
+
+        Optional<DuongKinhCanh> checkTonTai = ttRepo.findByTen(tenDKCStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại đường kính cánh.");
         } else {
             DuongKinhCanh tt = new DuongKinhCanh();
-            tt.setTen(tenDuongKinhCanh.trim());
+            tt.setTen(tenDKCStr.trim());
             tt.setTrang_thai(true);
             ttRepo.save(tt);
             return ResponseEntity.ok("Đường kính cánh thêm mới thành công.");
@@ -100,14 +116,29 @@ public class DuongKinhCanhController {
         if (tenDuongKinhCanh == null || tenDuongKinhCanh.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Tên đường kính cánh không được để trống.");
         }
-        Optional<DuongKinhCanh> checkTonTai = ttRepo.findByTen(tenDuongKinhCanh.trim());
+        Integer duongKinh;
+        try {
+            duongKinh = Integer.parseInt(tenDuongKinhCanh.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Đường kính cánh không hợp lệ.");
+        }
+
+        if (duongKinh < 30) {
+            return ResponseEntity.badRequest().body("Đường kính cánh không nhỏ hơn 30 cm.");
+        } else if (duongKinh > 300) {
+            return ResponseEntity.badRequest().body("Đường kính cánh không vượt quá 300 cm.");
+        }
+
+        String tenDKCStr = duongKinh + " cm";
+
+        Optional<DuongKinhCanh> checkTonTai = ttRepo.findByTen(tenDKCStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại đường kính cánh.");
         }
         Optional<DuongKinhCanh> ttOptional = ttRepo.findById(id);
         if (ttOptional.isPresent()) {
             DuongKinhCanh tt = ttOptional.get();
-            tt.setTen(tenDuongKinhCanh);
+            tt.setTen(tenDKCStr);
             ttRepo.save(tt);
             return ResponseEntity.ok("Cập nhật đường kính cánh thành công.");
         } else {

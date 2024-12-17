@@ -69,12 +69,27 @@ public class ChieuCaoController {
         if (tenChieuCao == null || tenChieuCao.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Tên chiều cao không được để trống.");
         }
-        Optional<ChieuCao> checkTonTai = chieuCaoRepo.findByTen(tenChieuCao.trim());
+        Integer chieuCaoInt;
+        try {
+            chieuCaoInt = Integer.parseInt(tenChieuCao.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Chiều cao không hợp lệ.");
+        }
+
+        if (chieuCaoInt < 30) {
+            return ResponseEntity.badRequest().body("Chiều cao không nhỏ hơn 30 cm.");
+        } else if (chieuCaoInt > 300) {
+            return ResponseEntity.badRequest().body("Chiều cao không vượt quá 300 cm.");
+        }
+
+        String chieuCaoStr = chieuCaoInt + " cm";
+
+        Optional<ChieuCao> checkTonTai = chieuCaoRepo.findByTen(chieuCaoStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại chiều cao.");
         } else {
             ChieuCao chieuCao = new ChieuCao();
-            chieuCao.setTen(tenChieuCao.trim());
+            chieuCao.setTen(chieuCaoStr.trim());
             chieuCao.setTrang_thai(true);
             chieuCaoRepo.save(chieuCao);
             return ResponseEntity.ok("Chiều cao thêm mới thành công.");
@@ -97,14 +112,30 @@ public class ChieuCaoController {
         if (tenChieuCao == null || tenChieuCao.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Tên chiều cao không được để trống.");
         }
-        Optional<ChieuCao> checkTonTai = chieuCaoRepo.findByTen(tenChieuCao.trim());
+
+        Integer chieuCaoInt;
+        try {
+            chieuCaoInt = Integer.parseInt(tenChieuCao.trim());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Chiều cao không hợp lệ.");
+        }
+
+        if (chieuCaoInt < 30) {
+            return ResponseEntity.badRequest().body("Chiều cao không nhỏ hơn 30 cm.");
+        } else if (chieuCaoInt > 300) {
+            return ResponseEntity.badRequest().body("Chiều cao không vượt quá 300 cm.");
+        }
+
+        String chieuCaoStr = chieuCaoInt + " cm";
+
+        Optional<ChieuCao> checkTonTai = chieuCaoRepo.findByTen(chieuCaoStr.trim());
         if (checkTonTai.isPresent()) {
             return ResponseEntity.badRequest().body("Đã tồn tại chiều cao.");
         }
         Optional<ChieuCao> chieuCaoOptional = chieuCaoRepo.findById(id);
         if (chieuCaoOptional.isPresent()) {
             ChieuCao chieuCao = chieuCaoOptional.get();
-            chieuCao.setTen(tenChieuCao);
+            chieuCao.setTen(chieuCaoStr);
             chieuCaoRepo.save(chieuCao);
             return ResponseEntity.ok("Cập nhật chiều cao thành công.");
         } else {
