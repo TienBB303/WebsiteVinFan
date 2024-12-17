@@ -57,9 +57,17 @@ public interface HoaDonService {
 
     void updateTongTienHoaDon();
 
-    void deleteSPInHD(Long idHoaDon, Long idSanPhamChiTiet);
+    void deleteSPInHD(Long idSanPhamChiTiet);
 
     HinhThucThanhToanResponse getHinhThucThanhToan();
+
+    void tangSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet);
+
+    void truSoLuongSanPham(Long idHD);
+
+    void hoanSoLuongSanPham(Long idHD);
+
+
 
     String generateOrderCode();
 
