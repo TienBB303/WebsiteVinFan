@@ -276,12 +276,12 @@ public class HoaDonController {
     @PostMapping("tang-so-luong")
     public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon, @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
         try {
-            hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             System.out.println("id hd" + idHoaDon);
             System.out.println("id sp" + idSanPhamChiTiet);
-            return ResponseEntity.ok().build();
+            hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
+            return ResponseEntity.ok().body("Thêm thành công");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.badRequest().body("Đã tồn tại chất liệu cánh.");
         }
     }
 
