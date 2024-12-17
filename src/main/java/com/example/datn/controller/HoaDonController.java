@@ -8,6 +8,7 @@ import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.HoaDon;
+import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.LichSuHoaDon;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.HoaDonChiTietRepo;
@@ -19,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +43,6 @@ public class HoaDonController {
     @Autowired
     HoaDonRepo hoaDonRespo;
 
-    PggInHoaDonResponse pggInHoaDonResponse;
 
     @GetMapping("index")
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
@@ -126,8 +128,7 @@ public class HoaDonController {
         List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
         model.addAttribute("listSPInHoaDon", list);
 
-        //Lấy thông tin sp theo id hóa đơn
-        List<ListSanPhamInHoaDonChiTietResponse> listHDCT = this.hoaDonService.getSanPhamCTByHoaDonId(id);
+        List<HoaDonChiTiet> listHDCT = this.hoaDonService.timSanPhamChiTietTheoHoaDon(id);
         model.addAttribute("listHDCT", listHDCT);
 
         //Lấy thông tin sp in hoaDonChiTiet
@@ -183,6 +184,7 @@ public class HoaDonController {
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
             lichSuHoaDon.setNgayTao(LocalDate.now());
             lichSuHoaDonRepo.save(lichSuHoaDon);
+            hoaDonService.hoanSoLuongSanPham(id);
         }
 
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
@@ -195,6 +197,8 @@ public class HoaDonController {
     ) {
         hoaDonService.xacNhanHoaDon(id);
         hoaDonService.updateTongTienHoaDon();
+        hoaDonService.truSoLuongSanPham(id);
+
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
@@ -243,6 +247,7 @@ public class HoaDonController {
             lichSuHoaDon.setNgayTao(LocalDate.now());
 
             lichSuHoaDonRepo.save(lichSuHoaDon);
+            hoaDonService.truSoLuongSanPham(id);
         }
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
@@ -255,6 +260,31 @@ public class HoaDonController {
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+
+    @PostMapping("/xoa")
+    public String deleteChiTiet(
+            @RequestParam("idHD") Long idHD,
+            @RequestParam("idSP") Long idSP) {
+        try {
+            hoaDonService.deleteSPInHD(idSP);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/hoa-don/detail?id=" + idHD;
+    }
+
+    @PostMapping("tang-so-luong")
+    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon, @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+        try {
+            hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
+            System.out.println("id hd" + idHoaDon);
+            System.out.println("id sp" + idSanPhamChiTiet);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 
     @PostMapping("/sua-thong-tin")
     public String updateThongTinNguoiNhan(@RequestParam("tenMoi") String tenNguoiNhanMoi,

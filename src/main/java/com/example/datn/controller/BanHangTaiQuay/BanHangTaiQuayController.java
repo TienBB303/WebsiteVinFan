@@ -59,12 +59,9 @@ public class BanHangTaiQuayController {
         List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
         model.addAttribute("listSPCTInHDCT", listSPCTInHDCT);
 
-        // hiển thị thông tin spct
-//        List<ListSanPhamInHoaDonChiTietResponse> listHDCT = this.hoaDonService.getSanPhamCTByHoaDonId(idHD);
-//        model.addAttribute("listHDCT", listHDCT);
 
-        List<HoaDonChiTiet> listHDCT1 = this.hoaDonService.timSanPhamChiTietTheoHoaDon(idHD);
-        model.addAttribute("listHDCT", listHDCT1);
+        List<HoaDonChiTiet> listHDCT = this.hoaDonService.timSanPhamChiTietTheoHoaDon(idHD);
+        model.addAttribute("listHDCT", listHDCT);
 
 
         // Lấy tổng tiền từ service
@@ -92,6 +89,16 @@ public class BanHangTaiQuayController {
         return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
     }
 
+    @PostMapping("tang-so-luong")
+    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon, @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+        try {
+            hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/tao-hoa-don")
     public String taoHoaDon() {
         HoaDon hoaDon = new HoaDon();
@@ -104,7 +111,7 @@ public class BanHangTaiQuayController {
             @RequestParam("idHD") Long idHD,
             @RequestParam("idSP") Long idSP) {
         try {
-            hoaDonService.deleteSPInHD(idHD, idSP);
+            hoaDonService.deleteSPInHD( idSP);
         } catch (Exception e) {
             e.printStackTrace();
         }
