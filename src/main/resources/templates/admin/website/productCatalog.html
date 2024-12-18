@@ -403,10 +403,11 @@
         <h1 class="text-center mb-5">Danh mục sản phẩm quạt của chúng tôi</h1>
 
         <!-- Kiểm tra nếu không có sản phẩm nào -->
-        <div th:if="${sanPhamGiamGia.empty and sanPhamKhongGiamGia.empty}" class="text-center">
-            <h3 class="text-danger">Sản phẩm không tồn tại</h3>
-            <p>Vui lòng thử lại với từ khóa khác hoặc chọn một danh mục khác.</p>
+        <div th:if="${sanPhamGiamGia != null and #lists.isEmpty(sanPhamGiamGia) and
+             sanPhamKhongGiamGia != null and #lists.isEmpty(sanPhamKhongGiamGia)}">
+            <p>Không có sản phẩm nào</p>
         </div>
+
 
         <!-- Nếu có sản phẩm -->
         <div th:unless="${sanPhamGiamGia.empty and sanPhamKhongGiamGia.empty}">
@@ -430,11 +431,11 @@
                                 <p class="card-text">
                                     <span class="old-price text-decoration-line-through"
                                           th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0đ</span>
+                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0VND</span>
                                 </p>
                                 <p class="card-text">
                                     <span class="main-price product-price"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0đ</span>
+                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0VND</span>
                                 </p>
                                 <div class="mt-auto">
                                     <a th:href="@{/admin/detail/{id}(id=${phieuGiamSanPham.sanPhamChiTiet.id})}" class="btn btn-primary w-100">Xem chi tiết</a>
@@ -469,7 +470,7 @@
                                     phẩm</h5>
                                 <p class="card-text">
                                     <span class="product-price main-price"
-                                          th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0đ</span>
+                                          th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0VND</span>
                                 </p>
                                 <div class="mt-auto">
                                     <a th:href="@{/admin/detail/{id}(id=${sanPhamChiTiet.id})}" class="btn btn-primary w-100">Xem chi tiết</a>
@@ -624,8 +625,8 @@
                             <div class="card-body d-flex flex-column">
                                 <img class="card-img-top" src="${product.imageUrl}" alt="${product.name}" style="height: 200px; object-fit: cover;">
                                 <h5 class="card-title">${product.name}</h5>
-                                ${product.discount ? `<p class="card-text text-danger">Giảm: ${product.discount} đ</p>` : ''}
-                                <p class="card-text">Giá: ${product.price} đ</p>
+                                ${product.discount ? `<p class="card-text text-danger">Giảm: ${product.discount} VND</p>` : ''}
+                                <p class="card-text">Giá: ${product.price} VND</p>
                                 <button class="btn btn-primary w-100">Xem chi tiết</button>
                             </div>
                         </div>
@@ -679,7 +680,7 @@
             currency: 'VND',
             minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
         });
-        return formatter.format(amount);
+        return formatter.format(amount).replace('₫', 'VND');
     }
 
     // Định dạng giá sản phẩm có giảm giá và không có giảm giá
@@ -689,7 +690,7 @@
 
         priceElements.forEach(function (element) {
             // Lấy giá từ thuộc tính th:if hoặc giá trị chứa trong thẻ
-            let priceText = element.innerText.replace('đ', '').replace('₫', '').trim();  // Loại bỏ dấu "đ" hoặc "₫"
+            let priceText = element.innerText.replace('VND', '').replace('VND', '').trim();  // Loại bỏ dấu "đ" hoặc "₫"
             let price = parseFloat(priceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
 
             // Nếu giá hợp lệ, định dạng lại giá
@@ -701,7 +702,7 @@
         // Định dạng giá đã giảm
         const discountPriceElements = document.querySelectorAll('.old-price');  // Tìm các giá đã giảm
         discountPriceElements.forEach(function (element) {
-            let discountPriceText = element.innerText.replace('đ', '').replace('₫', '').trim();
+            let discountPriceText = element.innerText.replace('VND', '').replace('VND', '').trim();
             let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());
 
             if (!isNaN(discountPrice)) {
@@ -710,31 +711,31 @@
         });
     });
 </script>
-<script>
-    // Hàm định dạng giá tiền VND
-    function formatCurrency(amount) {
-        const formatter = new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
-        });
-        return formatter.format(amount);
-    }
+<!--<script>-->
+<!--    // Hàm định dạng giá tiền VND-->
+<!--    function formatCurrency(amount) {-->
+<!--        const formatter = new Intl.NumberFormat('vi-VN', {-->
+<!--            style: 'currency',-->
+<!--            currency: 'VND',-->
+<!--            minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân-->
+<!--        });-->
+<!--        return formatter.format(amount);-->
+<!--    }-->
 
-    // Định dạng giá trị giảm giá sau khi tải trang
-    document.addEventListener("DOMContentLoaded", function () {
-        const discountPriceElements = document.querySelectorAll('.discount-price');  // Tìm tất cả các thẻ có class 'discount-price'
+<!--    // Định dạng giá trị giảm giá sau khi tải trang-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        const discountPriceElements = document.querySelectorAll('.discount-price');  // Tìm tất cả các thẻ có class 'discount-price'-->
 
-        discountPriceElements.forEach(function (element) {
-            let discountPriceText = element.innerText.replace('đ', '').trim();  // Loại bỏ dấu "đ"
-            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
+<!--        discountPriceElements.forEach(function (element) {-->
+<!--            let discountPriceText = element.innerText.replace('đ', '').trim();  // Loại bỏ dấu "đ"-->
+<!--            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)-->
 
-            // Nếu giá trị giảm giá hợp lệ, định dạng lại giá
-            if (!isNaN(discountPrice)) {
-                element.innerText = '-' + formatCurrency(discountPrice);  // Thêm dấu '-' và định dạng giá
-            }
-        });
-    });
-</script>
+<!--            // Nếu giá trị giảm giá hợp lệ, định dạng lại giá-->
+<!--            if (!isNaN(discountPrice)) {-->
+<!--                element.innerText = '-' + formatCurrency(discountPrice);  // Thêm dấu '-' và định dạng giá-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
 </body>
 </html>
