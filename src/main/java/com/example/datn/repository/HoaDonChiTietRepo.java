@@ -39,12 +39,23 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
     // Tìm chi tiết hóa đơn theo hóa đơn và sản phẩm chi tiết
     Optional<HoaDonChiTiet> findByHoaDonAndSanPhamChiTiet(HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
 
-    List<HoaDonChiTiet> findByHoaDon_Id(Long idHoaDon);
+    List<HoaDonChiTiet> findByHoaDon_Id(Long idHD);
+
+    HoaDonChiTiet findByHoaDon_IdAndSanPhamChiTiet_Id(Long idHoaDon, Long idSanPhamChiTiet);
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM HoaDonChiTiet h WHERE h.hoaDon.id = :idHoaDon AND h.sanPhamChiTiet.id = :idSanPhamChiTiet")
-    void deleteByHoaDon_IdAndSanPhamChiTiet_Id(@Param("idHoaDon") Long idHoaDon,@Param("idSanPhamChiTiet") Long idSanPhamChiTiet);
+    @Query("DELETE FROM HoaDonChiTiet h WHERE h.sanPhamChiTiet.id = :idSanPhamChiTiet")
+    void deleteSanPhamChiTiet_Id(@Param("idSanPhamChiTiet") Long idSanPhamChiTiet);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE HoaDonChiTiet h SET h.soLuong = :soLuong WHERE h.id = :idSanPhamChiTiet")
+    int updateSoLuong(@Param("soLuong") int soLuong, @Param("idSanPhamChiTiet") Long idSanPhamChiTiet);
+
+    @Query("SELECT SUM(hdct.soLuong) FROM HoaDonChiTiet hdct WHERE hdct.sanPhamChiTiet.id = :sanPhamChiTietId")
+    Integer getTotalSoLuongBySanPhamChiTiet(@Param("sanPhamChiTietId") Long sanPhamChiTietId);
+
 
 //    @Modifying
 //    @Query("UPDATE HoaDonChiTiet hdc SET hdc.soLuong = :soLuong WHERE hdc.id = :id")

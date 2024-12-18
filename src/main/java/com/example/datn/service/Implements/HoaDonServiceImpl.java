@@ -233,8 +233,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public void deleteSPInHD(Long idSanPhamChiTiet, Long idHoaDon) {
-        hoaDonChiTietRepo.deleteByHoaDon_IdAndSanPhamChiTiet_Id(idHoaDon,idSanPhamChiTiet);
+    public void deleteSPInHD(Long idSanPhamChiTiet) {
+        hoaDonChiTietRepo.deleteSanPhamChiTiet_Id(idSanPhamChiTiet);
     }
 
 
@@ -242,6 +242,62 @@ public class HoaDonServiceImpl implements HoaDonService {
     public HinhThucThanhToanResponse getHinhThucThanhToan() {
         HinhThucThanhToanResponse hinhThucThanhToan = new HinhThucThanhToanResponse("Thanh Toán Khi Nhận Hàng", "Chuyển Khoản", "Tiền Mặt");
         return hinhThucThanhToan;
+    }
+
+    @Override
+    public void tangSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet) {
+        // Lấy HoaDonChiTiet theo idHoaDon và idSanPhamChiTiet
+        HoaDonChiTiet hdct = hoaDonChiTietRepo.findByHoaDon_IdAndSanPhamChiTiet_Id(idHoaDon, idSanPhamChiTiet);
+
+        // Kiểm tra nếu không có bản ghi nào tìm thấy
+        if (hdct != null) {
+            // Tăng số lượng lên 1
+            hdct.setSoLuong(hdct.getSoLuong() + 1);
+
+            // Cập nhật lại thành tiền
+            BigDecimal gia = hdct.getGia();
+            hdct.setThanhTien(gia.multiply(BigDecimal.valueOf(hdct.getSoLuong())));
+
+            // Lưu lại bản ghi HoaDonChiTiet đã cập nhật
+            hoaDonChiTietRepo.save(hdct);
+        } else {
+            throw new RuntimeException("Không tìm thấy hóa đơn chi tiết với ID sản phẩm chi tiết.");
+        }
+    }
+
+
+    @Override
+    public void truSoLuongSanPham(Long idHD) {
+        List<HoaDonChiTiet> listHDCT = hoaDonChiTietRepo.findByHoaDon_Id(idHD);
+        for (HoaDonChiTiet hdct : listHDCT) {
+            SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
+            int soLuongTon = spct.getSo_luong(); // Số lượng hiện tại trong kho
+            int soLuongBan = hdct.getSoLuong();    // Số lượng trong hóa đơn chi tiết
+
+            if (soLuongTon >= soLuongBan) {
+                spct.setSo_luong(soLuongTon - soLuongBan); // Trừ số lượng
+                spctRepo.save(spct);
+            } else {
+                throw new RuntimeException("Số lượng tồn kho không đủ cho sản phẩm: " + spct.getSanPham().getTen());
+            }
+        }
+    }
+
+    @Override
+    public void hoanSoLuongSanPham(Long idHD) {
+        List<HoaDonChiTiet> listHDCT = hoaDonChiTietRepo.findByHoaDon_Id(idHD);
+        for (HoaDonChiTiet hdct : listHDCT) {
+            SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
+            int soLuongTon = spct.getSo_luong(); // Số lượng hiện tại trong kho
+            int soLuongBan = hdct.getSoLuong();    // Số lượng trong hóa đơn chi tiết
+
+            if (soLuongTon >= soLuongBan) {
+                spct.setSo_luong(soLuongTon + soLuongBan);
+                spctRepo.save(spct);
+            } else {
+                throw new RuntimeException("Số lượng hoàn lại: " + spct.getSanPham().getTen());
+            }
+        }
     }
 
     //khoi

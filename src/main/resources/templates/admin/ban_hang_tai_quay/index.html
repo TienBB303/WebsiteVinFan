@@ -29,7 +29,7 @@
             <div class="container">
                 <!-- Button để mở modal -->
                 <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                        data-bs-target="#modalAddSP">
+                        data-bs-target="#modalAddSP" th:disabled="${idHD == null}">
                     Thêm sản phẩm
                 </button>
 
@@ -138,20 +138,21 @@
                         <div th:text="${item.sanPhamChiTiet.sanPham.ten}"></div>
                     </td>
 
-                    <td style="display: flex; align-items: center;">
+                    <td>
                         <input type="number" class="form-control form-control-sm mx-2"
-                               th:value="${item.soLuong}" min="0" style="width: 75px; text-align: center"
-                               id="quantityInput_${item.id}" data-item-id="${item.id}"
-                               onchange="updateQuantity(this)">
+                               th:value="${item.soLuong}" min="0" style="width: 75px; text-align: center">
                     </td>
 
                     <td class="giaVND" th:text="${item.thanhTien}"></td>
 
                     <td>
-                        <form th:action="@{/ban-hang-tai-quay/xoa(idHD=${item.hoaDon.id}, idSP=${item.sanPhamChiTiet.id})}"
-                              method="post">
+                        <form th:action="@{/ban-hang-tai-quay/xoa}" method="post">
                             <input type="hidden" name="_method" value="DELETE"/>
-                            <button type="submit">Xóa</button>
+                            <input type="hidden" name="idHD" th:value="${item.hoaDon.id}"/>
+                            <input type="hidden" name="idSP" th:value="${item.sanPhamChiTiet.id}"/>
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -163,15 +164,17 @@
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h1 class="h5 mb-0">Tài khoản</h1>
-                    <div class="ms-auto d-flex gap-2">
+                    <div class="ms-auto d-flex gap-2" >
                         <button type="button" class="btn btn-outline-success"
                                 data-bs-toggle="modal"
-                                data-bs-target="#modalKH">
+                                data-bs-target="#modalKH"
+                                th:disabled="${idHD == null}">
                             Thêm khách hàng
                         </button>
                         <button type="button" class="btn btn-outline-primary"
                                 data-bs-toggle="modal"
-                                data-bs-target="#modalTaiKhoan">
+                                data-bs-target="#modalTaiKhoan"
+                                th:disabled="${idHD == null}">
                             Chọn tài khoản
                         </button>
                     </div>
@@ -262,7 +265,7 @@
                     <h4>Khách hàng</h4>
                 </div>
                 <!-- Button trigger modal -->
-                <div class="col text-end">
+                <div class="col text-end" th:disabled="${idHD == null}">
                     <button type="button" class="btn btn-outline-primary"
                             data-bs-toggle="modal"
                             data-bs-target="#modalDiaChi">
@@ -389,7 +392,7 @@
                 </div>
 
                 <!-- Nút xác nhận -->
-                <button class="btn btn-dark w-100 confirm-btn mb-5">Xác nhận đặt hàng</button>
+                <button class="btn btn-dark w-100 confirm-btn mb-5" th:disabled="${idHD == null}">Xác nhận đặt hàng</button>
             </div>
         </div>
 
@@ -400,28 +403,7 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
-  
-    <script>
-        // Giả sử bạn có một input cho số lượng sản phẩm và sự kiện onchange
-        $(document).on('change', '.soLuongInput', function() {
-            var idHDCT = $(this).data('id'); // Lấy id của chi tiết hóa đơn từ data-id
-            var newSoLuong = $(this).val(); // Lấy số lượng mới từ input
 
-            // Gửi yêu cầu PUT tới server
-            $.ajax({
-                url: '/ban-hang-tai-quay/update-so-luong/' + idHDCT,
-                type: 'PUT',
-                data: { newSoLuong: newSoLuong },
-                success: function(response) {
-                    // Cập nhật lại giao diện hoặc làm gì đó sau khi thành công
-                    location.reload(); // Reload trang để cập nhật dữ liệu mới
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
-    </script>
   
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
@@ -591,7 +573,6 @@
             }
         });
     </script>
-
 
 </div>
 </body>
