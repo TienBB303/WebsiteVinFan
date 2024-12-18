@@ -365,7 +365,11 @@
                         <td class="giaVND" th:text="${item.gia}"></td>
                         <td>
                             <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-decrease">-</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
+                                    th:data-id-hoa-don="${item.hoaDon.id}"
+                                    th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
+                                -
+                            </button>
                             <!-- Ô nhập số lượng -->
                             <input type="number" class="form-control quantity-input"
                                    th:value="${item.soLuong}"
@@ -868,24 +872,7 @@
                             });
                         }
                     });
-                    // fetch('/hoa-don/tang-so-luong', {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'Content-Type': 'application/json'
-                    //     },
-                    //     body: JSON.stringify({
-                    //         idHoaDon: idHoaDon,
-                    //         idSanPhamChiTiet: idSanPhamChiTiet
-                    //     })
-                    // })
-                    //     .then(response => {
-                    //         if (response.ok) {
-                    //             location.reload(); // Reload trang hoặc cập nhật giao diện
-                    //         } else {
-                    //             alert('Có lỗi xảy ra khi tăng số lượng!');
-                    //         }
-                    //     })
-                    //     .catch(error => console.log('Error:', error));
+
                 });
         </script>
 
