@@ -265,6 +265,28 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
     }
 
+    @Override
+    public void giamSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet) {
+        // Lấy HoaDonChiTiet theo idHoaDon và idSanPhamChiTiet
+        HoaDonChiTiet hdct = hoaDonChiTietRepo.findByHoaDon_IdAndSanPhamChiTiet_Id(idHoaDon, idSanPhamChiTiet);
+
+        // Kiểm tra nếu không có bản ghi nào tìm thấy
+        if (hdct != null) {
+            // Tăng số lượng lên 1
+            hdct.setSoLuong(hdct.getSoLuong() - 1);
+
+            // Cập nhật lại thành tiền
+            BigDecimal gia = hdct.getGia();
+            hdct.setThanhTien(gia.multiply(BigDecimal.valueOf(hdct.getSoLuong())));
+
+            // Lưu lại bản ghi HoaDonChiTiet đã cập nhật
+            hoaDonChiTietRepo.save(hdct);
+        } else {
+            throw new RuntimeException("Không tìm thấy hóa đơn chi tiết với ID sản phẩm chi tiết.");
+        }
+    }
+
+
 
     @Override
     public void truSoLuongSanPham(Long idHD) {
