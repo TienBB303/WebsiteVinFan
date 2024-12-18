@@ -120,6 +120,7 @@ public class ProductCatalog {
 
             // Truyền dữ liệu sang Thymeleaf
             model.addAttribute("sanPham", currentProduct.getSanPham());
+            model.addAttribute("sanPhamChiTiet", currentProduct); // Truyền SanPhamChiTiet
             model.addAttribute("bienTheList", bienTheList);
             model.addAttribute("giaSauGiamMap", giaSauGiamMap);
             model.addAttribute("defaultBienThe", defaultBienThe); // Biến thể mặc định
