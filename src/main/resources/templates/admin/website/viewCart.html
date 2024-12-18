@@ -15,10 +15,10 @@
         color: #333;
     }
 
-    /* Thiết kế phần chứa giỏ hàng */
+    /* Phần chứa giỏ hàng */
     .cart-container {
-        max-width: 800px;
-        margin: 80px auto;
+        max-width: 1200px; /* Tăng chiều rộng container */
+        margin: 50px auto; /* Giữ căn giữa */
         background-color: #ffffff;
         padding: 40px;
         border-radius: 20px;
@@ -235,21 +235,20 @@
 <body>
 <div class="cart-container">
     <h1>Giỏ hàng của bạn</h1>
-
     <div>
         <ul class="cart-items">
             <th:block th:each="item : ${cartItems}">
                 <li>
-                    <!-- Di chuyển ảnh vào trong <li> để căn chỉnh cùng các phần tử khác -->
                     <img src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg" alt="Product Image" class="item-image" />
-                    <!-- Các phần tử khác như tên, giá, số lượng... -->
                     <td>
-                        <!-- Tên sản phẩm và số lượng tồn kho hiển thị bên cạnh -->
-                        <span class="item-name" th:text="${item.name}">Tên sản phẩm</span>
+                        <!-- Hiển thị tên sản phẩm kèm màu sắc và công suất -->
+                        <span class="item-name" th:text="${item.name + ' (' + item.color + ',' + item.capacity + ')'}">
+                            Tên sản phẩm (Màu sắc, Công suất)
+                        </span>
                         <br>
                         <span class="stock-quantity" th:text="'(Còn ' + ${stockMap[item.productId]} + ')'">Số lượng tồn kho</span>
                     </td>
-                    <span class="item-price" th:text="${#numbers.formatDecimal(item.price, 0, '0') + 'đ'}">0</span>
+                    <span class="item-price" th:text="${#numbers.formatDecimal(item.price, 0, '0') + 'VND'}">0</span>
                     <div class="item-quantity">
                         <button class="decrease-quantity" th:attr="data-id=${item.productId}">-</button>
                         <input type="number" min="1" value="1" th:value="${item.quantity}" th:attr="data-id=${item.productId}" class="quantity-input">
@@ -264,7 +263,6 @@
                 </li>
             </th:block>
         </ul>
-
         <p class="total-price">Tổng tiền: <span th:text="${totalPrice}"></span></p>
     </div>
 
@@ -342,7 +340,7 @@
     function formatItemPrices() {
         document.querySelectorAll('.item-total, .item-price').forEach(totalElement => {
             let price = parseFloat(totalElement.textContent.replace(/\./g, '').replace(/[^0-9.-]+/g, '')); // Xóa dấu chấm và ký tự không phải số
-            totalElement.textContent = price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            totalElement.textContent = price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VND');
         });
         updateTotalPrice(); // Cập nhật tổng tiền khi giá đã được định dạng
     }
@@ -353,7 +351,7 @@
         document.querySelectorAll('.item-total').forEach(totalElement => {
             totalPrice += parseFloat(totalElement.textContent.replace(/\./g, '').replace(/[^0-9.-]+/g, '')); // Xử lý giá trị để tính tổng
         });
-        document.querySelector('.total-price span').textContent = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+        document.querySelector('.total-price span').textContent = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VND');
     }
 
     // Định dạng lại giá khi trang được tải

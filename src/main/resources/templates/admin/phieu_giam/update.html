@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -8,10 +9,12 @@
 
 <body>
 <div class="wrapper">
+    <!-- Sidebar -->
     <div>
         <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
     </div>
 
+    <!-- Main Content -->
     <div id="main">
         <header th:replace="/admin/fragments/header :: header"></header>
 
@@ -26,12 +29,8 @@
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a
-                                        href="/admin/phieu-giam/index">Phiếu
-                                    giảm giá</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a
-                                        th:href="@{/admin/phieu-giam/edit/{id}(id=${pgg.id})}">Sửa phiếu giảm giá</a>
-                                </li>
+                                <li class="breadcrumb-item"><a href="/admin/phieu-giam/index">Phiếu giảm giá</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Sửa phiếu giảm giá</li>
                             </ol>
                         </nav>
                     </div>
@@ -44,75 +43,86 @@
                 <section class="col-12">
                     <div class="card p-4">
                         <div id="alert" class="alert alert-danger" style="display:none;"></div>
+                        <!-- Form cập nhật phiếu giảm giá -->
                         <form th:action="@{/admin/phieu-giam/update}" th:object="${pgg}" method="post">
                             <input type="hidden" th:field="*{id}"/>
 
+                            <!-- Mã phiếu giảm giá -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ma" th:field="*{ma}" th:readonly="${!isEditable}">
+                                    <input type="text" class="form-control" th:field="*{ma}" readonly>
                                 </div>
                             </div>
 
+                            <!-- Tên phiếu giảm giá -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ten" th:field="*{ten}" th:readonly="${!isEditable}">
+                                    <input type="text" class="form-control" th:field="*{ten}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
+                            <!-- Ngày bắt đầu -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
                                 <div class="col-sm-8">
-                                    <input type="date" class="form-control" name="ngayBD" th:field="*{ngayBD}" th:readonly="${!isEditable}">
+                                    <input type="date" class="form-control" th:field="*{ngayBD}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
+                            <!-- Ngày kết thúc -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
                                 <div class="col-sm-8">
-                                    <input type="date" class="form-control" name="ngayKT" th:field="*{ngayKT}" th:readonly="${!isEditable}">
+                                    <input type="date" class="form-control" th:field="*{ngayKT}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
+                            <!-- Giá trị giảm -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Giá trị giảm</label>
                                 <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="giaTriGiam" th:field="*{giaTriGiam}" th:readonly="${!isEditable}">
+                                    <input type="number" class="form-control" th:field="*{giaTriGiam}" th:readonly="${!isEditable}">
                                 </div>
                             </div>
 
+                            <!-- Loại phiếu giảm giá -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="loaiPhieuGiam" th:field="*{loaiPhieuGiam}" th:disabled="${!isEditable}">
+                                    <select class="form-control" th:field="*{loaiPhieuGiam}" th:disabled="${!isEditable}">
                                         <option value="false">Giảm giá sản phẩm</option>
                                         <option value="true">Giảm giá hóa đơn</option>
                                     </select>
                                 </div>
                             </div>
 
+                            <!-- Trạng thái -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Trạng thái</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="trangThai" th:field="*{trangThai}" th:disabled="${!isEditable}">
+                                    <select class="form-control" th:field="*{trangThai}" th:disabled="${!isEditable}">
                                         <option value="true">Áp dụng</option>
                                         <option value="false">Ngừng áp dụng</option>
                                     </select>
                                 </div>
                             </div>
 
+                            <!-- Mã và tên sản phẩm áp dụng -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Sản phẩm áp dụng</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control"
-                                           th:value="${sanPham != null ? sanPham.ten : 'Không có sản phẩm áp dụng'}" readonly>
+                                           th:value="${sanPham != null ? sanPhamMa + ' - ' + sanPham.ten : 'Không có sản phẩm áp dụng'}"
+                                           readonly>
                                 </div>
                             </div>
 
-                            <div style="display: flex; justify-content: center;">
-                                <button type="submit" class="btn btn-primary" style="width: 500px;" th:disabled="${!isEditable}">
-                                    Cập Nhật
+                            <!-- Nút cập nhật -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary" th:disabled="${!isEditable}">
+                                    Cập nhật
                                 </button>
                             </div>
                         </form>
@@ -127,117 +137,151 @@
     </div>
 </div>
 
+<!-- Script -->
 <script th:replace="/admin/fragments/script :: script"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script th:inline="javascript">
-    function validateForm() {
-        var currentDate = new Date();
-        var ten = document.forms["updateForm"]["ten"].value;
-        var ngayBD = document.forms["updateForm"]["ngayBD"].value;
-        var ngayKT = document.forms["updateForm"]["ngayKT"].value;
-        var giaTriGiam = document.forms["updateForm"]["giaTriGiam"].value;
-        var giaTriMin = document.forms["updateForm"]["giaTriMin"].value;
-        var giaTriMax = document.forms["updateForm"]["giaTriMax"].value;
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 
-        var selectedStartDate = new Date(ngayBD);
-        var selectedEndDate = new Date(ngayKT);
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
 
-        // Mảng lưu thông báo lỗi
-        var errorMessages = [];
+<body>
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
 
-        // Kiểm tra từng trường và thêm thông báo lỗi vào mảng
-        if (ten.trim() === "") {
-            errorMessages.push("Không để trống tên phiếu giảm giá.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        }
+    <!-- Main Content -->
+    <div id="main">
+        <header th:replace="/admin/fragments/header :: header"></header>
 
-        if (ngayBD.trim() === "") {
-            errorMessages.push("Không để trống ngày bắt đầu.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        } else if (selectedStartDate < currentDate) {
-            errorMessages.push("Ngày bắt đầu không được là ngày quá khứ.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        }
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Phiếu giảm giá</h3>
+                        <p class="text-subtitle text-muted">Sửa phiếu giảm giá</p>
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/phieu-giam/index">Phiếu giảm giá</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Sửa phiếu giảm giá</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        if (ngayKT.trim() === "") {
-            errorMessages.push("Không để trống ngày kết thúc.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        } else if (selectedEndDate < currentDate) {
-            errorMessages.push("Ngày kết thúc phải lớn hơn ngày hiện tại.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        } else if (selectedEndDate <= selectedStartDate) {
-            errorMessages.push("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        }
+        <div class="page-content">
+            <section class="row">
+                <section class="col-12">
+                    <div class="card p-4">
+                        <div id="alert" class="alert alert-danger" style="display:none;"></div>
+                        <!-- Form cập nhật phiếu giảm giá -->
+                        <form th:action="@{/admin/phieu-giam/update}" th:object="${pgg}" method="post">
+                            <input type="hidden" th:field="*{id}"/>
 
-        if (giaTriGiam.trim() === "" || giaTriGiam <= 0) {
-            errorMessages.push("Số tiền giảm lớn hơn 0.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        }
+                            <!-- Mã phiếu giảm giá -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" th:field="*{ma}" readonly>
+                                </div>
+                            </div>
 
-        if (giaTriMin.trim() === "" || giaTriMin <= 0) {
-            errorMessages.push("Giá trị tối thiểu phải lớn hơn 0.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        }
+                            <!-- Tên phiếu giảm giá -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" th:field="*{ten}" th:readonly="${!isEditable}">
+                                </div>
+                            </div>
 
-        if (giaTriMax.trim() === "" || giaTriMax <= 0) {
-            errorMessages.push("Giá trị tối đa phải lớn hơn 0.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        }
+                            <!-- Ngày bắt đầu -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control" th:field="*{ngayBD}" th:readonly="${!isEditable}">
+                                </div>
+                            </div>
 
-        if (giaTriMax <= giaTriMin) {
-            errorMessages.push("Giá trị tối đa phải lớn hơn giá trị tối thiểu.");
-            showErrorMessagesInOrder(errorMessages);
-            return false; // Dừng lại, không kiểm tra các trường sau
-        }
+                            <!-- Ngày kết thúc -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control" th:field="*{ngayKT}" th:readonly="${!isEditable}">
+                                </div>
+                            </div>
 
-        // Nếu không có lỗi, cho phép form submit
-        return true;
-    }
+                            <!-- Giá trị giảm -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Giá trị giảm</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" th:field="*{giaTriGiam}" th:readonly="${!isEditable}">
+                                </div>
+                            </div>
 
-    function showErrorMessagesInOrder(messages) {
-        // Hàm hiển thị thông báo theo thứ tự
-        if (messages.length === 0) return;
+                            <!-- Loại phiếu giảm giá -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" th:field="*{loaiPhieuGiam}" th:disabled="${!isEditable}">
+                                        <option value="false">Giảm giá sản phẩm</option>
+                                        <option value="true">Giảm giá hóa đơn</option>
+                                    </select>
+                                </div>
+                            </div>
 
-        const showNextMessage = (index) => {
-            if (index < messages.length) {
-                showToast(messages[index]);
-                setTimeout(() => showNextMessage(index + 1), 3000); // Thời gian hiển thị thông báo
-            }
-        };
+                            <!-- Trạng thái -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Trạng thái</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" th:field="*{trangThai}" th:disabled="${!isEditable}">
+                                        <option value="true">Áp dụng</option>
+                                        <option value="false">Ngừng áp dụng</option>
+                                    </select>
+                                </div>
+                            </div>
 
-        showNextMessage(0); // Bắt đầu hiển thị từ thông báo đầu tiên
-    }
+                            <!-- Mã và tên sản phẩm áp dụng -->
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Sản phẩm áp dụng</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"
+                                           th:value="${sanPham != null ? sanPhamMa + ' - ' + sanPham.ten : 'Không có sản phẩm áp dụng'}"
+                                           readonly>
+                                </div>
+                            </div>
 
-    function showToast(message) {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end', // Vị trí góc phải
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            onOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-            }
-        });
+                            <!-- Nút cập nhật -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary" th:disabled="${!isEditable}">
+                                    Cập nhật
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </section>
+        </div>
 
-        Toast.fire({
-            icon: 'error',
-            title: message
-        });
-    }
-</script>
+        <div>
+            <footer th:replace="/admin/fragments/footer :: footer"></footer>
+        </div>
+    </div>
+</div>
+
+<!-- Script -->
+<script th:replace="/admin/fragments/script :: script"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:inline="javascript">
     var isEditable = /*[[${isEditable}]]*/ true;
     if (!isEditable) {
@@ -249,6 +293,19 @@
         });
     }
 </script>
+</body>
+</html>
 
+<script th:inline="javascript">
+    var isEditable = /*[[${isEditable}]]*/ true;
+    if (!isEditable) {
+        Swal.fire({
+            title: 'Phiếu giảm giá ngừng áp dụng',
+            text: 'Bạn chỉ có thể xem thông tin. Không thể chỉnh sửa phiếu giảm giá này.',
+            icon: 'warning',
+            confirmButtonText: 'Đồng ý'
+        });
+    }
+</script>
 </body>
 </html>

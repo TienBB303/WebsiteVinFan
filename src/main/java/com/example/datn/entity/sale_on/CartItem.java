@@ -16,4 +16,6 @@ public class CartItem {
     private Double price;
     private int quantity;
     private BigDecimal discountedPrice;
+    private String color;
+    private String capacity;
 }

@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,7 +35,8 @@ public class ProductCatalog {
     public String productCatalog(
             Model model,
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "kieuQuatId", required = false) Integer kieuQuatId) {
+            @RequestParam(value = "kieuQuatId", required = false) Integer kieuQuatId,
+            @RequestParam(value = "maSanPham", required = false) String maSanPham) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -54,6 +53,10 @@ public class ProductCatalog {
                     .stream()
                     .filter(sp -> !sanPhamCoGiamGiaIds.contains(sp.getId()))
                     .collect(Collectors.toList());
+
+        } else if (maSanPham != null && !maSanPham.isEmpty()) {
+            sanPhamKhongGiamGia = spctRepo.findBySanPhamMa(maSanPham);
+            sanPhamGiamGia = phieuGiamSanPhamRepo.findBySanPhamMa(maSanPham);
         } else {
             List<Long> sanPhamCoGiamGiaIds = phieuGiamSanPhamRepo.findAllSanPhamChiTietIds();
             sanPhamKhongGiamGia = spctRepo.findByIdNotIn(sanPhamCoGiamGiaIds);
@@ -71,11 +74,21 @@ public class ProductCatalog {
                     .collect(Collectors.toList());
         }
 
-        model.addAttribute("sanPhamKhongGiamGia", sanPhamKhongGiamGia);
-        model.addAttribute("sanPhamGiamGia", sanPhamGiamGia);
+        // Xóa trùng lặp sản phẩm theo mã
+        Map<String, SanPhamChiTiet> uniqueProducts = new LinkedHashMap<>();
+        sanPhamKhongGiamGia.forEach(sp -> uniqueProducts.put(sp.getSanPham().getMa(), sp));
+
+        Map<String, PhieuGiamSanPham> uniqueDiscountedProducts = new LinkedHashMap<>();
+        sanPhamGiamGia.forEach(pgg -> uniqueDiscountedProducts.put(
+                pgg.getSanPhamChiTiet().getSanPham().getMa(), pgg
+        ));
+
+        model.addAttribute("sanPhamKhongGiamGia", uniqueProducts.values());
+        model.addAttribute("sanPhamGiamGia", uniqueDiscountedProducts.values());
         model.addAttribute("query", query);
         model.addAttribute("kieuQuatId", kieuQuatId);
-        model.addAttribute("kieuQuats", kieuQuatRepo.findAll()); // Lấy danh sách kiểu quạt để hiển thị lọc
+        model.addAttribute("maSanPham", maSanPham);
+        model.addAttribute("kieuQuats", kieuQuatRepo.findAll());
 
         String currentPrincipalName = authentication.getName();
         model.addAttribute("currentPrincipalName", currentPrincipalName);
@@ -84,24 +97,38 @@ public class ProductCatalog {
     }
     @GetMapping("/detail/{id}")
     public String getProductDetail(@PathVariable Long id, Model model) {
-        // Lấy chi tiết sản phẩm theo id
-        Optional<SanPhamChiTiet> sanPhamChiTietOptional = spctRepo.findById(id);
+        Optional<SanPhamChiTiet> sanPhamChiTietOpt = spctRepo.findById(id);
 
-        if (sanPhamChiTietOptional.isPresent()) {
-            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietOptional.get();
+        if (sanPhamChiTietOpt.isPresent()) {
+            SanPhamChiTiet currentProduct = sanPhamChiTietOpt.get();
+            List<SanPhamChiTiet> bienTheList = spctRepo.findAllBySanPhamMa(currentProduct.getSanPham().getMa());
 
-            // Kiểm tra sản phẩm có thuộc danh sách giảm giá hay không
-            Optional<PhieuGiamSanPham> phieuGiamOptional = phieuGiamSanPhamRepo
-                    .findBySanPhamChiTietId(id); // Phương thức này cần được định nghĩa trong repository
+            // Tạo Map để lưu giá sau giảm cho từng biến thể
+            Map<Long, BigDecimal> giaSauGiamMap = new HashMap<>();
 
-            model.addAttribute("product", sanPhamChiTiet);  // Đối tượng sanPhamChiTiet được gửi vào model
-            if (phieuGiamOptional.isPresent()) {
-                PhieuGiamSanPham phieuGiamSanPham = phieuGiamOptional.get();
-                model.addAttribute("phieuGiam", phieuGiamSanPham);  // Đối tượng phieuGiam được gửi vào model nếu có
-            }
-            return "admin/website/detailSP";  // Chuyển đến view chi tiết sản phẩm
+            bienTheList.forEach(bienThe -> {
+                // Tìm giá sau giảm cho từng biến thể
+                Optional<PhieuGiamSanPham> phieuGiam = phieuGiamSanPhamRepo.findBySanPhamChiTietId(bienThe.getId());
+                phieuGiam.ifPresent(giam -> giaSauGiamMap.put(bienThe.getId(), giam.getGiaSauGiam()));
+            });
+
+            // Lấy biến thể cuối cùng làm mặc định
+            SanPhamChiTiet defaultBienThe = bienTheList.isEmpty() ? null : bienTheList.get(bienTheList.size() - 1);
+            BigDecimal defaultGiaSauGiam = defaultBienThe != null
+                    ? giaSauGiamMap.getOrDefault(defaultBienThe.getId(), defaultBienThe.getGia())
+                    : BigDecimal.ZERO;
+
+            // Truyền dữ liệu sang Thymeleaf
+            model.addAttribute("sanPham", currentProduct.getSanPham());
+            model.addAttribute("bienTheList", bienTheList);
+            model.addAttribute("giaSauGiamMap", giaSauGiamMap);
+            model.addAttribute("defaultBienThe", defaultBienThe); // Biến thể mặc định
+            model.addAttribute("defaultGiaSauGiam", defaultGiaSauGiam); // Giá của biến thể mặc định
+
+            return "admin/website/detailSP";
         }
-        // Nếu không tìm thấy sản phẩm, chuyển hướng về trang danh sách sản phẩm
-        return "redirect:/admin/product-catalog";
+
+        return "redirect:/cart/view";
     }
+
 }
