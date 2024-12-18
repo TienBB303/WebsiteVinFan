@@ -711,31 +711,31 @@
         });
     });
 </script>
-<!--<script>-->
-<!--    // Hàm định dạng giá tiền VND-->
-<!--    function formatCurrency(amount) {-->
-<!--        const formatter = new Intl.NumberFormat('vi-VN', {-->
-<!--            style: 'currency',-->
-<!--            currency: 'VND',-->
-<!--            minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân-->
-<!--        });-->
-<!--        return formatter.format(amount);-->
-<!--    }-->
+<script>
+    // Hàm định dạng giá tiền VND
+    function formatCurrency(amount) {
+        const formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
+        });
+        return formatter.format(amount).replace('₫', 'VND'); // Chuyển "₫" thành "VND"
+    }
 
-<!--    // Định dạng giá trị giảm giá sau khi tải trang-->
-<!--    document.addEventListener("DOMContentLoaded", function () {-->
-<!--        const discountPriceElements = document.querySelectorAll('.discount-price');  // Tìm tất cả các thẻ có class 'discount-price'-->
+    // Định dạng giá trị giảm giá sau khi tải trang
+    document.addEventListener("DOMContentLoaded", function () {
+        const discountPriceElements = document.querySelectorAll('.discount-price'); // Tìm tất cả các thẻ có class 'discount-price'
 
-<!--        discountPriceElements.forEach(function (element) {-->
-<!--            let discountPriceText = element.innerText.replace('đ', '').trim();  // Loại bỏ dấu "đ"-->
-<!--            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)-->
+        discountPriceElements.forEach(function (element) {
+            let discountPriceText = element.innerText.replace('đ', '').trim(); // Loại bỏ "đ" nếu có
+            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim()); // Chuyển thành số
 
-<!--            // Nếu giá trị giảm giá hợp lệ, định dạng lại giá-->
-<!--            if (!isNaN(discountPrice)) {-->
-<!--                element.innerText = '-' + formatCurrency(discountPrice);  // Thêm dấu '-' và định dạng giá-->
-<!--            }-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
+            // Nếu giá trị hợp lệ, định dạng lại giá
+            if (!isNaN(discountPrice)) {
+                element.innerText = '-' + formatCurrency(discountPrice); // Định dạng giá và thêm dấu "-"
+            }
+        });
+    });
+</script>
 </body>
 </html>
