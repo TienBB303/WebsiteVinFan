@@ -298,7 +298,7 @@
             if (discountPrice && parseFloat(discountPrice) < parseFloat(originalPrice)) {
                 oldPriceHtml = `
                 <span class="old-price">
-                    ${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(originalPrice)}
+                    ${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(originalPrice).replace('₫', 'VND')}
                 </span>
             `;
             }
@@ -306,7 +306,7 @@
             variantPrice.innerHTML = `
             ${oldPriceHtml}
             <span class="new-price">
-                ${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(priceToShow)}
+                ${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(priceToShow).replace('₫', 'VND')}
             </span>
         `;
 

@@ -36,7 +36,11 @@ public class ProductCatalog {
             Model model,
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "kieuQuatId", required = false) Integer kieuQuatId,
-            @RequestParam(value = "maSanPham", required = false) String maSanPham) {
+            @RequestParam(value = "maSanPham", required = false) String maSanPham,
+            @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
+            @RequestParam(value = "sortOrder", required = false, defaultValue = "newest") String sortOrder,
+            @RequestParam(value = "filter", required = false, defaultValue = "all") String filter) { // Add filter parameter
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -63,7 +67,14 @@ public class ProductCatalog {
             sanPhamGiamGia = phieuGiamSanPhamRepo.findAll();
         }
 
-        // Lọc theo kiểu quạt nếu có
+        // Apply filter
+        if ("discounted".equalsIgnoreCase(filter)) {
+            sanPhamKhongGiamGia.clear();
+        } else if ("non-discounted".equalsIgnoreCase(filter)) {
+            sanPhamGiamGia.clear();
+        }
+
+        // Filter by kieuQuatId if provided
         if (kieuQuatId != null) {
             sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream()
                     .filter(sp -> sp.getSanPham().getKieuQuat().getId().equals(kieuQuatId))
@@ -74,7 +85,33 @@ public class ProductCatalog {
                     .collect(Collectors.toList());
         }
 
-        // Xóa trùng lặp sản phẩm theo mã
+        // Filter by price range if provided
+        if (minPrice != null || maxPrice != null) {
+            BigDecimal finalMinPrice = minPrice != null ? minPrice : BigDecimal.ZERO;
+            BigDecimal finalMaxPrice = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
+
+            sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream()
+                    .filter(sp -> sp.getGia().compareTo(finalMinPrice) >= 0 && sp.getGia().compareTo(finalMaxPrice) <= 0)
+                    .collect(Collectors.toList());
+
+            sanPhamGiamGia = sanPhamGiamGia.stream()
+                    .filter(pg -> pg.getGiaSauGiam().compareTo(finalMinPrice) >= 0 && pg.getGiaSauGiam().compareTo(finalMaxPrice) <= 0)
+                    .collect(Collectors.toList());
+        }
+
+        // Sort by creation date
+        Comparator<SanPhamChiTiet> sanPhamComparator = Comparator.comparing(SanPhamChiTiet::getNgay_tao);
+        Comparator<PhieuGiamSanPham> phieuGiamComparator = Comparator.comparing(pg -> pg.getSanPhamChiTiet().getNgay_tao());
+
+        if ("newest".equalsIgnoreCase(sortOrder)) {
+            sanPhamComparator = sanPhamComparator.reversed();
+            phieuGiamComparator = phieuGiamComparator.reversed();
+        }
+
+        sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream().sorted(sanPhamComparator).collect(Collectors.toList());
+        sanPhamGiamGia = sanPhamGiamGia.stream().sorted(phieuGiamComparator).collect(Collectors.toList());
+
+        // Remove duplicates by product code
         Map<String, SanPhamChiTiet> uniqueProducts = new LinkedHashMap<>();
         sanPhamKhongGiamGia.forEach(sp -> uniqueProducts.put(sp.getSanPham().getMa(), sp));
 
@@ -88,6 +125,10 @@ public class ProductCatalog {
         model.addAttribute("query", query);
         model.addAttribute("kieuQuatId", kieuQuatId);
         model.addAttribute("maSanPham", maSanPham);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("filter", filter); // Pass filter to the view
         model.addAttribute("kieuQuats", kieuQuatRepo.findAll());
 
         String currentPrincipalName = authentication.getName();
@@ -130,6 +171,10 @@ public class ProductCatalog {
         }
 
         return "redirect:/cart/view";
+    }
+    @GetMapping("/track-order")
+    public String trackOrder() {
+        return "admin/website/trackOrder";
     }
 
 }

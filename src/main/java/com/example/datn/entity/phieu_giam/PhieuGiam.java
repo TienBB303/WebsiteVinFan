@@ -42,12 +42,6 @@ public class PhieuGiam {
     @Column(name = "loai_phieu_giam_gia")
     private boolean loaiPhieuGiam;
 
-    @Column(name = "gia_tri_toi_thieu_ap_dung")
-    private BigDecimal giaTriMin;
-
-    @Column(name = "gia_tri_toi_da_giam")
-    private BigDecimal giaTriMax;
-
     @Column(name = "gia_tri_giam")
     private BigDecimal giaTriGiam;
 
