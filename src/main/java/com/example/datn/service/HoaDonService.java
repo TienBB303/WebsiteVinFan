@@ -63,10 +63,11 @@ public interface HoaDonService {
 
     void tangSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet);
 
+    void giamSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet);
+
     void truSoLuongSanPham(Long idHD);
 
     void hoanSoLuongSanPham(Long idHD);
-
 
 
     String generateOrderCode();
