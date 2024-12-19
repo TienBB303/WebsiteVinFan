@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SanPhamImp implements SanPhamService {
@@ -142,20 +141,6 @@ public class SanPhamImp implements SanPhamService {
             }
         }
         return false; // Còn hàng
-    }
-
-    //khoi
-    public SanPhamChiTiet getProductDetails(Long productId) {
-        // Truy vấn sản phẩm chi tiết từ bảng san_pham_chi_tiet
-        Optional<SanPhamChiTiet> sanPhamChiTiet = spctRepo.findChiTietById(productId);
-
-        // Nếu tìm thấy sản phẩm chi tiết, trả về nó
-        if (sanPhamChiTiet.isPresent()) {
-            return sanPhamChiTiet.get();
-        } else {
-            // Nếu không tìm thấy, trả về null hoặc có thể xử lý theo nhu cầu
-            return null;
-        }
     }
 
 }

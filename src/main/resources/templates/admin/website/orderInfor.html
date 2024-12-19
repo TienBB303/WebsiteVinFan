@@ -326,9 +326,7 @@
             <img src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg" alt="Product Image">
             <span class="badge-quantity" th:text="${item.quantity}">1</span> <!-- Quantity Badge -->
             <div class="product-info">
-                <p th:text="${item.name + ' (' + item.color + ',' + item.capacity + ')'}">
-                    Tên sản phẩm - Màu sắc: X - Công suất: Y
-                </p>
+                <p th:text="${item.name}">Tên sản phẩm</p>
                 <p class="product-price formatted-price" th:attr="data-price=${item.price}">0₫</p>
             </div>
         </div>
@@ -436,22 +434,15 @@
 <script>
     // Định dạng giá tiền VND
     function formatVND(amount) {
-        if (isNaN(amount)) return "0₫"; // Xử lý nếu không phải số
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            minimumFractionDigits: 0,
-        }).format(amount).replace('₫', 'VND');
+        return amount.toLocaleString('vi-VN') + '₫';
     }
 
     // Format giá tiền khi trang được load
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.formatted-price').forEach(element => {
-            const price = parseFloat(element.getAttribute('data-price'));
+            const price = parseInt(element.getAttribute('data-price'), 10);
             if (!isNaN(price)) {
-                element.textContent = formatVND(price); // Hiển thị giá đã định dạng
-            } else {
-                element.textContent = "0₫"; // Xử lý lỗi hiển thị
+                element.textContent = formatVND(price);
             }
         });
     });

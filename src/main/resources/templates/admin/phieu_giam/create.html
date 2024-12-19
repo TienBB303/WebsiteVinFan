@@ -152,14 +152,12 @@
                             </div>
                             <!-- Chọn sản phẩm -->
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Chọn mã sản phẩm</label>
+                                <label class="col-sm-4 col-form-label">Chọn sản phẩm</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="sanPhamMa" id="productCodeSelect" required>
+                                    <select class="form-control" name="sanPhamId" id="productSelect" required>
                                         <option value="">Chọn sản phẩm</option>
-                                        <option th:each="sanPham : ${sanPhams}"
-                                                th:value="${sanPham.ma}"
-                                                th:text="${sanPham.ma + ' - ' + sanPham.ten}">
-                                        </option>
+                                        <option th:each="sanPham : ${sanPhams}" th:value="${sanPham.id}"
+                                                th:text="${sanPham.ten}"></option>
                                     </select>
                                 </div>
                             </div>

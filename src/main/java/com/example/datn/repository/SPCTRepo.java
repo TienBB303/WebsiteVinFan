@@ -1,6 +1,5 @@
 package com.example.datn.repository;
 
-import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 
@@ -40,15 +38,4 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
             "OR LOWER(spct.mauSac.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(spct.congSuat.ten) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<SanPhamChiTiet> searchSPCTInHDCT(String query);
-
-    //khoi
-    @Query("SELECT sp FROM SanPhamChiTiet sp JOIN sp.sanPham s WHERE sp.id = :productId")
-    Optional<SanPhamChiTiet> findChiTietById(@Param("productId") Long productId);
-
-    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.ma = :maSanPham")
-    List<SanPhamChiTiet> findBySanPhamMa(@Param("maSanPham") String maSanPham);
-
-    @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp WHERE sp.ma = :maSanPham")
-    List<SanPhamChiTiet> findAllBySanPhamMa(@Param("maSanPham") String maSanPham);
-
 }

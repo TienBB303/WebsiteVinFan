@@ -42,6 +42,4 @@ public interface SanPhamService {
 
     Boolean checkHetSoLuong(Long sanPhamId);
 
-    SanPhamChiTiet getProductDetails(Long productId);
-
 }

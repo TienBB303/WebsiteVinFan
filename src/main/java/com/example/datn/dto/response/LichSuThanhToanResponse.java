@@ -6,10 +6,10 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LichSuThanhToanResponse {
     BigDecimal tongTien;

@@ -6,11 +6,9 @@ import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +24,6 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
             "WHERE hd.id = :hoaDonId")
     List<ListSanPhamInHoaDonChiTietResponse> findSanPhamByHoaDonId(@Param("hoaDonId") Long hoaDonId);
 
-
     @Query("SELECT new com.example.datn.dto.response.ListSpNewInHoaDonResponse(" +
             "sp.ten, spct.so_luong, spct.gia) " +
             "FROM SanPhamChiTiet spct " +
@@ -38,23 +35,6 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
 
     // Tìm chi tiết hóa đơn theo hóa đơn và sản phẩm chi tiết
     Optional<HoaDonChiTiet> findByHoaDonAndSanPhamChiTiet(HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
-
-    List<HoaDonChiTiet> findByHoaDon_Id(Long idHD);
-
-    HoaDonChiTiet findByHoaDon_IdAndSanPhamChiTiet_Id(Long idHoaDon, Long idSanPhamChiTiet);
-
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM HoaDonChiTiet h WHERE h.sanPhamChiTiet.id = :idSanPhamChiTiet")
-    void deleteSanPhamChiTiet_Id(@Param("idSanPhamChiTiet") Long idSanPhamChiTiet);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE HoaDonChiTiet h SET h.soLuong = :soLuong WHERE h.id = :idSanPhamChiTiet")
-    int updateSoLuong(@Param("soLuong") int soLuong, @Param("idSanPhamChiTiet") Long idSanPhamChiTiet);
-
-    @Query("SELECT SUM(hdct.soLuong) FROM HoaDonChiTiet hdct WHERE hdct.sanPhamChiTiet.id = :sanPhamChiTietId")
-    Integer getTotalSoLuongBySanPhamChiTiet(@Param("sanPhamChiTietId") Long sanPhamChiTietId);
 
 
 //    @Modifying

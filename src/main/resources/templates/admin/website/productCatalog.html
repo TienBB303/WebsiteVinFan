@@ -14,28 +14,73 @@
         padding: 0;
     }
 
-    /*Navbar custom*/
-    .custom-navbar {
-        padding: 30px 0; /* Tăng chiều cao của navbar */
+    /* Navbar tùy chỉnh */
+    .navbar-custom {
+        background-color: #ffffff;
+        border-bottom: 1px solid #ddd;
     }
 
-    .custom-navbar .navbar-brand,
-    .custom-navbar .nav-link {
-        font-size: 1.2rem; /* Tăng kích thước font */
+    .navbar-brand img {
+        transition: transform 0.3s;
     }
 
-    /* Thêm viền cam dưới navbar */
-    .custom-navbar {
-        border-bottom: 3px solid orange; /* Viền cam */
+    .navbar-brand img:hover {
+        transform: scale(1.1);
     }
 
-    .search-bar .form-control {
-        height: 40px; /* Tăng chiều cao của ô tìm kiếm */
+    /* Thanh tìm kiếm */
+    .search-bar {
+        position: relative;
+        width: 350px;
     }
 
-    .search-bar .btn {
-        background-color: orange; /* Màu nền cam cho nút tìm kiếm */
-        color: white; /* Màu chữ trắng */
+    .search-bar input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .search-bar input:focus {
+        border-color: #007bff;
+    }
+
+    .search-bar button {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .search-bar button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Icons và thông tin liên hệ */
+    .contact-info {
+        color: #333;
+        font-size: 14px;
+        margin-right: 15px;
+    }
+
+    .icons-section a {
+        color: #333;
+        font-size: 20px;
+        margin-left: 15px;
+        transition: color 0.3s;
+    }
+
+    .icons-section a:hover {
+        color: #007bff;
     }
 
     /* Carousel */
@@ -85,6 +130,17 @@
         text-decoration: line-through;
         color: #888;
         margin-right: 10px;
+    }
+
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #e74c3c;
+        color: white;
+        padding: 5px;
+        font-size: 0.9rem;
+        border-radius: 5px;
     }
 
     /* Nút thêm vào giỏ hàng */
@@ -153,117 +209,89 @@
         color: #e74c3c; /* Màu đỏ */
     }
 
-    /* Phân trang */
-    #pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        margin-top: 20px;
-        font-size: 14px;
-    }
-
-    #pagination button {
-        border: none;
-        outline: none;
-        padding: 8px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        min-width: 35px;
-        text-align: center;
-        background-color: #f8f9fa;
-        color: #007bff;
-        transition: all 0.3s ease;
-    }
-
-    #pagination button:hover {
-        background-color: #007bff;
-        color: #fff;
-    }
-
-
-    #pagination button:disabled {
-        background-color: #e9ecef;
-        color: #6c757d;
-        cursor: not-allowed;
-    }
-
 </style>
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-custom py-3" id="navbar1">
     <div class="container-fluid">
         <!-- Logo -->
         <a class="navbar-brand" href="/admin/index">
             <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"
                  alt="Logo">
         </a>
-        <!-- Thanh điều hướng -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+        <!-- Search bar -->
+        <form class="d-flex ms-4 search-bar">
+            <input type="text" placeholder="Bạn tìm gì..." aria-label="Search for products">
+            <button class="btn btn-outline-none" type="submit" aria-label="Search">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <!-- Right-side icons and contact info -->
+        <div class="d-flex align-items-center ms-auto">
+            <div class="contact-info me-4">
+                <i class="fas fa-phone-alt"></i> Gọi mua hàng: 0977 27 6646
+            </div>
+            <div th:block>
+                <div th:if="${currentPrincipalName } != anonymousUser ">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                        </button>
+                    </form>
+                </div>
+                <div th:if="${currentPrincipalName} == anonymousUser">
+                    <a th:href="@{/login}">Đăng nhập</a>
+                </div>
+            </div>
+
+
+            <div class="contact-info me-4">
+                <a href="/cart/view" class="text-decoration-none">
+                    <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                </a>
+            </div>
+            <div class="icons-section">
+                <!--                <a href="#"><i class="fas fa-cart-plus cart-icon"></i></a>-->
+                <a href="https://www.facebook.com/yuamikami1608"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- Loc san pham -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="your-logo.png" alt="Logo của bạn">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- Thêm d-flex và align-items-center cho ul -->
-
-                <!-- Thanh tìm kiếm -->
-                <li class="nav-item">
-                    <form th:action="@{/admin/product-catalog}" method="get" class="d-flex align-items-center">
-                        <!-- Dùng d-flex để căn chỉnh các phần tử trong form -->
-                        <input type="text" name="query" th:value="${query}" placeholder="Tìm kiếm sản phẩm..."
-                               class="form-control me-2"> <!-- me-2 để tạo khoảng cách giữa input và button -->
-                        <button class="btn" type="submit"><i class="fas fa-search"></i></button>
-                    </form>
-                </li>
-
-                <!-- Giỏ hàng -->
-                <li class="nav-item mx-3">
-                    <a class="nav-link d-flex align-items-center" href="/cart/view">
-                        <i class="fas fa-shopping-cart"></i>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        Quạt trần
                     </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#"><img
+                                src="https://quatviet.net/wp-content/uploads/2023/07/Untitled-3-2.jpg">Quạt trần đèn
+                            Klasse 48KSA 300W</a></li>
+                        <li><a class="dropdown-item" href="#"><img
+                                src="https://quattranachau.vn/wp-content/uploads/2023/11/quat_tran_gking1350_01.png">QUẠT
+                            TRẦN THỦ LĨNH ÂU LẠC</a></li>
+                        <li><a class="dropdown-item" href="#"><img
+                                src="https://hoangminhhome.vn/uploads/images/644099a81ddab11374b58f9b/Qu%E1%BA%A1t-tr%E1%BA%A7n-6-c%C3%A1nh-nh%E1%BB%B1a-v%C3%A2n-g%E1%BB%97-VIFA-64-VF63.jpg">Quạt
+                            trần 6 cánh nhựa vân gỗ Vinfan</a></li>
+                    </ul>
                 </li>
-
-                <div th:block class="d-flex align-items-center">
-                    <!-- Thêm d-flex và align-items-center cho div chứa nút đăng xuất và đăng nhập -->
-                    <div th:if="${currentPrincipalName} != anonymousUser">
-                        <form th:action="@{/logout}" method="post" class="d-flex align-items-center">
-                            <button type="submit" class="btn btn-outline-danger d-flex align-items-center">
-                                Đăng Xuất
-                            </button>
-                        </form>
-                    </div>
-                    <div th:if="${currentPrincipalName} == anonymousUser">
-                        <button type="submit" class="btn btn-outline-primary d-flex align-items-center">
-                            <a th:href="@{/login}" class="text-decoration-none text-dark">Đăng nhập</a>
-                        </button>
-                    </div>
-                </div>
-
             </ul>
         </div>
-
-
     </div>
 </nav>
-<!-- Form lọc kiểu quạt-->
-<nav class="navbar navbar-expand-lg navbar-custom-2">
-    <div class="container-fluid justify-content-center">
-        <!-- Tất cả sản phẩm -->
-        <a class="nav-link fw-bold" >Tất cả sản phẩm</a>
-
-        <!-- Danh sách kiểu quạt -->
-        <ul class="navbar-nav">
-            <li class="nav-item" th:each="kieu : ${kieuQuats}">
-                <a class="nav-link"
-                   th:href="@{/admin/product-catalog(kieuQuatId=${kieu.id})}"
-                   th:text="${kieu.ten}"
-                   th:classappend="${kieu.id == kieuQuatId} ? 'active' : ''">Kiểu quạt</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-
 <!-- Slideshow -->
 <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1000">
     <div class="carousel-inner">
@@ -301,103 +329,106 @@
 <section class="py-5">
     <div class="container">
         <h1 class="text-center mb-5">Danh mục sản phẩm quạt của chúng tôi</h1>
+        <div class="row g-4">
 
-        <!-- Kiểm tra nếu không có sản phẩm nào -->
-        <div th:if="${sanPhamGiamGia != null and #lists.isEmpty(sanPhamGiamGia) and
-             sanPhamKhongGiamGia != null and #lists.isEmpty(sanPhamKhongGiamGia)}">
-            <p>Không có sản phẩm nào</p>
-        </div>
+            <!-- Hiển thị sản phẩm có giảm giá -->
+            <th:block th:each="phieuGiamSanPham : ${sanPhamGiamGia}">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card product-card h-100">
+                        <div class="card-body d-flex flex-column">
 
+                            <!-- Thêm ảnh giả sản phẩm -->
+                            <img class="card-img-top"
+                                 src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
+                                 alt="Anime Girl"
+                                 style="height: 200px; object-fit: cover;">
 
-        <!-- Nếu có sản phẩm -->
-        <div th:unless="${sanPhamGiamGia.empty and sanPhamKhongGiamGia.empty}">
-            <div class="row g-4" id="product-list">
+                            <h5 class="card-title product-title"
+                                th:text="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
 
-                <!-- Hiển thị sản phẩm có giảm giá -->
-                <th:block th:each="phieuGiamSanPham : ${sanPhamGiamGia}">
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="card product-card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <img class="card-img-top"
-                                     src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
-                                     alt="Anime Girl"
-                                     style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title product-title"
-                                    th:text="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
-                                <p class="card-text text-danger" th:if="${phieuGiamSanPham.phieuGiam.giaTriGiam > 0}">
-                                    Giảm: <span class="discount-price"
-                                                th:text="${#numbers.formatDecimal(phieuGiamSanPham.phieuGiam.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
-                                </p>
-                                <p class="card-text">
-                                    <span class="old-price text-decoration-line-through"
-                                          th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0VND</span>
-                                </p>
-                                <p class="card-text">
-                                    <span class="main-price product-price"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0VND</span>
-                                </p>
-                                <div class="mt-auto">
-                                    <a th:href="@{/admin/detail/{id}(id=${phieuGiamSanPham.sanPhamChiTiet.id})}"
-                                       class="btn btn-primary w-100">Xem chi tiết</a>
-                                    <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
-                                        <input type="hidden" name="productId"
-                                               th:value="${phieuGiamSanPham.sanPhamChiTiet.id}"/>
-                                        <input type="hidden" name="name"
-                                               th:value="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}"/>
-                                        <input type="hidden" name="price"
-                                               th:value="${phieuGiamSanPham.sanPhamChiTiet.gia}"/>
-                                        <input type="hidden" name="discountedPrice"
-                                               th:value="${phieuGiamSanPham.giaSauGiam}"/>
-                                        <input type="hidden" name="quantity" value="1"/>
-                                        <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
-                                    </form>
-                                </div>
+                            <!-- Hiển thị giảm giá nếu có -->
+                            <p class="card-text text-danger" th:if="${phieuGiamSanPham.phieuGiam.giaTriGiam > 0}">
+                                Giảm: <span class="discount-price"
+                                            th:text="${#numbers.formatDecimal(phieuGiamSanPham.phieuGiam.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
+                            </p>
+
+                            <!-- Gạch bỏ giá gốc và hiển thị giá đã giảm -->
+                            <p class="card-text">
+                                <span class="old-price text-decoration-line-through"
+                                      th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}"
+                                      th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0đ</span>
+                            </p>
+
+                            <!-- Hiển thị giá sau khi giảm -->
+                            <p class="card-text">
+                                <span class="main-price product-price"
+                                      th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0đ</span>
+                            </p>
+
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-primary w-100">Xem chi tiết</a>
+
+                                <!-- Form thêm vào giỏ hàng -->
+                                <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
+                                    <input type="hidden" name="productId"
+                                           th:value="${phieuGiamSanPham.sanPhamChiTiet.id}"/>
+                                    <input type="hidden" name="name"
+                                           th:value="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}"/>
+                                    <input type="hidden" name="price"
+                                           th:value="${phieuGiamSanPham.sanPhamChiTiet.gia}"/>
+                                    <input type="hidden" name="discountedPrice"
+                                           th:value="${phieuGiamSanPham.giaSauGiam}"/>
+                                    <input type="hidden" name="quantity" value="1"/> <!-- Mặc định số lượng là 1 -->
+                                    <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                </th:block>
+                </div>
+            </th:block>
 
-                <!-- Hiển thị sản phẩm không có giảm giá -->
-                <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="card product-card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <img class="card-img-top"
-                                     src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
-                                     alt="Anime Girl"
-                                     style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản
-                                    phẩm</h5>
-                                <p class="card-text">
-                                    <span class="product-price main-price"
-                                          th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0VND</span>
-                                </p>
-                                <div class="mt-auto">
-                                    <a th:href="@{/admin/detail/{id}(id=${sanPhamChiTiet.id})}"
-                                       class="btn btn-primary w-100">Xem chi tiết</a>
-                                    <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
-                                        <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
-                                        <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
-                                        <input type="hidden" name="price" th:value="${sanPhamChiTiet.gia}"/>
-                                        <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/>
-                                        <input type="hidden" name="quantity" value="1"/>
-                                        <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
-                                    </form>
-                                </div>
+            <!-- Hiển thị sản phẩm không có giảm giá -->
+            <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card product-card h-100">
+                        <div class="card-body d-flex flex-column">
+
+                            <!-- Thêm ảnh giả sản phẩm -->
+                            <img class="card-img-top"
+                                 src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
+                                 alt="Anime Girl"
+                                 style="height: 200px; object-fit: cover;">
+
+                            <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản
+                                phẩm</h5>
+
+                            <!-- Hiển thị giá bình thường nếu không có giảm giá -->
+                            <p class="card-text">
+                                <span class="product-price main-price"
+                                      th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0đ</span>
+                            </p>
+
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-primary w-100">Xem chi tiết</a>
+
+                                <!-- Form thêm vào giỏ hàng -->
+                                <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
+                                    <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
+                                    <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
+                                    <input type="hidden" name="price" th:value="${sanPhamChiTiet.gia}"/>
+                                    <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/>
+                                    <!-- Không có giảm giá thì discountedPrice = giá -->
+                                    <input type="hidden" name="quantity" value="1"/> <!-- Mặc định số lượng là 1 -->
+                                    <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                </th:block>
-            </div>
-        </div>
-        <!-- Nút phân trang -->
-        <div class="d-flex justify-content-center mt-4" id="pagination">
-            <!-- Các nút phân trang sẽ được tạo động ở đây -->
+                </div>
+            </th:block>
         </div>
     </div>
 </section>
-
 <!-- Footer -->
 <footer class="text-start py-4">
     <div class="container">
@@ -408,6 +439,7 @@
         <p class="footer-info mb-0">Website: www.vinfan.com</p>
     </div>
 </footer>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -418,127 +450,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const allProducts = Array.from(document.querySelectorAll("#product-list > div")); // Sản phẩm
-        const productsPerPage = 8; // Số sản phẩm trên mỗi trang
-        let currentPage = 1;
-
-        const pagination = document.getElementById("pagination");
-
-        function renderProducts() {
-            const start = (currentPage - 1) * productsPerPage;
-            const end = start + productsPerPage;
-
-            allProducts.forEach((product, index) => {
-                product.style.display = index >= start && index < end ? "block" : "none";
-            });
-        }
-
-        function renderPagination() {
-            pagination.innerHTML = "";
-            const totalPages = Math.ceil(allProducts.length / productsPerPage);
-
-            // Nút mũi tên về trang đầu (<<)
-            const firstButton = document.createElement("button");
-            firstButton.className = "pagination-arrow";
-            firstButton.disabled = currentPage === 1;
-            firstButton.innerHTML = "&laquo;"; // Mũi tên đôi trái
-            firstButton.addEventListener("click", () => {
-                currentPage = 1;
-                loadPage();
-            });
-            pagination.appendChild(firstButton);
-
-            // Nút mũi tên trái (<)
-            const prevButton = document.createElement("button");
-            prevButton.className = "pagination-arrow";
-            prevButton.disabled = currentPage === 1;
-            prevButton.innerHTML = "&lt;"; // Mũi tên trái
-            prevButton.addEventListener("click", () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadPage();
-                }
-            });
-            pagination.appendChild(prevButton);
-
-            // Nút số trang hiển thị giới hạn 3 trang xung quanh
-            for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {
-                const pageButton = document.createElement("button");
-                pageButton.innerText = i;
-                pageButton.className = currentPage === i ? "active" : "";
-                pageButton.addEventListener("click", () => {
-                    currentPage = i;
-                    loadPage();
-                });
-                pagination.appendChild(pageButton);
-            }
-
-            // Nút mũi tên phải (>)
-            const nextButton = document.createElement("button");
-            nextButton.className = "pagination-arrow";
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.innerHTML = "&gt;"; // Mũi tên phải
-            nextButton.addEventListener("click", () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadPage();
-                }
-            });
-            pagination.appendChild(nextButton);
-
-            // Nút mũi tên về trang cuối (>>)
-            const lastButton = document.createElement("button");
-            lastButton.className = "pagination-arrow";
-            lastButton.disabled = currentPage === totalPages;
-            lastButton.innerHTML = "&raquo;"; // Mũi tên đôi phải
-            lastButton.addEventListener("click", () => {
-                currentPage = totalPages;
-                loadPage();
-            });
-            pagination.appendChild(lastButton);
-        }
-
-        function loadPage() {
-            renderProducts();
-            renderPagination();
-        }
-
-        loadPage();
-    });
-</script>
-<script>
-    document.getElementById('searchForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        let searchQuery = document.getElementById('searchQuery').value;
-
-        // Gửi yêu cầu tìm kiếm đến server
-        fetch(`/search?query=${searchQuery}`)
-            .then(response => response.json())
-            .then(data => {
-                const productList = document.getElementById('product-list');
-                productList.innerHTML = ''; // Xóa danh sách sản phẩm hiện tại
-                data.products.forEach(product => {
-                    let productElement = document.createElement('div');
-                    productElement.classList.add('col-lg-3', 'col-md-4', 'col-sm-6');
-                    productElement.innerHTML = `
-                        <div class="card product-card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <img class="card-img-top" src="${product.imageUrl}" alt="${product.name}" style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title">${product.name}</h5>
-                                ${product.discount ? `<p class="card-text text-danger">Giảm: ${product.discount} VND</p>` : ''}
-                                <p class="card-text">Giá: ${product.price} VND</p>
-                                <button class="btn btn-primary w-100">Xem chi tiết</button>
-                            </div>
-                        </div>
-                    `;
-                    productList.appendChild(productElement);
-                });
-            });
-    });
-</script>
-
 <script>
     $(document).ready(function () {
         $('.add-to-cart-form').on('submit', function (e) {
@@ -582,7 +493,7 @@
             currency: 'VND',
             minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
         });
-        return formatter.format(amount).replace('₫', 'VND');
+        return formatter.format(amount);
     }
 
     // Định dạng giá sản phẩm có giảm giá và không có giảm giá
@@ -592,7 +503,7 @@
 
         priceElements.forEach(function (element) {
             // Lấy giá từ thuộc tính th:if hoặc giá trị chứa trong thẻ
-            let priceText = element.innerText.replace('VND', '').replace('VND', '').trim();  // Loại bỏ dấu "đ" hoặc "₫"
+            let priceText = element.innerText.replace('đ', '').replace('₫', '').trim();  // Loại bỏ dấu "đ" hoặc "₫"
             let price = parseFloat(priceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
 
             // Nếu giá hợp lệ, định dạng lại giá
@@ -604,7 +515,7 @@
         // Định dạng giá đã giảm
         const discountPriceElements = document.querySelectorAll('.old-price');  // Tìm các giá đã giảm
         discountPriceElements.forEach(function (element) {
-            let discountPriceText = element.innerText.replace('VND', '').replace('VND', '').trim();
+            let discountPriceText = element.innerText.replace('đ', '').replace('₫', '').trim();
             let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());
 
             if (!isNaN(discountPrice)) {
@@ -621,20 +532,20 @@
             currency: 'VND',
             minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
         });
-        return formatter.format(amount).replace('₫', 'VND'); // Chuyển "₫" thành "VND"
+        return formatter.format(amount);
     }
 
     // Định dạng giá trị giảm giá sau khi tải trang
     document.addEventListener("DOMContentLoaded", function () {
-        const discountPriceElements = document.querySelectorAll('.discount-price'); // Tìm tất cả các thẻ có class 'discount-price'
+        const discountPriceElements = document.querySelectorAll('.discount-price');  // Tìm tất cả các thẻ có class 'discount-price'
 
         discountPriceElements.forEach(function (element) {
-            let discountPriceText = element.innerText.replace('đ', '').trim(); // Loại bỏ "đ" nếu có
-            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim()); // Chuyển thành số
+            let discountPriceText = element.innerText.replace('đ', '').trim();  // Loại bỏ dấu "đ"
+            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
 
-            // Nếu giá trị hợp lệ, định dạng lại giá
+            // Nếu giá trị giảm giá hợp lệ, định dạng lại giá
             if (!isNaN(discountPrice)) {
-                element.innerText = '-' + formatCurrency(discountPrice); // Định dạng giá và thêm dấu "-"
+                element.innerText = '-' + formatCurrency(discountPrice);  // Thêm dấu '-' và định dạng giá
             }
         });
     });

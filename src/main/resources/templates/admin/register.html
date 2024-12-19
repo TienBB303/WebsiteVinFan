@@ -5,167 +5,87 @@
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
           crossorigin="anonymous">
-
     <style>
-        /* Tổng thể form */
-        .registration-container {
-            max-width: 800px;
-            margin: 0 auto;
+        body {
+            background: linear-gradient(to bottom right, rgba(255, 182, 193, 0.6), rgba(255, 105, 180, 0.6));
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+        }
+        .registration-form {
+            background-color: white;
             padding: 20px;
-            background-color: #f9f9f9; /* Màu nền nhạt */
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
         }
-
         .registration-title {
-            font-size: 24px;
-            font-weight: bold;
             text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        /* Các nhãn */
-        .form-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        /* Input và Select */
-        .form-control, .form-check-input {
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            transition: border-color 0.3s;
-        }
-
-        .form-control:focus, .form-check-input:focus {
-            border-color: #007bff; /* Đổi màu viền khi focus */
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        /* Nút Đăng Ký */
-        .btn-black {
-            background-color: #333;
-            color: #fff;
             font-weight: bold;
-            border-radius: 5px;
-            padding: 10px 20px;
-            transition: background-color 0.3s;
+            margin-bottom: 20px;
+            color: #ff69b4;
+            font-size: 24px;
         }
-
-        .btn-black:hover {
-            background-color: #555;
-        }
-
-        /* Căn chỉnh Radio Button */
-        .form-check-label {
-            margin-right: 15px;
-        }
-
-        /* Khoảng cách giữa các cột */
-        .row > .col {
-            padding: 0 10px;
-        }
-
-        /* Validation thông báo lỗi */
-        .text-danger {
-            font-size: 12px;
-            margin-top: 5px;
-            display: block;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .registration-container {
-                padding: 15px;
-            }
-
-            .registration-title {
-                font-size: 20px;
-            }
-        }
-
     </style>
 </head>
 <body>
-
-<div class="registration-container mt-5">
+<div class="registration-form">
     <div class="registration-title">Đăng Ký Tài Khoản</div>
     <form th:action="@{/register}" method="post">
-        <div class="row">
-            <!-- Phần 1 -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Tên</label>
-                    <input type="text" class="form-control" name="ten">
-                    <span th:text="${tenvali}" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email">
-                    <span th:text="${emailvali}" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" name="matKhau">
-                    <span th:text="${matkhauvali}" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" name="soDienThoai">
-                    <span th:text="${sdtvali}" class="text-danger"></span>
-                </div>
-            </div>
-            <!-- Phần 2 -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Ngày sinh</label>
-                    <input type="date" class="form-control" name="ngaySinh">
-                </div>
-                <div class="mt-4">
-                    <label class="form-label">Giới tính</label>
-                    <div>
-                        <input class="form-check-input" type="radio" name="gioiTinh" value="Nam" checked>
-                        <label class="form-check-label">Nam</label>
-                        <input class="form-check-input" type="radio" name="gioiTinh" value="Nữ">
-                        <label class="form-check-label">Nữ</label>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="form-label">Địa chỉ</label>
-                    <div class="row">
-                        <div class="col">
-                            <select class="form-control mb-2" id="city" name="tinhThanhPho">
-                                <option value="" selected>Chọn tỉnh thành</option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <select class="form-control mb-2" id="district" name="quanHuyen">
-                                <option value="" selected>Chọn quận huyện</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <select class="form-control mb-2" id="ward" name="xaPhuong">
-                                <option value="" selected>Chọn phường xã</option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control" name="soNhaNgoDuong" placeholder="Số nhà/ngõ đường">
-                        </div>
-                    </div>
-                </div>
+        <div class="mb-3">
+            <label class="form-label">Tên</label>
+            <input type="text" class="form-control" name="ten">
+            <span th:text="${tenvali}" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" name="email">
+            <span th:text="${emailvali}" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Mật khẩu</label>
+            <input type="password" class="form-control" name="matKhau">
+            <span th:text="${matkhauvali}" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" name="soDienThoai">
+            <span th:text="${sdtvali}" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ngày sinh</label>
+            <input type="date" class="form-control" name="ngaySinh">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Giới tính</label>
+            <div>
+                <input class="form-check-input" type="radio" name="gioiTinh" value="Nam" checked>
+                <label class="form-check-label">Nam</label>
+                <input class="form-check-input" type="radio" name="gioiTinh" value="Nữ">
+                <label class="form-check-label">Nữ</label>
             </div>
         </div>
+        <div class="mb-3">
+            <label class="form-label">Địa chỉ</label>
+            <select class="form-control mb-2" id="city" name="tinhThanhPho">
+                <option value="" selected>Chọn tỉnh thành</option>
+            </select>
+            <select class="form-control mb-2" id="district" name="quanHuyen">
+                <option value="" selected>Chọn quận huyện</option>
+            </select>
+            <select class="form-control mb-2" id="ward" name="xaPhuong">
+                <option value="" selected>Chọn phường xã</option>
+            </select>
+            <input type="text" class="form-control" name="soNhaNgoDuong" placeholder="Số nhà/ngõ đường">
+        </div>
         <div class="text-center">
-            <button type="submit" class="btn btn-black w-100">Đăng Ký</button>
+            <button type="submit" class="btn btn-primary">Thêm</button>
         </div>
     </form>
 </div>
-
-
 </body>
 </html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>

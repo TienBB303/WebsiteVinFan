@@ -151,8 +151,8 @@ public class SanPhamController {
             @RequestParam("sanPham.ten") String ten,
             @RequestParam("sanPham.kieuQuat.id") Integer kieuQuatId,
             @RequestParam("mauSac.id") List<Integer> mauSacIds,
+            @RequestParam("cheDoGio.id") List<Integer> cheDoGioIds,
             @RequestParam("congSuat.id") List<Integer> congSuatIds,
-            @RequestParam("cheDoGio.id") Integer cheDoGioId,
             @RequestParam("nutBam.id") Integer nutBamId,
             @RequestParam("chatLieuCanh.id") Integer chatLieuCanhId,
             @RequestParam("duongKinhCanh.id") Integer duongKinhCanhId,
@@ -178,7 +178,9 @@ public class SanPhamController {
             MauSac mauSac = mauSacRepo.findById(mauSacId).orElse(null);
             for (Integer congSuatId : congSuatIds) {
                 CongSuat congSuat = congSuatRepo.findById(congSuatId).orElse(null);
-                    // check trùng thuộc tính, cho phép trùng tên
+                for (Integer cheDoGioId : cheDoGioIds) {
+                    CheDoGio cheDoGio = cheDoGioRepo.findById(cheDoGioId).orElse(null);
+                    // check trung thuộc tính, cho phép trùng tên
                     if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
                         return ResponseEntity.badRequest().body(
                                 "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
@@ -188,7 +190,7 @@ public class SanPhamController {
                     sanPhamChiTietTam.setSanPhamTam(sanPhamTam);
                     sanPhamChiTietTam.setMauSac(mauSac);
                     sanPhamChiTietTam.setCongSuat(congSuat);
-                    sanPhamChiTietTam.setCheDoGio(cheDoGioRepo.findById(cheDoGioId).orElse(null));
+                    sanPhamChiTietTam.setCheDoGio(cheDoGio);
                     sanPhamChiTietTam.setNutBam(nutBamRepo.findById(nutBamId).orElse(null));
                     sanPhamChiTietTam.setChatLieuCanh(chatLieuCanhRepo.findById(chatLieuCanhId).orElse(null));
                     sanPhamChiTietTam.setDuongKinhCanh(duongKinhCanhRepo.findById(duongKinhCanhId).orElse(null));
@@ -205,6 +207,7 @@ public class SanPhamController {
                     sanPhamChiTietTam.setNguoi_tao("admin");
 
                     listSPCTTam.add(sanPhamChiTietTam);
+                }
             }
         }
 
@@ -333,7 +336,8 @@ public class SanPhamController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            String sanitizedInput = giaStr.replaceAll("[^\\d]", "");
+            String sanitizedInput = giaStr
+                    .replaceAll("[^\\d]", "");
 
             BigDecimal gia = new BigDecimal(sanitizedInput);
 
@@ -363,13 +367,16 @@ public class SanPhamController {
             sanPhamChiTiet.setCheDoGio(new CheDoGio(cheDoGioId));
             sanPhamChiTiet.setDieuKhienTuXa(new DieuKhienTuXa(dieuKhienTuXaId));
             sanPhamChiTiet.setNgay_sua(new Date());
-            if (soLuong <= 0 ) {
-                sanPhamChiTiet.setTrang_thai(false);
-            } else {
-                sanPhamChiTiet.setTrang_thai(trangThai);
-            }
+            sanPhamChiTiet.setTrang_thai(trangThai);
+
             sanPhamChiTiet.setNguoi_sua("admin");
             sanPhamService.update(sanPhamChiTiet);
+
+            if (soLuong <= 0) {
+                sanPhamChiTiet.setTrang_thai(false); // Tắt trạng thái nếu hết hàng
+            } else {
+                sanPhamChiTiet.setTrang_thai(true); // Bật trạng thái nếu còn hàng
+            }
 
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
                 sanPham.setTrang_thai(true); // Tắt sản phẩm nếu tất cả biến thể đều tắt

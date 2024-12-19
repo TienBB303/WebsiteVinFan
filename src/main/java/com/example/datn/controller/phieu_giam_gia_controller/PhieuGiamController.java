@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -79,55 +78,56 @@ public class PhieuGiamController {
 
 
     @PostMapping("/add")
-    public String add(@ModelAttribute PhieuGiam pgg, @RequestParam("sanPhamMa") String sanPhamMa) {
-        pgg.setNgayTao(Date.valueOf(LocalDate.now()));
+    public String add(@ModelAttribute PhieuGiam pgg, @RequestParam("sanPhamId") Long sanPhamId) {
+        LocalDate currentDate = LocalDate.now();
+        pgg.setNgayTao(Date.valueOf(currentDate));
         pgg.setNguoiTao("admin");
-        pgg.setMa(pggSV.taoMaTuDong());
 
-        List<SanPham> sanPhamList = spRepo.findByMa(sanPhamMa);
-        if (sanPhamList.isEmpty()) throw new IllegalArgumentException("Mã sản phẩm không tồn tại!");
+        // Tự động tạo mã cho phiếu giảm giá
+        String ma = pggSV.taoMaTuDong();
+        pgg.setMa(ma);
 
+        // Lấy sản phẩm từ ID
+        SanPham sanPham = spRepo.findById(sanPhamId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + sanPhamId));
+        pgg.setSanPham(sanPham); // Gán sản phẩm cho phiếu giảm giá
+
+        // Lưu phiếu giảm giá vào cơ sở dữ liệu
         PhieuGiam savedPgg = pggRepo.save(pgg);
 
-        for (SanPham sanPham : sanPhamList) {
-            for (SanPhamChiTiet sanPhamChiTiet : spctRepo.findBySanPhamId(sanPham.getId())) {
-                PhieuGiamSanPham pggSanPham = new PhieuGiamSanPham();
-                pggSanPham.setPhieuGiam(savedPgg);
-                pggSanPham.setSanPham(sanPham);
-                pggSanPham.setSanPhamChiTiet(sanPhamChiTiet);
+        // Lưu thông tin phiếu giảm giá - sản phẩm vào bảng trung gian
+        PhieuGiamSanPham pggSanPham = new PhieuGiamSanPham();
+        pggSanPham.setPhieuGiam(savedPgg);
+        pggSanPham.setSanPham(sanPham);
 
-                BigDecimal giaSauGiam = sanPhamChiTiet.getGia().subtract(savedPgg.getGiaTriGiam());
-                pggSanPham.setGiaSauGiam(giaSauGiam.max(BigDecimal.ZERO)); // Đảm bảo không âm
-                pggspRepo.save(pggSanPham);
-            }
+        // Nếu có sản phẩm chi tiết
+        List<SanPhamChiTiet> sanPhamChiTietList = spctRepo.findBySanPhamId(sanPhamId);
+        if (!sanPhamChiTietList.isEmpty()) {
+            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietList.get(0); // Lấy sản phẩm chi tiết đầu tiên
+            pggSanPham.setSanPhamChiTiet(sanPhamChiTiet);
+            pggSanPham.setGiaSauGiam(sanPhamChiTiet.getGia().subtract(savedPgg.getGiaTriGiam()));
         }
+
+        pggspRepo.save(pggSanPham); // Lưu vào bảng trung gian
+
         return "redirect:/admin/phieu-giam/index";
     }
 
+
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
-        // Lấy phiếu giảm giá
         PhieuGiam phieuGiam = pggRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Phiếu giảm giá không tồn tại với ID: " + id));
 
-        // Lấy sản phẩm và sản phẩm chi tiết liên kết
-        List<PhieuGiamSanPham> pggspList = pggspRepo.findByPhieuGiamId(id);
-
-        SanPham sanPham = null;
-        String sanPhamMa = null;
-
-        if (!pggspList.isEmpty()) {
-            sanPham = pggspList.get(0).getSanPham();
-            sanPhamMa = sanPham.getMa();
-        }
-
-        // Gửi dữ liệu sang View
+        SanPham sanPham = phieuGiam.getSanPham(); // Lấy sản phẩm liên kết (có thể null)
         model.addAttribute("pgg", phieuGiam);
         model.addAttribute("sanPham", sanPham);
-        model.addAttribute("sanPhamMa", sanPhamMa);
-        model.addAttribute("isEditable", phieuGiam.isTrangThai());
 
-        return "admin/phieu_giam/update";
+        // Truyền trạng thái chỉnh sửa để kiểm soát giao diện
+        boolean isEditable = phieuGiam.isTrangThai();
+        model.addAttribute("isEditable", isEditable);
+
+        return "admin/phieu_giam/update"; // Luôn hiển thị trang update
     }
 
     @PostMapping("/update")
@@ -145,24 +145,21 @@ public class PhieuGiamController {
             // Nếu trạng thái là "Áp dụng lại", tái tạo liên kết nếu cần
             List<PhieuGiamSanPham> links = pggspRepo.findByPhieuGiamId(phieuGiam.getId());
             if (links.isEmpty()) {
-                // Tìm sản phẩm liên kết
-                List<SanPhamChiTiet> sanPhamChiTietList = spctRepo.findBySanPhamId(phieuGiam.getSanPham().getId());
+                SanPham sanPham = phieuGiam.getSanPham();
+                SanPhamChiTiet sanPhamChiTiet = spctRepo.findBySanPhamId(sanPham.getId()).get(0);
 
-                for (SanPhamChiTiet spct : sanPhamChiTietList) {
-                    PhieuGiamSanPham newLink = new PhieuGiamSanPham();
-                    newLink.setPhieuGiam(phieuGiam);
-                    newLink.setSanPham(phieuGiam.getSanPham());
-                    newLink.setSanPhamChiTiet(spct);
-                    newLink.setGiaSauGiam(spct.getGia().subtract(phieuGiam.getGiaTriGiam()).max(BigDecimal.ZERO));
+                PhieuGiamSanPham newLink = new PhieuGiamSanPham();
+                newLink.setPhieuGiam(phieuGiam);
+                newLink.setSanPham(sanPham);
+                newLink.setSanPhamChiTiet(sanPhamChiTiet);
+                newLink.setGiaSauGiam(sanPhamChiTiet.getGia().subtract(phieuGiam.getGiaTriGiam()));
 
-                    pggspRepo.save(newLink);
-                }
+                pggspRepo.save(newLink); // Lưu liên kết mới
             }
         }
 
-        // Lưu phiếu giảm giá đã cập nhật
+        // Lưu thay đổi trạng thái của phiếu giảm giá
         pggRepo.save(phieuGiam);
-
         return "redirect:/admin/phieu-giam/index";
     }
 }
