@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -38,9 +39,8 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     PggInHoaDonResponse findPGGByHoaDonId(@Param("hoaDonId") long hoaDonId);
 
     @Query("SELECT new com.example.datn.dto.response.LichSuThanhToanResponse(" +
-            "hd.tongTien , hd.ngayTao, hd.loaiHoaDon,httt.hinhThucThanhToan, hd.trangThai, hd.nguoiTao) " +
+            "hd.tongTien , hd.ngayTao, hd.loaiHoaDon,hd.hinhThucThanhToan, hd.trangThai, hd.nguoiTao) " +
             "FROM HoaDon hd " +
-            "join hd.hinhThucThanhToan httt " +
             "where hd.id =:hoaDonId")
     LichSuThanhToanResponse findThanhToanHoaDonId(@Param("hoaDonId") long hoaDonId);
 

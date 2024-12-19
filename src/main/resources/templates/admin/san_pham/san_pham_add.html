@@ -40,7 +40,8 @@
             <section class="row">
                 <section class="col-12">
                     <div class="card p-4">
-                        <form id="TaoBienThe" th:action="@{/admin/san-pham/add-bien-the}" method="post" enctype="multipart/form-data">
+                        <form id="TaoBienThe" th:action="@{/admin/san-pham/add-bien-the}" method="post"
+                              enctype="multipart/form-data">
                             <!-- Thông tin sản phẩm -->
                             <div class="row">
                                 <div class="col-md-6">
@@ -52,15 +53,30 @@
                                     </div>
 
                                     <!-- Phần kiểu quạt -->
+                                    <!--                                    <div class="mb-3">-->
+                                    <!--                                        <label for="sanPhamKieuQuat" class="form-label">Kiểu quạt <span-->
+                                    <!--                                                class="text-danger">*</span></label>-->
+                                    <!--                                        <div class="d-flex align-items-center">-->
+                                    <!--                                            <select class="form-select me-2" id="sanPhamKieuQuat"-->
+                                    <!--                                                    name="sanPham.kieuQuat.id" >-->
+                                    <!--                                                <option value="" selected>Chọn kiểu quạt</option>-->
+                                    <!--                                                <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}"-->
+                                    <!--                                                        th:text="${kieuQuat.ten}"></option>-->
+                                    <!--                                            </select>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
                                     <div class="mb-3">
                                         <label for="sanPhamKieuQuat" class="form-label">Kiểu quạt <span
                                                 class="text-danger">*</span></label>
                                         <div class="d-flex align-items-center">
                                             <select class="form-select me-2" id="sanPhamKieuQuat"
-                                                    name="sanPham.kieuQuat.id" >
+                                                    name="sanPham.kieuQuat.id">
                                                 <option value="" selected>Chọn kiểu quạt</option>
-                                                <option th:each="kieuQuat : ${listKieuQuat}" th:value="${kieuQuat.id}"
-                                                        th:text="${kieuQuat.ten}"></option>
+                                                <option th:each="kieuQuat : ${listKieuQuat}"
+                                                        th:value="${kieuQuat.id}"
+                                                        th:text="${kieuQuat.ten}"
+                                                        th:if="${kieuQuat.trang_thai}">
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -70,7 +86,7 @@
                                         <label for="sanPhamName" class="form-label">Tên sản phẩm <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="sanPhamName" name="sanPham.ten"
-                                               placeholder="Nhập tên sản phẩm" >
+                                               placeholder="Nhập tên sản phẩm">
                                     </div>
 
                                     <!-- Phần nút bấm -->
@@ -79,7 +95,8 @@
                                         <div class="d-flex align-items-center">
                                             <select class="form-select me-2" id="sanPhamNutBam" name="nutBam.id">
                                                 <option th:each="nutBam : ${listNutBam}" th:value="${nutBam.id}"
-                                                        th:text="${nutBam.ten}"></option>
+                                                        th:text="${nutBam.ten}"
+                                                        th:if="${nutBam.trang_thai}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -89,7 +106,8 @@
                                         <div class="d-flex align-items-center">
                                             <select class="form-select me-2" id="sanPhamHang" name="hang.id">
                                                 <option th:each="hang : ${listHang}" th:value="${hang.id}"
-                                                        th:text="${hang.ten}"></option>
+                                                        th:text="${hang.ten}"
+                                                        th:if="${hang.trang_thai}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -103,7 +121,8 @@
                                                     name="chatLieuCanh.id">
                                                 <option th:each="chatLieuCanh : ${listChatLieuCanh}"
                                                         th:value="${chatLieuCanh.id}"
-                                                        th:text="${chatLieuCanh.ten}"></option>
+                                                        th:text="${chatLieuCanh.ten}"
+                                                        th:if="${chatLieuCanh.trang_thai}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -116,7 +135,8 @@
                                                     name="duongKinhCanh.id">
                                                 <option th:each="duongKinhCanh : ${listDuongKinhCanh}"
                                                         th:value="${duongKinhCanh.id}"
-                                                        th:text="${duongKinhCanh.ten}"></option>
+                                                        th:text="${duongKinhCanh.ten}"
+                                                        th:if="${duongKinhCanh.trang_thai}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -129,7 +149,8 @@
                                                     name="chatLieuKhung.id">
                                                 <option th:each="chatLieuKhung : ${listChatLieuKhung}"
                                                         th:value="${chatLieuKhung.id}"
-                                                        th:text="${chatLieuKhung.ten}"></option>
+                                                        th:text="${chatLieuKhung.ten}"
+                                                        th:if="${chatLieuKhung.trang_thai}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -140,7 +161,8 @@
                                         <div class="d-flex align-items-center">
                                             <select class="form-select me-2" id="sanPhamDeQuat" name="deQuat.id">
                                                 <option th:each="deQuat : ${listDeQuat}" th:value="${deQuat.id}"
-                                                        th:text="${deQuat.ten}"></option>
+                                                        th:text="${deQuat.ten}"
+                                                        th:if="${deQuat.trang_thai}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -151,7 +173,21 @@
                                         <div class="d-flex align-items-center">
                                             <select class="form-select me-2" id="sanPhamChieuCao" name="chieuCao.id">
                                                 <option th:each="chieuCao : ${listChieuCao}" th:value="${chieuCao.id}"
-                                                        th:text="${chieuCao.ten}"></option>
+                                                        th:text="${chieuCao.ten}"
+                                                        th:if="${chieuCao.trang_thai}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Phần chiều cao -->
+                                    <div class="mb-3">
+                                        <label for="sanPhamCheDoGio" class="form-label">Chế độ gió</label>
+                                        <div class="d-flex align-items-center">
+                                            <select class="form-select me-2" id="sanPhamCheDoGio" name="cheDoGio.id">
+                                                <option th:each="cheDoGio : ${listCheDoGio}" th:value="${cheDoGio.id}"
+                                                        th:text="${cheDoGio.ten}"
+                                                        th:if="${cheDoGio.trang_thai}">
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -161,52 +197,38 @@
                             <div class="text-center" style="color: darkorange">Thuộc tính</div>
                             <div class="row">
                                 <!-- Phần màu sắc -->
-                                <div class="mb-3">
-                                    <div class="mb-3">
+                                    <div class="col-6">
                                         <label for="sanPhamMauSac" class="form-label">Màu sắc</label>
                                         <div class="form-group">
-                                            <!-- Update the name attribute to allow multiple values -->
                                             <select id="sanPhamMauSac" name="mauSac.id"
                                                     class="form-select me-2 multiple-remove" multiple>
-                                                <!-- Dynamically generate the options from the listMau -->
-                                                <option th:each="mauSac : ${listMau}" th:value="${mauSac.id}"
-                                                        th:text="${mauSac.ten}"></option>
+                                                <option
+                                                        th:each="mauSac : ${listMau}"
+                                                        th:value="${mauSac.id}"
+                                                        th:text="${mauSac.ten}"
+                                                        th:if="${mauSac.trang_thai}">
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <!-- Phần chế độ gió -->
-                                    <div class="mb-3">
-                                        <label for="sanPhamCheDoGio" class="form-label">Chế độ gió</label>
-                                        <div class="form-group">
-                                            <select id="sanPhamCheDoGio" name="cheDoGio.id"
-                                                    class="form-select me-2 multiple-remove" multiple>
-                                                <option th:each="cheDoGio : ${listCheDoGio}" th:value="${cheDoGio.id}"
-                                                        th:text="${cheDoGio.ten}"></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
                                     <!-- Phần công suất -->
-                                    <div class="mb-3">
+                                    <div class="col-6">
                                         <label for="sanPhamCongSuat" class="form-label">Công suất</label>
                                         <div class="form-group">
                                             <select id="sanPhamCongSuat" name="congSuat.id"
                                                     class="form-select me-2 multiple-remove" multiple>
                                                 <option th:each="congSuat : ${listCongSuat}" th:value="${congSuat.id}"
-                                                        th:text="${congSuat.ten}"></option>
+                                                        th:text="${congSuat.ten}"
+                                                        th:if="${congSuat.trang_thai}">
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Nút submit -->
-                                <div class="row">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary">Tạo biến thể</button>
-                                    </div>
+                            </div>
+                            <!-- Nút submit -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">Tạo biến thể</button>
                                 </div>
                             </div>
                         </form>
@@ -232,7 +254,7 @@
                                 <tr th:each="spTam, stat : ${listSPCTTam}" data-id="${spTam.id}">
                                     <!-- Hiển thị thông tin sản phẩm -->
                                     <td th:text="${stat.index + 1}"></td>
-                                    <input type="hidden" name="sanPhamTamId" th:value="${spTam.id}" />
+                                    <input type="hidden" name="sanPhamTamId" th:value="${spTam.id}"/>
                                     <td th:text="${spTam.sanPhamTam.ten + ' (' + spTam.mauSac.ten + ')'}"></td>
                                     <td th:text="${spTam.sanPhamTam.kieuQuat.ten}"></td>
                                     <td th:text="${spTam.cheDoGio.ten}"></td>
@@ -241,11 +263,11 @@
                                     </td>
                                     <td><input type="number" th:value="${spTam.so_luong}" name="so_luong"
                                                class="form-control"/></td>
-<!--                                    <td>-->
-<!--                                        <button class="btn btn-warning" type="button" onclick="deleteSanPhamTam(${spTam.id})">-->
-<!--                                            <i class="bi bi-trash"></i>-->
-<!--                                        </button>-->
-<!--                                    </td>-->
+                                    <!--                                    <td>-->
+                                    <!--                                        <button class="btn btn-warning" type="button" onclick="deleteSanPhamTam(${spTam.id})">-->
+                                    <!--                                            <i class="bi bi-trash"></i>-->
+                                    <!--                                        </button>-->
+                                    <!--                                    </td>-->
                                 </tr>
                                 </tbody>
                             </table>
@@ -266,10 +288,10 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!--Tao Bien The-->
+    <!--Tao Bien The-->
     <script>
         $(document).ready(function () {
-            $('#TaoBienThe').submit(function(event) {
+            $('#TaoBienThe').submit(function (event) {
                 event.preventDefault(); // Ngăn chặn hành động mặc định
 
                 // Kiểm tra các giá trị đầu vào
@@ -349,7 +371,7 @@
                     url: '/admin/san-pham/add-bien-the',
                     type: 'POST',
                     data: $(this).serialize(), // Lấy tất cả dữ liệu trong form
-                    success: function(response) {
+                    success: function (response) {
                         Swal.fire({
                             toast: true,
                             icon: 'success',
@@ -365,7 +387,7 @@
                         tableBody.empty();  // Xóa dữ liệu cũ (nếu có)
 
                         // Duyệt qua từng sản phẩm biến thể trả về từ server
-                        $.each(response, function(index, item) {
+                        $.each(response, function (index, item) {
                             let newRow = `
                             <tr>
                                 <td>${index + 1}</td>
@@ -380,7 +402,7 @@
                             tableBody.append(newRow);  // Thêm dòng mới vào bảng
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         Swal.fire({
                             toast: true,
                             icon: 'error',
@@ -395,9 +417,9 @@
             });
         });
     </script>
-<!--Confirm -->
+    <!--Confirm -->
     <script>
-        $('#confirmSP').submit(function(event) {
+        $('#confirmSP').submit(function (event) {
             event.preventDefault();  // Ngăn form reload trang
 
             // Nếu kiểm tra thành công, tiếp tục gửi form
@@ -405,7 +427,7 @@
                 url: '/admin/san-pham/confirm',  // URL của endpoint xử lý form
                 type: 'POST',
                 data: $(this).serialize(),  // Lấy tất cả dữ liệu trong form
-                success: function(response) {
+                success: function (response) {
                     // Hiển thị thông báo thành công bằng SweetAlert
                     Swal.fire({
                         toast: true,
@@ -417,12 +439,12 @@
                         timerProgressBar: true
                     }).then(() => {
                         // Chuyển hướng sau 3 giây
-                        setTimeout(function() {
+                        setTimeout(function () {
                             window.location.href = '/admin/san-pham/viewAdd'; // URL của trang add mới
                         }, 1000);
                     });
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     // Hiển thị lỗi bằng SweetAlert nếu có lỗi từ phía server
                     Swal.fire({
                         toast: true,
@@ -437,7 +459,7 @@
             });
         });
     </script>
-<!--Xóa sp tạm -->
+    <!--Xóa sp tạm -->
     <script>
         function deleteSanPhamTam(id) {
             // Ngăn không cho form gửi
@@ -464,12 +486,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const colorSelect = new Choices('#sanPhamMauSac', {
-                removeItemButton: true,
-                placeholder: true,
-                searchEnabled: true
-            });
-
-            const cheDoGioSelect = new Choices('#sanPhamCheDoGio', {
                 removeItemButton: true,
                 placeholder: true,
                 searchEnabled: true

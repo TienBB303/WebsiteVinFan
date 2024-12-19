@@ -1,11 +1,15 @@
 package com.example.datn.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@Getter @Setter
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateQuantityRequest {
-    private Long itemId;
-    private int quantity;
+    private Long id;
+    private Integer soLuong;
 }

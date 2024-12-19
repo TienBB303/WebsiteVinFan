@@ -1,20 +1,14 @@
 package com.example.datn.service;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.request.SearchSanPhamChiTietRequest;
-import com.example.datn.dto.response.LichSuThanhToanResponse;
-import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-import com.example.datn.dto.response.PggInHoaDonResponse;
-import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
+import com.example.datn.dto.response.*;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
-import com.example.datn.entity.HoaDonOff;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +26,8 @@ public interface HoaDonService {
     Page<HoaDon> findHoaDonAndSortDay(int page, int size);
 
     List<ListSanPhamInHoaDonChiTietResponse> getSanPhamCTByHoaDonId(Long hoaDonId);
+
+    List<HoaDonChiTiet> timSanPhamChiTietTheoHoaDon(Long idHoaDon);
 
     List<ListSpNewInHoaDonResponse> getSanPhamInHoaDon();
 
@@ -61,9 +57,18 @@ public interface HoaDonService {
 
     void updateTongTienHoaDon();
 
-    boolean updateQuantity(Long itemId, int quantity);
+    void deleteSPInHD(Long idSanPhamChiTiet);
 
-    List<HoaDonOff> getAllHoaDonOff( );
+    HinhThucThanhToanResponse getHinhThucThanhToan();
+
+    void tangSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet);
+
+    void giamSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet);
+
+    void truSoLuongSanPham(Long idHD);
+
+    void hoanSoLuongSanPham(Long idHD);
+
 
     String generateOrderCode();
 
