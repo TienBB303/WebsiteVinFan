@@ -63,8 +63,18 @@ public class PhieuGiamController {
 
     @GetMapping("/store")
     public String store(Model model) {
-        // Lấy danh sách sản phẩm từ repository
         List<SanPham> sanPhams = spRepo.findAll();
+
+        // Gắn giá từ `SanPhamChiTiet` vào từng sản phẩm
+        sanPhams.forEach(sp -> {
+            List<SanPhamChiTiet> chiTietList = spctRepo.findBySanPhamId(sp.getId());
+            if (!chiTietList.isEmpty()) {
+                sp.setMo_ta("Giá: " + chiTietList.get(0).getGia().toString()); // Gắn giá đầu tiên vào mô tả (hoặc thêm thuộc tính mới)
+            } else {
+                sp.setMo_ta("Chưa có giá"); // Trường hợp không có giá
+            }
+        });
+
         // Thêm danh sách sản phẩm vào model
         model.addAttribute("sanPhams", sanPhams);
         return "/admin/phieu_giam/create";
@@ -77,33 +87,69 @@ public class PhieuGiamController {
         return "/admin/phieu_giam/cart"; // Trả về view
     }
 
-
     @PostMapping("/add")
-    public String add(@ModelAttribute PhieuGiam pgg, @RequestParam("sanPhamMa") String sanPhamMa) {
-        pgg.setNgayTao(Date.valueOf(LocalDate.now()));
-        pgg.setNguoiTao("admin");
-        pgg.setMa(pggSV.taoMaTuDong());
+    public String add(@ModelAttribute PhieuGiam pgg,
+                      @RequestParam(value = "sanPhamMa", required = false) String sanPhamMa,
+                      Model model) {
+        try {
+            // Thiết lập thông tin phiếu giảm giá
+            pgg.setNgayTao(Date.valueOf(LocalDate.now()));
+            pgg.setNguoiTao("admin");
+            pgg.setMa(pggSV.taoMaTuDong());
 
-        List<SanPham> sanPhamList = spRepo.findByMa(sanPhamMa);
-        if (sanPhamList.isEmpty()) throw new IllegalArgumentException("Mã sản phẩm không tồn tại!");
+            // Kiểm tra loại phiếu giảm giá
+            if (pgg.isLoaiPhieuGiam()) { // Nếu là giảm giá hóa đơn
+                sanPhamMa = null; // Không cần mã sản phẩm
+            } else {
+                // Xử lý nếu là giảm giá sản phẩm
+                if (sanPhamMa == null || sanPhamMa.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Vui lòng chọn mã sản phẩm!");
+                }
 
-        PhieuGiam savedPgg = pggRepo.save(pgg);
+                // Lấy danh sách sản phẩm dựa trên mã
+                List<SanPham> sanPhamList = spRepo.findByMa(sanPhamMa);
+                if (sanPhamList.isEmpty()) {
+                    throw new IllegalArgumentException("Mã sản phẩm không tồn tại!");
+                }
 
-        for (SanPham sanPham : sanPhamList) {
-            for (SanPhamChiTiet sanPhamChiTiet : spctRepo.findBySanPhamId(sanPham.getId())) {
-                PhieuGiamSanPham pggSanPham = new PhieuGiamSanPham();
-                pggSanPham.setPhieuGiam(savedPgg);
-                pggSanPham.setSanPham(sanPham);
-                pggSanPham.setSanPhamChiTiet(sanPhamChiTiet);
+                // Kiểm tra sản phẩm đã được áp dụng phiếu giảm giá
+                for (SanPham sanPham : sanPhamList) {
+                    for (SanPhamChiTiet sanPhamChiTiet : spctRepo.findBySanPhamId(sanPham.getId())) {
+                        if (pggspRepo.findBySanPhamChiTietId(sanPhamChiTiet.getId()).isPresent()) {
+                            throw new IllegalArgumentException("Sản phẩm '" + sanPham.getTen() + "' đã được áp dụng phiếu giảm giá trước đó!");
+                        }
+                    }
+                }
 
-                BigDecimal giaSauGiam = sanPhamChiTiet.getGia().subtract(savedPgg.getGiaTriGiam());
-                pggSanPham.setGiaSauGiam(giaSauGiam.max(BigDecimal.ZERO)); // Đảm bảo không âm
-                pggspRepo.save(pggSanPham);
+                // Tạo và lưu liên kết phiếu giảm giá - sản phẩm
+                for (SanPham sanPham : sanPhamList) {
+                    for (SanPhamChiTiet sanPhamChiTiet : spctRepo.findBySanPhamId(sanPham.getId())) {
+                        PhieuGiamSanPham pggSanPham = new PhieuGiamSanPham();
+                        pggSanPham.setPhieuGiam(pgg);
+                        pggSanPham.setSanPham(sanPham);
+                        pggSanPham.setSanPhamChiTiet(sanPhamChiTiet);
+
+                        BigDecimal giaSauGiam = sanPhamChiTiet.getGia().subtract(pgg.getGiaTriGiam());
+                        pggSanPham.setGiaSauGiam(giaSauGiam.max(BigDecimal.ZERO)); // Đảm bảo giá không âm
+                        pggspRepo.save(pggSanPham);
+                    }
+                }
             }
-        }
-        return "redirect:/admin/phieu-giam/index";
-    }
 
+            // Lưu phiếu giảm giá
+            pggRepo.save(pgg);
+
+            return "redirect:/admin/phieu-giam/index";
+
+        } catch (IllegalArgumentException e) {
+            // Gửi lại thông tin cần thiết về giao diện nếu xảy ra lỗi
+            model.addAttribute("sanPhams", spRepo.findAll());
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("pgg", pgg);
+            model.addAttribute("sanPhamMa", sanPhamMa);
+            return "/admin/phieu_giam/create"; // Trả về giao diện nhập liệu
+        }
+    }
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
         // Lấy phiếu giảm giá

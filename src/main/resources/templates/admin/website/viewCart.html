@@ -401,7 +401,7 @@
             }
             let price = parseFloat(this.closest('li').querySelector('.item-price').textContent.replace(/\./g, '').replace(/[^0-9.-]+/g, ''));
             let totalElement = this.closest('li').querySelector('.item-total');
-            totalElement.textContent = (price * quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            totalElement.textContent = (price * quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VND');
             updateTotalPrice();
             updateCartQuantity(this.getAttribute('data-id'), quantity);  // Cập nhật số lượng trên server
         });
