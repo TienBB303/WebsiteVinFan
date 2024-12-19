@@ -113,33 +113,12 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="loaiPhieuGiam">
+                                    <select class="form-control" name="loaiPhieuGiam" id="discountTypeSelect">
                                         <option value="false">Giảm giá sản phẩm</option>
                                         <option value="true">Giảm giá hóa đơn</option>
                                     </select>
                                 </div>
                             </div>
-
-                            <!-- Giá trị tối thiểu áp dụng -->
-<!--                            <div class="form-group row">-->
-<!--                                <label class="col-sm-4 col-form-label">Giá trị tối thiểu áp dụng</label>-->
-<!--                                <div class="col-sm-8">-->
-<!--                                    <input type="number" class="form-control" name="giaTriMin"-->
-<!--                                           placeholder="Nhập giá trị tối thiểu áp dụng">-->
-<!--                                    <span id="giaTriMinError" class="text-danger"></span>-->
-<!--                                </div>-->
-<!--                            </div>-->
-
-                            <!-- Giá trị tối đa áp dụng -->
-<!--                            <div class="form-group row">-->
-<!--                                <label class="col-sm-4 col-form-label">Giá trị tối đa áp dụng</label>-->
-<!--                                <div class="col-sm-8">-->
-<!--                                    <input type="number" class="form-control" name="giaTriMax"-->
-<!--                                           placeholder="Nhập giá trị tối đa áp dụng">-->
-<!--                                    <span id="giaTriMaxError" class="text-danger"></span>-->
-<!--                                </div>-->
-<!--                            </div>-->
-
                             <!-- Trạng thái -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Trạng thái</label>
@@ -154,11 +133,12 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Chọn mã sản phẩm</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="sanPhamMa" id="productCodeSelect" required>
-                                        <option value="">Chọn sản phẩm</option>
+                                    <select class="form-control" name="sanPhamMa" id="productCodeSelect">
+                                        <option value="" th:selected="${sanPhamMa == null}">Chọn sản phẩm</option>
                                         <option th:each="sanPham : ${sanPhams}"
                                                 th:value="${sanPham.ma}"
-                                                th:text="${sanPham.ma + ' - ' + sanPham.ten}">
+                                                th:text="${sanPham.ma + ' - ' + sanPham.ten + ' (' + sanPham.mo_ta + ')'}"
+                                                th:selected="${sanPhamMa == sanPham.ma}">
                                         </option>
                                     </select>
                                 </div>
@@ -280,6 +260,53 @@
                 },
                 templateSelection: function (data) {
                     return $('<span style="color: #007bff;">' + data.text + '</span>'); // Màu chữ xanh đậm cho mục đã chọn
+                }
+            });
+        });
+    </script>
+    <script th:inline="javascript">
+        var errorMessage = /*[[${errorMessage}]]*/ '';
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: errorMessage,
+                confirmButtonText: 'OK'
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const discountTypeSelect = document.getElementById("discountTypeSelect");
+            const productCodeSelect = document.getElementById("productCodeSelect");
+
+            // Theo dõi thay đổi trên dropdown "Loại phiếu giảm giá"
+            discountTypeSelect.addEventListener("change", function () {
+                if (this.value === "true") { // Nếu chọn giảm giá hóa đơn
+                    productCodeSelect.disabled = true; // Vô hiệu hóa dropdown
+                    productCodeSelect.value = ""; // Đặt giá trị null
+                } else {
+                    productCodeSelect.disabled = false; // Bật dropdown
+                }
+            });
+
+            // Hàm định dạng tiền VND
+            function formatCurrencyVND(value) {
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value).replace('₫', 'VND');
+            }
+
+            // Định dạng giá sản phẩm trong dropdown
+            Array.from(productCodeSelect.options).forEach(option => {
+                const textContent = option.textContent;
+                const regex = /\(Giá: (.*?)\)/;
+
+                const match = regex.exec(textContent);
+                if (match && match[1]) {
+                    const rawPrice = parseFloat(match[1].replace(/[^0-9.-]+/g, ""));
+                    if (!isNaN(rawPrice)) {
+                        const formattedPrice = formatCurrencyVND(rawPrice);
+                        option.textContent = textContent.replace(regex, `(Giá: ${formattedPrice})`);
+                    }
                 }
             });
         });
