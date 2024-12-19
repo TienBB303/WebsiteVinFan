@@ -1,7 +1,9 @@
 package com.example.datn.controller.sale_on_controller;
 
+import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
 import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
 import com.example.datn.repository.SPCTRepo;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,9 @@ public class ProductCatalog {
     private SPCTRepo spctRepo;
     @Autowired
     private KieuQuatRepo kieuQuatRepo;
+
+    @Autowired
+    private KhachHangRepo khachHangRepo;
 
     @GetMapping("/product-catalog")
     public String productCatalog(
@@ -132,7 +138,7 @@ public class ProductCatalog {
         model.addAttribute("kieuQuats", kieuQuatRepo.findAll());
 
         String currentPrincipalName = authentication.getName();
-        model.addAttribute("currentPrincipalName", currentPrincipalName);
+
 
         return "/admin/website/productCatalog";
     }
@@ -173,7 +179,17 @@ public class ProductCatalog {
         return "redirect:/cart/view";
     }
     @GetMapping("/track-order")
-    public String trackOrder() {
+    public String trackOrder(Model model) {
+        KhachHang khachHang   =  khachHangRepo.profileKhachHang();
+
+        if (khachHang == null) {
+            model.addAttribute("errorMessage", "Không tìm thấy thông tin kh.");
+            return "/admin/error"; // Điều hướng đến trang lỗi
+        }else {
+            System.out.println("dhfdhhdfhfd id: " + khachHang.getId());
+            model.addAttribute("ten", khachHang.getTen());
+            model.addAttribute("id", khachHang.getId());
+        }
         return "admin/website/trackOrder";
     }
 

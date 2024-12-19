@@ -34,6 +34,7 @@ public class TrangCaNhanController {
     @GetMapping("/index")
     public String getUserInfo(Model model) {
         NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+        System.out.println("dhushudfhudf:" + nhanVien.getId());
         if (nhanVien == null) {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin nhân viên.");
             return "/admin/error"; // Điều hướng đến trang lỗi
