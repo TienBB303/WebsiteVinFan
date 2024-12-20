@@ -4,6 +4,7 @@ import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.response.*;
 import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
+import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,11 +64,13 @@ public interface HoaDonService {
 
     void tangSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet);
 
+    void giamSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet);
+
     void truSoLuongSanPham(Long idHD);
 
     void hoanSoLuongSanPham(Long idHD);
 
-
+    List<HoaDon> getHoaDonByIdKH(Integer idKH);
 
     String generateOrderCode();
 

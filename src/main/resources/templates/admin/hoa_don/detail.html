@@ -365,7 +365,11 @@
                         <td class="giaVND" th:text="${item.gia}"></td>
                         <td>
                             <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-decrease">-</button>
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
+                                    th:data-id-hoa-don="${item.hoaDon.id}"
+                                    th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
+                                -
+                            </button>
                             <!-- Ô nhập số lượng -->
                             <input type="number" class="form-control quantity-input"
                                    th:value="${item.soLuong}"
@@ -868,25 +872,50 @@
                             });
                         }
                     });
-                    // fetch('/hoa-don/tang-so-luong', {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'Content-Type': 'application/json'
-                    //     },
-                    //     body: JSON.stringify({
-                    //         idHoaDon: idHoaDon,
-                    //         idSanPhamChiTiet: idSanPhamChiTiet
-                    //     })
-                    // })
-                    //     .then(response => {
-                    //         if (response.ok) {
-                    //             location.reload(); // Reload trang hoặc cập nhật giao diện
-                    //         } else {
-                    //             alert('Có lỗi xảy ra khi tăng số lượng!');
-                    //         }
-                    //     })
-                    //     .catch(error => console.log('Error:', error));
+
                 });
+        </script>
+
+        <script>
+            $(document).on('click', '.btn-increase', function () {
+                const button = $(this); // Sử dụng 'this' để lấy đối tượng nút hiện tại
+                const idHoaDon = button.attr('data-id-hoa-don');
+                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet');
+                $.ajax({
+
+                    url: `/hoa-don/giam-so-luong`,
+                    type: 'POST',
+                    data: {
+                        idHoaDon: idHoaDon,
+                        idSanPhamChiTiet: idSanPhamChiTiet
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: response, // Thông báo thành công từ server
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: xhr.responseText, // Thông báo lỗi từ server
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                    }
+                });
+
+            });
         </script>
 
     </div>

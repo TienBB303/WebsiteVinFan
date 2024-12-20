@@ -30,4 +30,11 @@ public interface PhieuGiamSanPhamRepo extends JpaRepository<PhieuGiamSanPham, In
     Optional<PhieuGiamSanPham> findBySanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet);
 
     Optional<PhieuGiamSanPham> findBySanPhamChiTietId(Long sanPhamChiTietId);
+
+    @Query("SELECT pgs FROM PhieuGiamSanPham pgs " +
+            "JOIN pgs.sanPhamChiTiet spct " +
+            "JOIN spct.sanPham sp " +
+            "WHERE sp.ma = :maSanPham")
+    List<PhieuGiamSanPham> findBySanPhamMa(@Param("maSanPham") String maSanPham);
+
 }

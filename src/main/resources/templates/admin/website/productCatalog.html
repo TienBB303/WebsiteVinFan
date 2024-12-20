@@ -14,96 +14,28 @@
         padding: 0;
     }
 
-    /* Navbar tùy chỉnh */
-    .navbar-custom {
-        background-color: #ffffff;
-        border-bottom: 1px solid #ddd;
+    /*Navbar custom*/
+    .custom-navbar {
+        padding: 30px 0; /* Tăng chiều cao của navbar */
     }
 
-    .navbar-brand img {
-        transition: transform 0.3s;
+    .custom-navbar .navbar-brand,
+    .custom-navbar .nav-link {
+        font-size: 1.2rem; /* Tăng kích thước font */
     }
 
-    .navbar-brand img:hover {
-        transform: scale(1.1);
-    }
-    /* Tùy chỉnh form tìm kiếm */
-    .search-form {
-        position: relative;
-        display: flex;
-        align-items: center;
-        max-width: 600px;
-        margin: 0 auto;
+    /* Thêm viền cam dưới navbar */
+    .custom-navbar {
+        border-bottom: 3px solid orange; /* Viền cam */
     }
 
-    /* Form tìm kiếm */
-    .search-form {
-        position: relative;
-        display: flex;
-        align-items: center;
-        max-width: 500px; /* Giới hạn chiều rộng */
-        margin: 0 auto; /* Căn giữa form */
-        margin-left: 20px; /* Tạo khoảng cách với logo */
+    .search-bar .form-control {
+        height: 40px; /* Tăng chiều cao của ô tìm kiếm */
     }
 
-    /* Input tìm kiếm */
-    .search-form input {
-        width: 100%;
-        padding: 10px 15px;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        outline: none;
-        font-size: 16px;
-        transition: border-color 0.3s; /* Hiệu ứng focus nhẹ */
-    }
-
-    .search-form input:focus {
-        border-color: #007bff;
-    }
-
-    /* Nút tìm kiếm */
-    .search-form button {
-        position: absolute;
-        right: 5px; /* Dịch nhẹ sang bên trái */
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-    }
-
-    .search-form button i {
-        font-size: 18px;
-    }
-
-    /* Loại bỏ hiệu ứng hover */
-    .search-form button:hover {
-        background-color: #007bff; /* Giữ nguyên màu */
-    }
-
-    /* Icons và thông tin liên hệ */
-    .contact-info {
-        color: #333;
-        font-size: 14px;
-        margin-right: 15px;
-    }
-
-    .icons-section a {
-        color: #333;
-        font-size: 20px;
-        margin-left: 15px;
-        transition: color 0.3s;
-    }
-
-    .icons-section a:hover {
-        color: #007bff;
+    .search-bar .btn {
+        background-color: orange; /* Màu nền cam cho nút tìm kiếm */
+        color: white; /* Màu chữ trắng */
     }
 
     /* Carousel */
@@ -249,108 +181,145 @@
         color: #fff;
     }
 
-    #pagination button.active {
-        background-color: #007bff;
-        color: #fff;
-        font-weight: bold;
-    }
 
     #pagination button:disabled {
         background-color: #e9ecef;
         color: #6c757d;
         cursor: not-allowed;
     }
-    /* Navbar thứ hai - Tùy chỉnh */
-    .navbar-custom-2 {
-        background-color: #000 !important; /* Nền đen */
-        border-bottom: 1px solid #444; /* Viền dưới màu xám nhẹ */
+
+    .btn-outline-info {
+        border: 2px solid #17a2b8;
+        color: #17a2b8;
+        font-weight: 600;
+        font-size: 1rem;
+        border-radius: 8px;
+        padding: 8px 15px;
         display: flex;
-        justify-content: center; /* Căn giữa các mục */
-        align-items: center; /* Căn giữa dọc */
-        padding: 10px 0; /* Khoảng cách trên dưới */
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
     }
 
-    .navbar-custom-2 .nav-item {
-        margin: 0 15px; /* Khoảng cách giữa các mục navbar */
+    .btn-outline-info i {
+        font-size: 1.2rem;
+        margin-right: 5px; /* Khoảng cách giữa icon và text */
     }
 
-    .navbar-custom-2 .nav-link {
-        color: #ffffff !important; /* Màu chữ trắng */
-        font-size: 16px;
-        font-weight: 500;
-        text-transform: capitalize; /* Chữ đầu viết hoa */
-        padding: 8px 12px; /* Tạo khoảng cách đều */
-        transition: background-color 0.3s, color 0.3s;
-        border-radius: 5px; /* Bo góc nhẹ khi hover */
+    .btn-outline-info:hover {
+        background-color: #17a2b8;
+        color: white;
+    }
+    .btn-group .btn {
+        border-radius: 20px; /* Làm nút bo tròn */
+        font-weight: bold;
+        padding: 10px 20px;
+        transition: all 0.3s ease-in-out;
     }
 
-    .navbar-custom-2 .nav-link:hover {
-        background-color: #222; /* Nền xám khi hover */
-        color: #f1f1f1 !important;
+    .btn-group .btn:hover {
+        background-color: #f8f9fc;
+        color: #dc3545; /* Màu đỏ */
+        border-color: #dc3545;
     }
 
-    .navbar-custom-2 .nav-link.active {
-        background-color: #444; /* Màu nền cho mục đang active */
-        color: #ffffff !important;
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-title {
+        color: #333;
         font-weight: bold;
     }
 
+    .modal-footer button {
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .modal-footer .btn-primary {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .modal-footer .btn-primary:hover {
+        background-color: #bd2130;
+    }
 </style>
 <body>
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-custom py-3" id="navbar1">
+
+<nav class="navbar navbar-expand-lg navbar-light custom-navbar">
     <div class="container-fluid">
         <!-- Logo -->
         <a class="navbar-brand" href="/admin/index">
             <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"
                  alt="Logo">
         </a>
+        <!-- Thanh điều hướng -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <!-- Search bar -->
-        <form th:action="@{/admin/product-catalog}" method="get" class="search-form mb-4">
-            <input type="text" name="query" th:value="${query}" placeholder="Tìm kiếm sản phẩm..." class="form-control">
-            <button type="submit">
-                <i class="fas fa-search"></i>
-            </button>
-        </form>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- Thêm d-flex và align-items-center cho ul -->
 
-        <!-- Right-side icons and contact info -->
-        <div class="d-flex align-items-center ms-auto">
-            <div class="contact-info me-4">
-                <i class="fas fa-phone-alt"></i> Gọi mua hàng: 0977 27 6646
-            </div>
-            <div th:block>
-                <div th:if="${currentPrincipalName } != anonymousUser ">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-box-arrow-right"></i> Đăng Xuất
-                        </button>
+                <!-- Button thông tin đơn hàng -->
+                <li class="nav-item mx-2">
+                    <a href="/admin/track-order" class="btn btn-outline-info d-flex align-items-center">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng
+                    </a>
+                </li>
+                <!-- Thanh tìm kiếm -->
+                <li class="nav-item">
+                    <form th:action="@{/admin/product-catalog}" method="get" class="d-flex align-items-center">
+                        <!-- Dùng d-flex để căn chỉnh các phần tử trong form -->
+                        <input type="text" name="query" th:value="${query}" placeholder="Tìm kiếm sản phẩm..."
+                               class="form-control me-2"> <!-- me-2 để tạo khoảng cách giữa input và button -->
+                        <button class="btn" type="submit"><i class="fas fa-search"></i></button>
                     </form>
-                </div>
-                <div th:if="${currentPrincipalName} == anonymousUser">
-                    <a th:href="@{/login}">Đăng nhập</a>
-                </div>
-            </div>
+                </li>
 
+                <!-- Giỏ hàng -->
+                <li class="nav-item mx-3">
+                    <a class="nav-link d-flex align-items-center" href="/cart/view">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                </li>
 
-            <div class="contact-info me-4">
-                <a href="/cart/view" class="text-decoration-none">
-                    <i class="fas fa-shopping-cart"></i> Giỏ hàng
-                </a>
-            </div>
-            <div class="icons-section">
-                <!--                <a href="#"><i class="fas fa-cart-plus cart-icon"></i></a>-->
-                <a href="https://www.facebook.com/yuamikami1608"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-            </div>
+                <div th:block class="d-flex align-items-center">
+                    <!-- Thêm d-flex và align-items-center cho div chứa nút đăng xuất và đăng nhập -->
+                    <div th:if="${currentPrincipalName} != anonymousUser">
+                        <form th:action="@{/logout}" method="post" class="d-flex align-items-center">
+                            <button type="submit" class="btn btn-outline-danger d-flex align-items-center">
+                                Đăng Xuất
+                            </button>
+                        </form>
+                    </div>
+                    <div th:if="${currentPrincipalName} == anonymousUser">
+                        <button type="submit" class="btn btn-outline-primary d-flex align-items-center">
+                            <a th:href="@{/login}" class="text-decoration-none text-dark">Đăng nhập</a>
+                        </button>
+                    </div>
+                </div>
+
+            </ul>
         </div>
+
+
     </div>
 </nav>
-<!-- Form lọc kiểu quạt -->
+<!-- Form lọc kiểu quạt-->
 <nav class="navbar navbar-expand-lg navbar-custom-2">
     <div class="container-fluid justify-content-center">
         <!-- Tất cả sản phẩm -->
-        <a class="nav-link fw-bold" th:href="@{/admin/product-catalog}">Tất cả sản phẩm</a>
+        <a class="nav-link fw-bold" th:href="@{/admin/product-catalog(filter='all')}">Tất cả sản phẩm</a>
 
         <!-- Danh sách kiểu quạt -->
         <ul class="navbar-nav">
@@ -401,13 +370,33 @@
 <section class="py-5">
     <div class="container">
         <h1 class="text-center mb-5">Danh mục sản phẩm quạt của chúng tôi</h1>
+            <!-- Thanh điều hướng với các tùy chọn -->
+            <div class="btn-group mb-4">
+                <!-- Nút Khoảng giá mở modal -->
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#priceFilterModal">Khoảng giá</button>
 
+                <!-- Nút Bán chạy nhất (dẫn liên kết) -->
+                <a class="btn btn-outline-secondary" th:href="@{/admin/product-catalog(sortOrder='popular')}">Bán chạy nhất</a>
+
+                <a th:href="@{/admin/product-catalog(sortOrder='newest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                   class="btn btn-outline-secondary">Mới nhất</a>
+
+                <a th:href="@{/admin/product-catalog(sortOrder='oldest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                   class="btn btn-outline-secondary">Cũ nhất</a>
+                <a class="btn btn-outline-secondary"
+                   th:href="@{/admin/product-catalog(filter='discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
+                    Sản phẩm giảm giá
+                </a>
+                <a class="btn btn-outline-secondary"
+                   th:href="@{/admin/product-catalog(filter='non-discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
+                    Sản phẩm không giảm giá
+                </a>
+            </div>
         <!-- Kiểm tra nếu không có sản phẩm nào -->
-        <div th:if="${sanPhamGiamGia.empty and sanPhamKhongGiamGia.empty}" class="text-center">
-            <h3 class="text-danger">Sản phẩm không tồn tại</h3>
-            <p>Vui lòng thử lại với từ khóa khác hoặc chọn một danh mục khác.</p>
+        <div th:if="${sanPhamGiamGia != null and #lists.isEmpty(sanPhamGiamGia) and
+             sanPhamKhongGiamGia != null and #lists.isEmpty(sanPhamKhongGiamGia)}">
+            <p>Không có sản phẩm nào</p>
         </div>
-
         <!-- Nếu có sản phẩm -->
         <div th:unless="${sanPhamGiamGia.empty and sanPhamKhongGiamGia.empty}">
             <div class="row g-4" id="product-list">
@@ -430,14 +419,15 @@
                                 <p class="card-text">
                                     <span class="old-price text-decoration-line-through"
                                           th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0đ</span>
+                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0VND</span>
                                 </p>
                                 <p class="card-text">
                                     <span class="main-price product-price"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0đ</span>
+                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0VND</span>
                                 </p>
                                 <div class="mt-auto">
-                                    <a th:href="@{/admin/detail/{id}(id=${phieuGiamSanPham.sanPhamChiTiet.id})}" class="btn btn-primary w-100">Xem chi tiết</a>
+                                    <a th:href="@{/admin/detail/{id}(id=${phieuGiamSanPham.sanPhamChiTiet.id})}"
+                                       class="btn btn-primary w-100">Xem chi tiết</a>
                                     <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
                                         <input type="hidden" name="productId"
                                                th:value="${phieuGiamSanPham.sanPhamChiTiet.id}"/>
@@ -469,10 +459,11 @@
                                     phẩm</h5>
                                 <p class="card-text">
                                     <span class="product-price main-price"
-                                          th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0đ</span>
+                                          th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0VND</span>
                                 </p>
                                 <div class="mt-auto">
-                                    <a th:href="@{/admin/detail/{id}(id=${sanPhamChiTiet.id})}" class="btn btn-primary w-100">Xem chi tiết</a>
+                                    <a th:href="@{/admin/detail/{id}(id=${sanPhamChiTiet.id})}"
+                                       class="btn btn-primary w-100">Xem chi tiết</a>
                                     <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
                                         <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
                                         <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
@@ -494,6 +485,33 @@
         </div>
     </div>
 </section>
+<!-- Modal Lọc Giá -->
+<div class="modal fade" id="priceFilterModal" tabindex="-1" aria-labelledby="priceFilterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="priceFilterModalLabel">Lọc theo khoảng giá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/admin/product-catalog}" method="get">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="minPrice" class="form-label">Giá từ:</label>
+                        <input type="number" name="minPrice" id="minPrice" class="form-control" placeholder="Nhập giá thấp nhất">
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxPrice" class="form-label">Đến:</label>
+                        <input type="number" name="maxPrice" id="maxPrice" class="form-control" placeholder="Nhập giá cao nhất">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Lọc</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Footer -->
 <footer class="text-start py-4">
@@ -515,6 +533,50 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- dịnh dạng input -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Hàm định dạng số tiền với dấu chấm ngăn cách hàng nghìn
+        function formatCurrency(value) {
+            value = value.replace(/\D/g, ''); // Loại bỏ ký tự không phải số
+            if (!value) return ''; // Nếu không có giá trị, trả về chuỗi rỗng
+
+            // Chuyển đổi thành định dạng với dấu '.'
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        // Lắng nghe sự kiện khi nhập và định dạng lại
+        function handleInput(event) {
+            const input = event.target;
+            const rawValue = input.value.replace(/\./g, ''); // Loại bỏ dấu chấm cũ
+            input.value = formatCurrency(rawValue); // Cập nhật giá trị đã định dạng
+        }
+
+        // Chuyển giá trị định dạng ngược lại khi gửi form
+        function handleFormSubmit(event) {
+            const minPriceInput = document.getElementById("minPrice");
+            const maxPriceInput = document.getElementById("maxPrice");
+
+            // Loại bỏ dấu chấm trước khi gửi đi
+            minPriceInput.value = minPriceInput.value.replace(/\./g, '');
+            maxPriceInput.value = maxPriceInput.value.replace(/\./g, '');
+        }
+
+        // Lấy các trường input
+        const minPriceInput = document.getElementById("minPrice");
+        const maxPriceInput = document.getElementById("maxPrice");
+        const filterForm = document.querySelector("#priceFilterModal form");
+
+        // Gắn sự kiện xử lý
+        minPriceInput.addEventListener("input", handleInput);
+        maxPriceInput.addEventListener("input", handleInput);
+
+        // Gắn sự kiện xử lý khi gửi form
+        filterForm.addEventListener("submit", handleFormSubmit);
+    });
+</script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const allProducts = Array.from(document.querySelectorAll("#product-list > div")); // Sản phẩm
@@ -605,6 +667,7 @@
         loadPage();
     });
 </script>
+
 <script>
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -624,8 +687,8 @@
                             <div class="card-body d-flex flex-column">
                                 <img class="card-img-top" src="${product.imageUrl}" alt="${product.name}" style="height: 200px; object-fit: cover;">
                                 <h5 class="card-title">${product.name}</h5>
-                                ${product.discount ? `<p class="card-text text-danger">Giảm: ${product.discount} đ</p>` : ''}
-                                <p class="card-text">Giá: ${product.price} đ</p>
+                                ${product.discount ? `<p class="card-text text-danger">Giảm: ${product.discount} VND</p>` : ''}
+                                <p class="card-text">Giá: ${product.price} VND</p>
                                 <button class="btn btn-primary w-100">Xem chi tiết</button>
                             </div>
                         </div>
@@ -679,7 +742,7 @@
             currency: 'VND',
             minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
         });
-        return formatter.format(amount);
+        return formatter.format(amount).replace('₫', 'VND');
     }
 
     // Định dạng giá sản phẩm có giảm giá và không có giảm giá
@@ -689,7 +752,7 @@
 
         priceElements.forEach(function (element) {
             // Lấy giá từ thuộc tính th:if hoặc giá trị chứa trong thẻ
-            let priceText = element.innerText.replace('đ', '').replace('₫', '').trim();  // Loại bỏ dấu "đ" hoặc "₫"
+            let priceText = element.innerText.replace('VND', '').replace('VND', '').trim();  // Loại bỏ dấu "đ" hoặc "₫"
             let price = parseFloat(priceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
 
             // Nếu giá hợp lệ, định dạng lại giá
@@ -701,7 +764,7 @@
         // Định dạng giá đã giảm
         const discountPriceElements = document.querySelectorAll('.old-price');  // Tìm các giá đã giảm
         discountPriceElements.forEach(function (element) {
-            let discountPriceText = element.innerText.replace('đ', '').replace('₫', '').trim();
+            let discountPriceText = element.innerText.replace('VND', '').replace('VND', '').trim();
             let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());
 
             if (!isNaN(discountPrice)) {
@@ -718,20 +781,20 @@
             currency: 'VND',
             minimumFractionDigits: 0,  // Đảm bảo không có phần thập phân
         });
-        return formatter.format(amount);
+        return formatter.format(amount).replace('₫', 'VND'); // Chuyển "₫" thành "VND"
     }
 
     // Định dạng giá trị giảm giá sau khi tải trang
     document.addEventListener("DOMContentLoaded", function () {
-        const discountPriceElements = document.querySelectorAll('.discount-price');  // Tìm tất cả các thẻ có class 'discount-price'
+        const discountPriceElements = document.querySelectorAll('.discount-price'); // Tìm tất cả các thẻ có class 'discount-price'
 
         discountPriceElements.forEach(function (element) {
-            let discountPriceText = element.innerText.replace('đ', '').trim();  // Loại bỏ dấu "đ"
-            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim());  // Chuyển giá trị thành số (loại bỏ dấu phẩy và chấm)
+            let discountPriceText = element.innerText.replace('đ', '').trim(); // Loại bỏ "đ" nếu có
+            let discountPrice = parseFloat(discountPriceText.replace(',', '').replace('.', '').trim()); // Chuyển thành số
 
-            // Nếu giá trị giảm giá hợp lệ, định dạng lại giá
+            // Nếu giá trị hợp lệ, định dạng lại giá
             if (!isNaN(discountPrice)) {
-                element.innerText = '-' + formatCurrency(discountPrice);  // Thêm dấu '-' và định dạng giá
+                element.innerText = '-' + formatCurrency(discountPrice); // Định dạng giá và thêm dấu "-"
             }
         });
     });
