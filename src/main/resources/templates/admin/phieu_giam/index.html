@@ -147,18 +147,38 @@
                             </div>
                             <nav aria-label="Page navigation">
                                 <ul class="pagination justify-content-center">
-                                    <li class="page-item ${currentPage == 0 ? 'disabled' : ''}">
-                                        <a class="page-link"
-                                           th:href="@{/admin/phieu-giam/index(page=${currentPage - 1})}">Previous</a>
+                                    <!-- Nút Trang Đầu -->
+                                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=0)}" aria-label="First">
+                                            <span>&laquo;&laquo;</span>
+                                        </a>
                                     </li>
-                                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+
+                                    <!-- Nút Trang Trước -->
+                                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${currentPage - 1})}" aria-label="Previous">
+                                            <span>&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Số Trang -->
+                                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item"
                                         th:classappend="${currentPage == i ? 'active' : ''}">
-                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${i})}">[[${i +
-                                            1}]]</a>
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${i})}">[[${i + 1}]]</a>
                                     </li>
-                                    <li class="page-item ${currentPage == totalPages - 1 ? 'disabled' : ''}">
-                                        <a class="page-link"
-                                           th:href="@{/admin/phieu-giam/index(page=${currentPage + 1})}">Next</a>
+
+                                    <!-- Nút Trang Sau -->
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${currentPage + 1})}" aria-label="Next">
+                                            <span>&raquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Nút Trang Cuối -->
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${totalPages - 1})}" aria-label="Last">
+                                            <span>&raquo;&raquo;</span>
+                                        </a>
                                     </li>
                                 </ul>
                             </nav>
