@@ -5,6 +5,8 @@ import com.example.datn.dto.request.sale_on_request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.entity.sale_on.CartItem;
+import com.example.datn.repository.DiaChiRepository;
+import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
@@ -21,6 +23,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +51,11 @@ public class CartController {
 
     @Autowired
     private SanPhamService sanPhamService;
+
+    @Autowired
+    private KhachHangRepo khachHangRepo;
+    @Autowired
+    private DiaChiRepository diaChiRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -272,7 +281,13 @@ public class CartController {
         if (cartItems == null || cartItems.isEmpty()) {
             return "redirect:/cart/orderinfor?error=CartIsEmpty";
         }
-
+        // Lấy thông tin khách hàng từ tài khoản đăng nhập
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Lấy email đăng nhập
+        KhachHang khachHang = khachHangRepo.findByEmail(email).orElse(null);
+        if (khachHang == null) {
+            return "redirect:/login?error=UserNotLoggedIn"; // Nếu không tìm thấy khách hàng
+        }
         // Tạo hóa đơn
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMa(hoaDonService.generateOrderCode());
@@ -304,8 +319,8 @@ public class CartController {
         hoaDon.setNgaySua(LocalDate.now());
         hoaDon.setNguoiTao("system");
         hoaDon.setNguoiSua("system");
-        hoaDon.setKhachHang(entityManager.find(KhachHang.class, 1L));
-        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
+        hoaDon.setKhachHang(khachHang);
+//        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
         hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L));
 //        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
 

@@ -77,6 +77,10 @@ public class KhachHang {
     @Column(name = "reset_token")
     private String resetToken;
 
+    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiaChi> diaChiList = new ArrayList<>();
+
+
 //    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<DiaChi> diaChiList = new ArrayList<>();
 
