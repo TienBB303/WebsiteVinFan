@@ -1,13 +1,12 @@
 package com.example.datn.controller;
 
-import com.example.datn.entity.SanPham;
-import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.entity.SanPhamChiTietTam;
-import com.example.datn.entity.SanPhamTam;
+import com.example.datn.entity.*;
 import com.example.datn.entity.thuoc_tinh.*;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.repository.SanPhamRepo;
 import com.example.datn.repository.ThuocTinhRepo.*;
+import com.example.datn.service.CloudinaryService;
 import com.example.datn.service.SanPhamService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin")
@@ -60,6 +58,15 @@ public class SanPhamController {
     SanPhamRepo sanPhamRepo;
     @Autowired
     HinhAnhRepo hinhAnhRepo;
+    @Autowired
+    private CloudinaryService cloudinaryService;
+    @Autowired
+    NhanVienRepository nhanVienRepository;
+
+    @ModelAttribute("listSanPham")
+    public List<SanPham> listSanPham() {
+        return sanPhamRepo.findAll();
+    }
 
     @ModelAttribute("listMau")
     public List<MauSac> listMau() {
@@ -148,6 +155,7 @@ public class SanPhamController {
 
     @PostMapping("/san-pham/add-bien-the")
     public ResponseEntity<?> addProduct(
+            @RequestParam("sanPham.ma") String inputMa,
             @RequestParam("sanPham.ten") String ten,
             @RequestParam("sanPham.kieuQuat.id") Integer kieuQuatId,
             @RequestParam("mauSac.id") List<Integer> mauSacIds,
@@ -160,17 +168,43 @@ public class SanPhamController {
             @RequestParam("deQuat.id") Integer deQuatId,
             @RequestParam("chieuCao.id") Integer chieuCaoId,
             @RequestParam("hang.id") Integer hangId,
+            @ModelAttribute NhanVien nhanVien,
             HttpSession session, Model model) {
 
+
+        String ma = (inputMa == null || inputMa.trim().isEmpty())
+                ? sanPhamService.taoMaTuDong() : inputMa.trim();
+        SanPham sp = sanPhamRepo.findByMa(ma);
+        if (sp != null) {
+            // Tên và kiểu quạt phải trùng
+            if (!sp.getTen().trim().equalsIgnoreCase(ten.trim())) {
+                return ResponseEntity.badRequest().body(
+                        "Mã " + ma + " đã tồn tại, nhưng với tên: " + sp.getTen() + ". Vui lòng sử dụng cùng tên."
+                );
+            }
+            if (!sp.getKieuQuat().getId().equals(kieuQuatId)) {
+                return ResponseEntity.badRequest().body(
+                        "Mã " + ma + " đã tồn tại, nhưng với kiểu quạt: " + sp.getKieuQuat().getTen() + ". Vui lòng chọn đúng kiểu quạt."
+                );
+            }
+        }
+        else {
+            // Kiểm tra nếu mã không tồn tại, tên không được trùng với bất kỳ tên nào trong database
+            List<SanPham> productsWithName = sanPhamRepo.findByTenIgnoreCase(ten);
+            if (!productsWithName.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                        "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống. Vui lòng chọn tên khác."
+                );
+            }
+        }
+
+        // Cập nhật thông tin sản phẩm
         SanPhamTam sanPhamTam = new SanPhamTam();
-        String ma = sanPhamService.taoMaTuDong();  // tự động gen mã
         sanPhamTam.setMa(ma);
         sanPhamTam.setTen(ten);
         sanPhamTam.setKieuQuat(kieuQuatRepo.findById(kieuQuatId).orElse(null));
         sanPhamTam.setTrang_thai(true);
         sanPhamTam.setNgay_tao(new Date());
-
-        List<String> existingProductNames = sanPhamRepo.getTenTonTai();
 
         List<SanPhamChiTietTam> listSPCTTam = new ArrayList<>();
 
@@ -178,37 +212,37 @@ public class SanPhamController {
             MauSac mauSac = mauSacRepo.findById(mauSacId).orElse(null);
             for (Integer congSuatId : congSuatIds) {
                 CongSuat congSuat = congSuatRepo.findById(congSuatId).orElse(null);
-                    // check trùng thuộc tính, cho phép trùng tên
-                    if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
-                        return ResponseEntity.badRequest().body(
-                                "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
-                        );
-                    }
-                    SanPhamChiTietTam sanPhamChiTietTam = new SanPhamChiTietTam();
-                    sanPhamChiTietTam.setSanPhamTam(sanPhamTam);
-                    sanPhamChiTietTam.setMauSac(mauSac);
-                    sanPhamChiTietTam.setCongSuat(congSuat);
-                    sanPhamChiTietTam.setCheDoGio(cheDoGioRepo.findById(cheDoGioId).orElse(null));
-                    sanPhamChiTietTam.setNutBam(nutBamRepo.findById(nutBamId).orElse(null));
-                    sanPhamChiTietTam.setChatLieuCanh(chatLieuCanhRepo.findById(chatLieuCanhId).orElse(null));
-                    sanPhamChiTietTam.setDuongKinhCanh(duongKinhCanhRepo.findById(duongKinhCanhId).orElse(null));
-                    sanPhamChiTietTam.setChatLieuKhung(chatLieuKhungRepo.findById(chatLieuKhungId).orElse(null));
-                    sanPhamChiTietTam.setDeQuat(deQuatRepo.findById(deQuatId).orElse(null));
-                    sanPhamChiTietTam.setChieuCao(chieuCaoRepo.findById(chieuCaoId).orElse(null));
-                    sanPhamChiTietTam.setHang(hangRepo.findById(hangId).orElse(null));
-                    sanPhamChiTietTam.setDieuKhienTuXa(new DieuKhienTuXa(2));
+                // Kiểm tra trùng thuộc tính cho phép trùng tên
+                if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
+                    return ResponseEntity.badRequest().body(
+                            "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
+                    );
+                }
+                SanPhamChiTietTam sanPhamChiTietTam = new SanPhamChiTietTam();
+                sanPhamChiTietTam.setSanPhamTam(sanPhamTam);
+                sanPhamChiTietTam.setMauSac(mauSac);
+                sanPhamChiTietTam.setCongSuat(congSuat);
+                sanPhamChiTietTam.setCheDoGio(cheDoGioRepo.findById(cheDoGioId).orElse(null));
+                sanPhamChiTietTam.setNutBam(nutBamRepo.findById(nutBamId).orElse(null));
+                sanPhamChiTietTam.setChatLieuCanh(chatLieuCanhRepo.findById(chatLieuCanhId).orElse(null));
+                sanPhamChiTietTam.setDuongKinhCanh(duongKinhCanhRepo.findById(duongKinhCanhId).orElse(null));
+                sanPhamChiTietTam.setChatLieuKhung(chatLieuKhungRepo.findById(chatLieuKhungId).orElse(null));
+                sanPhamChiTietTam.setDeQuat(deQuatRepo.findById(deQuatId).orElse(null));
+                sanPhamChiTietTam.setChieuCao(chieuCaoRepo.findById(chieuCaoId).orElse(null));
+                sanPhamChiTietTam.setHang(hangRepo.findById(hangId).orElse(null));
+                sanPhamChiTietTam.setDieuKhienTuXa(new DieuKhienTuXa(2));
+                HinhAnh hinhAnh = new HinhAnh();
+                sanPhamChiTietTam.setHinhAnh(hinhAnhRepo.save(hinhAnh));
+                sanPhamChiTietTam.setGia(new BigDecimal(100000));
+                sanPhamChiTietTam.setSo_luong(1);
+                sanPhamChiTietTam.setTrang_thai(true);
+                sanPhamChiTietTam.setNgay_tao(new Date());
+                sanPhamChiTietTam.setNguoi_tao(nhanVien.getTen());
 
-                    sanPhamChiTietTam.setGia(new BigDecimal(100000));
-                    sanPhamChiTietTam.setSo_luong(1);
-                    sanPhamChiTietTam.setTrang_thai(true);
-                    sanPhamChiTietTam.setNgay_tao(new Date());
-                    sanPhamChiTietTam.setNguoi_tao("admin");
-
-                    listSPCTTam.add(sanPhamChiTietTam);
+                listSPCTTam.add(sanPhamChiTietTam);
             }
         }
 
-        // Store the list in the session
         session.setAttribute("listSPCTTam", listSPCTTam);
         model.addAttribute("listSPCTTam", listSPCTTam);
         return ResponseEntity.ok(listSPCTTam);
@@ -227,16 +261,28 @@ public class SanPhamController {
         if (sanPhamChiTietTamList == null || sanPhamChiTietTamList.isEmpty()) {
             return ResponseEntity.badRequest().body("Không có sản phẩm để xác nhận.");
         }
-
-        // Cập nhật giá và số lượng cho từng sản phẩm tạm khi update ở bảng
+        if (gias.size() != sanPhamChiTietTamList.size()){
+            return ResponseEntity.badRequest().body("Giá không được để trống.");
+        }
+        if (soLuongs.size() != sanPhamChiTietTamList.size()) {
+            return ResponseEntity.badRequest().body("Số lượng không được để trống.");
+        }
+        // Cập nhật giá và số lượng cho từng sản phẩm tạm
         for (int i = 0; i < sanPhamChiTietTamList.size(); i++) {
             SanPhamChiTietTam spTam = sanPhamChiTietTamList.get(i);
             BigDecimal gia = gias.get(i);
             Integer soLuong = soLuongs.get(i);
 
-            // Kiểm tra điều kiện cho giá và số lượng
+            if (gia == null) {
+                return ResponseEntity.badRequest().body("Giá không được để trống.");
+            }
+            if (soLuong == null) {
+                return ResponseEntity.badRequest().body("Số lượng không được để trống.");
+            }
             if (gia.compareTo(new BigDecimal(10000)) < 0) {
                 return ResponseEntity.badRequest().body("Giá sản phẩm phải lớn hơn 10.000.");
+            } else if (gia.compareTo(new BigDecimal(20000000)) > 0) {
+                return ResponseEntity.badRequest().body("Giá sản phẩm không vượt quá 20 triệu.");
             }
             if (soLuong < 0 || soLuong > 500) {
                 return ResponseEntity.badRequest().body("Số lượng phải nằm trong khoảng 0 - 500.");
@@ -246,57 +292,86 @@ public class SanPhamController {
             } else {
                 spTam.setTrang_thai(true); // Bật trạng thái nếu còn hàng
             }
-            // Cập nhật giá và số lượng
+
             spTam.setGia(gia);
             spTam.setSo_luong(soLuong);
         }
 
-        // confirm
-        SanPham sanPham = new SanPham();
-        List<SanPhamChiTiet> listSPCT = new ArrayList<>();
+        SanPham sanPham = sanPhamRepo.findByMa(sanPhamChiTietTamList.get(0).getSanPhamTam().getMa());
 
-        for (SanPhamChiTietTam spTam : sanPhamChiTietTamList) {
-            sanPham.setTen(spTam.getSanPhamTam().getTen());
-            sanPham.setMa(spTam.getSanPhamTam().getMa());
-            sanPham.setKieuQuat(spTam.getSanPhamTam().getKieuQuat());
-            sanPham.setTrang_thai(spTam.getSanPhamTam().getTrang_thai());
-            sanPham.setNgay_tao(spTam.getSanPhamTam().getNgay_tao());
+        if (sanPham != null) {
+            List<SanPhamChiTiet> listSPCT = new ArrayList<>();
 
-            SanPhamChiTiet sanPhamChiTiet = new SanPhamChiTiet();
-            sanPhamChiTiet.setSanPham(sanPham);
-            sanPhamChiTiet.setMauSac(spTam.getMauSac());
-            sanPhamChiTiet.setCongSuat(spTam.getCongSuat());
-            sanPhamChiTiet.setCheDoGio(spTam.getCheDoGio());
-            sanPhamChiTiet.setChieuCao(spTam.getChieuCao());
-            sanPhamChiTiet.setDuongKinhCanh(spTam.getDuongKinhCanh());
-            sanPhamChiTiet.setChatLieuKhung(spTam.getChatLieuKhung());
-            sanPhamChiTiet.setNutBam(spTam.getNutBam());
-            sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
-            sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
-            sanPhamChiTiet.setHang(spTam.getHang());
-            sanPhamChiTiet.setDieuKhienTuXa(spTam.getDieuKhienTuXa());
+            for (SanPhamChiTietTam spTam : sanPhamChiTietTamList) {
+                SanPhamChiTiet sanPhamChiTiet = new SanPhamChiTiet();
+                sanPhamChiTiet.setSanPham(sanPham);
+                sanPhamChiTiet.setMauSac(spTam.getMauSac());
+                sanPhamChiTiet.setCongSuat(spTam.getCongSuat());
+                sanPhamChiTiet.setCheDoGio(spTam.getCheDoGio());
+                sanPhamChiTiet.setChieuCao(spTam.getChieuCao());
+                sanPhamChiTiet.setDuongKinhCanh(spTam.getDuongKinhCanh());
+                sanPhamChiTiet.setChatLieuKhung(spTam.getChatLieuKhung());
+                sanPhamChiTiet.setNutBam(spTam.getNutBam());
+                sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
+                sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
+                sanPhamChiTiet.setHang(spTam.getHang());
+                sanPhamChiTiet.setDieuKhienTuXa(spTam.getDieuKhienTuXa());
+                sanPhamChiTiet.setHinhAnh(spTam.getHinhAnh());
 
-            sanPhamChiTiet.setGia(spTam.getGia());
-            sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
-            sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
-            sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
-            sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
+                sanPhamChiTiet.setGia(spTam.getGia());
+                sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
+                sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
+                sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
+                sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
 
-            if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
-                sanPham.setTrang_thai(true); // Tắt sản phẩm nếu tất cả biến thể đều tắt
-            } else {
-                sanPham.setTrang_thai(false); // Bật sản phẩm nếu còn ít nhất 1 biến thể bật
+                listSPCT.add(sanPhamChiTiet);
             }
-            listSPCT.add(sanPhamChiTiet);
+            sanPhamService.create(sanPham, listSPCT);
+
+            // Xóa list sp tạm
+            session.removeAttribute("listSPCTTam");
+            return ResponseEntity.ok("Bổ sung sản phẩm quạt thành công.");
+        } else {
+            SanPham sanPhamNew = new SanPham();
+            List<SanPhamChiTiet> listSPCT = new ArrayList<>();
+            for (SanPhamChiTietTam spTam : sanPhamChiTietTamList) {
+                sanPhamNew.setTen(spTam.getSanPhamTam().getTen());
+                sanPhamNew.setMa(spTam.getSanPhamTam().getMa());
+                sanPhamNew.setKieuQuat(spTam.getSanPhamTam().getKieuQuat());
+                sanPhamNew.setTrang_thai(spTam.getSanPhamTam().getTrang_thai());
+                sanPhamNew.setNgay_tao(spTam.getSanPhamTam().getNgay_tao());
+
+                SanPhamChiTiet sanPhamChiTiet = new SanPhamChiTiet();
+                sanPhamChiTiet.setSanPham(sanPhamNew);
+                sanPhamChiTiet.setMauSac(spTam.getMauSac());
+                sanPhamChiTiet.setCongSuat(spTam.getCongSuat());
+                sanPhamChiTiet.setCheDoGio(spTam.getCheDoGio());
+                sanPhamChiTiet.setChieuCao(spTam.getChieuCao());
+                sanPhamChiTiet.setDuongKinhCanh(spTam.getDuongKinhCanh());
+                sanPhamChiTiet.setChatLieuKhung(spTam.getChatLieuKhung());
+                sanPhamChiTiet.setNutBam(spTam.getNutBam());
+                sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
+                sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
+                sanPhamChiTiet.setHang(spTam.getHang());
+                sanPhamChiTiet.setDieuKhienTuXa(spTam.getDieuKhienTuXa());
+                sanPhamChiTiet.setHinhAnh(spTam.getHinhAnh());
+
+                sanPhamChiTiet.setGia(spTam.getGia());
+                sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
+                sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
+                sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
+                sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
+
+                listSPCT.add(sanPhamChiTiet);
+            }
+            sanPhamService.create(sanPhamNew, listSPCT);
+
+            // Xóa list sp tạm
+            session.removeAttribute("listSPCTTam");
+            return ResponseEntity.ok("Sản phẩm mới đã được tạo và xác nhận thành công.");
         }
-
-        // lưu vào db sản phẩm + SPCT
-        sanPhamService.create(sanPham, listSPCT);
-
-        // Xóa list sp tạm
-        session.removeAttribute("listSPCTTam");
-        return ResponseEntity.ok("Sản phẩm đã được xác nhận thành công.");
     }
+
 
     //    Chuyển trang update
     @GetMapping("/san-pham/viewUpdate/{id}")
@@ -329,10 +404,16 @@ public class SanPhamController {
             @RequestParam("hang.id") Integer hangId,
             @RequestParam("cheDoGio.id") Integer cheDoGioId,
             @RequestParam("dieuKhienTuXa.id") Integer dieuKhienTuXaId,
-//            @RequestParam("hinhAnhFile") MultipartFile hinhAnhFile,
+            @RequestParam("fileAnh") MultipartFile file,
+            @RequestParam("fileAnh1") MultipartFile file1,
+            @RequestParam("fileAnh2") MultipartFile file2,
+            @ModelAttribute NhanVien nhanVien,
             RedirectAttributes redirectAttributes) {
 
         try {
+            if (file.isEmpty()) {
+                throw new IllegalArgumentException("Chưa có tệp hình ảnh được chọn.");
+            }
             String sanitizedInput = giaStr.replaceAll("[^\\d]", "");
 
             BigDecimal gia = new BigDecimal(sanitizedInput);
@@ -349,8 +430,6 @@ public class SanPhamController {
             sanPham.setNgay_sua(new Date());
             sanPham.setKieuQuat(sanPham.getKieuQuat());
 
-            sanPhamChiTiet.setGia(gia);
-            sanPhamChiTiet.setSo_luong(soLuong);
             sanPhamChiTiet.setMauSac(new MauSac(mauSacId));
             sanPhamChiTiet.setNutBam(new NutBam(nutBamId));
             sanPhamChiTiet.setCongSuat(new CongSuat(congSuatId));
@@ -368,7 +447,47 @@ public class SanPhamController {
             } else {
                 sanPhamChiTiet.setTrang_thai(trangThai);
             }
-            sanPhamChiTiet.setNguoi_sua("admin");
+//            Map uploadResult = cloudinaryService.upload(file);
+//            Map uploadResult1 = cloudinaryService.upload(file1);
+//            Map uploadResult2 = cloudinaryService.upload(file2);
+//            String imageUrl = (String) uploadResult.get("url");
+//            String imageUrl1 = (String) uploadResult1.get("url");
+//            String imageUrl2 = (String) uploadResult2.get("url");
+//            hinhAnh.setHinh_anh_1(imageUrl);
+//            hinhAnh.setHinh_anh_2(imageUrl1);
+//            hinhAnh.setHinh_anh_3(imageUrl2);
+//            HinhAnh savedHinhAnh = hinhAnhRepo.save(hinhAnh);
+//            sanPhamChiTiet.setHinhAnh(savedHinhAnh);
+            List<String>listAnh = new ArrayList<>();
+            if(file != null && !file.isEmpty()){
+                Map uploadAnh = cloudinaryService.upload(file);
+                listAnh.add((String) uploadAnh.get("url"));
+            }
+            if(file1!= null && !file1.isEmpty()){
+                Map uploadAnh1 = cloudinaryService.upload(file1);
+                listAnh.add((String) uploadAnh1.get("url"));
+            }if(file2 != null && !file2.isEmpty()){
+                Map uploadAnh2 = cloudinaryService.upload(file2);
+                listAnh.add((String) uploadAnh2.get("url"));
+            }
+
+            HinhAnh hinhAnh = new HinhAnh();
+            if(!listAnh.isEmpty()){
+                if(listAnh.size() > 0){
+                    hinhAnh.setHinh_anh_1(listAnh.get(0));
+                }
+                if(listAnh.size() > 1){
+                    hinhAnh.setHinh_anh_2(listAnh.get(0));
+                }
+                if(listAnh.size() > 2){
+                    hinhAnh.setHinh_anh_3(listAnh.get(0));
+                }
+                HinhAnh savedHinhAnh = hinhAnhRepo.save(hinhAnh);
+                sanPhamChiTiet.setHinhAnh(savedHinhAnh);
+            }
+            sanPhamChiTiet.setGia(gia);
+            sanPhamChiTiet.setSo_luong(soLuong);
+            sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
             sanPhamService.update(sanPhamChiTiet);
 
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
@@ -383,22 +502,25 @@ public class SanPhamController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Cập nhật sản phẩm thất bại!");
         }
+
         return "redirect:/admin/san-pham";
     }
 
 
-//    @DeleteMapping("/delete-tam/{id}")
-//    @ResponseBody
-//    public ResponseEntity<Void> deleteSanPhamTam(@PathVariable Long id, HttpSession session) {
-//        try {
-//            List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
-//            if (sanPhamChiTietTamList != null) {
-//                sanPhamChiTietTamList.removeIf(spTam -> spTam.getId().equals(id));
-//                session.setAttribute("listSPCTTam", sanPhamChiTietTamList);
-//            }
-//            return ResponseEntity.noContent().build();
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
+
+    @DeleteMapping("/delete-tam/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteSanPhamTam(@PathVariable Long id, HttpSession session) {
+        try {
+            List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
+            if (sanPhamChiTietTamList != null) {
+                sanPhamChiTietTamList.removeIf(spTam -> spTam.getId().equals(id));
+                session.setAttribute("listSPCTTam", sanPhamChiTietTamList);
+            }
+            return ResponseEntity.ok("Xóa sản phẩm thành công.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi xóa sản phẩm.");
+        }
+    }
+
 }
