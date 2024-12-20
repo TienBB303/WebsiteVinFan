@@ -208,7 +208,28 @@
                                     </thead>
                                     <tbody>
                                     <tr>
+                                    <tr th:each="khachHang, stat : ${listsKhachhang}">
+                                        <td th:text="${stat.index + 1}"></td>
+<!--                                        <td th:text="${khachHang.ma}"></td>-->
+                                        <td th:text="${khachHang.ten}"></td>
+<!--                                        <td th:text="${khachHang.gioiTinh}"></td>-->
+<!--                                        <td th:text="${khachHang.soDienThoai}"></td>-->
+                                        <td th:text="${khachHang.email}"></td>
+<!--                                        <td th:text="${#dates.format(khachHang.ngaySinh,'dd/MM/yyyy')}"></td>-->
+                                        <!--                                                <td th:text="${#dates.format(khachHang.ngayTao,'dd/MM/yyyy')}"></td>-->
+                                        <!--                                                <td th:text="${#dates.format(khachHang.ngaySua,'dd/MM/yyyy')}"></td>-->
 
+<!--                                        <td th:text="${khachHang.trangThai ? 'Hoạt động' : 'Không hoạt động'}"></td>-->
+                                        <td>
+                                            <form method="post" th:action="@{/ban-hang-tai-quay/addKH}"
+                                                  class="d-inline">
+                                                <input type="hidden" name="idHD" th:value="${idHD}">
+                                                <input type="hidden" name="idKH" th:value="${khachHang.id}">
+                                                <button type="submit">chon</button>
+                                            </form>
+                                        </td>
+
+                                    </tr>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -242,18 +263,19 @@
                     </div>
                 </div>
 
-                <div class="card-body mt-3" th:if="${khachHang != null}">
+
+                <div class="card-body mt-3" th:if="${TTkhachHang != null}">
                     <div class="d-flex align-items-center" style="gap: 124px;">
                         <label class=" fw-bold">Tên khách hàng:</label>
-                        <span class="badge bg-secondary" th:text="${khachHang.ten}"></span>
+                        <span class="badge bg-secondary" th:text="${TTkhachHang.ten}"></span>
                     </div>
                     <div class="d-flex align-items-center" style="gap: 212px;">
                         <label class="fw-bold">SDT:</label>
-                        <span class="badge bg-secondary" th:text="${khachHang.soDienThoai}"></span>
+                        <span class="badge bg-secondary" th:text="${TTkhachHang.soDienThoai}"></span>
                     </div>
                     <div class="d-flex align-items-center" style="gap: 200px;">
                         <label class="fw-bold">Email:</label>
-                        <span class="badge bg-secondary" th:text="${khachHang.email}"></span>
+                        <span class="badge bg-secondary" th:text="${TTkhachHang.email}"></span>
                     </div>
                 </div>
 
@@ -294,107 +316,121 @@
             </div>
         </div>
         <hr>
+
         <!-- Form thông tin khách hàng -->
+        <form th:action="@{/ban-hang-tai-quay/thanh-toan}"
+              method="post">
         <div class="row mb-3 mb-md-5">
             <div class="col-6" id="deliveryForm" style="visibility: hidden;">
                 <div class="form-section">
-                    <input type="text" class="form-control" placeholder="Nguyễn Hà Nhật Nam">
+                    <input type="text" class="form-control" name="tenKhangHang" th:value="${TTkhachHang.ten}">
                 </div>
                 <div class="form-section">
-                    <input type="text" class="form-control" placeholder="0378538888">
+                    <input type="text" class="form-control" name="soDienThoaiKhachHang"  th:value="${TTkhachHang.soDienThoai}">
                 </div>
                 <div class="form-section">
-                    <input type="email" class="form-control" placeholder="vinhnguyenn.dev@gmail.com">
+                    <input type="email" class="form-control"  th:value="${TTkhachHang.email}">
                 </div>
                 <div class="form-section">
-                    <input type="text" class="form-control" placeholder="10 Trung Dương Thanh">
+                    <input type="text" class="form-control" th:value="${diachiMacDinh.soNhaNgoDuong}">
                 </div>
+
                 <div class="row mb-4">
+                    <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho}"/>
+                    <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen}"/>
+                    <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong}"/>
                     <div class="col-md-4">
-                        <select class="form-select">
-                            <option selected>Bình Dương</option>
-                            <option value="1">Hồ Chí Minh</option>
-                            <option value="2">Hà Nội</option>
+                        <select class="form-control" id="city" aria-label=".form-select-sm"
+                                name="tinhThanhPho">
+                            <option value="" selected>Chọn tỉnh thành</option>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <select class="form-select">
-                            <option selected>Huyện Dầu Tiếng</option>
+                        <select class="form-control" id="district" aria-label=".form-select-sm"
+                                name="quanHuyen">
+                            <option value="" selected>Chọn quận huyện</option>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <select class="form-select">
-                            <option selected>Xã Minh Hòa</option>
+                        <select class="form-control" id="ward" aria-label=".form-select-sm"
+                                name="xaPhuong">
+                            <option value="" selected>Chọn phường xã</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-section">
-                    <textarea class="form-control" rows="3" placeholder="Ghi chú"></textarea>
+                    <textarea class="form-control" rows="3" name="soDienThoaiKhachHang" placeholder="Ghi chú"></textarea>
                 </div>
             </div>
 
             <div class="col-6">
                 <h4>Thông tin thanh toán</h4>
 
-                <!-- Khách thanh toán -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-2">Khách thanh toán:</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control " placeholder="0 VND" disabled>
-                        <button class="btn btn-outline-secondary">Chọn mã</button>
+                    <input type="hidden" th:name="idHD" th:value="${idHD}">
+
+
+                    <!-- Khách thanh toán -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-2">Khách thanh toán:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control " placeholder="0 VND" disabled>
+                            <button class="btn btn-outline-secondary">Chọn mã</button>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Mã giảm giá -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-2">Mã giảm giá:</label>
-                    <input type="text" class="form-control" disabled>
-                </div>
+                    <!-- Mã giảm giá -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-2">Mã giảm giá:</label>
+                        <input type="text" class="form-control" disabled>
+                    </div>
 
-                <!-- Trả Sau -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-3">Trả Sau:</label>
-                    <label class="toggle-switch">
-                        <input type="checkbox" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                    <!-- Trả Sau -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-3">Trả Sau:</label>
+                        <select name="phuongThucThanhToanKhiNhan" >
+                            <option value="Chuyển Khoản">Chuyển Khoản</option>
+                            <option value="Tiền Mặt">Tiền Mặt</option>
+                            <option value="Thanh Toán Khi Nhận">Thanh toán khi nhận</option>
+                        </select>
 
-                <!-- Giao Hàng -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-3">Giao Hàng:</label>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="toggleForm">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                    </div>
 
-                <!-- Tiền hàng -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-3">Tiền hàng:</label>
-                    <p class="mb-0">9.500.000 VND</p>
-                </div>
+                    <!-- Giao Hàng -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-3">Giao Hàng:</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggleForm">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
 
-                <!-- Phí vận chuyển -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-3">Phí vận chuyển:</label>
-                    <input type="text" class="form-control" value="0 VND" disabled>
-                </div>
+                    <!-- Tiền hàng -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-3">Tiền hàng:</label>
+                        <p class="mb-0">9.500.000 VND</p>
+                    </div>
 
-                <!-- Giảm giá -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-3">Giảm giá:</label>
-                    <p class="mb-0">300.000 VND</p>
-                </div>
+                    <!-- Phí vận chuyển -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-3">Phí vận chuyển:</label>
+                        <input type="text" class="form-control" value="0 VND" disabled>
+                    </div>
 
-                <!-- Tổng tiền -->
-                <div class="form-section d-flex align-items-center mb-3">
-                    <label class="form-label me-3">Tổng tiền:</label>
-                    <p class="total-price mb-0 text-danger fw-bold giaVND" th:text="${tongTien}"></p>
-                </div>
+                    <!-- Giảm giá -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-3">Giảm giá:</label>
+                        <p class="mb-0">300.000 VND</p>
+                    </div>
 
-                <!-- Nút xác nhận -->
-                <button class="btn btn-dark w-100 confirm-btn mb-5" th:disabled="${idHD == null}">Xác nhận đặt hàng</button>
+                    <!-- Tổng tiền -->
+                    <div class="form-section d-flex align-items-center mb-3">
+                        <label class="form-label me-3">Tổng tiền:</label>
+                        <p class="total-price mb-0 text-danger fw-bold giaVND" th:name="inputTongTien" th:text="${tongTien}"></p>
+                    </div>
+
+                    <!-- Nút xác nhận -->
+                    <button class="btn btn-dark w-100 confirm-btn mb-5" th:disabled="${idHD == null}">Xác nhận đặt hàng</button>
+                </form>
             </div>
         </div>
 
@@ -405,8 +441,8 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 
-  
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
             const originalValue = parseFloat(element.innerText);
@@ -574,6 +610,72 @@
                 form.style.visibility = 'hidden';
             }
         });
+    </script>
+    <script th:inline="javascript">
+
+        var idTinh = document.getElementById("tinhThanhPho").value;
+        var idHuyen = document.getElementById("quanHuyen").value;
+        var idXa = document.getElementById("xaPhuong").value;
+
+        console.log(idTinh)
+        console.log(idHuyen)
+        console.log(idXa)
+
+        var citis = document.getElementById("city");
+        var districts = document.getElementById("district");
+        var wards = document.getElementById("ward");
+
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        axios(Parameter).then(function (result) {
+            renderCity(result.data);
+            // Preselect city, district, and ward after data is loaded
+            citis.value = idTinh;
+            citis.dispatchEvent(new Event('change'));
+
+            setTimeout(function () {
+                districts.value = idHuyen;
+                districts.dispatchEvent(new Event('change'));
+            }, 500);
+
+            setTimeout(function () {
+                wards.value = idXa;
+            }, 1000);
+        });
+
+        function renderCity(data) {
+            for (const x of data) {
+                citis.options[citis.options.length] = new Option(x.Name, x.Id);
+            }
+
+            citis.onchange = function () {
+                districts.length = 1;
+                wards.length = 1;
+
+                if (this.value != "") {
+                    const result = data.filter(n => n.Id === this.value);
+                    for (const k of result[0].Districts) {
+                        districts.options[districts.options.length] = new Option(k.Name, k.Id);
+                    }
+                }
+            };
+
+            districts.onchange = function () {
+                wards.length = 1;
+                const dataCity = data.filter((n) => n.Id === citis.value);
+
+                if (this.value != "") {
+                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+                    for (const w of dataWards) {
+                        wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                    }
+                }
+            };
+        }
     </script>
 
 </div>
