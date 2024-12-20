@@ -68,7 +68,7 @@ public class CartController {
                             @RequestParam(required = false) BigDecimal discountedPrice, // Giá giảm (nếu có)
                             @RequestParam int quantity,
                             HttpSession session) {
-        // Lấy danh sách giỏ hàng từ session
+        // Lấy danh sách giỏ hàng từ session m
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
         if (cart == null) {
