@@ -15,12 +15,14 @@ public class HinhAnh {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    String hinh_anh_1;
+    @Column(name = "hinh_anh_1")
+    private String hinh_anh_1;
 
-    String hinh_anh_2;
+    @Column(name = "hinh_anh_2")
+    private String hinh_anh_2;
 
-    String hinh_anh_3;
-
+    @Column(name = "hinh_anh_3")
+    private String hinh_anh_3;
 
     public HinhAnh(Integer hinhAnhId) {
         this.id = hinhAnhId;

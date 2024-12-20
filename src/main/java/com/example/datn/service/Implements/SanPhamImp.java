@@ -158,4 +158,8 @@ public class SanPhamImp implements SanPhamService {
         }
     }
 
+    @Override
+    public Page<SanPham> findByMaOrTen(String ten, Pageable pageable) {
+        return sanPhamRepo.findByTenOrMa(ten, pageable);
+    }
 }

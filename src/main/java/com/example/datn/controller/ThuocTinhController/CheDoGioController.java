@@ -1,7 +1,6 @@
 package com.example.datn.controller.ThuocTinhController;
 
 import com.example.datn.entity.thuoc_tinh.CheDoGio;
-import com.example.datn.entity.thuoc_tinh.CheDoGio;
 import com.example.datn.repository.ThuocTinhRepo.CheDoGioRepo;
 import com.example.datn.service.thuoc_tinh_service.CheDoGioService;
 import org.springframework.beans.factory.annotation.Autowired;
