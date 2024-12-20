@@ -281,7 +281,7 @@ public class HoaDonController {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             return ResponseEntity.ok().body("Thêm thành công");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Đã tồn tại chất liệu cánh.");
+            return ResponseEntity.badRequest().body("Lỗi.");
         }
     }
     @PostMapping("giam-so-luong")
@@ -292,7 +292,7 @@ public class HoaDonController {
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             return ResponseEntity.ok().body("Thêm thành công");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Đã tồn tại chất liệu cánh.");
+            return ResponseEntity.badRequest().body("Lỗi.");
         }
     }
 

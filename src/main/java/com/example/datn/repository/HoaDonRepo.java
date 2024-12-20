@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
@@ -50,7 +51,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     @Query("UPDATE HoaDon h SET h.tongTien = (SELECT SUM(hcd.thanhTien) FROM HoaDonChiTiet hcd WHERE hcd.hoaDon.id = h.id)")
     void updateTongTienHoaDon();
 
-
+    List<HoaDon> findByKhachHang_Id(Integer idKH);
 
     @Query("SELECT hd FROM HoaDon hd WHERE CAST(hd.ngayTao AS DATE) = :date ORDER BY hd.ngayTao DESC")
     Page<HoaDon> findByNgayTao(@Param("date") LocalDate date, Pageable pageable);

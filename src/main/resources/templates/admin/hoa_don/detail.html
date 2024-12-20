@@ -876,6 +876,48 @@
                 });
         </script>
 
+        <script>
+            $(document).on('click', '.btn-increase', function () {
+                const button = $(this); // Sử dụng 'this' để lấy đối tượng nút hiện tại
+                const idHoaDon = button.attr('data-id-hoa-don');
+                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet');
+                $.ajax({
+
+                    url: `/hoa-don/giam-so-luong`,
+                    type: 'POST',
+                    data: {
+                        idHoaDon: idHoaDon,
+                        idSanPhamChiTiet: idSanPhamChiTiet
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: response, // Thông báo thành công từ server
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: xhr.responseText, // Thông báo lỗi từ server
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                    }
+                });
+
+            });
+        </script>
+
     </div>
 </div>
 </body>
