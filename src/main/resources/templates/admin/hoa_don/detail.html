@@ -831,6 +831,8 @@
                             showConfirmButton: false,
                             timer: 1000,
                             timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
                         });
                     },
                     error: function (xhr) {
@@ -843,6 +845,8 @@
                             showConfirmButton: false,
                             timer: 1000,
                             timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
                         });
                     }
                 });
