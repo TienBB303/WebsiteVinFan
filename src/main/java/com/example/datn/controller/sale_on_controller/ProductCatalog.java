@@ -1,21 +1,22 @@
 package com.example.datn.controller.sale_on_controller;
 
+import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.KhachHangRepo;
+import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
 import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
 import com.example.datn.repository.SPCTRepo;
+import com.example.datn.service.HoaDonService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.sql.SQLOutput;
@@ -23,10 +24,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/admin")
 public class ProductCatalog {
 
-
+    private final HoaDonService hoaDonService;
+    private final LichSuHoaDonRepo lichSuHoaDonRepo;
     @Autowired
     private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
     @Autowired
@@ -142,6 +145,7 @@ public class ProductCatalog {
 
         return "/admin/website/productCatalog";
     }
+
     @GetMapping("/detail/{id}")
     public String getProductDetail(@PathVariable Long id, Model model) {
         Optional<SanPhamChiTiet> sanPhamChiTietOpt = spctRepo.findById(id);
@@ -178,19 +182,29 @@ public class ProductCatalog {
 
         return "redirect:/cart/view";
     }
+
     @GetMapping("/track-order")
     public String trackOrder(Model model) {
-        KhachHang khachHang   =  khachHangRepo.profileKhachHang();
+        KhachHang khachHang = khachHangRepo.profileKhachHang();
+        List<HoaDon> hoaDons = hoaDonService.getHoaDonByIdKH(khachHang.getId());
 
         if (khachHang == null) {
             model.addAttribute("errorMessage", "Không tìm thấy thông tin kh.");
             return "/admin/error"; // Điều hướng đến trang lỗi
-        }else {
-            System.out.println("dhfdhhdfhfd id: " + khachHang.getId());
-            model.addAttribute("ten", khachHang.getTen());
-            model.addAttribute("id", khachHang.getId());
+        } else {
+
+            // Thêm danh sách hóa đơn vào model
+            model.addAttribute("hoaDons", hoaDons);
+            model.addAttribute("khachHang", khachHang);
         }
         return "admin/website/trackOrder";
+    }
+    // Thêm phương thức xử lý AJAX để trả về chi tiết hóa đơn theo ID
+    @GetMapping("/hoadon/{id}")
+    @ResponseBody
+    public HoaDon chiTietHoaDon(@PathVariable("id") Long id) {
+        HoaDon hoaDon = hoaDonService.findById(id).orElse(null);
+        return hoaDon; // Trả về hóa đơn dưới dạng JSON
     }
 
 }

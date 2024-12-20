@@ -322,6 +322,11 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
     }
 
+    @Override
+    public List<HoaDon> getHoaDonByIdKH(Integer idKH) {
+        return hoaDonRepo.findByKhachHang_Id(idKH);
+    }
+
     //khoi
     @Override
     public void saveHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet) {
