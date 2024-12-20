@@ -8,6 +8,7 @@ import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -56,6 +57,8 @@ public interface HoaDonService {
 
     boolean huyHoaDon(long id);
 
+    boolean hoanThanhHoaDon(long id);
+
     void updateTongTienHoaDon();
 
     void deleteSPInHD(Long idSanPhamChiTiet);
@@ -68,7 +71,6 @@ public interface HoaDonService {
 
     void truSoLuongSanPham(Long idHD);
 
-    void hoanSoLuongSanPham(Long idHD);
 
     List<HoaDon> getHoaDonByIdKH(Integer idKH);
 
