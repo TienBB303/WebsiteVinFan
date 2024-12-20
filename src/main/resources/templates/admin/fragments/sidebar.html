@@ -1,14 +1,15 @@
 <div id="sidebar" class="sidebar-desktop active" th:fragment="sidebar" xmlns:th="http://www.thymeleaf.org">
     <div class="sidebar-wrapper active ps ps--active-y">
-<!--    Mục để chỉnh sidebar-->
+        <!--    Mục để chỉnh sidebar-->
         <div class="sidebar-header position-relative">
-<!--        Chỉnh thành phần trên cùng cảu sidebar: logo, button-->
+            <!--        Chỉnh thành phần trên cùng cảu sidebar: logo, button-->
             <div class="d-flex justify-content-between align-items-center">
-<!--            Chỉnh logo-->
+                <!--            Chỉnh logo-->
                 <a href="/admin/index">
-                    <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 50%; height: 50%;" alt="Logo">
+                    <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 50%; height: 50%;"
+                         alt="Logo">
                 </a>
-<!--            Chỉnh giao diện sáng tối-->
+                <!--            Chỉnh giao diện sáng tối-->
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                          aria-hidden="true" role="img" class="iconify iconify--system-uicons" width="20" height="20"
@@ -36,7 +37,7 @@
                         </path>
                     </svg>
                 </div>
-<!--            Nút đóng sidebar-->
+                <!--            Nút đóng sidebar-->
                 <div class="sidebar-toggler  x">
                     <a href="#" class="sidebar-hide d-xl-none d-block">
                         <i class="bi bi-x bi-middle">
@@ -50,13 +51,16 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
                 <li class="sidebar-item  ">
-                    <a href="/admin/index" class="sidebar-link">
+                    <a href="/trang-ca-nhan/index" class="sidebar-link">
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-title">Bán hàng</li>
-<!--            Bán hàng tại quầy-->
+                <hr style="border: none;
+            border-top: 3px dashed #090a0b; /* Đường kẻ nét đứt */
+            width: 80%; /* Chiều dài đường kẻ */
+            margin: 20px auto; /* Canh giữa */">
+                <!--            Bán hàng tại quầy-->
                 <li class="sidebar-item  ">
                     <a href="/ban-hang-tai-quay/index" class="sidebar-link" target="_blank">
                         <i class="bi bi-basket"></i>
@@ -69,7 +73,7 @@
                         <span>Website</span>
                     </a>
                 </li>
-<!--            Sản phẩm-->
+                <!--            Sản phẩm-->
                 <li class="sidebar-item  has-sub">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-stack"></i>
@@ -86,81 +90,42 @@
                             <a href="/admin/thuoc-tinh" class="submenu-link">Thuộc tính</a>
                         </li>
                     </ul>
-
-
                 </li>
 
-                <li class="sidebar-item  has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-collection-fill"></i>
-                        <span>Thống kê</span>
-                    </a>
 
-                    <ul class="submenu submenu-closed" style="--submenu-height: 258px;">
-                        <li class="submenu-item  ">
-                            <a href="/thong-ke/index" class="submenu-link">Thống kê</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="sidebar-item  has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-grid-1x2-fill"></i>
+                <li class="sidebar-item">
+                    <a href="/hoa-don/index" class="sidebar-link">
+                        <i class="bi bi-receipt-cutoff"></i>
                         <span>Hóa đơn</span>
                     </a>
-
-                    <ul class="submenu submenu-closed" style="--submenu-height: 215px;">
-                        <li class="submenu-item  ">
-                            <a href="/hoa-don/index" class="submenu-link">Hóa đơn</a>
-                        </li>
-                    </ul>
                 </li>
 
-                <li class="sidebar-item  has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-grid-1x2-fill"></i>
+                <li class="sidebar-item ">
+                    <a href="/admin/phieu-giam/index" class="sidebar-link">
+                        <i class="bi bi-bookmarks"></i>
                         <span>Quản lý phiếu giảm giá</span>
                     </a>
-
-                    <ul class="submenu submenu-closed" style="--submenu-height: 215px;">
-                        <li class="submenu-item  ">
-                            <a href="/admin/phieu-giam/index" class="submenu-link">Phiếu giảm giá</a>
-                        </li>
-                    </ul>
                 </li>
 
-                <li class="sidebar-item  has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-grid-1x2-fill"></i>
-                        <span>Quản lý khách hàng</span>
-                    </a>
-
-                    <ul class="submenu submenu-closed" style="--submenu-height: 215px;">
-                        <li class="submenu-item  ">
-                            <a href="/admin/khach-hang/index" class="submenu-link">Khách hàng</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="sidebar-item  has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-grid-1x2-fill"></i>
+                <li class="sidebar-item">
+                    <a href="/admin/nhan-vien/index" class="sidebar-link">
+                        <i class="bi bi-person-circle"></i>
                         <span>Quản lý nhân viên</span>
                     </a>
-
-                    <ul class="submenu submenu-closed" style="--submenu-height: 215px;">
-                        <li class="submenu-item  ">
-                            <a href="/admin/nhan-vien/index" class="submenu-link">Nhân viên</a>
-                        </li>
-                    </ul>
                 </li>
 
-                <li class="sidebar-title">Tiêu đề mục</li>
+                <li class="sidebar-item">
+                    <a href="/admin/khach-hang/index" class="sidebar-link">
+                        <i class="bi bi-people"></i>
+                        <span>Quản lý khách hàng</span>
+                    </a>
+                </li>
 
-                <li class="sidebar-item  ">
-                    <a href="demo.html" class="sidebar-link">
-                        <i class="bi bi-file-earmark-medical-fill"></i>
-                        <span>Mục đơn</span>
+
+                <li class="sidebar-item">
+                    <a href="/thong-ke/index" class="sidebar-link">
+                        <i class="bi bi-list-stars"></i>
+                        <span>Thống kê</span>
                     </a>
                 </li>
             </ul>
