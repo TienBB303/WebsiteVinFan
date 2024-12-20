@@ -44,4 +44,6 @@ public interface SanPhamService {
 
     SanPhamChiTiet getProductDetails(Long productId);
 
+    Page<SanPham> findByMaOrTen(String ten, Pageable pageable);
+
 }
