@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
 import java.util.Optional;
@@ -30,5 +32,12 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer>{
     Optional<KhachHang> findByResetToken(String resetToken);
 
     Optional<KhachHang> findById(Long id);
+
+    default KhachHang profileKhachHang() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return findByEmail(email).orElse(null);
+    }
+
 
 }

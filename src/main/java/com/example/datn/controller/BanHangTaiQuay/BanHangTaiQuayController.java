@@ -6,6 +6,7 @@ import com.example.datn.entity.HoaDon;
 import com.example.datn.entity.HoaDonChiTiet;
 import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
@@ -29,6 +30,7 @@ public class BanHangTaiQuayController {
     private final BanHangTaiQuayService banHangTaiQuayService;
     private final HoaDonService hoaDonService;
     private final SPCTRepo spctRepo;
+    private final KhachHangRepo khachHangRepo;
 
     @GetMapping("/index")
     public String index(
