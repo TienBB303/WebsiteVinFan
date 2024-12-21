@@ -216,6 +216,8 @@
         <tr>
             <th>STT</th>
             <th>Tên sản phẩm</th>
+            <th>Công xuất</th>
+            <th>Màu sắc</th>
             <th>Giá bán</th>
             <th>Số lượng</th>
             <th>Thành tiền</th>
@@ -225,6 +227,8 @@
         <tr th:each="item, iter : ${listHDCT}" th:data-id="${item.id}">
             <td th:text="${iter.count}"></td>
             <td th:text="${item.sanPhamChiTiet.sanPham.ten}"></td>
+            <td th:text="${item.sanPhamChiTiet.congSuat.ten}"></td>
+            <td th:text="${item.sanPhamChiTiet.mauSac.ten}"></td>
             <td class="giaVND" th:text="${item.gia}"></td>
             <td>
                 <input type="number" class="form-control quantity-input"

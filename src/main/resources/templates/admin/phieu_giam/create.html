@@ -131,18 +131,21 @@
                             </div>
                             <!-- Chọn sản phẩm -->
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Chọn mã sản phẩm</label>
+                                <label class="col-sm-4 col-form-label">Chọn sản phẩm chi tiết</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="sanPhamMa" id="productCodeSelect">
-                                        <option value="" th:selected="${sanPhamMa == null}">Chọn sản phẩm</option>
-                                        <option th:each="sanPham : ${sanPhams}"
-                                                th:value="${sanPham.ma}"
-                                                th:text="${sanPham.ma + ' - ' + sanPham.ten + ' (' + (sanPham.mo_ta != null ? sanPham.mo_ta : 'Chưa có giá') + ')'}"
-                                                th:selected="${sanPhamMa == sanPham.ma}">
+                                    <select class="form-control" name="sanPhamChiTietId" id="productCodeSelect">
+                                        <option value="" th:selected="${sanPhamChiTietId == null}">Chọn sản phẩm chi tiết</option>
+                                        <option th:each="spct : ${sanPhamChiTietList}"
+                                                th:value="${spct.id}"
+                                                th:selected="${spct.id == sanPhamChiTietId}"
+                                                th:text="${spct.sanPham.ten + ' - ' + spct.mauSac.ten + ' - Công suất: ' + spct.congSuat + 'W - Giá: ' +
+                 (spct.gia != null ? spct.gia : 'Chưa có giá') +
+                 (appliedProductMap != null && appliedProductMap.containsKey(spct.id) ? ' - ĐÃ ÁP DỤNG' : '')}">
                                         </option>
                                     </select>
                                 </div>
                             </div>
+
                             <!-- Button thêm mới -->
                             <div style="display: flex; justify-content: center;">
                                 <button type="submit" class="btn btn-primary" style="width: 500px;">Thêm mới</button>
@@ -168,14 +171,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         function validateForm() {
-            var currentDate = new Date();
-            var ten = document.forms["addForm"]["ten"].value.trim();
+            const currentDate = new Date();
+            const ten = document.forms["addForm"]["ten"].value.trim();
             var ngayBD = document.forms["addForm"]["ngayBD"].value.trim();
-            var ngayKT = document.forms["addForm"]["ngayKT"].value.trim();
-            var giaTriGiam = parseInt(document.forms["addForm"]["giaTriGiam"].value);
-            var sanPhamGia = getSelectedProductPrice(); // Giá sản phẩm lấy từ dropdown
-            var selectedStartDate = new Date(ngayBD);
-            var selectedEndDate = new Date(ngayKT);
+            const ngayKT = document.forms["addForm"]["ngayKT"].value.trim();
+            const giaTriGiam = parseInt(document.forms["addForm"]["giaTriGiam"].value, 10);
+            const sanPhamGia = getSelectedProductPrice(); // Lấy giá sản phẩm từ dropdown
+            const selectedStartDate = new Date(ngayBD);
+            const selectedEndDate = new Date(ngayKT);
 
             console.log("Giá sản phẩm:", sanPhamGia); // Debug giá sản phẩm
 
@@ -185,76 +188,83 @@
                 return false;
             }
 
-            if (ngayBD.trim() === "") {
-                showToast("Không để trống ngày bắt đầu.");
-                return false; // Dừng lại ngay khi phát hiện lỗi
-            } else {
-                // Đặt thời gian của ngày bắt đầu và ngày hiện tại về 00:00:00
-                selectedStartDate.setHours(0, 0, 0, 0);
-                currentDate.setHours(0, 0, 0, 0);
-
-                if (selectedStartDate < currentDate) {
-                    showToast("Ngày bắt đầu không được là ngày quá khứ.");
-                    return false;
-                }
-            }
-
-            if (!ngayKT) {
-                showToast("Không để trống ngày kết thúc.");
-                return false;
-            }
-
-            if (selectedEndDate <= selectedStartDate) {
-                showToast("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
-                return false;
-            }
+            // if (!ngayBD) {
+            //     showToast("Không để trống ngày bắt đầu.");
+            //     return false;
+            // } else {
+            //     selectedStartDate.setHours(0, 0, 0, 0);
+            //     currentDate.setHours(0, 0, 0, 0);
+            //
+            //     if (selectedStartDate < currentDate) {
+            //         showToast("Ngày bắt đầu không được là ngày quá khứ.");
+            //         return false;
+            //     }
+            // }
+            //
+            // if (!ngayKT) {
+            //     showToast("Không để trống ngày kết thúc.");
+            //     return false;
+            // } else if (selectedEndDate <= selectedStartDate) {
+            //     showToast("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
+            //     return false;
+            // }
 
             if (!giaTriGiam || giaTriGiam <= 10000) {
                 showToast("Giá trị giảm phải lớn hơn 10000 VND.");
                 return false;
             }
+
             // Nếu không tìm thấy giá sản phẩm thì bỏ qua kiểm tra mức giảm tối đa
             if (!sanPhamGia || sanPhamGia <= 0) {
                 console.log("Không tìm thấy giá sản phẩm, bỏ qua kiểm tra mức giảm tối đa.");
-                return true; // Bỏ qua kiểm tra và tiếp tục
+                return true;
             }
 
             // Xác định mức giảm tối đa
-            var maxGiam = 0;
-            if (sanPhamGia >= 100000 && sanPhamGia < 200000) {
-                maxGiam = 50000;
-            } else if (sanPhamGia >= 200000 && sanPhamGia < 500000) {
-                maxGiam = 100000;
-            } else if (sanPhamGia >= 500000 && sanPhamGia < 1000000) {
-                maxGiam = 250000;
-            } else if (sanPhamGia >= 1000000 && sanPhamGia < 10000000) {
-                maxGiam = 500000;
-            } else if (sanPhamGia >= 10000000) {
-                maxGiam = 1000000;
-            }
+            const maxGiam = calculateMaxDiscount(sanPhamGia);
 
             if (giaTriGiam > maxGiam) {
-                showToast(`Giá trị giảm không được vượt quá ${maxGiam} VND cho mức giá sản phẩm ${sanPhamGia} VND.`);
+                showToast(`Giá trị giảm không được vượt quá ${maxGiam.toLocaleString()} VND cho mức giá sản phẩm ${sanPhamGia.toLocaleString()} VND.`);
                 return false;
             }
 
             return true; // Form hợp lệ
         }
 
+        // Hàm tính toán mức giảm tối đa dựa trên giá sản phẩm
+        function calculateMaxDiscount(sanPhamGia) {
+            if (sanPhamGia >= 100000 && sanPhamGia < 200000) {
+                return 50000;
+            } else if (sanPhamGia >= 200000 && sanPhamGia < 500000) {
+                return 100000;
+            } else if (sanPhamGia >= 500000 && sanPhamGia < 1000000) {
+                return 250000;
+            } else if (sanPhamGia >= 1000000 && sanPhamGia < 10000000) {
+                return 500000;
+            } else if (sanPhamGia >= 10000000) {
+                return 1000000;
+            }
+            return 0; // Trường hợp giá sản phẩm không hợp lệ
+        }
+
         // Hàm lấy giá sản phẩm từ dropdown
         function getSelectedProductPrice() {
-            var productSelect = document.getElementById("productCodeSelect");
-            var selectedOption = productSelect.options[productSelect.selectedIndex];
-            if (!selectedOption || !selectedOption.textContent) return 0;
+            const productSelect = document.getElementById("productCodeSelect");
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            if (!selectedOption || !selectedOption.textContent) {
+                return 0; // Không có giá trị được chọn
+            }
 
             // Lấy giá sản phẩm từ chuỗi dạng "(Giá: xxx.xxx VND)"
-            var regex = /\(Giá:\s*([\d.,]+)\s*VND\)/;
-            var match = regex.exec(selectedOption.textContent);
+            const regex = /Giá:\s*([\d.,]+)/; // Regex tìm giá trị "Giá: xxx.xxx"
+            const match = regex.exec(selectedOption.textContent);
+
             if (match && match[1]) {
-                // Loại bỏ dấu phẩy hoặc dấu chấm và chuyển về số nguyên
+                // Loại bỏ dấu phẩy hoặc dấu chấm và chuyển thành số nguyên
                 return parseInt(match[1].replace(/[,.]/g, ""), 10);
             }
-            return 0; // Nếu không lấy được giá, trả về 0
+
+            return 0; // Giá không hợp lệ
         }
 
         function showToast(message) {
