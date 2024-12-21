@@ -10,8 +10,6 @@ import java.util.List;
 public interface BanHangTaiQuayService {
     void taoHoaDonCho(HoaDon hoaDon);
 
-    void addSPToHoaDonCho(Long idSP);
-
     List<HoaDon> findHoaDon();
 
     Long getIdHoaDon();
