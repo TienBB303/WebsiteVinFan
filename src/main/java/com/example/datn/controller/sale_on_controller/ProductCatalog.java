@@ -1,9 +1,7 @@
 package com.example.datn.controller.sale_on_controller;
 
-import com.example.datn.entity.HoaDon;
-import com.example.datn.entity.KhachHang;
+import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
-import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
@@ -199,8 +197,17 @@ public class ProductCatalog {
         }
         return "admin/website/trackOrder";
     }
-    @GetMapping("/detail-order")
-    public String detailOrder() {
+    @GetMapping("/hoa-don-kh/{id}")
+    public String detailOrder(@PathVariable long id, Model model) {
+        //Lấy thông tin lịch sử hóa đơn theo id hóa đơn
+        List<LichSuHoaDon> lichSuHoaDonList = lichSuHoaDonRepo.findLichSuHoaDonByIdHoaDon(id);
+        model.addAttribute("listHistory", lichSuHoaDonList);
+
+        List<HoaDonChiTiet> listHDCT = this.hoaDonService.timSanPhamChiTietTheoHoaDon(id);
+        model.addAttribute("listHDCT", listHDCT);
+
+        KhachHang khachHang = khachHangRepo.profileKhachHang();
+        model.addAttribute("khachHang", khachHang);
 
         return "admin/website/detailDH";
     }

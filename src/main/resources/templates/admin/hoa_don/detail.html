@@ -77,7 +77,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="card mb-4">
@@ -143,7 +142,7 @@
                           class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-outline-success">
-                            <i class=""></i> Xác Nhận
+                            <i class=""></i> Chờ xác nhận
                         </button>
                     </form>
 
@@ -156,19 +155,10 @@
                         </button>
                     </form>
 
-                    <form method="post" th:action="@{/hoa-don/cho-xac-nhan}"
-                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}"
-                          class="me-2">
-                        <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-outline-secondary ">
-                            <i class=""></i>Hoàn tác
-                        </button>
-                    </form>
-
                     <form method="post" th:action="@{/hoa-don/hoan-thanh}"
                           th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 3}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-outline-primary">
+                        <button type="submit" class="btn btn-outline-primary" >
                             <i class=""></i> Hoàn Thành
                         </button>
                     </form>
@@ -182,9 +172,7 @@
                     </form>
                 </div>
             </div>
-            <!--            -->
 
-            <!--            -->
             <!-- Payment History Section -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -366,17 +354,19 @@
                         <td>
                             <!-- Nút Giảm -->
                             <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                    th:data-id-hoa-don="${item.hoaDon.id}"
-                                    th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
+                                    th:if="${ hoaDon.trangThai == 1 || hoaDon.trangThai == 0}"
+                                    th:data-id-hoa-don-giam="${item.hoaDon.id}"
+                                    th:data-id-san-pham-chi-tiet-giam="${item.sanPhamChiTiet.id}">
                                 -
                             </button>
                             <!-- Ô nhập số lượng -->
                             <input type="number" class="form-control quantity-input"
                                    th:value="${item.soLuong}"
                                    min="1"
-                                   style="width: 60px; text-align: center; display: inline-block;"/>
+                                   style="width: 60px; text-align: center; display: inline-block;" disabled/>
                             <!-- Nút Tăng -->
                             <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
+                                    th:if="${hoaDon.trangThai == 1 || hoaDon.trangThai == 0}"
                                     th:data-id-hoa-don="${item.hoaDon.id}"
                                     th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
                                 +
@@ -385,11 +375,12 @@
                         </td>
                         <td class="giaVND" th:text="${item.thanhTien}"></td>
                         <td>
-                            <form th:action="@{/hoa-don/xoa}" method="post" >
+                            <form th:action="@{/hoa-don/xoa}" method="post">
                                 <input type="hidden" name="_method" value="DELETE"/>
                                 <input type="hidden" name="idHD" th:value="${item.hoaDon.id}"/>
                                 <input type="hidden" name="idSP" th:value="${item.sanPhamChiTiet.id}"/>
-                                <button type="submit" class="btn btn-outline-danger" th:disabled="${hoaDon.trangThai != 1}">
+                                <button type="submit" class="btn btn-outline-danger"
+                                        th:disabled="${hoaDon.trangThai != 1}">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -556,10 +547,10 @@
     <!-- Script -->
     <div>
         <script th:replace="/admin/fragments/script :: script"></script>
-<!--        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+        <!--        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<!--        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>-->
+        <!--        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
         <script th:inline="javascript">
             var ganDiaChi = document.getElementById("ganDiaChi");
@@ -795,34 +786,6 @@
 
         </script>
 
-
-        <script>
-            // Lắng nghe sự kiện tăng và giảm số lượng
-            document.addEventListener('DOMContentLoaded', function () {
-                // Nút giảm số lượng
-                const decreaseButtons = document.querySelectorAll('.btn-decrease');
-                decreaseButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        const input = button.nextElementSibling; // Lấy input sau nút
-                        let quantity = parseInt(input.value);
-                        if (quantity > 1) {
-                            input.value = quantity - 1; // Giảm số lượng
-                        }
-                    });
-                });
-
-                // Nút tăng số lượng
-                const increaseButtons = document.querySelectorAll('.btn-increase');
-                increaseButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        const input = button.previousElementSibling; // Lấy input trước nút
-                        let quantity = parseInt(input.value);
-                        input.value = quantity + 1; // Tăng số lượng
-                    });
-                });
-            });
-
-        </script>
         <script>
             document.querySelectorAll('.giaVND').forEach(element => {
                 const originalValue = parseFloat(element.innerText);
@@ -833,54 +796,59 @@
                 });
             });
         </script>
-
+        <meta name="_csrf" content="${_csrf.token}" />
+        <meta name="_csrf_header" content="${_csrf.headerName}" />
         <script>
             $(document).on('click', '.btn-increase', function () {
-                const button = $(this); // Sử dụng 'this' để lấy đối tượng nút hiện tại
-                const idHoaDon = button.attr('data-id-hoa-don');
-                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet');
-                    $.ajax({
+                const button = $(this); // Lấy đối tượng nút hiện tại
+                const idHoaDon = button.attr('data-id-hoa-don'); // Lấy ID hóa đơn từ thuộc tính data
+                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet'); // Lấy ID sản phẩm chi tiết từ thuộc tính data
 
-                        url: `/hoa-don/tang-so-luong`,
-                        type: 'POST',
-                        data: {
-                            idHoaDon: idHoaDon,
-                            idSanPhamChiTiet: idSanPhamChiTiet
-                        },
-                        success: function (response) {
-                            Swal.fire({
-                                toast: true,
-                                icon: 'success',
-                                title: response, // Thông báo thành công từ server
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 1000,
-                                timerProgressBar: true
-                            }).then(() => {
-                                location.reload();
-                            });
-                        },
-                        error: function (xhr) {
-                            Swal.fire({
-                                toast: true,
-                                icon: 'error',
-                                title: xhr.responseText, // Thông báo lỗi từ server
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                        }
-                    });
-
+                $.ajax({
+                    url: `/hoa-don/tang-so-luong`, // Endpoint xử lý tăng số lượng
+                    type: 'POST',
+                    data: {
+                        idHoaDon: idHoaDon,
+                        idSanPhamChiTiet: idSanPhamChiTiet
+                    },
+                    success: function (response) {
+                        // Hiển thị thông báo thành công
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: response, // Thông báo từ server
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        // Hiển thị thông báo lỗi
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: xhr.responseText, // Thông báo lỗi từ server
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
                 });
+            });
         </script>
 
+
         <script>
             $(document).on('click', '.btn-increase', function () {
                 const button = $(this); // Sử dụng 'this' để lấy đối tượng nút hiện tại
-                const idHoaDon = button.attr('data-id-hoa-don');
-                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet');
+                const idHoaDon = button.attr('data-id-hoa-don-giam');
+                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet-giam');
                 $.ajax({
 
                     url: `/hoa-don/giam-so-luong`,
@@ -911,6 +879,8 @@
                             showConfirmButton: false,
                             timer: 3000,
                             timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
                         });
                     }
                 });
