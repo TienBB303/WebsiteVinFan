@@ -179,15 +179,15 @@ public class HoaDonServiceImpl implements HoaDonService {
         List<HoaDonChiTiet> listHDCT = hoaDonChiTietRepo.findByHoaDon_Id(id);
 
         if (hoaDonOptional.isPresent()) {
-            for (HoaDonChiTiet hdct : listHDCT) {
-                SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
-                int soLuongTon = spct.getSo_luong(); // Số lượng hiện tại trong kho
-                int soLuongBan = hdct.getSoLuong();    // Số lượng trong hóa đơn chi tiết
-
-                if (soLuongTon < soLuongBan) {
-                    throw new RuntimeException("Số lượng tồn kho không đủ cho sản phẩm: " + spct.getSanPham().getTen());
-                }
-            }
+//            for (HoaDonChiTiet hdct : listHDCT) {
+//                SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
+//                int soLuongTon = spct.getSo_luong(); // Số lượng hiện tại trong kho
+//                int soLuongBan = hdct.getSoLuong();    // Số lượng trong hóa đơn chi tiết
+//
+//                if (soLuongTon < soLuongBan) {
+//                    throw new RuntimeException("Số lượng tồn kho không đủ cho sản phẩm: " + spct.getSanPham().getTen());
+//                }
+//            }
             HoaDon hoaDon = hoaDonOptional.get();
 
             // Cập nhật trạng thái của HoaDon
@@ -239,35 +239,35 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public boolean hoanThanhHoaDon(long id) {
-        // Tìm kiếm HoaDon dựa trên ID
-        Optional<HoaDon> hoaDonOptional = hoaDonRepo.findById(id);
-        List<HoaDonChiTiet> listHDCT = hoaDonChiTietRepo.findByHoaDon_Id(id);
-
-        if (hoaDonOptional.isPresent()) {
-            for (HoaDonChiTiet hdct : listHDCT) {
-                SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
-                int soLuongTon = spct.getSo_luong(); // Số lượng hiện tại trong kho
-                int soLuongBan = hdct.getSoLuong();    // Số lượng trong hóa đơn chi tiết
-
-                if (soLuongTon < soLuongBan) {
-                    throw new RuntimeException("Số lượng tồn kho không đủ cho sản phẩm: " + spct.getSanPham().getTen());
-                }
-            }
-            HoaDon hoaDon = hoaDonOptional.get();
-
-            // Cập nhật trạng thái của HoaDon
-            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-            hoaDonRepo.save(hoaDon);
-
-            // Tạo lịch sử cập nhật
-            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setHoaDon(hoaDon);
-            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-            lichSuHoaDon.setNgayTao(LocalDate.now());
-            lichSuHoaDonRepo.save(lichSuHoaDon);
-
-            return true;
-        }
+//        // Tìm kiếm HoaDon dựa trên ID
+//        Optional<HoaDon> hoaDonOptional = hoaDonRepo.findById(id);
+//        List<HoaDonChiTiet> listHDCT = hoaDonChiTietRepo.findByHoaDon_Id(id);
+//
+//        if (hoaDonOptional.isPresent()) {
+//            for (HoaDonChiTiet hdct : listHDCT) {
+//                SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
+//                int soLuongTon = spct.getSo_luong(); // Số lượng hiện tại trong kho
+//                int soLuongBan = hdct.getSoLuong();    // Số lượng trong hóa đơn chi tiết
+//
+//                if (soLuongTon < soLuongBan) {
+//                    throw new RuntimeException("Số lượng tồn kho không đủ cho sản phẩm: " + spct.getSanPham().getTen());
+//                }
+//            }
+//            HoaDon hoaDon = hoaDonOptional.get();
+//
+//            // Cập nhật trạng thái của HoaDon
+//            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+//            hoaDonRepo.save(hoaDon);
+//
+//            // Tạo lịch sử cập nhật
+//            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+//            lichSuHoaDon.setHoaDon(hoaDon);
+//            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+//            lichSuHoaDon.setNgayTao(LocalDate.now());
+//            lichSuHoaDonRepo.save(lichSuHoaDon);
+//
+//            return true;
+//        }
         return false;// Khong tim thay hoa don
     }
 

@@ -77,7 +77,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="card mb-4">
@@ -142,11 +141,10 @@
                           th:if="${hoaDon.trangThai != 2 && hoaDon.trangThai != 3 && hoaDon.trangThai != 0}"
                           class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="button" class="btn btn-outline-success" id="confirmButton">
-                            <i class=""></i> Xác Nhận
+                        <button type="submit" class="btn btn-outline-success">
+                            <i class=""></i> Chờ xác nhận
                         </button>
                     </form>
-
 
                     <form method="post" th:action="@{/hoa-don/giao-hang}"
                           th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 1 && hoaDon.trangThai != 0}"
@@ -174,15 +172,7 @@
                     </form>
                 </div>
             </div>
-            <!--            -->
-            <div id="message"
-                 style="position: fixed; top: 20px; right: 20px; padding: 10px 20px;
-            background-color: #f5f5f5; color: green;
-            font-weight: bold; border-radius: 5px;
-            width: 300px; height: 80px; display: none;">
-            </div>
 
-            <!--            -->
             <!-- Payment History Section -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -831,6 +821,8 @@
                             showConfirmButton: false,
                             timer: 1000,
                             timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
                         });
                     },
                     error: function (xhr) {
@@ -843,6 +835,8 @@
                             showConfirmButton: false,
                             timer: 1000,
                             timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
                         });
                     }
                 });
@@ -891,37 +885,6 @@
                     }
                 });
 
-            });
-        </script>
-
-
-        <script>
-            $(document).ready(function () {
-                $("#confirmButton").click(function () {
-                    const hoaDonId = $("input[name='id']").val(); // Lấy ID từ input hidden
-
-                    $.ajax({
-                        url: "/hoa-don/xac-nhan",
-                        method: "POST",
-                        data: {id: hoaDonId},
-                        success: function (response) {
-                            $("#message").css("color", "green").text(response).fadeIn(); // Hiển thị thông báo thành công
-                            setTimeout(function () {
-                                $("#message").fadeOut(); // Ẩn thông báo sau 3 giây
-                            }, 3000);
-                        },
-                        error: function (xhr) {
-                            if (xhr.status === 400) {
-                                $("#message").css("color", "red").text("Lỗi: " + xhr.responseText).fadeIn(); // Hiển thị lỗi
-                            } else {
-                                $("#message").css("color", "red").text("Có lỗi xảy ra. Vui lòng thử lại.").fadeIn(); // Lỗi khác
-                            }
-                            setTimeout(function () {
-                                $("#message").fadeOut(); // Ẩn thông báo sau 3 giây
-                            }, 3000);
-                        }
-                    });
-                });
             });
         </script>
 

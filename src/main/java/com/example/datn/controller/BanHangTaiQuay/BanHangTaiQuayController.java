@@ -45,9 +45,6 @@ public class BanHangTaiQuayController {
         //hiển thị danh sách sản phẩm add
         List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
         model.addAttribute("listSPCTInHDCT", listSPCTInHDCT);
-
-
-
         model.addAttribute("listsKhachhang", khachHangRepo.findAll());
 
         return "admin/ban_hang_tai_quay/index";

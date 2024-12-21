@@ -166,19 +166,34 @@ public class HoaDonController {
         return "redirect:/hoa-don/detail?id=" + request.getIdHD();
     }
 
+
+
     @PostMapping("/xac-nhan")
-    public ResponseEntity<?> xacNhanHoaDon( @ModelAttribute("id") long id) {
-        try {
-            boolean result = hoaDonService.xacNhanHoaDon(id);
-            if (result) {
-                hoaDonService.updateTongTienHoaDon();
-                hoaDonService.truSoLuongSanPham(id);
-                return ResponseEntity.ok("Hóa đơn đã được xác nhận thành công.");
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy hóa đơn.");
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public String xacNhan(
+            @ModelAttribute("id") long id
+    ) {
+        // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
+        Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
+
+        if (hoaDonOptional.isPresent()) {
+            HoaDon hoaDon = hoaDonOptional.get();
+
+            // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
+            hoaDonService.save(hoaDon);
+            hoaDonService.updateTongTienHoaDon();
+            hoaDonService.truSoLuongSanPham(id);
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
+            lichSuHoaDon.setNgayTao(LocalDate.now());
+
+            lichSuHoaDonRepo.save(lichSuHoaDon);
         }
+
+        // Chuyển hướng người dùng đến trang chi tiết của HoaDon
+        return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
 
     @PostMapping("/giao-hang")
@@ -206,19 +221,29 @@ public class HoaDonController {
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
 
+
     @PostMapping("/hoan-thanh")
-    public ResponseEntity<?> hoanThanh( @ModelAttribute("id") long id) {
-        try {
-            boolean result = hoaDonService.hoanThanhHoaDon(id);
-            if (result) {
-                hoaDonService.updateTongTienHoaDon();
-                hoaDonService.truSoLuongSanPham(id);
-                return ResponseEntity.ok("Hóa đơn đã được xác nhận thành công.");
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy hóa đơn.");
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public String hoanThanh(@ModelAttribute("id") long id) {
+        // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
+        Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
+        if (hoaDonOptional.isPresent()) {
+            HoaDon hoaDon = hoaDonOptional.get();
+
+            // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+            hoaDonService.save(hoaDon);
+
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+            lichSuHoaDon.setNgayTao(LocalDate.now());
+
+            lichSuHoaDonRepo.save(lichSuHoaDon);
+            hoaDonService.truSoLuongSanPham(id);
         }
+        // Chuyển hướng người dùng đến trang chi tiết của HoaDon
+        return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
 
     @PostMapping("/huy")
