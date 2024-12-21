@@ -244,6 +244,17 @@ public class CartController {
         // Lấy danh sách sản phẩm từ session
         List<CartItem> cartItems = getCartFromSession(session);
 
+        KhachHang khachHang = khachHangRepo.profileKhachHang();
+        model.addAttribute("khachHang",khachHang);
+
+        List<DiaChi> diaChi =  diaChiRepository.findByKhachHangId(khachHang.getId());
+        for ( DiaChi x: diaChi) {
+            if (x.getTrangThai() == true){
+                model.addAttribute("diaChiMacDinh",diaChi);
+            }
+        }
+
+
         // Tính tổng tiền
         double totalPrice = cartItems.stream()
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
