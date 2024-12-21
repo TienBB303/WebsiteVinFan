@@ -247,12 +247,8 @@ public class CartController {
         KhachHang khachHang = khachHangRepo.profileKhachHang();
         model.addAttribute("khachHang",khachHang);
 
-        List<DiaChi> diaChi =  diaChiRepository.findByKhachHangId(khachHang.getId());
-        for ( DiaChi x: diaChi) {
-            if (x.getTrangThai() == true){
-                model.addAttribute("diaChiMacDinh",diaChi);
-            }
-        }
+        DiaChi diaChi =  diaChiRepository.DiaChimacDinhvsfindByKhachHangId(khachHang.getId());
+        model.addAttribute("diachiMacDinh",diaChi);
 
 
         // Tính tổng tiền
@@ -286,7 +282,12 @@ public class CartController {
 
     @Transactional
     @PostMapping("/process-payment")
-    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session, Model model) {
+    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session, Model model,
+        @RequestParam("tinhThanhPho") String tinhThanhPho,
+        @RequestParam("quanHuyen") String quanHuyen,
+        @RequestParam("xaPhuong") String xaPhuong,
+        @RequestParam("soNhaNgoDuong") String soNhaNgoDuong
+    ) {
         // Lấy giỏ hàng từ session
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
         if (cartItems == null || cartItems.isEmpty()) {
@@ -304,15 +305,8 @@ public class CartController {
         hoaDon.setMa(hoaDonService.generateOrderCode());
         hoaDon.setTenNguoiNhan(request.getName());
         hoaDon.setSdtNguoiNhan(request.getPhone());
-
         // Ghép địa chỉ
-        String diaChi = request.getAddress();
-        if (request.getDistrict() != null && !request.getDistrict().isEmpty()) {
-            diaChi += ", " + request.getDistrict();
-        }
-        if (request.getProvince() != null && !request.getProvince().isEmpty()) {
-            diaChi += ", " + request.getProvince();
-        }
+        String diaChi = tinhThanhPho +"," + quanHuyen +","  +xaPhuong +","  + soNhaNgoDuong;
         hoaDon.setDiaChi(diaChi);
         hoaDon.setNgayTao(LocalDate.now());
         hoaDon.setTrangThai(1); // Trạng thái chờ xác nhận

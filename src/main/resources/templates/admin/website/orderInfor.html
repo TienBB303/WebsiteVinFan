@@ -268,9 +268,9 @@
 
             <input type="text" name="name"  th:value="${khachHang.ten}">
             <input type="tel" name="phone"pattern="[0-9]{10}" th:value="${khachHang.soDienThoai}">
-<!--            <input type="hidden" id="tinhThanhPho" th:value="${diaChiMacDinh.tinhThanhPho}"/>-->
-<!--            <input type="hidden" id="quanHuyen" th:value="${diaChiMacDinh.quanHuyen}"/>-->
-<!--            <input type="hidden" id="xaPhuong" th:value="${diaChiMacDinh.xaPhuong}"/>-->
+            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho}"/>
+            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen}"/>
+            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong}"/>
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Tỉnh/Thành phố</label>
@@ -298,7 +298,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Số nhà/ngõ đường</label>
-<!--                    <input type="text" class="form-control" th:value="${diaChiMacDinh.soNhaNgoDuong}" >-->
+                    <input type="text" name="soNhaNgoDuong" class="form-control" th:value="${diachiMacDinh.soNhaNgoDuong}" >
                 </div>
             </div>
 
@@ -418,11 +418,11 @@
         setTimeout(function () {
             districts.value = idHuyen;
             districts.dispatchEvent(new Event('change'));
-        }, 500);
+        }, 200);
 
         setTimeout(function () {
             wards.value = idXa;
-        }, 1000);
+        }, 500);
     });
 
     function renderCity(data) {
