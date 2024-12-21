@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head xmlns:th="http://www.thymeleaf.org">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thông tin tài khoản</title>
@@ -44,8 +44,6 @@
 
     <div id="orders" class="bg-white shadow rounded p-6 hidden">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Đơn mua</h3>
-        <h1 class="text-gray-700">Thông tin hóa đơn của khách hàng ID: <span th:text="${khachHang.id}"></span></h1>
-
         <!-- Kiểm tra hóa đơn -->
         <div th:if="${#lists.isEmpty(hoaDons)}" class="text-center text-gray-600 mt-4">
             <p>Không có hóa đơn nào cho khách hàng này.</p>
@@ -68,7 +66,7 @@
                     <td class="px-4 py-2 border text-center" th:text="${hoaDon.ngayTao}"></td>
                     <td class="px-4 py-2 border text-center" th:text="${hoaDon.tongTien}"></td>
                     <td class="px-4 py-2 border text-center">
-                        <a th:href="@{/hoaDon/{id}(id=${hoaDon.id})}" class="text-blue-500 hover:underline">Xem chi tiết</a>
+                        <a th:href="@{/admin/hoa-don-kh/{id}(id=${hoaDon.id})}" class="text-blue-500 hover:underline">Xem chi tiết</a>
                     </td>
                 </tr>
                 </tbody>
