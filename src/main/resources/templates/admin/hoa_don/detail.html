@@ -156,7 +156,7 @@
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/hoan-thanh}"
-                          th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 3}" class="me-2">
+                          th:if="${hoaDon.trangThai == 3}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-outline-primary" >
                             <i class=""></i> Hoàn Thành
