@@ -1,6 +1,7 @@
 package com.example.datn.entity.phieu_giam;
 
 import com.example.datn.entity.SanPham;
+import com.example.datn.entity.SanPhamChiTiet;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -60,10 +61,14 @@ public class PhieuGiam {
     private String nguoiSua;
 
     @Column(name = "trang_thai")
-    private boolean trangThai;
+    private boolean trangThai ;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "id_san_pham", referencedColumnName = "id", nullable = true)
     private SanPham sanPham;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "id_san_pham_chi_tiet", referencedColumnName = "id", nullable = true)
+    private SanPhamChiTiet spct;
 
 }
