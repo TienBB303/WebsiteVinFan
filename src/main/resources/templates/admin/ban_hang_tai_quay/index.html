@@ -165,6 +165,12 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h1 class="h5 mb-0">Tài khoản</h1>
                     <div class="ms-auto d-flex gap-2" >
+                        <button type="button" class="btn btn-outline-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalKH"
+                                th:disabled="${idHD == null}">
+                            Thêm khách hàng
+                        </button>
                         <button type="button" class="btn btn-outline-primary"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modalTaiKhoan"
@@ -283,6 +289,13 @@
                     <h4>Khách hàng</h4>
                 </div>
                 <!-- Button trigger modal -->
+                <div class="col text-end" th:disabled="${idHD == null}">
+                    <button type="button" class="btn btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalDiaChi">
+                        Chọn địa chỉ
+                    </button>
+                </div>
                 <div class="modal fade" id="modalDiaChi" tabindex="-1" aria-labelledby="exampleModalLabelDiaChi"
                      aria-hidden="true">
                     <div class="modal-dialog modal-xl">
