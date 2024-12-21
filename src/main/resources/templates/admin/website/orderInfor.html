@@ -265,8 +265,12 @@
     <div class="checkout-form">
         <h2>Thông tin giao hàng</h2>
         <form th:action="@{/cart/process-payment}" method="post" id="checkout-form">
-            <input type="text" name="name" placeholder="Họ và Tên">
-            <input type="tel" name="phone" placeholder="Số điện thoại" pattern="[0-9]{10}">
+
+            <input type="text" name="name"  th:value="${khachHang.ten}">
+            <input type="tel" name="phone"pattern="[0-9]{10}" th:value="${khachHang.soDienThoai}">
+            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho}"/>
+            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen}"/>
+            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong}"/>
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Tỉnh/Thành phố</label>
@@ -294,7 +298,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Số nhà/ngõ đường</label>
-                    <input type="text" class="form-control" name="soNhaNgoDuong">
+                    <input type="text" name="soNhaNgoDuong" class="form-control" th:value="${diachiMacDinh.soNhaNgoDuong}" >
                 </div>
             </div>
 
@@ -343,7 +347,7 @@
 <!-- JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
+<script th:inline="javascript">
     document.querySelector('#checkout-form').addEventListener('submit', function (event) {
         event.preventDefault(); // Ngăn form gửi dữ liệu ngay lập tức
 
@@ -386,46 +390,66 @@
             event.target.submit();
         });
     });
-    var cities = document.getElementById("city");
+
+    var idTinh = document.getElementById("tinhThanhPho").value;
+    var idHuyen = document.getElementById("quanHuyen").value;
+    var idXa = document.getElementById("xaPhuong").value;
+
+    console.log(idTinh)
+    console.log(idHuyen)
+    console.log(idXa)
+
+    var citis = document.getElementById("city");
     var districts = document.getElementById("district");
     var wards = document.getElementById("ward");
 
-    var parameter = {
+    var Parameter = {
         url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
         method: "GET",
-        responseType: "json",
+        responseType: "application/json",
     };
 
-    axios(parameter).then(function (result) {
+    axios(Parameter).then(function (result) {
         renderCity(result.data);
+        // Preselect city, district, and ward after data is loaded
+        citis.value = idTinh;
+        citis.dispatchEvent(new Event('change'));
+
+        setTimeout(function () {
+            districts.value = idHuyen;
+            districts.dispatchEvent(new Event('change'));
+        }, 200);
+
+        setTimeout(function () {
+            wards.value = idXa;
+        }, 500);
     });
 
     function renderCity(data) {
-        for (const city of data) {
-            cities.options[cities.options.length] = new Option(city.Name, city.Id);
+        for (const x of data) {
+            citis.options[citis.options.length] = new Option(x.Name, x.Id);
         }
-        cities.onchange = function () {
+
+        citis.onchange = function () {
             districts.length = 1;
             wards.length = 1;
-            if (this.value !== "") {
-                const result = data.find(n => n.Id === this.value);
-                if (result) {
-                    for (const district of result.Districts) {
-                        districts.options[districts.options.length] = new Option(district.Name, district.Id);
-                    }
+
+            if (this.value != "") {
+                const result = data.filter(n => n.Id === this.value);
+                for (const k of result[0].Districts) {
+                    districts.options[districts.options.length] = new Option(k.Name, k.Id);
                 }
             }
         };
+
         districts.onchange = function () {
             wards.length = 1;
-            if (this.value !== "") {
-                const result = data
-                    .find(n => n.Districts.some(d => d.Id === this.value));
-                if (result) {
-                    const district = result.Districts.find(d => d.Id === this.value);
-                    for (const ward of district.Wards) {
-                        wards.options[wards.options.length] = new Option(ward.Name, ward.Id);
-                    }
+            const dataCity = data.filter((n) => n.Id === citis.value);
+
+            if (this.value != "") {
+                const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+                for (const w of dataWards) {
+                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
                 }
             }
         };
