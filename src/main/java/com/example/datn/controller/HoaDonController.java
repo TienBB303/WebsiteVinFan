@@ -177,6 +177,9 @@ public class HoaDonController {
             if (hoaDonOptional.isPresent()) {
                 HoaDon hoaDon = hoaDonOptional.get();
 
+                NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+                hoaDon.setNhanVien(nhanVien);
+                hoaDon.setNguoiTao(nhanVien.getTen());
                 // Kiểm tra số lượng tồn kho trước khi xác nhận
                 hoaDonService.truSoLuongSanPham(id); // Đây là nơi bạn cần kiểm tra số lượng tồn kho
 
@@ -190,11 +193,11 @@ public class HoaDonController {
                 lichSuHoaDon.setHoaDon(hoaDon);
                 lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
                 lichSuHoaDon.setNgayTao(LocalDate.now());
+                lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
                 lichSuHoaDonRepo.save(lichSuHoaDon);
 
-                NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-                hoaDon.setNhanVien(nhanVien);
-                hoaDon.setNguoiTao(nhanVien.getTen());
+
 
                 // Gửi thông báo thành công
                 redirectAttributes.addFlashAttribute("successMessage", "Hóa đơn đã được xác nhận thành công!");
@@ -217,6 +220,10 @@ public class HoaDonController {
         if (hoaDonOptional.isPresent()) {
             HoaDon hoaDon = hoaDonOptional.get();
 
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+            hoaDon.setNguoiTao(nhanVien.getTen());
+
             // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDangGiaoHang());
             hoaDonService.save(hoaDon);
@@ -226,11 +233,9 @@ public class HoaDonController {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDangGiaoHang());
             lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
             lichSuHoaDonRepo.save(lichSuHoaDon);
 
-            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-            hoaDon.setNhanVien(nhanVien);
-            hoaDon.setNguoiTao(nhanVien.getTen());
 
         }
 
@@ -259,9 +264,10 @@ public class HoaDonController {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
             lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
 
             lichSuHoaDonRepo.save(lichSuHoaDon);
-            hoaDonService.truSoLuongSanPham(id);
         }
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id

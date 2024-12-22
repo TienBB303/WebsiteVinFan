@@ -46,33 +46,33 @@
                             <div class="dashboard-qa" th:each="item : ${thongKeListDay}"
                                  th:if="${item.day == currentDay}">
                                 <div>Ngày hôm nay</div>
-                                <p><span th:text="${item.day}"></span></p>
-                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+<!--                                <p><span th:text="${item.day}"></span></p>-->
+                                <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div >Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
 
                             <div class="dashboard-qa" th:each="item : ${thongKeListWeek}"
                                  th:if="${item.week == currentWeek}">
                                 <div>Tuần này</div>
-                                <p><span th:text="${item.week}"></span></p>
-                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+<!--                                <p><span th:text="${item.week}"></span></p>-->
+                                <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
 
                             <div class="dashboard-qa" th:each="item : ${thongKeListMonth}"
                                  th:if="${item.month == currentMonth}">
                                 <div>Tháng này</div>
-                                <p><span th:text="${item.month}"></span></p>
-                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+<!--                                <p><span th:text="${item.month}"></span></p>-->
+                                <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div >Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
 
                             <div class="dashboard-qa" th:each="item : ${thongKeListYear}"
                                  th:if="${item.year == currentYear}">
                                 <div>Năm này</div>
-                                <p><span th:text="${item.year}"></span></p>
+<!--                                <p><span th:text="${item.year}"></span></p>-->
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div>Tổng tiền: <span th:text="${item.tongTien}"></span></div>
+                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                                         <td th:text="${iterStat.count}">Tên Sản Phẩm</td>
                                         <td th:text="${sp.tenSanPham}">Tên Sản Phẩm</td>
                                         <td th:text="${sp.soLuongBan}">Số Lượng Bán</td>
-                                        <td th:text="${sp.gia}">Giá</td>
+                                        <td class="giaVND" th:text="${sp.gia}">Giá</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -109,6 +109,16 @@
                 </div>
             </section>
         </div>
+        <script>
+            document.querySelectorAll('.giaVND').forEach(element => {
+                const originalValue = parseFloat(element.innerText);
+                element.innerText = originalValue.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+                });
+            });
+        </script>
     </div>
     <!-- Footer-->
     <div>
@@ -117,7 +127,6 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
-
 </div>
 </body>
 </html>
