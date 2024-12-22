@@ -55,11 +55,16 @@ public class MauSacController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         MauSac mauSac = mauSacRepo.findById(id).orElse(null);
         if (mauSac != null) {
-            if (mauSac.getTrang_thai() == true) {
-                mauSac.setTrang_thai(false);
-            } else if (mauSac.getTrang_thai() == false) {
-                mauSac.setTrang_thai(true);
+            if (mauSac.getTrang_thai()) {
+                long countTrue = mauSacRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một màu sắc hoạt động");
+                }
             }
+            mauSac.setTrang_thai(!mauSac.getTrang_thai());
             mauSacRepo.save(mauSac);
             return ResponseEntity.ok("Màu sắc thay đổi trạng thái thành công.");
         } else {

@@ -32,9 +32,9 @@ public class SecurityConfig {
 //                        .requestMatchers("/admin/product-catalog").hasAnyAuthority("ROLE_KHACHHANG")
                                 .requestMatchers("/thong-ke/index", "/admin/nhan-vien/**").hasAnyAuthority("Quản lý")
                                 .requestMatchers("/admin/khach-hang/**", "/trang-ca-nhan/index", "/ban-hang-tai-quay/ban-hang", "/hoa-don/**", "/admin/phieu-giam/**").hasAnyAuthority("Nhân viên bán hàng", "Quản lý")
-                                .requestMatchers(HttpMethod.POST, "/ban-hang-tai-quay/**", "/cart/**").permitAll()  // Cho phép POST
-                                .requestMatchers(HttpMethod.PUT, "/ban-hang-tai-quay/**", "/cart/**").permitAll()   // Cho phép PUT
-                                .requestMatchers(HttpMethod.DELETE, "/ban-hang-tai-quay/**", "/cart/**").permitAll()// Cho phép DELETE
+                                .requestMatchers(HttpMethod.POST, "/ban-hang-tai-quay/**","/admin/san-pham/**", "/cart/**").permitAll()  // Cho phép POST
+                                .requestMatchers(HttpMethod.PUT, "/ban-hang-tai-quay/**","/admin/san-pham/**", "/cart/**").permitAll()   // Cho phép PUT
+                                .requestMatchers(HttpMethod.DELETE, "/ban-hang-tai-quay/**","/admin/san-pham/**", "/cart/**").permitAll()// Cho phép DELETE
 
                                 .anyRequest().authenticated()
                 )
