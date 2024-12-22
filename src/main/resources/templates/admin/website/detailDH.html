@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin tài khoản</title>
+    <style>
+        /* Tổng quan */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: #ffffff;
+            border-radius: 8px 8px 0 0;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .row-ls {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 15px 0;
+        }
+
+        .row-ls > div {
+            flex: 0 0 auto;
+            text-align: center;
+        }
+
+        .arrow-qa {
+            display: inline-flex; /* Đặt kiểu hiển thị là inline-flex để các thẻ span nằm ngang */
+            align-items: center; /* Căn giữa các phần tử con theo chiều dọc */
+            position: relative;
+            padding: 10px 20px;
+            color: #ffffff;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+
+        .arrow-qaa {
+            display: inline-flex; /* Đặt kiểu hiển thị là inline-flex để các thẻ span nằm ngang */
+            align-items: center; /* Căn giữa các phần tử con theo chiều dọc */
+            position: relative;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+
+        .arrow-qa::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 180%; /* Đặt mũi tên sang bên phải */
+            margin-top: -15px; /* Căn chỉnh mũi tên theo chiều dọc */
+            border-width: 15px;
+            border-style: solid;
+            border-color: transparent transparent transparent #ffffff; /* Màu sắc của mũi tên */
+        }
+
+        /* Tùy chỉnh màu sắc cho các trạng thái */
+        .bg-success-qa {
+            background-color: #28a745;
+        }
+
+        .bg-success-qa::after {
+            border-color: transparent transparent transparent #28a745;
+        }
+
+        .bg-primary-qa {
+            background-color: #007bff;
+        }
+
+        .bg-primary-qa::after {
+            border-color: transparent transparent transparent #007bff;
+        }
+
+        .bg-info-qa {
+            background-color: #17a2b8;
+        }
+
+        .bg-info-qa::after {
+            border-color: transparent transparent transparent #17a2b8;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table thead {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        table th, table td {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        table tbody {
+            display: block;
+            max-height: 350px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        table thead, table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        input.quantity-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            height: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-header {
+                font-size: 1.2rem;
+                padding: 10px;
+            }
+
+            .arrow-qa {
+                padding: 5px 10px;
+                font-size: 0.9rem;
+            }
+
+            table th, table td {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<div class="border rounded p-3 mb-4">
+    <a href="/admin/track-order" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-return-left"></i>
+    </a>
+</div>
+
+<div class="card mb-4 border rounded p-3">
+    <div class="card-header mb-4">
+        <h2><strong>Theo dõi đơn hàng</strong></h2>
+    </div>
+    <div class="row-ls overflow-x-auto">
+        <div th:each="history : ${listHistory}" class="col-12 col-sm-6 col-md-3 mb-3">
+            <div class="d-flex align-items-center justify-content-center" style="height: 70px;">
+                <div>
+                    <div th:switch="${history.trangThai}">
+                        <div th:case="0" class="arrow-qa bg-primary-qa">
+                            <span>Hóa đơn chờ</span>
+                        </div>
+                        <div th:case="1" class="arrow-qa bg-primary-qa">
+                            <span>Chờ xác nhận</span>
+                        </div>
+                        <div th:case="2" class="arrow-qa bg-success-qa">
+                            <span>Đã xác nhận</span>
+                        </div>
+                        <div th:case="3" class="arrow-qa bg-info-qa">
+                            <span>Đang vận chuyển</span>
+                        </div>
+                        <div th:case="4" class="arrow-qaa">
+                            <span>Hoàn thành</span>
+                        </div>
+                        <div th:case="5" class="arrow-qaa">
+                            <span>Hủy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-header d-flex justify-content-center align-items-center mb-4 border rounded p-3">
+    <h2><strong>Thông tin sản phẩm</strong></h2>
+</div>
+
+<div class="border rounded p-3">
+    <table class="table table-striped dataTable-table mt-3">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên sản phẩm</th>
+            <th>Công xuất</th>
+            <th>Màu sắc</th>
+            <th>Giá bán</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, iter : ${listHDCT}" th:data-id="${item.id}">
+            <td th:text="${iter.count}"></td>
+            <td th:text="${item.sanPhamChiTiet.sanPham.ten}"></td>
+            <td th:text="${item.sanPhamChiTiet.congSuat.ten}"></td>
+            <td th:text="${item.sanPhamChiTiet.mauSac.ten}"></td>
+            <td class="giaVND" th:text="${item.gia}"></td>
+            <td>
+                <input type="number" class="form-control quantity-input"
+                       th:value="${item.soLuong}"
+                       min="1"
+                       disabled/>
+            </td>
+            <td class="giaVND" th:text="${item.thanhTien}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+<script>
+    document.querySelectorAll('.giaVND').forEach(element => {
+        const originalValue = parseFloat(element.innerText);
+        element.innerText = originalValue.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+        });
+    });
+</script>
+
+</body>
+</html>

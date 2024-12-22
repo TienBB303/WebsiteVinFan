@@ -1,9 +1,7 @@
 package com.example.datn.controller.sale_on_controller;
 
-import com.example.datn.entity.HoaDon;
-import com.example.datn.entity.KhachHang;
+import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
-import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
@@ -163,8 +161,8 @@ public class ProductCatalog {
                 phieuGiam.ifPresent(giam -> giaSauGiamMap.put(bienThe.getId(), giam.getGiaSauGiam()));
             });
 
-            // Lấy biến thể cuối cùng làm mặc định
-            SanPhamChiTiet defaultBienThe = bienTheList.isEmpty() ? null : bienTheList.get(bienTheList.size() - 1);
+            // Lấy biến thể đầu tiên làm mặc định
+            SanPhamChiTiet defaultBienThe = bienTheList.isEmpty() ? null : bienTheList.get(0);
             BigDecimal defaultGiaSauGiam = defaultBienThe != null
                     ? giaSauGiamMap.getOrDefault(defaultBienThe.getId(), defaultBienThe.getGia())
                     : BigDecimal.ZERO;
@@ -199,12 +197,18 @@ public class ProductCatalog {
         }
         return "admin/website/trackOrder";
     }
-    // Thêm phương thức xử lý AJAX để trả về chi tiết hóa đơn theo ID
-    @GetMapping("/hoadon/{id}")
-    @ResponseBody
-    public HoaDon chiTietHoaDon(@PathVariable("id") Long id) {
-        HoaDon hoaDon = hoaDonService.findById(id).orElse(null);
-        return hoaDon; // Trả về hóa đơn dưới dạng JSON
-    }
+    @GetMapping("/hoa-don-kh/{id}")
+    public String detailOrder(@PathVariable long id, Model model) {
+        //Lấy thông tin lịch sử hóa đơn theo id hóa đơn
+        List<LichSuHoaDon> lichSuHoaDonList = lichSuHoaDonRepo.findLichSuHoaDonByIdHoaDon(id);
+        model.addAttribute("listHistory", lichSuHoaDonList);
 
+        List<HoaDonChiTiet> listHDCT = this.hoaDonService.timSanPhamChiTietTheoHoaDon(id);
+        model.addAttribute("listHDCT", listHDCT);
+
+        KhachHang khachHang = khachHangRepo.profileKhachHang();
+        model.addAttribute("khachHang", khachHang);
+
+        return "admin/website/detailDH";
+    }
 }

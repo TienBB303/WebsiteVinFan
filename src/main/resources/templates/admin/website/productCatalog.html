@@ -534,49 +534,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- dịnh dạng input -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Hàm định dạng số tiền với dấu chấm ngăn cách hàng nghìn
-        function formatCurrency(value) {
-            value = value.replace(/\D/g, ''); // Loại bỏ ký tự không phải số
-            if (!value) return ''; // Nếu không có giá trị, trả về chuỗi rỗng
-
-            // Chuyển đổi thành định dạng với dấu '.'
-            return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-
-        // Lắng nghe sự kiện khi nhập và định dạng lại
-        function handleInput(event) {
-            const input = event.target;
-            const rawValue = input.value.replace(/\./g, ''); // Loại bỏ dấu chấm cũ
-            input.value = formatCurrency(rawValue); // Cập nhật giá trị đã định dạng
-        }
-
-        // Chuyển giá trị định dạng ngược lại khi gửi form
-        function handleFormSubmit(event) {
-            const minPriceInput = document.getElementById("minPrice");
-            const maxPriceInput = document.getElementById("maxPrice");
-
-            // Loại bỏ dấu chấm trước khi gửi đi
-            minPriceInput.value = minPriceInput.value.replace(/\./g, '');
-            maxPriceInput.value = maxPriceInput.value.replace(/\./g, '');
-        }
-
-        // Lấy các trường input
-        const minPriceInput = document.getElementById("minPrice");
-        const maxPriceInput = document.getElementById("maxPrice");
-        const filterForm = document.querySelector("#priceFilterModal form");
-
-        // Gắn sự kiện xử lý
-        minPriceInput.addEventListener("input", handleInput);
-        maxPriceInput.addEventListener("input", handleInput);
-
-        // Gắn sự kiện xử lý khi gửi form
-        filterForm.addEventListener("submit", handleFormSubmit);
-    });
-</script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const allProducts = Array.from(document.querySelectorAll("#product-list > div")); // Sản phẩm

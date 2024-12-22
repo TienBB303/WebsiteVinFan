@@ -149,8 +149,6 @@ public class SanPhamController {
         return "admin/san_pham/san_pham_index";
     }
 
-
-
     @GetMapping("/san-pham/viewAdd")
     public String viewAddProduct() {
         return "admin/san_pham/san_pham_add";

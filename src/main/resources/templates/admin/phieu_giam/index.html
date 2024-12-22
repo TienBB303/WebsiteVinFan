@@ -122,6 +122,7 @@
                                         <th>Ngày bắt đầu</th>
                                         <th>Ngày kết thúc</th>
                                         <th>Giá trị giảm</th>
+                                        <th>Tên sản phẩm áp dụng</th> <!-- Cột mới -->
                                         <th>Trạng thái</th>
                                         <th>Chi tiết</th>
                                     </tr>
@@ -130,14 +131,14 @@
                                     <tr th:each="pgg : ${ListPGG}" style="cursor: pointer;">
                                         <td th:text="${pgg.ma}">Mã phiếu giảm</td>
                                         <td th:text="${pgg.ten}">Tên phiếu giảm</td>
-                                        <td th:text="${pgg.loaiPhieuGiam }== true ? 'Giảm giá hóa đơn' : 'Giảm sản phẩm'">Loại phiếu giảm</td>
+                                        <td th:text="${pgg.loaiPhieuGiam ? 'Giảm giá hóa đơn' : 'Giảm sản phẩm'}">Loại phiếu giảm</td>
                                         <td th:text="${pgg.ngayBD}">Ngày bắt đầu</td>
                                         <td th:text="${pgg.ngayKT}">Ngày kết thúc</td>
-                                        <td id="giaTriGiam" th:text="${pgg.giaTriGiam}">Gía trị giảm</td>
-                                        <td th:text="${pgg.trangThai} == true ? 'Áp dụng' : 'Ngừng áp dụng'"></td>
+                                        <td th:text="${pgg.giaTriGiam}">Giá trị giảm</td>
+                                        <td th:text="${pgg.sanPham != null ? pgg.sanPham.ten : 'Không áp dụng sản phẩm'}">Tên sản phẩm</td> <!-- Hiển thị tên sản phẩm -->
+                                        <td th:text="${pgg.trangThai ? 'Áp dụng' : 'Ngừng áp dụng'}"></td>
                                         <td>
-                                            <a class="btn btn-info"
-                                               th:href="@{/admin/phieu-giam/edit/{id}(id=${pgg.id})}">
+                                            <a class="btn btn-info" th:href="@{/admin/phieu-giam/edit/{id}(id=${pgg.id})}">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
@@ -147,18 +148,38 @@
                             </div>
                             <nav aria-label="Page navigation">
                                 <ul class="pagination justify-content-center">
-                                    <li class="page-item ${currentPage == 0 ? 'disabled' : ''}">
-                                        <a class="page-link"
-                                           th:href="@{/admin/phieu-giam/index(page=${currentPage - 1})}">Previous</a>
+                                    <!-- Nút Trang Đầu -->
+                                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=0)}" aria-label="First">
+                                            <span>&laquo;&laquo;</span>
+                                        </a>
                                     </li>
-                                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+
+                                    <!-- Nút Trang Trước -->
+                                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${currentPage - 1})}" aria-label="Previous">
+                                            <span>&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Số Trang -->
+                                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item"
                                         th:classappend="${currentPage == i ? 'active' : ''}">
-                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${i})}">[[${i +
-                                            1}]]</a>
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${i})}">[[${i + 1}]]</a>
                                     </li>
-                                    <li class="page-item ${currentPage == totalPages - 1 ? 'disabled' : ''}">
-                                        <a class="page-link"
-                                           th:href="@{/admin/phieu-giam/index(page=${currentPage + 1})}">Next</a>
+
+                                    <!-- Nút Trang Sau -->
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${currentPage + 1})}" aria-label="Next">
+                                            <span>&raquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Nút Trang Cuối -->
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${totalPages - 1})}" aria-label="Last">
+                                            <span>&raquo;&raquo;</span>
+                                        </a>
                                     </li>
                                 </ul>
                             </nav>

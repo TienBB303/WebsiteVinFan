@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -166,8 +167,11 @@ public class HoaDonController {
     }
 
 
-    @PostMapping("/cho-xac-nhan")
-    public String choXacNhan(@ModelAttribute("id") long id) {
+
+    @PostMapping("/xac-nhan")
+    public String xacNhan(
+            @ModelAttribute("id") long id
+    ) {
         // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
 
@@ -175,29 +179,18 @@ public class HoaDonController {
             HoaDon hoaDon = hoaDonOptional.get();
 
             // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
-            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
             hoaDonService.save(hoaDon);
-
+            hoaDonService.updateTongTienHoaDon();
+            hoaDonService.truSoLuongSanPham(id);
             // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setHoaDon(hoaDon);
-            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
             lichSuHoaDon.setNgayTao(LocalDate.now());
+
             lichSuHoaDonRepo.save(lichSuHoaDon);
-            hoaDonService.hoanSoLuongSanPham(id);
         }
-
-        // Chuyển hướng người dùng đến trang chi tiết của HoaDon
-        return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
-    }
-
-    @PostMapping("/xac-nhan")
-    public String xacNhan(
-            @ModelAttribute("id") long id
-    ) {
-        hoaDonService.xacNhanHoaDon(id);
-        hoaDonService.updateTongTienHoaDon();
-        hoaDonService.truSoLuongSanPham(id);
 
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
@@ -274,27 +267,31 @@ public class HoaDonController {
     }
 
     @PostMapping("tang-so-luong")
-    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon, @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet
+                                         ) {
         try {
-            System.out.println("id hd" + idHoaDon);
-            System.out.println("id sp" + idSanPhamChiTiet);
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
+            hoaDonService.updateTongTienHoaDon();
             return ResponseEntity.ok().body("Thêm thành công");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi.");
+            // Trả về thông báo lỗi
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @PostMapping("giam-so-luong")
-    public ResponseEntity<?> giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon, @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+    public ResponseEntity<?> giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
         try {
-            System.out.println("id hd" + idHoaDon);
-            System.out.println("id sp" + idSanPhamChiTiet);
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-            return ResponseEntity.ok().body("Thêm thành công");
+            hoaDonService.updateTongTienHoaDon();
+            return ResponseEntity.ok("Giảm số lượng thành công.");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
 
     @PostMapping("/sua-thong-tin")

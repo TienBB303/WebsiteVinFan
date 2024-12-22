@@ -5,6 +5,8 @@ import com.example.datn.dto.request.sale_on_request.CreateHoaDonRequest;
 import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.entity.sale_on.CartItem;
+import com.example.datn.repository.DiaChiRepository;
+import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
@@ -21,6 +23,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +52,11 @@ public class CartController {
     @Autowired
     private SanPhamService sanPhamService;
 
+    @Autowired
+    private KhachHangRepo khachHangRepo;
+    @Autowired
+    private DiaChiRepository diaChiRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -59,7 +68,7 @@ public class CartController {
                             @RequestParam(required = false) BigDecimal discountedPrice, // Giá giảm (nếu có)
                             @RequestParam int quantity,
                             HttpSession session) {
-        // Lấy danh sách giỏ hàng từ session
+        // Lấy danh sách giỏ hàng từ session m
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
         if (cart == null) {
@@ -235,6 +244,13 @@ public class CartController {
         // Lấy danh sách sản phẩm từ session
         List<CartItem> cartItems = getCartFromSession(session);
 
+        KhachHang khachHang = khachHangRepo.profileKhachHang();
+        model.addAttribute("khachHang",khachHang);
+
+        DiaChi diaChi =  diaChiRepository.DiaChimacDinhvsfindByKhachHangId(khachHang.getId());
+        model.addAttribute("diachiMacDinh",diaChi);
+
+
         // Tính tổng tiền
         double totalPrice = cartItems.stream()
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
@@ -266,27 +282,31 @@ public class CartController {
 
     @Transactional
     @PostMapping("/process-payment")
-    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session, Model model) {
+    public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session, Model model,
+        @RequestParam("tinhThanhPho") String tinhThanhPho,
+        @RequestParam("quanHuyen") String quanHuyen,
+        @RequestParam("xaPhuong") String xaPhuong,
+        @RequestParam("soNhaNgoDuong") String soNhaNgoDuong
+    ) {
         // Lấy giỏ hàng từ session
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
         if (cartItems == null || cartItems.isEmpty()) {
             return "redirect:/cart/orderinfor?error=CartIsEmpty";
         }
-
+        // Lấy thông tin khách hàng từ tài khoản đăng nhập
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Lấy email đăng nhập
+        KhachHang khachHang = khachHangRepo.findByEmail(email).orElse(null);
+        if (khachHang == null) {
+            return "redirect:/login?error=UserNotLoggedIn"; // Nếu không tìm thấy khách hàng
+        }
         // Tạo hóa đơn
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMa(hoaDonService.generateOrderCode());
         hoaDon.setTenNguoiNhan(request.getName());
         hoaDon.setSdtNguoiNhan(request.getPhone());
-
         // Ghép địa chỉ
-        String diaChi = request.getAddress();
-        if (request.getDistrict() != null && !request.getDistrict().isEmpty()) {
-            diaChi += ", " + request.getDistrict();
-        }
-        if (request.getProvince() != null && !request.getProvince().isEmpty()) {
-            diaChi += ", " + request.getProvince();
-        }
+        String diaChi = tinhThanhPho +"," + quanHuyen +","  +xaPhuong +","  + soNhaNgoDuong;
         hoaDon.setDiaChi(diaChi);
         hoaDon.setNgayTao(LocalDate.now());
         hoaDon.setTrangThai(1); // Trạng thái chờ xác nhận
@@ -304,8 +324,8 @@ public class CartController {
         hoaDon.setNgaySua(LocalDate.now());
         hoaDon.setNguoiTao("system");
         hoaDon.setNguoiSua("system");
-        hoaDon.setKhachHang(entityManager.find(KhachHang.class, 1L));
-        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
+        hoaDon.setKhachHang(khachHang);
+//        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
         hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L));
 //        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
 
