@@ -44,33 +44,33 @@ public class PhieuGiamController {
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
             @RequestParam(name = "status", required = false) Boolean status
     ) {
+        // Đảm bảo page >= 0
         if (page < 0) {
             page = 0;
         }
+
+        // Tạo Pageable để phân trang
         PageRequest pageable = PageRequest.of(page, size);
         String searchTerm = "%" + keyword + "%";
 
-        // Lấy tất cả phiếu giảm giá
+        // Lấy tất cả phiếu giảm giá và cập nhật trạng thái
         List<PhieuGiam> allDiscounts = pggRepo.findAll();
 
-        // Cập nhật trạng thái phiếu giảm giá dựa vào ngày kết thúc
         allDiscounts.forEach(pgg -> {
             if (pgg.getNgayKT() != null &&
                     pgg.getNgayKT().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now()) &&
                     pgg.isTrangThai()) {
-                // Ngừng áp dụng phiếu giảm giá
+                // Nếu hết hạn thì cập nhật trạng thái
                 pgg.setTrangThai(false);
                 pggRepo.save(pgg);
 
-                // Xóa các liên kết trong bảng phieu_giam_san_pham
+                // Xóa các liên kết trong bảng phieu_giam_san_pham nếu cần
                 List<PhieuGiamSanPham> links = pggspRepo.findByPhieuGiamId(pgg.getId());
-                if (!links.isEmpty()) {
-                    links.forEach(link -> pggspRepo.delete(link));
-                }
+                links.forEach(pggspRepo::delete);
             }
         });
 
-        // Lọc kết quả sau khi cập nhật
+        // Lọc phiếu giảm giá theo từ khóa và trạng thái
         Page<PhieuGiam> phieuGiamGiaPage;
         if (status != null) {
             phieuGiamGiaPage = pggRepo.findByTenLikeAndTrangThai(searchTerm, status, pageable);
@@ -78,10 +78,23 @@ public class PhieuGiamController {
             phieuGiamGiaPage = pggRepo.findByTenLike(searchTerm, pageable);
         }
 
+        // Đảm bảo không có trường hợp null trong danh sách
+        List<PhieuGiam> sanitizedPhieuGiamList = phieuGiamGiaPage.getContent().stream().map(pgg -> {
+            if (pgg.getSpct() == null) {
+                pgg.setSpct(new SanPhamChiTiet());
+            }
+            if (pgg.getSpct().getSanPham() == null) {
+                pgg.getSpct().setSanPham(new SanPham());
+            }
+            return pgg;
+        }).toList();
+
         // Truyền dữ liệu sang View
-        model.addAttribute("ListPGG", phieuGiamGiaPage.getContent());
+        model.addAttribute("ListPGG", sanitizedPhieuGiamList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", phieuGiamGiaPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status);
 
         return "admin/phieu_giam/index";
     }
@@ -133,7 +146,6 @@ public class PhieuGiamController {
 
                 // Gán sản phẩm chi tiết và sản phẩm vào phiếu giảm giá
                 phieuGiam.setSpct(spct);
-                phieuGiam.setSanPham(spct.getSanPham());
             }
 
             // Lưu Phiếu Giảm Giá

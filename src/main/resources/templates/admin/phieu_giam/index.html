@@ -135,7 +135,7 @@
                                         <td th:text="${pgg.ngayBD}">Ngày bắt đầu</td>
                                         <td th:text="${pgg.ngayKT}">Ngày kết thúc</td>
                                         <td th:text="${pgg.giaTriGiam}">Giá trị giảm</td>
-                                        <td th:text="${pgg.sanPham != null ? pgg.sanPham.ten : 'Không áp dụng sản phẩm'}">Tên sản phẩm</td> <!-- Hiển thị tên sản phẩm -->
+                                        <td th:text="${pgg.spct.sanPham.ten != null ? pgg.spct.sanPham.ten : 'Không áp dụng sản phẩm'}">Tên sản phẩm</td> <!-- Hiển thị tên sản phẩm -->
                                         <td th:text="${pgg.trangThai ? 'Áp dụng' : 'Ngừng áp dụng'}"></td>
                                         <td>
                                             <a class="btn btn-info" th:href="@{/admin/phieu-giam/edit/{id}(id=${pgg.id})}">
