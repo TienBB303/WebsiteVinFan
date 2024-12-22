@@ -27,6 +27,8 @@ public class SanPhamTam {
 
     Date ngay_sua;
 
+    Boolean dieu_khien_tu_xa;
+
     Boolean trang_thai;
 
     KieuQuat kieuQuat;

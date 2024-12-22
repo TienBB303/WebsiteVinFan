@@ -52,11 +52,16 @@ public class CheDoGioController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         CheDoGio cheDoGio = cheDoGioRepo.findById(id).orElse(null);
         if (cheDoGio != null) {
-            if (cheDoGio.getTrang_thai() == true) {
-                cheDoGio.setTrang_thai(false);
-            } else if (cheDoGio.getTrang_thai() == false) {
-                cheDoGio.setTrang_thai(true);
+            if (cheDoGio.getTrang_thai()) {
+                long countTrue = cheDoGioRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một chế độ gió hoạt động");
+                }
             }
+            cheDoGio.setTrang_thai(!cheDoGio.getTrang_thai());
             cheDoGioRepo.save(cheDoGio);
             return ResponseEntity.ok("Chế độ gió thay đổi trạng thái thành công.");
         } else {

@@ -28,7 +28,7 @@
 //
 //@Controller
 //@RequestMapping("/admin")
-//public class SanPhamController {
+//public class SanPhamController_backup {
 //    @Autowired
 //    SanPhamService sanPhamService;
 //    @Autowired

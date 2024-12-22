@@ -16,6 +16,10 @@ public interface SanPhamRepo extends JpaRepository<SanPham, Long> {
     @Query("SELECT sp.ten FROM SanPham sp")
     List<SanPham> getTenTonTai(String ten);
 
+//    @Query("SELECT sp.ma FROM SanPham sp" +
+//            " WHERE LOWER(sp.ma) LIKE LOWER(CONCAT('%', :ten, '%'))")
+    SanPham findByTen(String ten);
+
     @Query("SELECT sp FROM SanPham sp " +
             "WHERE LOWER(sp.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(sp.ma) LIKE LOWER(CONCAT('%', :query, '%'))")

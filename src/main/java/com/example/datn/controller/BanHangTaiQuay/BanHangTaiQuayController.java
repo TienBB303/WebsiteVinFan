@@ -109,12 +109,26 @@ public class BanHangTaiQuayController {
     @PostMapping("/thanh-toan")
     public String thanhToan(
             @RequestParam("idHD") Long idhd,
-            @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan
+            @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
+            @RequestParam("tinhThanhPho") String tinhThanhPho,
+            @RequestParam("soDienThoaiKhachHang") String soDienThoaiKhachHang,
+            @RequestParam("quanHuyen") String quanHuyen,
+            @RequestParam("xaPhuong") String xaPhuong,
+            @RequestParam("chiTietDiaChi") String chitiet,
+            @RequestParam("ghichu") String ghiChu,
+            @RequestParam("tenKhangHang") String tenKhangHang
     ) {
         HoaDon hoaDon = hoaDonService.findById(idhd)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
         NhanVien nhanVien = nhanVienRepository.profileNhanVien();
         hoaDon.setNhanVien(nhanVien);
+
+        String diaChiNguoiNhan = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + chitiet;
+
+        hoaDon.setTenNguoiNhan(tenKhangHang);
+        hoaDon.setDiaChi(diaChiNguoiNhan);
+        hoaDon.setSdtNguoiNhan(soDienThoaiKhachHang);
+        hoaDon.setGhiChu(ghiChu);
         hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
         System.out.println(phuongThucThanhToan);
         hoaDonService.save(hoaDon);
@@ -132,6 +146,15 @@ public class BanHangTaiQuayController {
         // Tìm khách hàng theo ID
         KhachHang khachHang = khachHangRepo.findById(idKh)
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại với ID: " + idKh));
+
+        DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(Math.toIntExact(idKh));
+        String diaChiHoaDon = diaChi.getTinhThanhPho() +
+                ","  + diaChi.getQuanHuyen() + ","
+                + diaChi.getXaPhuong() + ","
+                + diaChi.getSoNhaNgoDuong();
+        System.out.println("dia chi nhan la:" + diaChiHoaDon);
+
+        hoaDon.setDiaChi(diaChiHoaDon);
 
         // Gán khách hàng vào hóa đơn
         hoaDon.setKhachHang(khachHang);

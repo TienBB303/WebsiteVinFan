@@ -20,7 +20,7 @@ public class SanPhamChiTietTam {
     private DuongKinhCanh duongKinhCanh;
     private ChatLieuKhung chatLieuKhung;
     private CongSuat congSuat;
-    private DieuKhienTuXa dieuKhienTuXa;
+//    private DieuKhienTuXa dieuKhienTuXa;
     private Hang hang;
     private ChieuCao chieuCao;
     private DeQuat deQuat;

@@ -53,11 +53,16 @@ public class ChatLieuCanhController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         ChatLieuCanh chatLieuCanh = chatLieuCanhRepo.findById(id).orElse(null);
         if (chatLieuCanh != null) {
-            if (chatLieuCanh.getTrang_thai() == true) {
-                chatLieuCanh.setTrang_thai(false);
-            } else if (chatLieuCanh.getTrang_thai() == false) {
-                chatLieuCanh.setTrang_thai(true);
+            if (chatLieuCanh.getTrang_thai()) {
+                long countTrue = chatLieuCanhRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một chất liệu cánh hoạt động");
+                }
             }
+            chatLieuCanh.setTrang_thai(!chatLieuCanh.getTrang_thai());
             chatLieuCanhRepo.save(chatLieuCanh);
             return ResponseEntity.ok("Chất liệu cánh thay đổi trạng thái thành công.");
         } else {

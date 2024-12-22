@@ -124,7 +124,6 @@ public class HoaDonController {
         model.addAttribute("chitietdiachi", mang.length > 3 ? mang[3] : "N/A");
 
 
-
         //Lấy thông tin sp in hoa don
         List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
         model.addAttribute("listSPInHoaDon", list);
@@ -167,34 +166,46 @@ public class HoaDonController {
     }
 
 
-
     @PostMapping("/xac-nhan")
     public String xacNhan(
-            @ModelAttribute("id") long id
+            @ModelAttribute("id") long id,
+            RedirectAttributes redirectAttributes
     ) {
-        // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
-        Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
+        try {
+            // Tìm kiếm HoaDon dựa trên id được nhận từ yêu cầu
+            Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
 
-        if (hoaDonOptional.isPresent()) {
-            HoaDon hoaDon = hoaDonOptional.get();
+            if (hoaDonOptional.isPresent()) {
+                HoaDon hoaDon = hoaDonOptional.get();
 
-            // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
-            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
-            hoaDonService.save(hoaDon);
-            hoaDonService.updateTongTienHoaDon();
-            hoaDonService.truSoLuongSanPham(id);
-            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
-            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setHoaDon(hoaDon);
-            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
-            lichSuHoaDon.setNgayTao(LocalDate.now());
+                // Kiểm tra số lượng tồn kho trước khi xác nhận
+                hoaDonService.truSoLuongSanPham(id); // Đây là nơi bạn cần kiểm tra số lượng tồn kho
 
-            lichSuHoaDonRepo.save(lichSuHoaDon);
+                // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
+                hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
+                hoaDonService.save(hoaDon);
+                hoaDonService.updateTongTienHoaDon();
+
+                // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+                LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+                lichSuHoaDon.setHoaDon(hoaDon);
+                lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
+                lichSuHoaDon.setNgayTao(LocalDate.now());
+
+                lichSuHoaDonRepo.save(lichSuHoaDon);
+
+                // Gửi thông báo thành công
+                redirectAttributes.addFlashAttribute("successMessage", "Hóa đơn đã được xác nhận thành công!");
+            }
+        } catch (RuntimeException e) {
+            // Bắt lỗi khi số lượng tồn kho không đủ
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
+
 
     @PostMapping("/giao-hang")
     public String dangGiaoHang(@ModelAttribute("id") long id) {
@@ -269,7 +280,7 @@ public class HoaDonController {
     @PostMapping("tang-so-luong")
     public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
                                          @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet
-                                         ) {
+    ) {
         try {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon();
@@ -291,7 +302,6 @@ public class HoaDonController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
 
     @PostMapping("/sua-thong-tin")

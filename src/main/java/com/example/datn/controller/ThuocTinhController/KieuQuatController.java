@@ -58,11 +58,16 @@ public class KieuQuatController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         KieuQuat kieuQuat = kieuQuatRepo.findById(id).orElse(null);
         if (kieuQuat != null) {
-            if (kieuQuat.getTrang_thai() == true) {
-                kieuQuat.setTrang_thai(false);
-            } else if (kieuQuat.getTrang_thai() == false) {
-                kieuQuat.setTrang_thai(true);
+            if (kieuQuat.getTrang_thai()) {
+                long countTrue = kieuQuatRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một kiểu quạt hoạt động");
+                }
             }
+            kieuQuat.setTrang_thai(!kieuQuat.getTrang_thai());
             kieuQuatRepo.save(kieuQuat);
             return ResponseEntity.ok("Kiểu quạt thay đổi trạng thái thành công.");
         } else {
