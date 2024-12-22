@@ -55,14 +55,6 @@
                             </div>
                             <div class="text-center" style="color: #F4A460; font-weight: bold; padding-bottom: 15px">Thuộc tính cố định cho 1 loại sản phẩm</div>
                             <input type="text" class="form-control" id="sanPhamid" th:field="*{id}" hidden>
-                            <div th:if="${message}" class="alert alert-success" role="alert">
-                                <p th:text="${message}"></p>
-                            </div>
-
-                            <!-- Hiển thị thông báo lỗi -->
-                            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-                                <p th:text="${errorMessage}"></p>
-                            </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <!-- Phần kiểu quạt -->
@@ -127,7 +119,7 @@
                                     <!-- Phần giá bán -->
                                     <div class="mb-3">
                                         <label for="sanPhamPrice">Giá bán <b style="color: red">*</b></label>
-                                        <input type="text" class="form-control" id="sanPhamPrice" th:field="*{gia}"  placeholder="Nhập giá bán" required>
+                                        <input type="number" class="form-control" id="sanPhamPrice" th:field="*{gia}"  placeholder="Nhập giá bán" min="0">
                                     </div>
                                 </div>
 
@@ -226,16 +218,16 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
-    <script>
-        // Hàm định dạng giá theo kiểu VND khi nhập vào ô input
-        document.getElementById('sanPhamPrice').addEventListener('input', function (event) {
-            let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
-            if (value) {
-                value = parseInt(value).toLocaleString(); // định dạng giá theo kiểu số
-            }
-            event.target.value = value ? value : '';
-        });
-    </script>
+<!--    <script>-->
+<!--        // Hàm định dạng giá theo kiểu VND khi nhập vào ô input-->
+<!--        document.getElementById('sanPhamPrice').addEventListener('input', function (event) {-->
+<!--            let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số-->
+<!--            if (value) {-->
+<!--                value = parseInt(value).toLocaleString(); // định dạng giá theo kiểu số-->
+<!--            }-->
+<!--            event.target.value = value ? value : '';-->
+<!--        });-->
+<!--    </script>-->
 
     <!--    xem trc ảnh-->
     <script>

@@ -1,6 +1,5 @@
 package com.example.datn.controller;
 
-//import com.example.datn.dto.request.SPCTUpdateRequest;
 import com.example.datn.entity.*;
 import com.example.datn.entity.thuoc_tinh.*;
 import com.example.datn.repository.NhanVienRepository;
@@ -10,14 +9,13 @@ import com.example.datn.repository.ThuocTinhRepo.*;
 import com.example.datn.service.CloudinaryService;
 import com.example.datn.service.SanPhamService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -148,6 +146,8 @@ public class SanPhamController {
         model.addAttribute("maxPrice", maxPrice);
         return "admin/san_pham/san_pham_index";
     }
+
+
 
     @GetMapping("/san-pham/viewAdd")
     public String viewAddProduct() {
@@ -362,7 +362,6 @@ public class SanPhamController {
                 sanPhamNew.setKieuQuat(spTam.getSanPhamTam().getKieuQuat());
                 sanPhamNew.setTrang_thai(spTam.getSanPhamTam().getTrang_thai());
                 sanPhamNew.setDieu_khien_tu_xa(spTam.getSanPhamTam().getDieu_khien_tu_xa());
-                sanPhamNew.setHinh_anh(spTam.getSanPhamTam().getHinh_anh());
                 sanPhamNew.setNgay_tao(spTam.getSanPhamTam().getNgay_tao());
 
                 SanPhamChiTiet sanPhamChiTiet = new SanPhamChiTiet();
@@ -406,104 +405,76 @@ public class SanPhamController {
         model.addAttribute("spUpdate", sanPhamChiTiet);
         return "admin/san_pham/san_pham_update";
     }
+
+    //  Cập nhật sản phẩm
     @PostMapping("/san-pham/update")
-    public String updateProduct(
+    public ResponseEntity<Map<String, String>> updateProduct(
             @RequestParam("id") Long sanPhamId,
             @RequestParam("sanPham.ten") String ten,
             @RequestParam("sanPham.mo_ta") String moTa,
             @RequestParam("sanPham.dieu_khien_tu_xa") Boolean dieuKhienTuXa,
-            @RequestParam("gia") String giaStr,
+            @RequestParam("gia") BigDecimal gia,
             @RequestParam("so_luong") Integer soLuong,
             @RequestParam("trang_thai") Boolean trangThai,
             @RequestParam("mauSac.id") Integer mauSacId,
             @RequestParam("congSuat.id") Integer congSuatId,
-            @RequestParam("hinhAnh.hinh_anh_1") MultipartFile file,
-            @ModelAttribute NhanVien nhanVien,
-            Model model) {
+            @RequestParam("hinhAnh.hinh_anh_1") MultipartFile file) {
+
+        Map<String, String> response = new HashMap<>();
         try {
-            // Kiểm tra giá nhập
-            String giaDinhDang = giaStr.replaceAll("[^\\d]", "");
-            if (giaDinhDang.isEmpty()) {
-                model.addAttribute("errorMessage", "Giá không hợp lệ!");
-                return "redirect:/admin/san-pham/update"; // Hiển thị lại trang cập nhật
-            }
-            BigDecimal gia = new BigDecimal(giaDinhDang);
-
-            // Kiểm tra số lượng
-            if (soLuong < 0) {
-                model.addAttribute("errorMessage", "Số lượng phải lớn hơn hoặc bằng 0!");
-                return "redirect:/admin/san-pham/update"; // Hiển thị lại trang cập nhật
-            }
-
-            // Kiểm tra sự tồn tại của sản phẩm chi tiết
             SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
             if (sanPhamChiTiet == null) {
-                model.addAttribute("errorMessage", "Sản phẩm không tồn tại!");
-                return "admin/san_pham/san_pham_update"; // Trang cập nhật sản phẩm
-            }
-            // Kiểm tra tên sản phẩm
-            String tenSanPham = ten.trim().toLowerCase();
-            List<SanPham> tonTaiTen = sanPhamRepo.findByTenIgnoreCase(tenSanPham);
-            if (!tonTaiTen.isEmpty() && tonTaiTen.stream().noneMatch(p -> p.getId().equals(sanPhamId))) {
-                model.addAttribute("errorMessage", "Tên sản phẩm đã tồn tại trong hệ thống.");
-                return "admin/san_pham/san_pham_update"; // Hiển thị lại trang cập nhật sản phẩm
+                response.put("error", "Sản phẩm không tồn tại!");
+                return ResponseEntity.badRequest().body(response);
             }
 
-            // Cập nhật thông tin sản phẩm
             SanPham sanPham = sanPhamChiTiet.getSanPham();
             sanPham.setTen(ten);
             sanPham.setMo_ta(moTa);
-            sanPham.setDieu_khien_tu_xa(dieuKhienTuXa);
             sanPham.setNgay_sua(new Date());
+            sanPham.setDieu_khien_tu_xa(dieuKhienTuXa);
 
             sanPhamChiTiet.setMauSac(new MauSac(mauSacId));
             sanPhamChiTiet.setCongSuat(new CongSuat(congSuatId));
-            sanPhamChiTiet.setGia(gia);
-            sanPhamChiTiet.setSo_luong(soLuong);
-            sanPhamChiTiet.setTrang_thai(soLuong > 0 ? trangThai : false);
-            sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
             sanPhamChiTiet.setNgay_sua(new Date());
+            if (soLuong <= 0 ) {
+                sanPhamChiTiet.setTrang_thai(false);
+            } else {
+                sanPhamChiTiet.setTrang_thai(trangThai);
+            }
 
-            // Upload hình ảnh
             if (file != null && !file.isEmpty()) {
-                // Nếu có file mới, upload file lên cloud và cập nhật vào sản phẩm chi tiết
                 Map<String, String> uploadAnh = cloudinaryService.upload(file);
                 String imageUrl = uploadAnh.get("url");
 
                 HinhAnh hinhAnh = sanPhamChiTiet.getHinhAnh();
                 hinhAnh.setHinh_anh_1(imageUrl);
-                hinhAnhRepo.save(hinhAnh);
-            } else {
-                // Nếu không có file mới, lấy ảnh từ sản phẩm chi tiết
-                HinhAnh hinhAnh = sanPhamChiTiet.getHinhAnh();
-                if (hinhAnh != null && hinhAnh.getHinh_anh_1() == null) {
-                    // Nếu hình ảnh chi tiết cũng không có, giữ giá trị là null
-                    hinhAnh.setHinh_anh_1(null);
-                    hinhAnhRepo.save(hinhAnh);
-                }
+                HinhAnh savedHinhAnh = hinhAnhRepo.save(hinhAnh);
+                sanPhamChiTiet.setHinhAnh(savedHinhAnh);
             }
 
-            // Cập nhật trạng thái sản phẩm
+            sanPhamChiTiet.setGia(gia);
+            sanPhamChiTiet.setSo_luong(soLuong);
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
+            sanPhamService.update(sanPhamChiTiet);
+
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
-                sanPham.setTrang_thai(true); // Tắt sản phẩm nếu tất cả biến thể đều tắt
+                sanPham.setTrang_thai(true);
             } else {
-                sanPham.setTrang_thai(false); // Bật sản phẩm nếu còn ít nhất 1 biến thể bật
+                sanPham.setTrang_thai(false);
             }
 
             sanPhamService.update(sanPham);
-            sanPhamService.update(sanPhamChiTiet);
 
-            // Hiển thị thông báo thành công
-            model.addAttribute("message", "Cập nhật sản phẩm thành công!");
-            return "redirect:/admin/san-pham"; // Chuyển hướng tới trang danh sách sản phẩm
-
+            response.put("message", "Cập nhật sản phẩm thành công!");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("errorMessage", "Cập nhật sản phẩm thất bại!");
-            return "redirect:/admin/san-pham/update"; // Hiển thị lại trang cập nhật với thông báo lỗi
+            response.put("error", "Cập nhật sản phẩm thất bại!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
 
 
     @DeleteMapping("/delete-tam/{id}")
