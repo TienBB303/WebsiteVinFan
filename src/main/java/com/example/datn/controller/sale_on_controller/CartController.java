@@ -54,7 +54,11 @@ public class CartController {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/add")
-    public String addToCart(CartItemRequest cartItemRequest, HttpSession session) {
+    public String addToCart(@RequestParam Long productId,
+                            @RequestParam BigDecimal price,
+                            @RequestParam(required = false) BigDecimal discountedPrice, // Giá giảm (nếu có)
+                            @RequestParam int quantity,
+                            HttpSession session) {
         // Lấy danh sách giỏ hàng từ session
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
@@ -63,35 +67,40 @@ public class CartController {
             session.setAttribute("cart", cart);
         }
 
-        // Kiểm tra xem sản phẩm có trong giỏ hàng chưa
+        // Kiểm tra sản phẩm đã tồn tại trong giỏ hàng chưa
         Optional<CartItem> existingItem = cart.stream()
-                .filter(item -> item.getProductId().equals(cartItemRequest.getProductId()))
+                .filter(item -> item.getProductId().equals(productId))
                 .findFirst();
 
         if (existingItem.isPresent()) {
-            // Nếu đã có sản phẩm trong giỏ, tăng số lượng
-            existingItem.get().setQuantity(existingItem.get().getQuantity() + cartItemRequest.getQuantity());
+            // Nếu sản phẩm đã tồn tại trong giỏ, tăng số lượng
+            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
         } else {
-            // Nếu chưa có, thêm mới sản phẩm với giá đã giảm (nếu có)
-            BigDecimal price = cartItemRequest.getDiscountedPrice() != null
-                    ? cartItemRequest.getDiscountedPrice()
-                    : cartItemRequest.getPrice();
+            // Nếu sản phẩm chưa tồn tại trong giỏ, lấy thêm thông tin từ DB
+            SanPhamChiTiet productDetails = spctRepo.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm chi tiết"));
 
+            // Sử dụng giá giảm nếu có
+            double finalPrice = discountedPrice != null ? discountedPrice.doubleValue() : price.doubleValue();
+
+            // Tạo đối tượng CartItem mới với thông tin đầy đủ
             CartItem newItem = new CartItem(
-                    cartItemRequest.getProductId(),
-                    cartItemRequest.getName(),
-                    price.doubleValue(),  // Chuyển đổi sang double để xử lý
-                    cartItemRequest.getQuantity(),
-                    cartItemRequest.getDiscountedPrice() // Lưu giá đã giảm
+                    productId,
+                    productDetails.getSanPham().getTen(),       // Tên sản phẩm
+                    finalPrice,                                // Sử dụng giá sau giảm nếu có
+                    quantity,
+                    null, // Giá giảm
+                    productDetails.getMauSac().getTen(),        // Màu sắc
+                    productDetails.getCongSuat().getTen()       // Công suất
             );
             cart.add(newItem);
         }
 
-        // Cập nhật lại session
+        // Cập nhật lại giỏ hàng trong session
         session.setAttribute("cart", cart);
+
         return "redirect:/cart/view";
     }
-
     // Phương thức hiển thị giỏ hàng
     @GetMapping("/view")
     public String viewCart(HttpSession session, HttpServletRequest request, Model model) {

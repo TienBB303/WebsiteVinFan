@@ -43,6 +43,7 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
 
     HoaDonChiTiet findByHoaDon_IdAndSanPhamChiTiet_Id(Long idHoaDon, Long idSanPhamChiTiet);
 
+
     @Modifying
     @Transactional
     @Query("DELETE FROM HoaDonChiTiet h WHERE h.sanPhamChiTiet.id = :idSanPhamChiTiet")
