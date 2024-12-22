@@ -376,7 +376,6 @@
                                     th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
                                 +
                             </button>
-
                         </td>
                         <td class="giaVND" th:text="${item.thanhTien}"></td>
                         <td>
@@ -893,7 +892,7 @@
 
             });
         </script>
-<!--thông báo lỗi số lượng k đủ và xác nhận thành công-->
+    <!--thông báo lỗi số lượng k đủ và xác nhận thành công-->
         <script th:if="${errorMessage}" th:inline="javascript">
             showAlert([[${errorMessage}]], 'danger');
         </script>
