@@ -188,26 +188,26 @@
                 return false;
             }
 
-            // if (!ngayBD) {
-            //     showToast("Không để trống ngày bắt đầu.");
-            //     return false;
-            // } else {
-            //     selectedStartDate.setHours(0, 0, 0, 0);
-            //     currentDate.setHours(0, 0, 0, 0);
-            //
-            //     if (selectedStartDate < currentDate) {
-            //         showToast("Ngày bắt đầu không được là ngày quá khứ.");
-            //         return false;
-            //     }
-            // }
-            //
-            // if (!ngayKT) {
-            //     showToast("Không để trống ngày kết thúc.");
-            //     return false;
-            // } else if (selectedEndDate <= selectedStartDate) {
-            //     showToast("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
-            //     return false;
-            // }
+            if (!ngayBD) {
+                showToast("Không để trống ngày bắt đầu.");
+                return false;
+            } else {
+                selectedStartDate.setHours(0, 0, 0, 0);
+                currentDate.setHours(0, 0, 0, 0);
+
+                if (selectedStartDate < currentDate) {
+                    showToast("Ngày bắt đầu không được là ngày quá khứ.");
+                    return false;
+                }
+            }
+
+            if (!ngayKT) {
+                showToast("Không để trống ngày kết thúc.");
+                return false;
+            } else if (selectedEndDate <= selectedStartDate) {
+                showToast("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
+                return false;
+            }
 
             if (!giaTriGiam || giaTriGiam <= 10000) {
                 showToast("Giá trị giảm phải lớn hơn 10000 VND.");
