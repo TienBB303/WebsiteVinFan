@@ -3,10 +3,7 @@ package com.example.datn.service.Implements;
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.response.*;
 import com.example.datn.entity.*;
-import com.example.datn.repository.HoaDonChiTietRepo;
-import com.example.datn.repository.HoaDonRepo;
-import com.example.datn.repository.LichSuHoaDonRepo;
-import com.example.datn.repository.SPCTRepo;
+import com.example.datn.repository.*;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +12,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +26,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final SPCTRepo spctRepo;
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
-
+    private final NhanVienRepository nhanVienRepository;
 
     @Override
     public Page<HoaDon> findAll(Pageable pageable) {
@@ -178,6 +173,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         Optional<HoaDon> hoaDonOptional = hoaDonRepo.findById(id);
         List<HoaDonChiTiet> listHDCT = hoaDonChiTietRepo.findByHoaDon_Id(id);
 
+
         if (hoaDonOptional.isPresent()) {
             for (HoaDonChiTiet hdct : listHDCT) {
                 SanPhamChiTiet spct = hdct.getSanPhamChiTiet();
@@ -192,6 +188,9 @@ public class HoaDonServiceImpl implements HoaDonService {
 
             // Cập nhật trạng thái của HoaDon
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+            hoaDon.setNguoiTao(nhanVien.getTen());
             hoaDonRepo.save(hoaDon);
 
             // Tạo lịch sử cập nhật
@@ -199,6 +198,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
             lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
             lichSuHoaDonRepo.save(lichSuHoaDon);
 
             return true;
@@ -213,6 +214,10 @@ public class HoaDonServiceImpl implements HoaDonService {
 
         if (hoaDonOptional.isPresent()) {
             HoaDon hoaDon = hoaDonOptional.get();
+
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+            hoaDon.setNguoiTao(nhanVien.getTen());
 
             // Cập nhật trạng thái của HoaDon
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
@@ -230,6 +235,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
             lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
             lichSuHoaDonRepo.save(lichSuHoaDon);
 
             return true;
@@ -289,6 +296,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         return hinhThucThanhToan;
     }
 
+
     @Override
     public void tangSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet) {
         // Lấy HoaDonChiTiet theo idHoaDon và idSanPhamChiTiet
@@ -313,7 +321,8 @@ public class HoaDonServiceImpl implements HoaDonService {
 
                 // Lưu lại bản ghi HoaDonChiTiet đã cập nhật
                 hoaDonChiTietRepo.save(hdct);
-            } else {
+            }
+            else {
                 throw new RuntimeException("Số lượng sản phẩm trong kho không đủ để thêm.");
             }
         } else {

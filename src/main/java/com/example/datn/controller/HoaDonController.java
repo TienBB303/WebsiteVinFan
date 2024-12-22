@@ -7,13 +7,11 @@ import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
-import com.example.datn.entity.HoaDon;
-import com.example.datn.entity.HoaDonChiTiet;
-import com.example.datn.entity.LichSuHoaDon;
-import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.entity.*;
 import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +38,7 @@ public class HoaDonController {
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
     private final HoaDonChiTietRepo hoaDonChiTietRepo;
+    private final NhanVienRepository nhanVienRepository;
 
     @Autowired
     HoaDonRepo hoaDonRespo;
@@ -178,6 +177,9 @@ public class HoaDonController {
             if (hoaDonOptional.isPresent()) {
                 HoaDon hoaDon = hoaDonOptional.get();
 
+                NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+                hoaDon.setNhanVien(nhanVien);
+                hoaDon.setNguoiTao(nhanVien.getTen());
                 // Kiểm tra số lượng tồn kho trước khi xác nhận
                 hoaDonService.truSoLuongSanPham(id); // Đây là nơi bạn cần kiểm tra số lượng tồn kho
 
@@ -191,8 +193,11 @@ public class HoaDonController {
                 lichSuHoaDon.setHoaDon(hoaDon);
                 lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
                 lichSuHoaDon.setNgayTao(LocalDate.now());
+                lichSuHoaDon.setNguoiTao(nhanVien.getTen());
 
                 lichSuHoaDonRepo.save(lichSuHoaDon);
+
+
 
                 // Gửi thông báo thành công
                 redirectAttributes.addFlashAttribute("successMessage", "Hóa đơn đã được xác nhận thành công!");
@@ -215,6 +220,10 @@ public class HoaDonController {
         if (hoaDonOptional.isPresent()) {
             HoaDon hoaDon = hoaDonOptional.get();
 
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+            hoaDon.setNguoiTao(nhanVien.getTen());
+
             // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDangGiaoHang());
             hoaDonService.save(hoaDon);
@@ -224,8 +233,10 @@ public class HoaDonController {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDangGiaoHang());
             lichSuHoaDon.setNgayTao(LocalDate.now());
-
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
             lichSuHoaDonRepo.save(lichSuHoaDon);
+
+
         }
 
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
@@ -244,14 +255,19 @@ public class HoaDonController {
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
             hoaDonService.save(hoaDon);
 
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+            hoaDon.setNguoiTao(nhanVien.getTen());
+
             // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
             lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
 
             lichSuHoaDonRepo.save(lichSuHoaDon);
-            hoaDonService.truSoLuongSanPham(id);
         }
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
