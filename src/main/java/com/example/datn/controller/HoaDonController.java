@@ -251,6 +251,7 @@ public class HoaDonController {
             lichSuHoaDon.setNgayTao(LocalDate.now());
 
             lichSuHoaDonRepo.save(lichSuHoaDon);
+            hoaDonService.truSoLuongSanPham(id);
         }
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id

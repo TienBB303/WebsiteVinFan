@@ -1,5 +1,6 @@
 package com.example.datn.controller;
 
+//import com.example.datn.dto.request.SPCTUpdateRequest;
 import com.example.datn.entity.*;
 import com.example.datn.entity.thuoc_tinh.*;
 import com.example.datn.repository.NhanVienRepository;
@@ -9,14 +10,16 @@ import com.example.datn.repository.ThuocTinhRepo.*;
 import com.example.datn.service.CloudinaryService;
 import com.example.datn.service.SanPhamService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -40,8 +43,8 @@ public class SanPhamController {
     CongSuatRepo congSuatRepo;
     @Autowired
     DeQuatRepo deQuatRepo;
-    @Autowired
-    DieuKhienTuXaRepo dieuKhienTuXaRepo;
+//    @Autowired
+//    DieuKhienTuXaRepo dieuKhienTuXaRepo;
     @Autowired
     DuongKinhCanhRepo duongKinhCanhRepo;
     @Autowired
@@ -103,10 +106,10 @@ public class SanPhamController {
         return cheDoGioRepo.findAll();
     }
 
-    @ModelAttribute("listDieuKhienTuXa")
-    public List<DieuKhienTuXa> listDieuKhienTuXa() {
-        return dieuKhienTuXaRepo.findAll();
-    }
+//    @ModelAttribute("listDieuKhienTuXa")
+//    public List<DieuKhienTuXa> listDieuKhienTuXa() {
+//        return dieuKhienTuXaRepo.findAll();
+//    }
 
     @ModelAttribute("listDuongKinhCanh")
     public List<DuongKinhCanh> listDuongKinhCanh() {
@@ -146,8 +149,6 @@ public class SanPhamController {
         return "admin/san_pham/san_pham_index";
     }
 
-
-
     @GetMapping("/san-pham/viewAdd")
     public String viewAddProduct() {
         return "admin/san_pham/san_pham_add";
@@ -157,6 +158,7 @@ public class SanPhamController {
     public ResponseEntity<?> addProduct(
             @RequestParam("sanPham.ma") String inputMa,
             @RequestParam("sanPham.ten") String ten,
+//            @RequestParam("sanPham.anh") MultipartFile fileAnh,
             @RequestParam("sanPham.kieuQuat.id") Integer kieuQuatId,
             @RequestParam("mauSac.id") List<Integer> mauSacIds,
             @RequestParam("congSuat.id") List<Integer> congSuatIds,
@@ -191,9 +193,10 @@ public class SanPhamController {
         else {
             // Kiểm tra nếu mã không tồn tại, tên không được trùng với bất kỳ tên nào trong database
             List<SanPham> productsWithName = sanPhamRepo.findByTenIgnoreCase(ten);
+            SanPham spTimMa = sanPhamRepo.findByTen(ten);
             if (!productsWithName.isEmpty()) {
                 return ResponseEntity.badRequest().body(
-                        "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống. Vui lòng chọn tên khác."
+                        "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + spTimMa.getMa()+" ."
                 );
             }
         }
@@ -203,6 +206,24 @@ public class SanPhamController {
         sanPhamTam.setMa(ma);
         sanPhamTam.setTen(ten);
         sanPhamTam.setKieuQuat(kieuQuatRepo.findById(kieuQuatId).orElse(null));
+        sanPhamTam.setDieu_khien_tu_xa(true);
+
+//        try {
+//            if (fileAnh.isEmpty()) {
+//                return ResponseEntity.badRequest().body("Lỗi khi tải lên ảnh.");
+//            }
+//
+//            Map uploadResult = cloudinaryService.upload(fileAnh);
+//            String imageUrl = (String) uploadResult.get("url");
+//            if (imageUrl == null) {
+//                return ResponseEntity.badRequest().body("Không thể lấy URL của ảnh.");
+//            }
+//            sanPhamTam.setHinh_anh(imageUrl);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Lỗi khi tải lên ảnh.");
+//        }
+
+
         sanPhamTam.setTrang_thai(true);
         sanPhamTam.setNgay_tao(new Date());
 
@@ -230,7 +251,6 @@ public class SanPhamController {
                 sanPhamChiTietTam.setDeQuat(deQuatRepo.findById(deQuatId).orElse(null));
                 sanPhamChiTietTam.setChieuCao(chieuCaoRepo.findById(chieuCaoId).orElse(null));
                 sanPhamChiTietTam.setHang(hangRepo.findById(hangId).orElse(null));
-                sanPhamChiTietTam.setDieuKhienTuXa(new DieuKhienTuXa(2));
                 HinhAnh hinhAnh = new HinhAnh();
                 sanPhamChiTietTam.setHinhAnh(hinhAnhRepo.save(hinhAnh));
                 sanPhamChiTietTam.setGia(new BigDecimal(100000));
@@ -315,15 +335,17 @@ public class SanPhamController {
                 sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
                 sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
                 sanPhamChiTiet.setHang(spTam.getHang());
-                sanPhamChiTiet.setDieuKhienTuXa(spTam.getDieuKhienTuXa());
                 sanPhamChiTiet.setHinhAnh(spTam.getHinhAnh());
 
                 sanPhamChiTiet.setGia(spTam.getGia());
                 sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
                 sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
+                if(sanPhamChiTiet.getTrang_thai() == true){
+                    sanPham.setTrang_thai(true);
+                }
                 sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
                 sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
-
+                sanPhamService.update(sanPham);
                 listSPCT.add(sanPhamChiTiet);
             }
             sanPhamService.create(sanPham, listSPCT);
@@ -339,6 +361,8 @@ public class SanPhamController {
                 sanPhamNew.setMa(spTam.getSanPhamTam().getMa());
                 sanPhamNew.setKieuQuat(spTam.getSanPhamTam().getKieuQuat());
                 sanPhamNew.setTrang_thai(spTam.getSanPhamTam().getTrang_thai());
+                sanPhamNew.setDieu_khien_tu_xa(spTam.getSanPhamTam().getDieu_khien_tu_xa());
+                sanPhamNew.setHinh_anh(spTam.getSanPhamTam().getHinh_anh());
                 sanPhamNew.setNgay_tao(spTam.getSanPhamTam().getNgay_tao());
 
                 SanPhamChiTiet sanPhamChiTiet = new SanPhamChiTiet();
@@ -353,7 +377,6 @@ public class SanPhamController {
                 sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
                 sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
                 sanPhamChiTiet.setHang(spTam.getHang());
-                sanPhamChiTiet.setDieuKhienTuXa(spTam.getDieuKhienTuXa());
                 sanPhamChiTiet.setHinhAnh(spTam.getHinhAnh());
 
                 sanPhamChiTiet.setGia(spTam.getGia());
@@ -383,127 +406,102 @@ public class SanPhamController {
         model.addAttribute("spUpdate", sanPhamChiTiet);
         return "admin/san_pham/san_pham_update";
     }
-
-    //  Cập nhật sản phẩm
     @PostMapping("/san-pham/update")
     public String updateProduct(
             @RequestParam("id") Long sanPhamId,
             @RequestParam("sanPham.ten") String ten,
             @RequestParam("sanPham.mo_ta") String moTa,
-            @RequestParam("gia") String giaStr,  // Đổi kiểu sang String để xử lý
+            @RequestParam("sanPham.dieu_khien_tu_xa") Boolean dieuKhienTuXa,
+            @RequestParam("gia") String giaStr,
             @RequestParam("so_luong") Integer soLuong,
             @RequestParam("trang_thai") Boolean trangThai,
             @RequestParam("mauSac.id") Integer mauSacId,
-            @RequestParam("nutBam.id") Integer nutBamId,
             @RequestParam("congSuat.id") Integer congSuatId,
-            @RequestParam("chatLieuCanh.id") Integer chatLieuCanhId,
-            @RequestParam("duongKinhCanh.id") Integer duongKinhCanhId,
-            @RequestParam("chatLieuKhung.id") Integer chatLieuKhungId,
-            @RequestParam("deQuat.id") Integer deQuatId,
-            @RequestParam("chieuCao.id") Integer chieuCaoId,
-            @RequestParam("hang.id") Integer hangId,
-            @RequestParam("cheDoGio.id") Integer cheDoGioId,
-            @RequestParam("dieuKhienTuXa.id") Integer dieuKhienTuXaId,
-            @RequestParam("fileAnh") MultipartFile file,
-            @RequestParam("fileAnh1") MultipartFile file1,
-            @RequestParam("fileAnh2") MultipartFile file2,
+            @RequestParam("hinhAnh.hinh_anh_1") MultipartFile file,
             @ModelAttribute NhanVien nhanVien,
-            RedirectAttributes redirectAttributes) {
-
+            Model model) {
         try {
-            if (file.isEmpty()) {
-                throw new IllegalArgumentException("Chưa có tệp hình ảnh được chọn.");
+            // Kiểm tra giá nhập
+            String giaDinhDang = giaStr.replaceAll("[^\\d]", "");
+            if (giaDinhDang.isEmpty()) {
+                model.addAttribute("errorMessage", "Giá không hợp lệ!");
+                return "redirect:/admin/san-pham/update"; // Hiển thị lại trang cập nhật
             }
-            String sanitizedInput = giaStr.replaceAll("[^\\d]", "");
+            BigDecimal gia = new BigDecimal(giaDinhDang);
 
-            BigDecimal gia = new BigDecimal(sanitizedInput);
+            // Kiểm tra số lượng
+            if (soLuong < 0) {
+                model.addAttribute("errorMessage", "Số lượng phải lớn hơn hoặc bằng 0!");
+                return "redirect:/admin/san-pham/update"; // Hiển thị lại trang cập nhật
+            }
 
+            // Kiểm tra sự tồn tại của sản phẩm chi tiết
             SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(sanPhamId);
             if (sanPhamChiTiet == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Sản phẩm không tồn tại!");
-                return "redirect:/admin/san-pham";
+                model.addAttribute("errorMessage", "Sản phẩm không tồn tại!");
+                return "admin/san_pham/san_pham_update"; // Trang cập nhật sản phẩm
+            }
+            // Kiểm tra tên sản phẩm
+            String tenSanPham = ten.trim().toLowerCase();
+            List<SanPham> tonTaiTen = sanPhamRepo.findByTenIgnoreCase(tenSanPham);
+            if (!tonTaiTen.isEmpty() && tonTaiTen.stream().noneMatch(p -> p.getId().equals(sanPhamId))) {
+                model.addAttribute("errorMessage", "Tên sản phẩm đã tồn tại trong hệ thống.");
+                return "admin/san_pham/san_pham_update"; // Hiển thị lại trang cập nhật sản phẩm
             }
 
+            // Cập nhật thông tin sản phẩm
             SanPham sanPham = sanPhamChiTiet.getSanPham();
             sanPham.setTen(ten);
             sanPham.setMo_ta(moTa);
+            sanPham.setDieu_khien_tu_xa(dieuKhienTuXa);
             sanPham.setNgay_sua(new Date());
-            sanPham.setKieuQuat(sanPham.getKieuQuat());
 
             sanPhamChiTiet.setMauSac(new MauSac(mauSacId));
-            sanPhamChiTiet.setNutBam(new NutBam(nutBamId));
             sanPhamChiTiet.setCongSuat(new CongSuat(congSuatId));
-            sanPhamChiTiet.setChatLieuCanh(new ChatLieuCanh(chatLieuCanhId));
-            sanPhamChiTiet.setDuongKinhCanh(new DuongKinhCanh(duongKinhCanhId));
-            sanPhamChiTiet.setChatLieuKhung(new ChatLieuKhung(chatLieuKhungId));
-            sanPhamChiTiet.setDeQuat(new DeQuat(deQuatId));
-            sanPhamChiTiet.setChieuCao(new ChieuCao(chieuCaoId));
-            sanPhamChiTiet.setHang(new Hang(hangId));
-            sanPhamChiTiet.setCheDoGio(new CheDoGio(cheDoGioId));
-            sanPhamChiTiet.setDieuKhienTuXa(new DieuKhienTuXa(dieuKhienTuXaId));
-            sanPhamChiTiet.setNgay_sua(new Date());
-            if (soLuong <= 0 ) {
-                sanPhamChiTiet.setTrang_thai(false);
-            } else {
-                sanPhamChiTiet.setTrang_thai(trangThai);
-            }
-//            Map uploadResult = cloudinaryService.upload(file);
-//            Map uploadResult1 = cloudinaryService.upload(file1);
-//            Map uploadResult2 = cloudinaryService.upload(file2);
-//            String imageUrl = (String) uploadResult.get("url");
-//            String imageUrl1 = (String) uploadResult1.get("url");
-//            String imageUrl2 = (String) uploadResult2.get("url");
-//            hinhAnh.setHinh_anh_1(imageUrl);
-//            hinhAnh.setHinh_anh_2(imageUrl1);
-//            hinhAnh.setHinh_anh_3(imageUrl2);
-//            HinhAnh savedHinhAnh = hinhAnhRepo.save(hinhAnh);
-//            sanPhamChiTiet.setHinhAnh(savedHinhAnh);
-            List<String>listAnh = new ArrayList<>();
-            if(file != null && !file.isEmpty()){
-                Map uploadAnh = cloudinaryService.upload(file);
-                listAnh.add((String) uploadAnh.get("url"));
-            }
-            if(file1!= null && !file1.isEmpty()){
-                Map uploadAnh1 = cloudinaryService.upload(file1);
-                listAnh.add((String) uploadAnh1.get("url"));
-            }if(file2 != null && !file2.isEmpty()){
-                Map uploadAnh2 = cloudinaryService.upload(file2);
-                listAnh.add((String) uploadAnh2.get("url"));
-            }
-
-            HinhAnh hinhAnh = new HinhAnh();
-            if(!listAnh.isEmpty()){
-                if(listAnh.size() > 0){
-                    hinhAnh.setHinh_anh_1(listAnh.get(0));
-                }
-                if(listAnh.size() > 1){
-                    hinhAnh.setHinh_anh_2(listAnh.get(0));
-                }
-                if(listAnh.size() > 2){
-                    hinhAnh.setHinh_anh_3(listAnh.get(0));
-                }
-                HinhAnh savedHinhAnh = hinhAnhRepo.save(hinhAnh);
-                sanPhamChiTiet.setHinhAnh(savedHinhAnh);
-            }
             sanPhamChiTiet.setGia(gia);
             sanPhamChiTiet.setSo_luong(soLuong);
+            sanPhamChiTiet.setTrang_thai(soLuong > 0 ? trangThai : false);
             sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
-            sanPhamService.update(sanPhamChiTiet);
+            sanPhamChiTiet.setNgay_sua(new Date());
 
+            // Upload hình ảnh
+            if (file != null && !file.isEmpty()) {
+                // Nếu có file mới, upload file lên cloud và cập nhật vào sản phẩm chi tiết
+                Map<String, String> uploadAnh = cloudinaryService.upload(file);
+                String imageUrl = uploadAnh.get("url");
+
+                HinhAnh hinhAnh = sanPhamChiTiet.getHinhAnh();
+                hinhAnh.setHinh_anh_1(imageUrl);
+                hinhAnhRepo.save(hinhAnh);
+            } else {
+                // Nếu không có file mới, lấy ảnh từ sản phẩm chi tiết
+                HinhAnh hinhAnh = sanPhamChiTiet.getHinhAnh();
+                if (hinhAnh != null && hinhAnh.getHinh_anh_1() == null) {
+                    // Nếu hình ảnh chi tiết cũng không có, giữ giá trị là null
+                    hinhAnh.setHinh_anh_1(null);
+                    hinhAnhRepo.save(hinhAnh);
+                }
+            }
+
+            // Cập nhật trạng thái sản phẩm
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
                 sanPham.setTrang_thai(true); // Tắt sản phẩm nếu tất cả biến thể đều tắt
             } else {
                 sanPham.setTrang_thai(false); // Bật sản phẩm nếu còn ít nhất 1 biến thể bật
             }
-            sanPhamService.update(sanPham);
 
-            redirectAttributes.addFlashAttribute("message", "Cập nhật sản phẩm thành công!");
+            sanPhamService.update(sanPham);
+            sanPhamService.update(sanPhamChiTiet);
+
+            // Hiển thị thông báo thành công
+            model.addAttribute("message", "Cập nhật sản phẩm thành công!");
+            return "redirect:/admin/san-pham"; // Chuyển hướng tới trang danh sách sản phẩm
+
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Cập nhật sản phẩm thất bại!");
+            model.addAttribute("errorMessage", "Cập nhật sản phẩm thất bại!");
+            return "redirect:/admin/san-pham/update"; // Hiển thị lại trang cập nhật với thông báo lỗi
         }
-
-        return "redirect:/admin/san-pham";
     }
 
 
@@ -522,5 +520,4 @@ public class SanPhamController {
             return ResponseEntity.badRequest().body("Lỗi khi xóa sản phẩm.");
         }
     }
-
 }

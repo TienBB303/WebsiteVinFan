@@ -1,22 +1,27 @@
 package com.example.datn.controller.BanHangTaiQuay;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
+import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.entity.*;
-import com.example.datn.repository.*;
 import com.example.datn.repository.DiaChiRepository;
+import com.example.datn.repository.KhachHangRepo;
+import com.example.datn.repository.NhanVienRepository;
+import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
-import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,8 +29,6 @@ import java.util.List;
 public class BanHangTaiQuayController {
     private final BanHangTaiQuayService banHangTaiQuayService;
     private final HoaDonService hoaDonService;
-    private final TrangThaiHoaDonService trangThaiHoaDonService;
-    private final LichSuHoaDonRepo lichSuHoaDonRepo;
     private final SPCTRepo spctRepo;
     private final KhachHangRepo khachHangRepo;
     private final DiaChiRepository diaChiRepository;
@@ -106,26 +109,29 @@ public class BanHangTaiQuayController {
     @PostMapping("/thanh-toan")
     public String thanhToan(
             @RequestParam("idHD") Long idhd,
-            @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan
+            @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
+            @RequestParam("tinhThanhPho") String tinhThanhPho,
+            @RequestParam("soDienThoaiKhachHang") String soDienThoaiKhachHang,
+            @RequestParam("quanHuyen") String quanHuyen,
+            @RequestParam("xaPhuong") String xaPhuong,
+            @RequestParam("chiTietDiaChi") String chitiet,
+            @RequestParam("ghichu") String ghiChu,
+            @RequestParam("tenKhangHang") String tenKhangHang
     ) {
         HoaDon hoaDon = hoaDonService.findById(idhd)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
         NhanVien nhanVien = nhanVienRepository.profileNhanVien();
         hoaDon.setNhanVien(nhanVien);
-        hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-        hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
 
+        String diaChiNguoiNhan = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + chitiet;
+
+        hoaDon.setTenNguoiNhan(tenKhangHang);
+        hoaDon.setDiaChi(diaChiNguoiNhan);
+        hoaDon.setSdtNguoiNhan(soDienThoaiKhachHang);
+        hoaDon.setGhiChu(ghiChu);
+        hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
         System.out.println(phuongThucThanhToan);
         hoaDonService.save(hoaDon);
-
-        // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setHoaDon(hoaDon);
-        lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-        lichSuHoaDon.setNgayTao(LocalDate.now());
-
-        lichSuHoaDonRepo.save(lichSuHoaDon);
-
         return "redirect:/ban-hang-tai-quay/index";
     }
     @PostMapping("/addKH")
@@ -140,6 +146,15 @@ public class BanHangTaiQuayController {
         // Tìm khách hàng theo ID
         KhachHang khachHang = khachHangRepo.findById(idKh)
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại với ID: " + idKh));
+
+        DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(Math.toIntExact(idKh));
+        String diaChiHoaDon = diaChi.getTinhThanhPho() +
+                ","  + diaChi.getQuanHuyen() + ","
+                + diaChi.getXaPhuong() + ","
+                + diaChi.getSoNhaNgoDuong();
+        System.out.println("dia chi nhan la:" + diaChiHoaDon);
+
+        hoaDon.setDiaChi(diaChiHoaDon);
 
         // Gán khách hàng vào hóa đơn
         hoaDon.setKhachHang(khachHang);

@@ -165,6 +165,12 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h1 class="h5 mb-0">Tài khoản</h1>
                     <div class="ms-auto d-flex gap-2" >
+                        <button type="button" class="btn btn-outline-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalKH"
+                                th:disabled="${idHD == null}">
+                            Thêm khách hàng
+                        </button>
                         <button type="button" class="btn btn-outline-primary"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modalTaiKhoan"
@@ -283,6 +289,13 @@
                     <h4>Khách hàng</h4>
                 </div>
                 <!-- Button trigger modal -->
+                <div class="col text-end" th:disabled="${idHD == null}">
+                    <button type="button" class="btn btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalDiaChi">
+                        Chọn địa chỉ
+                    </button>
+                </div>
                 <div class="modal fade" id="modalDiaChi" tabindex="-1" aria-labelledby="exampleModalLabelDiaChi"
                      aria-hidden="true">
                     <div class="modal-dialog modal-xl">
@@ -319,7 +332,7 @@
                     <input type="email" class="form-control"  th:value="${TTkhachHang.email}">
                 </div>
                 <div class="form-section">
-                    <input type="text" class="form-control" th:value="${diachiMacDinh.soNhaNgoDuong}">
+                    <input type="text" class="form-control" name="chiTietDiaChi" th:value="${diachiMacDinh.soNhaNgoDuong}">
                 </div>
 
                 <div class="row mb-4">
@@ -346,7 +359,7 @@
                     </div>
                 </div>
                 <div class="form-section">
-                    <textarea class="form-control" rows="3" name="soDienThoaiKhachHang" placeholder="Ghi chú"></textarea>
+                    <textarea class="form-control" rows="3" name="ghichu" placeholder="Ghi chú"></textarea>
                 </div>
             </div>
 

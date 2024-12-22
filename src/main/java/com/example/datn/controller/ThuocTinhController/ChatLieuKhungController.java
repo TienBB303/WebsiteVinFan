@@ -54,11 +54,16 @@ public class ChatLieuKhungController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         ChatLieuKhung chatLieuKhung = chatLieuKhungRepo.findById(id).orElse(null); // sửa ở đây(8)
         if (chatLieuKhung != null) {
-            if (chatLieuKhung.getTrang_thai() == true) {
-                chatLieuKhung.setTrang_thai(false);
-            } else if (chatLieuKhung.getTrang_thai() == false) {
-                chatLieuKhung.setTrang_thai(true);
+            if (chatLieuKhung.getTrang_thai()) {
+                long countTrue = chatLieuKhungRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một chất liệu khung hoạt động");
+                }
             }
+            chatLieuKhung.setTrang_thai(!chatLieuKhung.getTrang_thai());
             chatLieuKhungRepo.save(chatLieuKhung);
             return ResponseEntity.ok("Chất liệu khung thay đổi trạng thái thành công."); // sửa ở đây(9)
         } else {

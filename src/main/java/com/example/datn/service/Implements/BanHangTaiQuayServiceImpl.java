@@ -59,6 +59,41 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
     }
 
     @Override
+    public void addSPToHoaDonCho(Long idSP) {
+//        System.out.println("id sp là : " + idSP);
+//        if (myHoaDon == null) {
+//            throw new IllegalStateException("Vui lòng chọn hóa đơn.");
+//        }
+//        List<SPCTRequest> listSPCT = hoaDonCho.get(myHoaDon);
+//        if (listSPCT == null) {
+//            listSPCT = new ArrayList<>();
+//            hoaDonCho.put(myHoaDon, listSPCT);
+//        }
+//        //call spct
+//        SanPhamChiTiet sanPhamChiTiet = spctRepo.findById(idSP).orElseThrow();
+//        // tạo 1 đối tượng sp mới
+//        SPCTRequest request = new SPCTRequest(sanPhamChiTiet.getId(), sanPhamChiTiet.getSanPham().getTen(),
+//                sanPhamChiTiet.getSo_luong(), sanPhamChiTiet.getGia());
+//        // Thêm sản phẩm vào danh sách hiện tại
+//        int soLuongUpdateKhiTrung = 1;
+//        boolean checkSP = false;
+//        for (int i = 0; i < listSPCT.size(); i++) {
+//            if (listSPCT.get(i).getIdSP().equals(request.getIdSP())) {
+//                SPCTRequest sanPhamGet = listSPCT.get(i);
+//                SPCTRequest spUpdate = new SPCTRequest(sanPhamGet.getIdSP(), sanPhamGet.getTenSP(),
+//                        sanPhamGet.getSoLuong() + soLuongUpdateKhiTrung, sanPhamGet.getGia());
+//                // sanPhamUpdate.setSoLuong(soLuongUpdateKhiTrung + sanPhamUpdate.getSoLuong());
+//                listSPCT.set(i, spUpdate);
+//                checkSP = true;
+//            }
+//        }
+//        if (checkSP == false) {
+//            listSPCT.add(request);
+//        }
+//        System.out.println("Danh sách hóa đơn chi tiết sau khi thêm: " + listSPCT);
+    }
+
+    @Override
     public List<HoaDon> findHoaDon() {
         return hoaDonRepo.findAll().stream().
                 filter(loc -> loc.getTrangThai() == trangThaiHoaDonService.getTrangThaiHoaDonRequest()

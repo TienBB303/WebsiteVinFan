@@ -36,8 +36,7 @@
             <section class="row">
                 <section class="col-12">
                     <div class="card p-4">
-                        <form id="TaoBienThe" th:action="@{/admin/san-pham/add-bien-the}" method="post"
-                              enctype="multipart/form-data">
+                        <form id="TaoBienThe" th:action="@{/admin/san-pham/add-bien-the}" method="post" enctype="multipart/form-data">
                             <!-- Thông tin sản phẩm -->
                             <div class="row">
                                 <div class="col-md-6">
@@ -47,6 +46,19 @@
                                             <input type="text" class="form-control" id="sanPhamMa" name="sanPham.ma" placeholder="Mã sản phẩm tự động tạo">
                                     </div>
                                 </div>
+                                <!-- ảnh -->
+<!--                                <div class="col-md-4">-->
+<!--                                    <div class="card" style="width: 100%; margin-top: 10px;">-->
+<!--                                        <div id="imagePreview" class="card-img-top"-->
+<!--                                             style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">-->
+<!--                                            <span style="color: #6c757d;">No Image</span>-->
+<!--                                        </div>-->
+<!--                                        <div class="card-body">-->
+<!--                                            <p class="card-text text-center">Ảnh quạt</p>-->
+<!--                                            <input type="file" class="form-control" id="sanPhamAnh" name="sanPham.anh" onchange="previewImage(event, 'imagePreview')">-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
@@ -515,6 +527,18 @@
             });
 
         });
+    </script>
+    <!--xem trc ảnh-->
+    <script>
+        function previewImage(event, elementId) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(elementId).style.backgroundImage = 'url(' + e.target.result + ')';
+                document.getElementById(elementId).innerHTML = '';
+            };
+            reader.readAsDataURL(file);
+        }
     </script>
 </div>
 </body>
