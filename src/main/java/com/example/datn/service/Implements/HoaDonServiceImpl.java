@@ -32,7 +32,6 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
 
-
     @Override
     public Page<HoaDon> findAll(Pageable pageable) {
         return hoaDonRepo.findAll(pageable);
@@ -288,6 +287,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         HinhThucThanhToanResponse hinhThucThanhToan = new HinhThucThanhToanResponse("Thanh Toán Khi Nhận Hàng", "Chuyển Khoản", "Tiền Mặt");
         return hinhThucThanhToan;
     }
+
 
     @Override
     public void tangSoLuongSanPham(Long idHoaDon, Long idSanPhamChiTiet) {

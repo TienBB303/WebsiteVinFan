@@ -322,8 +322,6 @@ public class CartController {
         // Fake data bổ sung
         hoaDon.setTongTienSauGiamGia(BigDecimal.valueOf(0));
         hoaDon.setNgaySua(LocalDate.now());
-        hoaDon.setNguoiTao("system");
-        hoaDon.setNguoiSua("system");
         hoaDon.setKhachHang(khachHang);
 //        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
         hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L));
