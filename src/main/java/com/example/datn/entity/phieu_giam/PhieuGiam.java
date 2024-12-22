@@ -64,10 +64,6 @@ public class PhieuGiam {
     private boolean trangThai ;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "id_san_pham", referencedColumnName = "id", nullable = true)
-    private SanPham sanPham;
-
-    @ManyToOne(optional = true)
     @JoinColumn(name = "id_san_pham_chi_tiet", referencedColumnName = "id", nullable = true)
     private SanPhamChiTiet spct;
 
