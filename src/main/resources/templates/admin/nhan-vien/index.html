@@ -92,7 +92,6 @@
                                                         <th>Giới Tính</th>
                                                         <th>Ngày Sinh</th>
                                                         <th>Số Điện Thoại</th>
-                                                        <th>Căn cước công dân</th>
                                                         <th>Email</th>
                                                         <th>ngày sinh</th>
                                                         <th>Chức Vụ</th>
@@ -107,9 +106,7 @@
                                                         <td th:text="${nhanVien.ten}"></td>
                                                         <td th:text="${nhanVien.gioiTinh ? 'Nam' : 'Nữ'}"></td>
                                                         <td th:text="${#dates.format(nhanVien.ngaySinh, 'yyyy-MM-dd')}"></td>
-
                                                         <td th:text="${nhanVien.soDienThoai}"></td>
-                                                        <td th:text="${nhanVien.canCuocCongDan}"></td>
                                                         <td th:text="${nhanVien.email}"></td>
                                                         <td th:text="${#dates.format(nhanVien.ngaySinh,'dd/MM/yyyy')}"></td>
                                                         <td th:text="${nhanVien.chucVu.viTri}"></td>
