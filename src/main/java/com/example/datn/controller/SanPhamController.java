@@ -131,11 +131,13 @@ public class SanPhamController {
 
     @GetMapping("/san-pham")
     public String searchProducts(@RequestParam(value = "query", defaultValue = "") String query,
-                                 @RequestParam(value = "minPrice", defaultValue = "0") BigDecimal minPrice,
-                                 @RequestParam(value = "maxPrice", defaultValue = "0") BigDecimal maxPrice,
+                                 @RequestParam(value = "minPrice", defaultValue = "0") String minPriceStr,
+                                 @RequestParam(value = "maxPrice", defaultValue = "0") String maxPriceStr,
                                  @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "5") int size,
                                  Model model) {
+        BigDecimal minPrice = epKieuDecimal(minPriceStr.trim());
+        BigDecimal maxPrice = epKieuDecimal(maxPriceStr.trim());
         if (maxPrice.compareTo(BigDecimal.ZERO) == 0) {
             maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
@@ -146,7 +148,17 @@ public class SanPhamController {
         model.addAttribute("maxPrice", maxPrice);
         return "admin/san_pham/san_pham_index";
     }
-
+    private BigDecimal epKieuDecimal(String priceStr) {
+        if (priceStr.trim() == null || priceStr.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        String xoaString = priceStr.replaceAll(",", "");  // Loại bỏ dấu phẩy trong giá trị đầu vào
+        try {
+            return new BigDecimal(xoaString);
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO; // Trả về 0 nếu không thể chuyển đổi
+        }
+    }
 
 
     @GetMapping("/san-pham/viewAdd")
@@ -175,8 +187,7 @@ public class SanPhamController {
         if (inputMa != null && inputMa.length() > 5) {
             return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 5 ký tự.");
         }
-        String ma = (inputMa == null || inputMa.trim().isEmpty())
-                ? sanPhamService.taoMaTuDong() : inputMa.trim();
+        String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
         SanPham sp = sanPhamRepo.findByMa(ma);
         if (sp != null) {
             // Tên và kiểu quạt phải trùng
@@ -199,6 +210,34 @@ public class SanPhamController {
                 return ResponseEntity.badRequest().body(
                         "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + spTimMa.getMa()+" ."
                 );
+            }
+        }
+        List<SanPhamChiTiet> spcheck = spctRepo.timKiemTheoTen(ten.trim());
+        if (spcheck != null && !spcheck.isEmpty()) {
+            SanPhamChiTiet spDauTien = spcheck.get(0);
+            if (!spDauTien.getCheDoGio().getId().equals(cheDoGioId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chế độ gió phải là : " + spDauTien.getCheDoGio().getTen());
+            }
+            if (!spDauTien.getNutBam().getId().equals(nutBamId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " nút bấm phải là : " + spDauTien.getNutBam().getTen());
+            }
+            if (!spDauTien.getChatLieuCanh().getId().equals(chatLieuCanhId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu cánh phải là : " + spDauTien.getChatLieuCanh().getTen());
+            }
+            if (!spDauTien.getDuongKinhCanh().getId().equals(duongKinhCanhId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đường kính cánh phải là : " + spDauTien.getDuongKinhCanh().getTen());
+            }
+            if (!spDauTien.getChatLieuKhung().getId().equals(chatLieuKhungId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu khung phải là : " + spDauTien.getChatLieuKhung().getTen());
+            }
+            if (!spDauTien.getDeQuat().getId().equals(deQuatId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đế quạt cánh phải là : " + spDauTien.getDeQuat().getTen());
+            }
+            if (!spDauTien.getChieuCao().getId().equals(chieuCaoId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chiều cao phải là : " + spDauTien.getChieuCao().getTen());
+            }
+            if (!spDauTien.getHang().getId().equals(hangId)) {
+                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " hãng phải là : " + spDauTien.getHang().getTen());
             }
         }
 
@@ -328,7 +367,11 @@ public class SanPhamController {
                     sanPham.setTrang_thai(true);
                 }
                 sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
-                sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
+                NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+                if (nhanVien == null) {
+                    return ResponseEntity.badRequest().body("Không tìm thấy thông tin nhân viên cập nhật");
+                }
+                sanPhamChiTiet.setNguoi_tao(nhanVien.getTen());
                 sanPhamService.update(sanPham);
                 listSPCT.add(sanPhamChiTiet);
             }
@@ -360,13 +403,18 @@ public class SanPhamController {
                 sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
                 sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
                 sanPhamChiTiet.setHang(spTam.getHang());
-                sanPhamChiTiet.setHinhAnh(spTam.getHinhAnh());
+                HinhAnh hinhAnh = new HinhAnh();
+                sanPhamChiTiet.setHinhAnh(hinhAnhRepo.save(hinhAnh));
 
                 sanPhamChiTiet.setGia(spTam.getGia());
                 sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
                 sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
                 sanPhamChiTiet.setNgay_tao(spTam.getNgay_tao());
-                sanPhamChiTiet.setNguoi_tao(spTam.getNguoi_tao());
+                NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+                if (nhanVien == null) {
+                    return ResponseEntity.badRequest().body("Không tìm thấy thông tin nhân viên cập nhật");
+                }
+                sanPhamChiTiet.setNguoi_tao(nhanVien.getTen());
 
                 listSPCT.add(sanPhamChiTiet);
             }
@@ -420,7 +468,7 @@ public class SanPhamController {
             if(ten.trim().isEmpty() || ten.trim() == null){
                 return ResponseEntity.badRequest().body("Tên không được để trống");
             }
-            boolean isNameChanged = !sanPhamChiTiet.getSanPham().getTen().equals(ten.trim());
+            boolean isNameChanged = !sanPhamChiTiet.getSanPham().getTen().equals(ten);
             boolean isCongSuatChanged = !sanPhamChiTiet.getCongSuat().getId().equals(congSuatId);
             boolean isMauSacChanged = !sanPhamChiTiet.getMauSac().getId().equals(mauSacId);
 
