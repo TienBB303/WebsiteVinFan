@@ -32,6 +32,8 @@ public interface SanPhamService {
 
     BigDecimal getSanPhamGiaLonNhat();
 
+    BigDecimal getSanPhamGiaNhoNhat();
+
     List<SanPhamChiTiet> timSanPhamTheoTen(String ten);
 
     Boolean tatCaSanPhamTrangThaiOff(Long sanPhamId);
