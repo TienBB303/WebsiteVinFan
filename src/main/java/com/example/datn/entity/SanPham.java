@@ -31,6 +31,8 @@ public class SanPham {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date ngay_sua;
 
+    Boolean dieu_khien_tu_xa;
+
     Boolean trang_thai;
 
     @ManyToOne

@@ -52,11 +52,16 @@ public class DeQuatController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         DeQuat tt = ttRepo.findById(id).orElse(null);
         if (tt != null) {
-            if (tt.getTrang_thai() == true) {
-                tt.setTrang_thai(false);
-            } else if (tt.getTrang_thai() == false) {
-                tt.setTrang_thai(true);
+            if (tt.getTrang_thai()) {
+                long countTrue = ttRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một đế quạt hoạt động");
+                }
             }
+            tt.setTrang_thai(!tt.getTrang_thai());
             ttRepo.save(tt);
             return ResponseEntity.ok("Đế quạt thay đổi trạng thái thành công.");
         } else {

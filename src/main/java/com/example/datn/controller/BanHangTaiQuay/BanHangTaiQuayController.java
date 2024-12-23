@@ -1,27 +1,21 @@
 package com.example.datn.controller.BanHangTaiQuay;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.entity.*;
+import com.example.datn.repository.*;
 import com.example.datn.repository.DiaChiRepository;
-import com.example.datn.repository.KhachHangRepo;
-import com.example.datn.repository.NhanVienRepository;
-import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
+import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,6 +23,8 @@ import java.util.Optional;
 public class BanHangTaiQuayController {
     private final BanHangTaiQuayService banHangTaiQuayService;
     private final HoaDonService hoaDonService;
+    private final TrangThaiHoaDonService trangThaiHoaDonService;
+    private final LichSuHoaDonRepo lichSuHoaDonRepo;
     private final SPCTRepo spctRepo;
     private final KhachHangRepo khachHangRepo;
     private final DiaChiRepository diaChiRepository;
@@ -129,9 +125,20 @@ public class BanHangTaiQuayController {
         hoaDon.setDiaChi(diaChiNguoiNhan);
         hoaDon.setSdtNguoiNhan(soDienThoaiKhachHang);
         hoaDon.setGhiChu(ghiChu);
+        hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
         hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
-        System.out.println(phuongThucThanhToan);
+        hoaDon.setNguoiTao(nhanVien.getTen());
         hoaDonService.save(hoaDon);
+
+        // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setHoaDon(hoaDon);
+        lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+        lichSuHoaDon.setNgayTao(LocalDate.now());
+        lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
+        lichSuHoaDonRepo.save(lichSuHoaDon);
+        hoaDonService.truSoLuongSanPham(idhd);
         return "redirect:/ban-hang-tai-quay/index";
     }
     @PostMapping("/addKH")
@@ -168,18 +175,36 @@ public class BanHangTaiQuayController {
 
 
     @PostMapping("tang-so-luong")
-    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon, @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet
+    ) {
         try {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-            return ResponseEntity.ok().build();
+            hoaDonService.updateTongTienHoaDon();
+            return ResponseEntity.ok().body("Thêm thành công");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            // Trả về thông báo lỗi
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("giam-so-luong")
+    public ResponseEntity<?> giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+        try {
+            hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
+            hoaDonService.updateTongTienHoaDon();
+            return ResponseEntity.ok("Giảm số lượng thành công.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PostMapping("/tao-hoa-don")
     public String taoHoaDon() {
         HoaDon hoaDon = new HoaDon();
+        NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+        hoaDon.setNhanVien(nhanVien);
         banHangTaiQuayService.taoHoaDonCho(hoaDon);
         return "redirect:/ban-hang-tai-quay/index";
     }

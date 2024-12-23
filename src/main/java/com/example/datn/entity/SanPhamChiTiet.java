@@ -51,9 +51,9 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_cong_suat")
     CongSuat congSuat;
 
-    @ManyToOne
-    @JoinColumn(name = "id_dieu_khien_tu_xa")
-    DieuKhienTuXa dieuKhienTuXa;
+//    @ManyToOne
+//    @JoinColumn(name = "id_dieu_khien_tu_xa")
+//    DieuKhienTuXa dieuKhienTuXa;
 
     @ManyToOne
     @JoinColumn(name = "id_hang")

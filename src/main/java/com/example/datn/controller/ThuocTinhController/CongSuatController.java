@@ -53,11 +53,16 @@ public class CongSuatController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         CongSuat congSuat = congSuatRepo.findById(id).orElse(null);
         if (congSuat != null) {
-            if (congSuat.getTrang_thai() == true) {
-                congSuat.setTrang_thai(false);
-            } else if (congSuat.getTrang_thai() == false) {
-                congSuat.setTrang_thai(true);
+            if (congSuat.getTrang_thai()) {
+                long countTrue = congSuatRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một công suất hoạt động");
+                }
             }
+            congSuat.setTrang_thai(!congSuat.getTrang_thai());
             congSuatRepo.save(congSuat);
             return ResponseEntity.ok("Công suất thay đổi trạng thái thành công.");
         } else {

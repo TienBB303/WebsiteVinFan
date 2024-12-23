@@ -39,4 +39,5 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
         return findByEmail(email).orElse(null);
     }
 
+
 }

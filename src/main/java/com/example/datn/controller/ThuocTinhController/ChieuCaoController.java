@@ -52,11 +52,16 @@ public class ChieuCaoController {
     public ResponseEntity doiTrangThai(@PathVariable("id") Integer id) {
         ChieuCao chieuCao = chieuCaoRepo.findById(id).orElse(null);
         if (chieuCao != null) {
-            if (chieuCao.getTrang_thai() == true) {
-                chieuCao.setTrang_thai(false);
-            } else if (chieuCao.getTrang_thai() == false) {
-                chieuCao.setTrang_thai(true);
+            if (chieuCao.getTrang_thai()) {
+                long countTrue = chieuCaoRepo.findAll().stream()
+                        .filter(c -> c.getTrang_thai() && !c.getId().equals(id))
+                        .count();
+
+                if (countTrue == 0) {
+                    return ResponseEntity.badRequest().body("Cần có ít nhất một đơn vị chiều hoạt động");
+                }
             }
+            chieuCao.setTrang_thai(!chieuCao.getTrang_thai());
             chieuCaoRepo.save(chieuCao);
             return ResponseEntity.ok("Chiều cao thay đổi trạng thái thành công.");
         } else {

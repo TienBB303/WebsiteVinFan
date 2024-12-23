@@ -36,8 +36,7 @@
             <section class="row">
                 <section class="col-12">
                     <div class="card p-4">
-                        <form id="TaoBienThe" th:action="@{/admin/san-pham/add-bien-the}" method="post"
-                              enctype="multipart/form-data">
+                        <form id="TaoBienThe" th:action="@{/admin/san-pham/add-bien-the}" method="post" enctype="multipart/form-data">
                             <!-- Thông tin sản phẩm -->
                             <div class="row">
                                 <div class="col-md-6">
@@ -221,7 +220,7 @@
                             <!-- Nút submit -->
                             <div class="row">
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">Tạo biến thể</button>
+                                    <button type="submit" class="btn btn-outline-warning">Tạo biến thể</button>
                                 </div>
                             </div>
                         </form>
@@ -257,11 +256,11 @@
                                     <td>
                                         <input type="number" th:value="${spTam.so_luong}" name="so_luong" class="form-control"/>
                                     </td>
-<!--                                    <td>-->
-<!--                                        <a class="btn btn-danger" onclick="deleteSanPhamTam(${spTam.id})">-->
-<!--                                            <i class="bi bi-trash"></i>-->
-<!--                                        </a>-->
-<!--                                    </td>-->
+                                    <td>
+                                        <button type="button" class="btn btn-danger delete-button" data-id="${spTam.id}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -376,6 +375,7 @@
                         });
 
                         // Xử lý dữ liệu trả về từ server để cập nhật bảng mà không reload trang
+                        console.log(response);
                         let tableBody = $('tbody');  // Đoạn tbody của bảng biến thể
                         tableBody.empty();  // Xóa dữ liệu cũ (nếu có)
 
@@ -390,9 +390,15 @@
                                 <td>${item.congSuat.ten}</td>
                                 <td><input type="number" value="${item.gia}" name="gia" class="form-control"/></td>
                                 <td><input type="number" value="${item.so_luong}" name="so_luong" class="form-control"/></td>
+                                <td>
+                                     <button type="button" class="btn btn-danger delete-button" data-id="${item.id}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
                             </tr>`;
                             tableBody.append(newRow);  // Thêm dòng mới vào bảng
                         });
+                        $('#confirmFormCard').show();
                     },
                     error: function (xhr) {
                         Swal.fire({
@@ -406,33 +412,8 @@
                         });
                     }
                 });
-                // $('#TaoBienThe').hide();  // Ẩn form tạo biến thể
-                $('#confirmFormCard').show();  // Hiển thị form xác nhận
             });
         });
-    </script>
-    <script>
-        function deleteSanPhamTam(id) {
-            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-                // Xóa yêu cầu DELETE từ server
-                fetch(`/admin/san-pham/delete-tam/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Xóa dòng trong bảng sau khi xóa thành công
-                        // Lấy dòng của sản phẩm và xóa nó
-                        document.querySelector(`tr[data-id="${id}"]`).remove();
-                    } else {
-                        alert("Có lỗi xảy ra khi xóa sản phẩm.");
-                    }
-                })
-                .catch(error => {
-                    alert("Có lỗi xảy ra khi xóa sản phẩm.");
-                    console.error(error);
-                });
-            }
-        }
     </script>
     <!--Confirm -->
     <script>
@@ -478,26 +459,60 @@
     </script>
     <!--Xóa sp tạm -->
     <script>
-        function deleteSanPhamTam(id) {
-            // Ngăn không cho form gửi
-            event.preventDefault();
+        $(document).ready(function () {
+            let isDeleting = false;
+            $('.delete-button').on('click', function (e) {
+                e.preventDefault(); // Ngăn chặn hành động mặc định
 
-            // Gửi yêu cầu xóa sản phẩm tạm
-            fetch(`/admin/san-pham/delete-tam/${id}`, {
-                method: 'DELETE',
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // Xóa sản phẩm trong bảng
-                        document.querySelector(`tr[data-id="${id}"]`).remove();
-                    } else {
-                        alert("Lỗi khi xóa sản phẩm tạm!");
+                let sanPhamTamId = $(this).data('id'); // Lấy ID sản phẩm từ data-id
+                console.log(sanPhamTamId);
+
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có',
+                    cancelButtonText: 'Không'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        isDeleting = true;
+                        // Gửi yêu cầu xóa đến server
+                        $.ajax({
+                            url: `/admin/san-pham/delete-tam/${sanPhamTamId}`, // URL xóa sản phẩm tạm
+                            type: 'DELETE',
+                            success: function (response) {
+                                // Xóa hàng khỏi bảng
+                                $(`tr[data-id=${sanPhamTamId}]`).remove();
+
+                                Swal.fire({
+                                    toast: true,
+                                    icon: 'success',
+                                    title: 'Xóa biến thể thành công.',
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true
+                                });
+                            },
+                            error: function (xhr) {
+                                Swal.fire({
+                                    toast: true,
+                                    icon: 'error',
+                                    title: xhr.responseText, // Thông báo lỗi trả về từ server
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true
+                                });
+                            },
+                            complete: function () {
+                                isDeleting = false;
+                            }
+                        });
                     }
-                })
-                .catch(error => {
-                    console.error('Lỗi:', error);
                 });
-        }
+            });
+        });
     </script>
     <!--multi select cho các option thêm : màu sắc, công suất, chê sdodoj gió-->
     <script>
@@ -515,6 +530,18 @@
             });
 
         });
+    </script>
+    <!--xem trc ảnh-->
+    <script>
+        function previewImage(event, elementId) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(elementId).style.backgroundImage = 'url(' + e.target.result + ')';
+                document.getElementById(elementId).innerHTML = '';
+            };
+            reader.readAsDataURL(file);
+        }
     </script>
 </div>
 </body>

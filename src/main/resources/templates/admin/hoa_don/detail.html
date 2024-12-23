@@ -142,7 +142,7 @@
                           class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-outline-success">
-                            <i class=""></i> Chờ xác nhận
+                            <i class=""></i> Xác nhận
                         </button>
                     </form>
 
@@ -158,7 +158,7 @@
                     <form method="post" th:action="@{/hoa-don/hoan-thanh}"
                           th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 3}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-outline-primary" >
+                        <button type="submit" class="btn btn-outline-primary">
                             <i class=""></i> Hoàn Thành
                         </button>
                     </form>
@@ -172,6 +172,11 @@
                     </form>
                 </div>
             </div>
+            <!-- Thông báo lỗi -->
+            <div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
+
+            <!-- Thông báo thành công -->
+            <div th:if="${successMessage}" style="color: green;" th:text="${successMessage}"></div>
 
             <!-- Payment History Section -->
             <div class="card mb-4">
@@ -371,7 +376,6 @@
                                     th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
                                 +
                             </button>
-
                         </td>
                         <td class="giaVND" th:text="${item.thanhTien}"></td>
                         <td>
@@ -785,7 +789,7 @@
 
 
         </script>
-
+<!--format gia-->
         <script>
             document.querySelectorAll('.giaVND').forEach(element => {
                 const originalValue = parseFloat(element.innerText);
@@ -796,8 +800,9 @@
                 });
             });
         </script>
-        <meta name="_csrf" content="${_csrf.token}" />
-        <meta name="_csrf_header" content="${_csrf.headerName}" />
+
+        <meta name="_csrf" content="${_csrf.token}"/>
+        <meta name="_csrf_header" content="${_csrf.headerName}"/>
         <script>
             $(document).on('click', '.btn-increase', function () {
                 const button = $(this); // Lấy đối tượng nút hiện tại
@@ -887,8 +892,31 @@
 
             });
         </script>
+    <!--thông báo lỗi số lượng k đủ và xác nhận thành công-->
+        <script th:if="${errorMessage}" th:inline="javascript">
+            showAlert([[${errorMessage}]], 'danger');
+        </script>
+
+        <script th:if="${successMessage}" th:inline="javascript">
+            showAlert([[${successMessage}]], 'success');
+        </script>
+
+        <script>
+            // Hiển thị thông báo động
+            function showAlert(message, type) {
+                const alertBox = document.createElement('div');
+                alertBox.className = `alert alert-${type}`; // Dùng Bootstrap hoặc CSS tùy chỉnh
+                alertBox.innerText = message;
+                document.body.prepend(alertBox);
+
+                // Tự động ẩn sau 5 giây
+                setTimeout(() => alertBox.remove(), 2000);
+            }
+        </script>
 
     </div>
+
 </div>
+
 </body>
 </html>

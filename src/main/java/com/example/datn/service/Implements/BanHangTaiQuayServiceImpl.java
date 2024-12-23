@@ -24,6 +24,7 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
     private final SPCTRepo spctRepo;
     private final KhachHangRepo khachHangRepo;
+    private final NhanVienRepository nhanVienRepository;
     Long myHoaDon = null;
 
 
@@ -36,6 +37,9 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
                 .count();
         if (count < 5) {
             //tao hoa don
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+
             hoaDon.setMa(hoaDonService.generateOrderCode());
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHoaDonCho());
             hoaDon.setNgayTao(LocalDate.now());
@@ -46,6 +50,8 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
             hoaDon.setTenNguoiNhan(khachHang.getTen());
             HinhThucThanhToanResponse hinhThucThanhToanResponse = hoaDonService.getHinhThucThanhToan();
             hoaDon.setHinhThucThanhToan(hinhThucThanhToanResponse.getTienMat());
+            hoaDon.setNguoiTao(nhanVien.getTen());
+
             hoaDonRepo.saveAndFlush(hoaDon);
 
             //tao lich su hoa don
@@ -53,6 +59,8 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setNgayTao(hoaDon.getNgayTao());
             lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
             lichSuHoaDonRepo.save(lichSuHoaDon);
 
         }
