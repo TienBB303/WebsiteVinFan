@@ -48,17 +48,17 @@
                                     <div class="row">
                                         <div class="col-4">
                                             <input type="text" id="searchInput" class="form-control" name="query"
-                                                   placeholder="Tìm kiếm sản phẩm theo mã và tên" th:value="${param.query}">
+                                                   placeholder="Tìm kiếm sản phẩm theo mã và tên" th:value="${param.query}" maxlength="255">
                                         </div>
                                         <div class="col-3">
-                                            <input type="text" id="searchInputMinPrice" class="form-control" th:id="giaMinVND"
+                                            <input type="text" id="searchInputMinPrice" class="form-control"
                                                    name="minPrice" placeholder="Giá nhỏ nhất"
-                                                   th:value="${param.minPrice}">
+                                                   th:value="${param.minPrice}" >
                                         </div>
                                         <div class="col-3">
-                                            <input type="text" id="searchInputMaxPrice" class="form-control" th:id="giaMaxVND"
+                                            <input type="text" id="searchInputMaxPrice" class="form-control"
                                                    name="maxPrice" placeholder="Giá lớn nhất"
-                                                   th:value="${param.maxPrice}">
+                                                   th:value="${param.maxPrice}" >
                                         </div>
                                         <div class="col-2 d-flex">
                                             <div>
@@ -210,25 +210,24 @@
                 currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
             });
         });
-        document.getElementById('giaMinVND').addEventListener('input', function (event) {
-            let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
-            if (value.length > 9) {
-                value = value.slice(0, 9); // Giới hạn tối đa 9 chữ số
+        function formatPriceInput(element) {
+            let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
+            if (value.length > 8) {
+                value = value.slice(0, 8); // Giới hạn tối đa 9 chữ số
             }
             if (value) {
-                value = parseInt(value).toLocaleString(); // Định dạng giá trị thành số
+                // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
-            event.target.value = value ? value : '';
+            element.value = value ? value : '';
+        }
+
+        document.getElementById('searchInputMinPrice').addEventListener('input', function (event) {
+            formatPriceInput(event.target);
         });
-        document.getElementById('giaMaxVND').addEventListener('input', function (event) {
-            let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
-            if (value.length > 9) {
-                value = value.slice(0, 9); // Giới hạn tối đa 9 chữ số
-            }
-            if (value) {
-                value = parseInt(value).toLocaleString(); // Định dạng giá trị thành số
-            }
-            event.target.value = value ? value : '';
+
+        document.getElementById('searchInputMaxPrice').addEventListener('input', function (event) {
+            formatPriceInput(event.target);
         });
     </script>
 </div>
