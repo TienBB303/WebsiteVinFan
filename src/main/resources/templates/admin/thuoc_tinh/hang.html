@@ -182,7 +182,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/hang/update">
-                        <input type="hidden" id="mauSacId" name="id">
+                        <input type="hidden" id="hangId" name="id">
                         <div class="mb-3">
                             <label for="ten_hangUpdate" class="form-label">Tên hãng</label>
                             <input type="text" class="form-control" id="ten_hangUpdate" name="ten_hang_update" placeholder="Nhập tên hãng mới">
@@ -299,14 +299,14 @@
         $(document).on('click', '.hienThiThongTinModal', function () {
             const id = $(this).data('id');
             console.log("ID lấy được:", id);
-            $('#mauSacId').val(id); // Gắn ID vào input ẩn trong form
+            $('#hangId').val(id); // Gắn ID vào input ẩn trong form
 
             $.ajax({
                 url: `/admin/thuoc-tinh/hang/detail/${id}`,
                 type: 'GET',
                 success: function (response) {
                     console.log("Response:", response);
-                    $('#mauSacId').val(response.id);
+                    $('#hangId').val(response.id);
                     $('#ten_hangUpdate').val(response.ten);
                 },
                 error: function (xhr) {
@@ -324,14 +324,14 @@
         $('#updateKieuQuat').on('submit', function (e) {
             e.preventDefault(); // Ngăn submit mặc định của form
 
-            const mauSacId = $('#mauSacId').val();
+            const hangId = $('#hangId').val();
             const ten_hang = $('#ten_hangUpdate').val();
 
             $.ajax({
                 url: `/admin/thuoc-tinh/hang/update`,
                 type: 'POST',
                 data: {
-                    id: mauSacId,
+                    id: hangId,
                     ten_hang_update: ten_hang
                 },
                 success: function (response) {

@@ -44,7 +44,7 @@ public class MauSacController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<MauSac> searchPage = mauSacService.search(ten_mau_sac, trang_thai, PageRequest.of(page, size));
+        Page<MauSac> searchPage = mauSacService.search(ten_mau_sac.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listMS", searchPage);
         model.addAttribute("ten_mau_sac", ten_mau_sac);
         model.addAttribute("trang_thai", trang_thaiStr);

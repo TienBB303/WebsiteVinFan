@@ -42,7 +42,7 @@ public class ChatLieuCanhController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<ChatLieuCanh> searchPage = chatLieuCanhService.search(ten_chat_lieu_canh, trang_thai, PageRequest.of(page, size));
+        Page<ChatLieuCanh> searchPage = chatLieuCanhService.search(ten_chat_lieu_canh.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listCLC", searchPage);
         model.addAttribute("ten_chat_lieu_canh", ten_chat_lieu_canh);
         model.addAttribute("trang_thai", trang_thaiStr);
@@ -111,7 +111,7 @@ public class ChatLieuCanhController {
         Optional<ChatLieuCanh> chatLieuCanhOptional = chatLieuCanhRepo.findById(id);
         if (chatLieuCanhOptional.isPresent()) {
             ChatLieuCanh chatLieuCanh = chatLieuCanhOptional.get();
-            chatLieuCanh.setTen(tenChatLieuCanh);
+            chatLieuCanh.setTen(tenChatLieuCanh.trim());
             chatLieuCanhRepo.save(chatLieuCanh);
             return ResponseEntity.ok("Cập nhật chất liệu cánh thành công.");
         } else {

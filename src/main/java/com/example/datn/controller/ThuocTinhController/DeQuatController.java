@@ -41,7 +41,7 @@ public class DeQuatController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<DeQuat> searchPage = ttService.search(ten_de_quat, trang_thai, PageRequest.of(page, size));
+        Page<DeQuat> searchPage = ttService.search(ten_de_quat.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_de_quat", ten_de_quat);
         model.addAttribute("trang_thai", trang_thaiStr);
