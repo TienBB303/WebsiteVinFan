@@ -48,7 +48,7 @@
                                     <div class="row">
                                         <div class="col-4">
                                             <input type="text" id="searchInput" class="form-control" name="query"
-                                                   placeholder="Tìm kiếm sản phẩm...." th:value="${param.query}">
+                                                   placeholder="Tìm kiếm sản phẩm theo mã và tên" th:value="${param.query}">
                                         </div>
                                         <div class="col-3">
                                             <input type="text" id="searchInputMinPrice" class="form-control" th:id="giaMinVND"
@@ -94,7 +94,10 @@
                                         <th data-sortable="" style="width: 10%;">
                                             <a href="#" class="dataTable-sorter">Công suất</a>
                                         </th>
-                                        <th data-sortable="" style="width: 15%;">
+                                        <th data-sortable="" style="width: 5%;">
+                                            <a href="#" class="dataTable-sorter">Số lượng</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%;">
                                             <a href="#" class="dataTable-sorter">Giá bán</a>
                                         </th>
                                         <th data-sortable="" style="width: 10%;">
@@ -112,6 +115,7 @@
                                         <td th:text="${sp.sanPham.ten + ' (' + sp.mauSac.ten + ')'}"></td>
                                         <td th:text="${sp.sanPham.kieuQuat.ten}"></td>
                                         <td th:text="${sp.congSuat.ten}"></td>
+                                        <td th:text="${sp.so_luong}"></td>
                                         <td class="giaVND" th:text="${sp.gia}"></td>
                                         <td style="text-align: center">
                                             <span th:if="${sp.trang_thai}" class="badge bg-light-success">
@@ -197,8 +201,14 @@
     <script th:replace="/admin/fragments/script :: script"></script>
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
+            // const originalValue = parseFloat(element.innerText);
+            // element.innerText = originalValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
             const originalValue = parseFloat(element.innerText);
-            element.innerText = originalValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            element.innerText = originalValue.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+            });
         });
         document.getElementById('giaMinVND').addEventListener('input', function (event) {
             let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
