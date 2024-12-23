@@ -105,6 +105,11 @@ public class SanPhamImp implements SanPhamService {
     }
 
     @Override
+    public BigDecimal getSanPhamGiaNhoNhat() {
+        return spctRepo.findMinPrice();
+    }
+
+    @Override
     public List<SanPhamChiTiet> timSanPhamTheoTen(String ten) {
         return spctRepo.timKiemTheoTen(ten);
     }

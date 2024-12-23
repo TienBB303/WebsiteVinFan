@@ -26,6 +26,9 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
     @Query("SELECT MAX(spct.gia) FROM SanPhamChiTiet spct")
     BigDecimal findMaxPrice();
 
+    @Query("SELECT MIN(spct.gia) FROM SanPhamChiTiet spct")
+    BigDecimal findMinPrice();
+
     @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.id = :sanPhamId")
     List<SanPhamChiTiet> findBySanPhamId(@Param("sanPhamId") Long sanPhamId);
 
@@ -33,6 +36,9 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 
     @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham.ten LIKE %:ten%")
     List<SanPhamChiTiet> timKiemTheoTen(String ten);
+
+    @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham.ten LIKE %:ten%")
+    SanPhamChiTiet timKiem1SPCTTheoTenSP(String ten);
 
     //qanh
     @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp " +
