@@ -45,7 +45,7 @@ public class NutBamController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<NutBam> searchPage = ttService.search(ten_nut_bam, trang_thai, PageRequest.of(page, size));
+        Page<NutBam> searchPage = ttService.search(ten_nut_bam.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_nut_bam", ten_nut_bam);
         model.addAttribute("trang_thai", trang_thaiStr);

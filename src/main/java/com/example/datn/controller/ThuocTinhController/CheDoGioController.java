@@ -41,7 +41,7 @@ public class CheDoGioController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<CheDoGio> searchPage = cheDoGioService.search(ten_che_do_gio, trang_thai, PageRequest.of(page, size));
+        Page<CheDoGio> searchPage = cheDoGioService.search(ten_che_do_gio.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listCDG", searchPage);
         model.addAttribute("ten_che_do_gio", ten_che_do_gio);
         model.addAttribute("trang_thai", trang_thaiStr);

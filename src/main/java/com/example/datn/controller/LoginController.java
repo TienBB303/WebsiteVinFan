@@ -15,10 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -75,8 +72,17 @@ public class LoginController {
                       @RequestParam("tinhThanhPho") String tinhThanhPho,
                       @RequestParam("quanHuyen") String quanHuyen,
                       @RequestParam("xaPhuong") String xaPhuong,
-                      @RequestParam("soNhaNgoDuong") String soNhaNgoDuong, Model model) {
+                      @RequestParam("soNhaNgoDuong") String soNhaNgoDuong,
+                      Model model) {
 
+        // Kiểm tra email đã tồn tại
+        if (khachHangRepository.findByEmail(khachHang.getEmail()).isPresent() ||
+                nhanVienRepository.findByEmail(khachHang.getEmail()).isPresent()) {
+            model.addAttribute("error", "Email đã tồn tại trong hệ thống!"); // Thêm thông báo lỗi vào model
+            return "/admin/register"; // Trả về trang đăng ký
+        }
+
+        // Thêm khách hàng và địa chỉ
         LocalDate currentDate = LocalDate.now();
         Date sqlDate = Date.valueOf(currentDate);
         khachHang.setNgayTao(sqlDate);
@@ -91,10 +97,18 @@ public class LoginController {
         diaChi.setSoNhaNgoDuong(soNhaNgoDuong);
         diaChi.setTrangThai(true);
         diaChiRepository.save(diaChi);
-        model.addAttribute("message","tạo tài khoản thành công vui lòng kiểm tra email");
-        emailService.sendEmail(khachHang.getEmail(), "Tạo tài khoản thành công",
-                khachHang.getEmail(), khachHang.getMatKhau(), "hentai.");
-        return "redirect:/login";
+
+        // Gửi email thông báo
+        emailService.sendEmail(
+                khachHang.getEmail(),
+                "Tạo tài khoản thành công",
+                khachHang.getEmail(),
+                khachHang.getMatKhau(),
+                "http://yourwebsite.com"
+        );
+
+        model.addAttribute("success", "Tạo tài khoản thành công, vui lòng kiểm tra email.");
+        return "redirect:/login"; // Chuyển đến trang login
     }
 
     @GetMapping("forgot-password")

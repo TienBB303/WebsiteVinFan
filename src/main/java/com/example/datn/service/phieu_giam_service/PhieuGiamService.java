@@ -7,6 +7,4 @@ public interface PhieuGiamService {
      String taoMaTuDong();
 
      SanPham findById(Long id);
-
-     SanPhamChiTiet findDetailById(Long id);
 }

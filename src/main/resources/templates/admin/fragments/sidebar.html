@@ -1,4 +1,19 @@
 <div id="sidebar" class="sidebar-desktop active" th:fragment="sidebar" xmlns:th="http://www.thymeleaf.org">
+    <style>
+        /* CSS Custom cho Sidebar */
+        #sidebar {
+            background-color: #f8f9fa;
+            border-right: 2px solid #dee2e6;
+            color: #343a40;
+        }
+        #sidebar .sidebar-link {
+            color: #FFCC33;
+        }
+        #sidebar .sidebar-link:hover {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+    </style>
     <div class="sidebar-wrapper active ps ps--active-y">
         <!--    Mục để chỉnh sidebar-->
         <div class="sidebar-header position-relative">
@@ -76,7 +91,7 @@
                 <!--            Sản phẩm-->
                 <li class="sidebar-item  has-sub">
                     <a href="#" class="sidebar-link">
-                        <i class="bi bi-stack"></i>
+                        <i class="bi bi-fan"></i>
                         <span>Sản phẩm</span>
                     </a>
 

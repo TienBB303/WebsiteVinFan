@@ -402,7 +402,7 @@
             <div class="row g-4" id="product-list">
 
                 <!-- Hiển thị sản phẩm có giảm giá -->
-                <th:block th:each="phieuGiamSanPham : ${sanPhamGiamGia}">
+                <th:block th:each="phieuGiamGia : ${sanPhamGiamGia}">
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="card product-card h-100">
                             <div class="card-body d-flex flex-column">
@@ -411,32 +411,32 @@
                                      alt="Anime Girl"
                                      style="height: 200px; object-fit: cover;">
                                 <h5 class="card-title product-title"
-                                    th:text="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}">Tên sản phẩm</h5>
-                                <p class="card-text text-danger" th:if="${phieuGiamSanPham.phieuGiam.giaTriGiam > 0}">
+                                    th:text="${phieuGiamGia.spct.sanPham.ten}">Tên sản phẩm</h5>
+                                <p class="card-text text-danger" th:if="${phieuGiamGia.giaTriGiam > 0}">
                                     Giảm: <span class="discount-price"
-                                                th:text="${#numbers.formatDecimal(phieuGiamSanPham.phieuGiam.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
+                                                th:text="${#numbers.formatDecimal(phieuGiamGia.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
                                 </p>
                                 <p class="card-text">
                                     <span class="old-price text-decoration-line-through"
-                                          th:if="${phieuGiamSanPham.giaSauGiam < phieuGiamSanPham.sanPhamChiTiet.gia}"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.sanPhamChiTiet.gia, 1, 0)}">0VND</span>
+                                          th:if="${phieuGiamGia.giaSauGiam < phieuGiamGia.spct.gia}"
+                                          th:text="${#numbers.formatDecimal(phieuGiamGia.spct.gia, 1, 0)}">0VND</span>
                                 </p>
                                 <p class="card-text">
                                     <span class="main-price product-price"
-                                          th:text="${#numbers.formatDecimal(phieuGiamSanPham.giaSauGiam, 1, 0)}">0VND</span>
+                                          th:text="${#numbers.formatDecimal(phieuGiamGia.giaSauGiam, 1, 0)}">0VND</span>
                                 </p>
                                 <div class="mt-auto">
-                                    <a th:href="@{/admin/detail/{id}(id=${phieuGiamSanPham.sanPhamChiTiet.id})}"
+                                    <a th:href="@{/admin/detail/{id}(id=${phieuGiamGia.spct.id})}"
                                        class="btn btn-primary w-100">Xem chi tiết</a>
                                     <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
                                         <input type="hidden" name="productId"
-                                               th:value="${phieuGiamSanPham.sanPhamChiTiet.id}"/>
+                                               th:value="${phieuGiamGia.spct.id}"/>
                                         <input type="hidden" name="name"
-                                               th:value="${phieuGiamSanPham.sanPhamChiTiet.sanPham.ten}"/>
+                                               th:value="${phieuGiamGia.spct.sanPham.ten}"/>
                                         <input type="hidden" name="price"
-                                               th:value="${phieuGiamSanPham.sanPhamChiTiet.gia}"/>
+                                               th:value="${phieuGiamGia.spct.gia}"/>
                                         <input type="hidden" name="discountedPrice"
-                                               th:value="${phieuGiamSanPham.giaSauGiam}"/>
+                                               th:value="${phieuGiamGia.giaSauGiam}"/>
                                         <input type="hidden" name="quantity" value="1"/>
                                         <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
                                     </form>

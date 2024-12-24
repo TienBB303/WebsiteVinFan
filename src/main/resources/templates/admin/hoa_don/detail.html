@@ -346,6 +346,7 @@
                         <th>STT</th>
                         <th>Tên sản phẩm</th>
                         <th>Giá bán</th>
+                        <th>Giá giảm</th>
                         <th>Số lượng</th>
                         <th>Thành tiền</th>
                         <th>Hành động</th>
@@ -356,10 +357,11 @@
                         <td th:text="${iter.count}"></td>
                         <td th:text="${item.sanPhamChiTiet.sanPham.ten}"></td>
                         <td class="giaVND" th:text="${item.gia}"></td>
+                        <td class="giaVND" th:text="${item.giaGiam != null ? item.giaGiam + ' VND' : '0 VND'}"></td>
                         <td>
-                            <!-- Nút Giảm -->
+                            <!-- Nút giảm -->
                             <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                    th:if="${ hoaDon.trangThai == 1 || hoaDon.trangThai == 0}"
+                                    th:if="${ hoaDon.trangThai == 1 || hoaDon.trangThai == 0 }"
                                     th:data-id-hoa-don-giam="${item.hoaDon.id}"
                                     th:data-id-san-pham-chi-tiet-giam="${item.sanPhamChiTiet.id}">
                                 -
@@ -369,9 +371,9 @@
                                    th:value="${item.soLuong}"
                                    min="1"
                                    style="width: 60px; text-align: center; display: inline-block;" disabled/>
-                            <!-- Nút Tăng -->
+                            <!-- Nút tăng -->
                             <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                    th:if="${hoaDon.trangThai == 1 || hoaDon.trangThai == 0}"
+                                    th:if="${hoaDon.trangThai == 1 || hoaDon.trangThai == 0 }"
                                     th:data-id-hoa-don="${item.hoaDon.id}"
                                     th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
                                 +

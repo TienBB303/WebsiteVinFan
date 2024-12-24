@@ -182,7 +182,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/chat-lieu-canh/update">
-                        <input type="hidden" id="mauSacId" name="id">
+                        <input type="hidden" id="chatLieuCanhId" name="id">
                         <div class="mb-3">
                             <label for="ten_chat_lieu_canhUpdate" class="form-label">Tên chất liệu cánh</label>
                             <input type="text" class="form-control" id="ten_chat_lieu_canhUpdate" name="ten_chat_lieu_canh_update" placeholder="Nhập tên chất liệu cánh mới">
@@ -299,14 +299,14 @@
         $(document).on('click', '.hienThiThongTinModal', function () {
             const id = $(this).data('id');
             console.log("ID lấy được:", id);
-            $('#mauSacId').val(id); // Gắn ID vào input ẩn trong form
+            $('#chatLieuCanhId').val(id); // Gắn ID vào input ẩn trong form
 
             $.ajax({
                 url: `/admin/thuoc-tinh/chat-lieu-canh/detail/${id}`,
                 type: 'GET',
                 success: function (response) {
                     console.log("Response:", response);
-                    $('#mauSacId').val(response.id);
+                    $('#chatLieuCanhId').val(response.id);
                     $('#ten_chat_lieu_canhUpdate').val(response.ten);
                 },
                 error: function (xhr) {
@@ -324,14 +324,14 @@
         $('#updateKieuQuat').on('submit', function (e) {
             e.preventDefault(); // Ngăn submit mặc định của form
 
-            const mauSacId = $('#mauSacId').val();
+            const chatLieuCanhId = $('#chatLieuCanhId').val();
             const ten_chat_lieu_canh = $('#ten_chat_lieu_canhUpdate').val();
 
             $.ajax({
                 url: `/admin/thuoc-tinh/chat-lieu-canh/update`,
                 type: 'POST',
                 data: {
-                    id: mauSacId,
+                    id: chatLieuCanhId,
                     ten_chat_lieu_canh_update: ten_chat_lieu_canh
                 },
                 success: function (response) {

@@ -56,7 +56,9 @@ public interface HoaDonService {
 
     boolean hoanThanhHoaDon(long id);
 
-    void updateTongTienHoaDon();
+    void updateTongTienHoaDon(Long idHoaDon);
+
+    Optional<HoaDon> findByIdWithPhieuGiamGia(Long id);
 
     void deleteSPInHD(Long idSanPhamChiTiet);
 

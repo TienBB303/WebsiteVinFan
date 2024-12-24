@@ -131,6 +131,8 @@
                     <tr>
                         <th>STT</th>
                         <th>Sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Giá giảm</th>
                         <th>Số lượng</th>
                         <th>Thành tiền</th>
                         <th>Hành động</th>
@@ -142,7 +144,8 @@
                         <td>
                             <div th:text="${item.sanPhamChiTiet.sanPham.ten}"></div>
                         </td>
-
+                        <td class="giaVND" th:text="${item.gia}"></td>
+                        <td class="giaVND" th:text="${item.giaGiam != null ? item.giaGiam + ' VND' : '0 VND'}"></td>
                         <td>
                             <!-- Nút Giảm -->
                             <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
@@ -350,13 +353,19 @@
                                 <button class="btn btn-outline-secondary">Chọn mã</button>
                             </div>
                         </div>
-
-                        <!-- Mã giảm giá -->
+                        <!-- Chọn mã giảm giá -->
                         <div class="form-section d-flex align-items-center mb-3">
-                            <label class="form-label me-2">Mã giảm giá:</label>
-                            <input type="text" class="form-control" disabled>
+                            <label class="form-label me-2">Chọn mã giảm giá:</label>
+                            <select id="discountCode" class="form-select" onchange="loadDiscountValue()">
+                                <option value="">-- Chọn mã giảm giá --</option>
+                                <!-- Loop mã giảm giá -->
+                                <option th:each="phieu : ${phieuGiamList}"
+                                        th:value="${phieu.ma}"
+                                        th:data-value="${phieu.giaTriGiam}"
+                                        th:text="${phieu.ma}">
+                                </option>
+                            </select>
                         </div>
-
                         <!-- Trả Sau -->
                         <div class="form-section d-flex align-items-center mb-3">
                             <label for="paymentMethod" class="form-label me-3 mb-0">Trả Sau:</label>
@@ -381,27 +390,26 @@
 
                         <!-- Tiền hàng -->
                         <div class="form-section d-flex align-items-center mb-3">
-                            <label class="form-label me-3">Tiền hàng:</label>
-                            <p class="mb-0">9.500.000 VND</p>
+                            <label class="form-label me-3">Tổng tiền hàng:</label>
+                            <p class="total-price mb-0 text-danger fw-bold giaVND" th:text="${tongTien} + ' VND'"></p>
                         </div>
-
                         <!-- Phí vận chuyển -->
                         <div class="form-section d-flex align-items-center mb-3">
                             <label class="form-label me-3">Phí vận chuyển:</label>
                             <input type="text" class="form-control" value="0 VND" disabled>
                         </div>
 
-                        <!-- Giảm giá -->
+                        <!-- Hiển thị giảm giá -->
                         <div class="form-section d-flex align-items-center mb-3">
                             <label class="form-label me-3">Giảm giá:</label>
-                            <p class="mb-0">300.000 VND</p>
+                            <input id="discountValue" type="text" class="form-control" readonly value="0 VND">
                         </div>
 
-                        <!-- Tổng tiền -->
+                        <!-- Tổng tiền sau giảm -->
                         <div class="form-section d-flex align-items-center mb-3">
-                            <label class="form-label me-3">Tổng tiền:</label>
-                            <p class="total-price mb-0 text-danger fw-bold giaVND" th:name="inputTongTien"
-                               th:text="${tongTien}"></p>
+                            <label class="form-label me-3">Tổng tiền sau giảm:</label>
+                            <input type="hidden" id="tongTienSauGiam" name="tongTienSauGiam" value="0">
+                            <input id="totalAfterDiscount" type="text" class="form-control" readonly value="0 VND">
                         </div>
 
                         <!-- Nút xác nhận -->
@@ -421,7 +429,35 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+        function loadDiscountValue() {
+            const discountDropdown = document.getElementById("discountCode");
+            const selectedOption = discountDropdown.options[discountDropdown.selectedIndex];
 
+            // Lấy giá trị giảm giá từ `data-value`
+            const discountValue = selectedOption.getAttribute("data-value");
+            const discountAmount = parseInt(discountValue) || 0;
+
+            // Hiển thị giá trị giảm giá
+            document.getElementById("discountValue").value = discountAmount.toLocaleString('vi-VN') + " VND";
+
+            // Lấy tổng tiền hàng
+            const tongTienText = document.querySelector(".total-price").textContent.trim();
+            const tongTien = parseInt(tongTienText.replace(/\D/g, '')) || 0;
+
+            // Tính toán tổng tiền sau giảm
+            const totalAfterDiscount = tongTien - discountAmount;
+
+            // Hiển thị tổng tiền sau giảm
+            document.getElementById("totalAfterDiscount").value = (totalAfterDiscount > 0 ? totalAfterDiscount.toLocaleString('vi-VN') : "0") + " VND";
+
+            // Cập nhật giá trị input hidden
+            document.getElementById("tongTienSauGiam").value = totalAfterDiscount > 0 ? totalAfterDiscount : 0;
+        }
+
+        // Thêm sự kiện onchange cho dropdown mã giảm giá
+        document.getElementById("discountCode").addEventListener("change", loadDiscountValue);
+    </script>
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
             const originalValue = parseFloat(element.innerText);

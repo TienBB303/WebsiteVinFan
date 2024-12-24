@@ -1,13 +1,17 @@
 package com.example.datn.controller.BanHangTaiQuay;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
+import com.example.datn.dto.request.DiscountRequest;
 import com.example.datn.entity.*;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.repository.*;
 import com.example.datn.repository.DiaChiRepository;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +19,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,6 +36,8 @@ public class BanHangTaiQuayController {
     private final KhachHangRepo khachHangRepo;
     private final DiaChiRepository diaChiRepository;
     private final NhanVienRepository nhanVienRepository;
+    private final PhieuGiamRepo phieuGiamRepo;
+    private final HoaDonRepo hoaDonRepo;
 
     @GetMapping("/index")
     public String index(
@@ -51,52 +60,71 @@ public class BanHangTaiQuayController {
             Model model,
             @RequestParam("idHD") Long idHD
     ) {
+        // Lấy danh sách mã giảm giá có loại phiếu là 1
+        List<PhieuGiam> phieuGiamList = phieuGiamRepo.findByLoaiPhieuGiam(true); // true = loại phiếu là 1
+        model.addAttribute("phieuGiamList", phieuGiamList);
 
-        //hiển thị danh sách hóa đơn chờ
+        // Cập nhật tổng tiền trước khi lấy dữ liệu
+        hoaDonService.updateTongTienHoaDon(idHD);
+
+        // Hiển thị danh sách hóa đơn chờ
         List<HoaDon> listHoaDon = banHangTaiQuayService.findHoaDon();
         model.addAttribute("listHoaDon", listHoaDon);
 
-        //hiển thị danh sách sản phẩm add
+        // Hiển thị danh sách sản phẩm add
         List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
         model.addAttribute("listSPCTInHDCT", listSPCTInHDCT);
 
-
+        // Lấy danh sách chi tiết hóa đơn
         List<HoaDonChiTiet> listHDCT = this.hoaDonService.timSanPhamChiTietTheoHoaDon(idHD);
         model.addAttribute("listHDCT", listHDCT);
 
         NhanVien nhanVien = nhanVienRepository.profileNhanVien();
         model.addAttribute("idNhanVienbanHang", nhanVien.getId());
 
+        // Lấy thông tin hóa đơn
+        HoaDon hoaDon = hoaDonService.findById(idHD)
+                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idHD));
 
-        // Lấy tổng tiền từ service
-        BigDecimal tongTien = banHangTaiQuayService.getTongTien(idHD);
+        // Lấy tổng tiền từ hóa đơn
+        BigDecimal tongTien = hoaDon.getTongTien();
         model.addAttribute("tongTien", tongTien);
+
+        // Tính tổng tiền sau giảm giá
+        BigDecimal tongTienSauGiam = tongTien;
+        if (hoaDon.getPhieuGiamGia() != null) {
+            BigDecimal giaTriGiam = hoaDon.getPhieuGiamGia().getGiaTriGiam();
+            tongTienSauGiam = tongTien.subtract(giaTriGiam).max(BigDecimal.ZERO); // Đảm bảo không âm
+        }
+        model.addAttribute("tongTienSauGiam", tongTienSauGiam);
 
         model.addAttribute("listsKhachhang", khachHangRepo.findAll());
 
         // Thêm ID hóa đơn được chọn vào model
         model.addAttribute("idHD", idHD);
-        HoaDon hoaDon = hoaDonService.findById(idHD)
-                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idHD));
-        KhachHang khachHang =  hoaDon.getKhachHang();
-        model.addAttribute("TTkhachHang",khachHang);
+
+        // Lấy thông tin khách hàng
+        KhachHang khachHang = hoaDon.getKhachHang();
+        model.addAttribute("TTkhachHang", khachHang);
+
+        // Lấy địa chỉ mặc định
         List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHang.getId());
-        for (DiaChi diaChi:
-                diaChiList) {
-            if(diaChi.getTrangThai() == true){
-                model.addAttribute("diachiMacDinh",diaChi);
+        for (DiaChi diaChi : diaChiList) {
+            if (diaChi.getTrangThai()) {
+                model.addAttribute("diachiMacDinh", diaChi);
             }
         }
+
         return "admin/ban_hang_tai_quay/index";
     }
-
     @PostMapping("/addSPCT")
     public String addSPToHoaDonChiTiet(
             @ModelAttribute AddSPToHoaDonChiTietRequest request
     ) {
         try {
             hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
-            hoaDonService.updateTongTienHoaDon();
+            hoaDonService.timSanPhamChiTietTheoHoaDon(request.getIdHD());
+            hoaDonService.updateTongTienHoaDon(request.getIdHD());
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -105,6 +133,7 @@ public class BanHangTaiQuayController {
     @PostMapping("/thanh-toan")
     public String thanhToan(
             @RequestParam("idHD") Long idhd,
+            @RequestParam("tongTienSauGiam") BigDecimal tongTienSauGiam,
             @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
             @RequestParam("tinhThanhPho") String tinhThanhPho,
             @RequestParam("soDienThoaiKhachHang") String soDienThoaiKhachHang,
@@ -119,6 +148,7 @@ public class BanHangTaiQuayController {
         NhanVien nhanVien = nhanVienRepository.profileNhanVien();
         hoaDon.setNhanVien(nhanVien);
 
+        // Cập nhật thông tin thanh toán
         String diaChiNguoiNhan = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + chitiet;
 
         hoaDon.setTenNguoiNhan(tenKhangHang);
@@ -128,6 +158,11 @@ public class BanHangTaiQuayController {
         hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
         hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
         hoaDon.setNguoiTao(nhanVien.getTen());
+
+        // Lưu tổng tiền sau giảm
+        hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+
+        // Lưu hóa đơn vào cơ sở dữ liệu
         hoaDonService.save(hoaDon);
 
         // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
@@ -137,8 +172,12 @@ public class BanHangTaiQuayController {
         lichSuHoaDon.setNgayTao(LocalDate.now());
         lichSuHoaDon.setNguoiTao(nhanVien.getTen());
 
+        // Lưu lịch sử hóa đơn
         lichSuHoaDonRepo.save(lichSuHoaDon);
+
+        // Trừ số lượng sản phẩm trong hóa đơn
         hoaDonService.truSoLuongSanPham(idhd);
+
         return "redirect:/ban-hang-tai-quay/index";
     }
     @PostMapping("/addKH")
@@ -180,7 +219,7 @@ public class BanHangTaiQuayController {
     ) {
         try {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-            hoaDonService.updateTongTienHoaDon();
+            hoaDonService.updateTongTienHoaDon(idHoaDon);
             return ResponseEntity.ok().body("Thêm thành công");
         } catch (RuntimeException e) {
             // Trả về thông báo lỗi
@@ -193,7 +232,7 @@ public class BanHangTaiQuayController {
                                          @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
         try {
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-            hoaDonService.updateTongTienHoaDon();
+            hoaDonService.updateTongTienHoaDon(idHoaDon);
             return ResponseEntity.ok("Giảm số lượng thành công.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -240,5 +279,4 @@ public class BanHangTaiQuayController {
         diaChiRepository.deleteById(id);
         return "redirect:/admin/khach-hang/from-sua/"+khachHangId;
     }
-
 }
