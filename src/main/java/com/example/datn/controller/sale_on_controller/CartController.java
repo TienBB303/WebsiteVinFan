@@ -9,6 +9,7 @@ import com.example.datn.repository.DiaChiRepository;
 import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.SPCTRepo;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.SanPhamService;
 import com.example.datn.service.TrangThaiHoaDonService;
@@ -45,6 +46,8 @@ public class CartController {
 
     @Autowired
     private LichSuHoaDonRepo lichSuHoaDonRepo;
+    @Autowired
+    private PhieuGiamRepo phieuGiamRepo;
 
     @Autowired
     private TrangThaiHoaDonService trangThaiHoaDonService;
@@ -283,16 +286,17 @@ public class CartController {
     @Transactional
     @PostMapping("/process-payment")
     public String processPayment(@ModelAttribute CreateHoaDonRequest request, HttpSession session, Model model,
-        @RequestParam("tinhThanhPho") String tinhThanhPho,
-        @RequestParam("quanHuyen") String quanHuyen,
-        @RequestParam("xaPhuong") String xaPhuong,
-        @RequestParam("soNhaNgoDuong") String soNhaNgoDuong
+                                 @RequestParam("tinhThanhPho") String tinhThanhPho,
+                                 @RequestParam("quanHuyen") String quanHuyen,
+                                 @RequestParam("xaPhuong") String xaPhuong,
+                                 @RequestParam("soNhaNgoDuong") String soNhaNgoDuong
     ) {
         // Lấy giỏ hàng từ session
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
         if (cartItems == null || cartItems.isEmpty()) {
             return "redirect:/cart/orderinfor?error=CartIsEmpty";
         }
+
         // Lấy thông tin khách hàng từ tài khoản đăng nhập
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName(); // Lấy email đăng nhập
@@ -300,39 +304,24 @@ public class CartController {
         if (khachHang == null) {
             return "redirect:/login?error=UserNotLoggedIn"; // Nếu không tìm thấy khách hàng
         }
+
         // Tạo hóa đơn
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMa(hoaDonService.generateOrderCode());
         hoaDon.setTenNguoiNhan(request.getName());
         hoaDon.setSdtNguoiNhan(request.getPhone());
         // Ghép địa chỉ
-        String diaChi = tinhThanhPho +"," + quanHuyen +","  +xaPhuong +","  + soNhaNgoDuong;
+        String diaChi = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + soNhaNgoDuong;
         hoaDon.setDiaChi(diaChi);
         hoaDon.setNgayTao(LocalDate.now());
         hoaDon.setTrangThai(1); // Trạng thái chờ xác nhận
         hoaDon.setLoaiHoaDon(false); // Mặc định là false (tương đương 0)
-
-        // Kiểm tra và gán giá trị cho ghi chú
-        if (request.getNote() == null || request.getNote().trim().isEmpty()) {
-            hoaDon.setGhiChu("Không có ghi chú"); // Gán mặc định
-        } else {
-            hoaDon.setGhiChu(request.getNote()); // Lưu ghi chú từ request
-        }
-
-        // Fake data bổ sung
-        hoaDon.setTongTienSauGiamGia(BigDecimal.valueOf(0));
-        hoaDon.setNgaySua(LocalDate.now());
+        hoaDon.setPhiVanChuyen(BigDecimal.valueOf(30000));
         hoaDon.setKhachHang(khachHang);
-//        hoaDon.setNhanVien(entityManager.find(NhanVien.class, 1L));
-        hoaDon.setPhieuGiamGia(entityManager.find(PhieuGiam.class, 1L));
-//        hoaDon.setHinhThucThanhToan(entityManager.find(HinhThucThanhToan.class, 1L));
-
-        // Phí vận chuyển
-        BigDecimal shippingFee = BigDecimal.valueOf(30000);
-        BigDecimal total = BigDecimal.ZERO;
-
-        // Lưu hóa đơn trước
         hoaDonService.save(hoaDon);
+
+        // Tổng tiền hóa đơn
+        BigDecimal total = BigDecimal.ZERO;
 
         // Tạo chi tiết hóa đơn
         for (CartItem item : cartItems) {
@@ -340,18 +329,30 @@ public class CartController {
             if (sanPhamChiTiet == null) {
                 return "redirect:/cart/orderinfor?error=ProductNotFound";
             }
+
+            // Tìm giá giảm (nếu có) từ PhieuGiam
+            BigDecimal finalPrice = sanPhamChiTiet.getGia(); // Giá mặc định là giá gốc
+            Optional<PhieuGiam> phieuGiam = phieuGiamRepo.findBySanPhamChiTietId(sanPhamChiTiet.getId());
+            if (phieuGiam.isPresent() && phieuGiam.get().getGiaTriGiam() != null) {
+                finalPrice = finalPrice.subtract(phieuGiam.get().getGiaTriGiam());
+            }
+
+            // Tạo chi tiết hóa đơn
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
             hoaDonChiTiet.setHoaDon(hoaDon);
             hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
             hoaDonChiTiet.setSoLuong(item.getQuantity());
             hoaDonChiTiet.setGia(sanPhamChiTiet.getGia());
-            hoaDonChiTiet.setThanhTien(sanPhamChiTiet.getGia().multiply(BigDecimal.valueOf(item.getQuantity())));
+            hoaDonChiTiet.setThanhTien(finalPrice.multiply(BigDecimal.valueOf(item.getQuantity())));
             hoaDonChiTiet.setTrangThai(1);
+
+            // Cộng vào tổng tiền hóa đơn
             total = total.add(hoaDonChiTiet.getThanhTien());
 
             hoaDonService.saveHoaDonChiTiet(hoaDonChiTiet);
         }
-        //lịch sử hóa đơn
+
+        // Lưu lịch sử hóa đơn
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setHoaDon(hoaDon);
         lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
@@ -359,17 +360,12 @@ public class CartController {
         lichSuHoaDonRepo.save(lichSuHoaDon);
 
         // Cập nhật tổng tiền và phí vận chuyển cho hóa đơn
-        total = total.add(shippingFee);
+        total = total.add(hoaDon.getPhiVanChuyen());
         hoaDon.setTongTien(total);
-        hoaDon.setPhiVanChuyen(shippingFee);
         hoaDonService.save(hoaDon);
 
         // Xóa giỏ hàng khỏi session sau khi thanh toán
         session.removeAttribute("cart");
-
-        // Khởi tạo giỏ hàng trống mới trong trường hợp người dùng quay lại
-        session.setAttribute("cart", new ArrayList<CartItem>());
-
 
         // Thêm hóa đơn vào model để gửi đến view
         model.addAttribute("hoaDon", hoaDon);

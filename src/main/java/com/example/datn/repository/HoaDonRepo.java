@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
@@ -64,5 +65,6 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     Page<HoaDon> findHoaDonByDateRange(@Param("startDate") LocalDate startDate,
                                        @Param("endDate") LocalDate endDate,
                                        Pageable pageable);
-
+    @Query("SELECT h FROM HoaDon h LEFT JOIN FETCH h.phieuGiamGia WHERE h.id = :id")
+    Optional<HoaDon> findByIdWithPhieuGiamGia(@Param("id") Long id);
 }
