@@ -1,23 +1,20 @@
 package com.example.datn.controller.sale_on_controller;
 
 import com.example.datn.entity.*;
-import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
-import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,8 +25,10 @@ public class ProductCatalog {
 
     private final HoaDonService hoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
+//    @Autowired
+//    private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
     @Autowired
-    private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
+    private PhieuGiamRepo phieuGiamRepo;
     @Autowired
     private SPCTRepo spctRepo;
     @Autowired
@@ -47,52 +46,51 @@ public class ProductCatalog {
             @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
             @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
             @RequestParam(value = "sortOrder", required = false, defaultValue = "newest") String sortOrder,
-            @RequestParam(value = "filter", required = false, defaultValue = "all") String filter) { // Add filter parameter
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            @RequestParam(value = "filter", required = false, defaultValue = "all") String filter) {
 
         List<SanPhamChiTiet> sanPhamKhongGiamGia;
-        List<PhieuGiamSanPham> sanPhamGiamGia;
+        List<PhieuGiam> sanPhamGiamGia;
 
         if (query != null && !query.trim().isEmpty()) {
-            sanPhamGiamGia = phieuGiamSanPhamRepo.timKiemSanPhamCoGiamGia(query);
+            // Lọc phiếu giảm giá có liên kết với sản phẩm
+            sanPhamGiamGia = phieuGiamRepo.timKiemSanPhamCoGiamGia(query);
             List<Long> sanPhamCoGiamGiaIds = sanPhamGiamGia.stream()
-                    .map(p -> p.getSanPhamChiTiet().getId())
+                    .map(pg -> pg.getSpct().getId())
                     .collect(Collectors.toList());
-
             sanPhamKhongGiamGia = spctRepo.timKiemTheoTen(query)
                     .stream()
                     .filter(sp -> !sanPhamCoGiamGiaIds.contains(sp.getId()))
                     .collect(Collectors.toList());
-
         } else if (maSanPham != null && !maSanPham.isEmpty()) {
             sanPhamKhongGiamGia = spctRepo.findBySanPhamMa(maSanPham);
-            sanPhamGiamGia = phieuGiamSanPhamRepo.findBySanPhamMa(maSanPham);
+            sanPhamGiamGia = phieuGiamRepo.findBySanPhamMa(maSanPham);
         } else {
-            List<Long> sanPhamCoGiamGiaIds = phieuGiamSanPhamRepo.findAllSanPhamChiTietIds();
+            // Chỉ lấy phiếu giảm giá có liên kết với sản phẩm
+            sanPhamGiamGia = phieuGiamRepo.findAllWithLinkedSpct();
+            List<Long> sanPhamCoGiamGiaIds = sanPhamGiamGia.stream()
+                    .map(pg -> pg.getSpct().getId())
+                    .collect(Collectors.toList());
             sanPhamKhongGiamGia = spctRepo.findByIdNotIn(sanPhamCoGiamGiaIds);
-            sanPhamGiamGia = phieuGiamSanPhamRepo.findAll();
         }
 
-        // Apply filter
         if ("discounted".equalsIgnoreCase(filter)) {
             sanPhamKhongGiamGia.clear();
         } else if ("non-discounted".equalsIgnoreCase(filter)) {
             sanPhamGiamGia.clear();
         }
 
-        // Filter by kieuQuatId if provided
+        // Lọc theo kiểu quạt (kieuQuatId)
         if (kieuQuatId != null) {
             sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream()
                     .filter(sp -> sp.getSanPham().getKieuQuat().getId().equals(kieuQuatId))
                     .collect(Collectors.toList());
 
             sanPhamGiamGia = sanPhamGiamGia.stream()
-                    .filter(pg -> pg.getSanPhamChiTiet().getSanPham().getKieuQuat().getId().equals(kieuQuatId))
+                    .filter(pg -> pg.getSpct().getSanPham().getKieuQuat().getId().equals(kieuQuatId))
                     .collect(Collectors.toList());
         }
 
-        // Filter by price range if provided
+        // Lọc theo khoảng giá (minPrice, maxPrice)
         if (minPrice != null || maxPrice != null) {
             BigDecimal finalMinPrice = minPrice != null ? minPrice : BigDecimal.ZERO;
             BigDecimal finalMaxPrice = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
@@ -102,44 +100,21 @@ public class ProductCatalog {
                     .collect(Collectors.toList());
 
             sanPhamGiamGia = sanPhamGiamGia.stream()
-                    .filter(pg -> pg.getGiaSauGiam().compareTo(finalMinPrice) >= 0 && pg.getGiaSauGiam().compareTo(finalMaxPrice) <= 0)
+                    .filter(pg -> pg.getGiaSauGiam().compareTo(finalMinPrice) >= 0
+                            && pg.getGiaSauGiam().compareTo(finalMaxPrice) <= 0)
                     .collect(Collectors.toList());
         }
 
-        // Sort by creation date
-        Comparator<SanPhamChiTiet> sanPhamComparator = Comparator.comparing(SanPhamChiTiet::getNgay_tao);
-        Comparator<PhieuGiamSanPham> phieuGiamComparator = Comparator.comparing(pg -> pg.getSanPhamChiTiet().getNgay_tao());
-
-        if ("newest".equalsIgnoreCase(sortOrder)) {
-            sanPhamComparator = sanPhamComparator.reversed();
-            phieuGiamComparator = phieuGiamComparator.reversed();
-        }
-
-        sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream().sorted(sanPhamComparator).collect(Collectors.toList());
-        sanPhamGiamGia = sanPhamGiamGia.stream().sorted(phieuGiamComparator).collect(Collectors.toList());
-
-        // Remove duplicates by product code
-        Map<String, SanPhamChiTiet> uniqueProducts = new LinkedHashMap<>();
-        sanPhamKhongGiamGia.forEach(sp -> uniqueProducts.put(sp.getSanPham().getMa(), sp));
-
-        Map<String, PhieuGiamSanPham> uniqueDiscountedProducts = new LinkedHashMap<>();
-        sanPhamGiamGia.forEach(pgg -> uniqueDiscountedProducts.put(
-                pgg.getSanPhamChiTiet().getSanPham().getMa(), pgg
-        ));
-
-        model.addAttribute("sanPhamKhongGiamGia", uniqueProducts.values());
-        model.addAttribute("sanPhamGiamGia", uniqueDiscountedProducts.values());
+        model.addAttribute("sanPhamKhongGiamGia", sanPhamKhongGiamGia);
+        model.addAttribute("sanPhamGiamGia", sanPhamGiamGia);
         model.addAttribute("query", query);
         model.addAttribute("kieuQuatId", kieuQuatId);
         model.addAttribute("maSanPham", maSanPham);
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("sortOrder", sortOrder);
-        model.addAttribute("filter", filter); // Pass filter to the view
+        model.addAttribute("filter", filter);
         model.addAttribute("kieuQuats", kieuQuatRepo.findAll());
-
-        String currentPrincipalName = authentication.getName();
-
 
         return "/admin/website/productCatalog";
     }
@@ -157,7 +132,7 @@ public class ProductCatalog {
 
             bienTheList.forEach(bienThe -> {
                 // Tìm giá sau giảm cho từng biến thể
-                Optional<PhieuGiamSanPham> phieuGiam = phieuGiamSanPhamRepo.findBySanPhamChiTietId(bienThe.getId());
+                Optional<PhieuGiam> phieuGiam = phieuGiamRepo.findBySanPhamChiTietId(bienThe.getId());
                 phieuGiam.ifPresent(giam -> giaSauGiamMap.put(bienThe.getId(), giam.getGiaSauGiam()));
             });
 

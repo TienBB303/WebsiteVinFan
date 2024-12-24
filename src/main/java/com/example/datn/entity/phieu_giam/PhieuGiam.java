@@ -63,8 +63,11 @@ public class PhieuGiam {
     @Column(name = "trang_thai")
     private boolean trangThai ;
 
-    @ManyToOne(optional = true)
+    @OneToOne(optional = true)
     @JoinColumn(name = "id_san_pham_chi_tiet", referencedColumnName = "id", nullable = true)
     private SanPhamChiTiet spct;
+
+    @Column(name = "gia_sau_giam")
+    private BigDecimal giaSauGiam;
 
 }
