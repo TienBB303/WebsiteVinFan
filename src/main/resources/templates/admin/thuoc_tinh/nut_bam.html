@@ -182,7 +182,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/nut-bam/update">
-                        <input type="hidden" id="mauSacId" name="id">
+                        <input type="hidden" id="nutBamId" name="id">
                         <div class="mb-3">
                             <label for="ten_nut_bamUpdate" class="form-label">Tên nút bấm</label>
                             <input type="text" class="form-control" id="ten_nut_bamUpdate" name="ten_nut_bam_update" placeholder="Nhập tên nút bấm mới">
@@ -299,14 +299,14 @@
         $(document).on('click', '.hienThiThongTinModal', function () {
             const id = $(this).data('id');
             console.log("ID lấy được:", id);
-            $('#mauSacId').val(id); // Gắn ID vào input ẩn trong form
+            $('#nutBamId').val(id); // Gắn ID vào input ẩn trong form
 
             $.ajax({
                 url: `/admin/thuoc-tinh/nut-bam/detail/${id}`,
                 type: 'GET',
                 success: function (response) {
                     console.log("Response:", response);
-                    $('#mauSacId').val(response.id);
+                    $('#nutBamId').val(response.id);
                     $('#ten_nut_bamUpdate').val(response.ten);
                 },
                 error: function (xhr) {
@@ -324,14 +324,14 @@
         $('#updateKieuQuat').on('submit', function (e) {
             e.preventDefault(); // Ngăn submit mặc định của form
 
-            const mauSacId = $('#mauSacId').val();
+            const nutBamId = $('#nutBamId').val();
             const ten_nut_bam = $('#ten_nut_bamUpdate').val();
 
             $.ajax({
                 url: `/admin/thuoc-tinh/nut-bam/update`,
                 type: 'POST',
                 data: {
-                    id: mauSacId,
+                    id: nutBamId,
                     ten_nut_bam_update: ten_nut_bam
                 },
                 success: function (response) {

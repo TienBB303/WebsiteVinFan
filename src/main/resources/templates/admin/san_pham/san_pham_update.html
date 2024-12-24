@@ -173,7 +173,7 @@
                                     <!-- Phần giá bán           4-->
                                     <div class="mb-3">
                                         <label for="sanPhamPrice">Giá bán <b style="color: red">*</b></label>
-                                        <input type="number" class="form-control" id="sanPhamPrice" th:field="*{gia}"  placeholder="Nhập giá bán" required>
+                                        <input type="text" class="form-control" id="sanPhamPrice" th:field="*{gia}"  placeholder="Nhập giá bán" required>
                                     </div>
 
                                 </div>
@@ -229,16 +229,23 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
-<!--    <script>-->
-<!--        // Hàm định dạng giá theo kiểu VND khi nhập vào ô input-->
-<!--        document.getElementById('sanPhamPrice').addEventListener('input', function (event) {-->
-<!--            let value = event.target.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số-->
-<!--            if (value) {-->
-<!--                value = parseInt(value).toLocaleString(); // định dạng giá theo kiểu số-->
-<!--            }-->
-<!--            event.target.value = value ? value : '';-->
-<!--        });-->
-<!--    </script>-->
+    <script>
+        function formatPriceInput(element) {
+            let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
+            if (value.length > 8) {
+                value = value.slice(0, 8); // Giới hạn tối đa 9 chữ số
+            }
+            if (value) {
+                // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            element.value = value ? value : '';
+        }
+        document.getElementById('sanPhamPrice').addEventListener('input', function (event) {
+            formatPriceInput(event.target);
+        });
+    </script>
+<!--    Cập nhật-->
     <script>
         const form = document.getElementById('updateSanpham');  // Id của form
         form.addEventListener('submit', function(event) {

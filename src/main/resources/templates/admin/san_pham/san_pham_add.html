@@ -238,7 +238,7 @@
                                     <th>Công suất quạt</th>
                                     <th>Giá</th>
                                     <th>Số lượng</th>
-                                    <th>Hành động</th>
+<!--                                    <th>Hành động</th>-->
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -251,16 +251,16 @@
                                     <td th:text="${spTam.cheDoGio.ten}"></td>
                                     <td th:text="${spTam.congSuat.ten}"></td>
                                     <td>
-                                        <input type="number" th:value="${spTam.gia}" name="gia" class="form-control"/>
+                                        <input type="text" th:value="${spTam.gia}" name="gia" class="form-control gia-input"/>
                                     </td>
                                     <td>
                                         <input type="number" th:value="${spTam.so_luong}" name="so_luong" class="form-control"/>
                                     </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger delete-button" data-id="${spTam.id}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
+<!--                                    <td>-->
+<!--                                        <button type="button" class="btn btn-danger delete-button" data-id="${spTam.id}">-->
+<!--                                            <i class="bi bi-trash"></i>-->
+<!--                                        </button>-->
+<!--                                    </td>-->
                                 </tr>
                                 </tbody>
                             </table>
@@ -388,13 +388,8 @@
                                 <td>${item.sanPhamTam.kieuQuat.ten}</td>
                                 <td>${item.cheDoGio.ten}</td>
                                 <td>${item.congSuat.ten}</td>
-                                <td><input type="number" value="${item.gia}" name="gia" class="form-control"/></td>
+                                <td><input type="text" value="${item.gia}" name="gia" class="form-control gia-input"/></td>
                                 <td><input type="number" value="${item.so_luong}" name="so_luong" class="form-control"/></td>
-                                <td>
-                                     <button type="button" class="btn btn-danger delete-button" data-id="${item.id}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
                             </tr>`;
                             tableBody.append(newRow);  // Thêm dòng mới vào bảng
                         });
@@ -457,63 +452,7 @@
             });
         });
     </script>
-    <!--Xóa sp tạm -->
-    <script>
-        $(document).ready(function () {
-            let isDeleting = false;
-            $('.delete-button').on('click', function (e) {
-                e.preventDefault(); // Ngăn chặn hành động mặc định
 
-                let sanPhamTamId = $(this).data('id'); // Lấy ID sản phẩm từ data-id
-                console.log(sanPhamTamId);
-
-                Swal.fire({
-                    title: 'Bạn có chắc chắn muốn xóa?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Có',
-                    cancelButtonText: 'Không'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        isDeleting = true;
-                        // Gửi yêu cầu xóa đến server
-                        $.ajax({
-                            url: `/admin/san-pham/delete-tam/${sanPhamTamId}`, // URL xóa sản phẩm tạm
-                            type: 'DELETE',
-                            success: function (response) {
-                                // Xóa hàng khỏi bảng
-                                $(`tr[data-id=${sanPhamTamId}]`).remove();
-
-                                Swal.fire({
-                                    toast: true,
-                                    icon: 'success',
-                                    title: 'Xóa biến thể thành công.',
-                                    position: 'top-end',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true
-                                });
-                            },
-                            error: function (xhr) {
-                                Swal.fire({
-                                    toast: true,
-                                    icon: 'error',
-                                    title: xhr.responseText, // Thông báo lỗi trả về từ server
-                                    position: 'top-end',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true
-                                });
-                            },
-                            complete: function () {
-                                isDeleting = false;
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    </script>
     <!--multi select cho các option thêm : màu sắc, công suất, chê sdodoj gió-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -543,6 +482,83 @@
             reader.readAsDataURL(file);
         }
     </script>
+
+    <script>
+        function formatPriceInput(element) {
+            let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
+            if (value.length > 8) {
+                value = value.slice(0, 8); // Giới hạn tối đa 8 chữ số
+            }
+            if (value) {
+                // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            element.value = value ? value : '';
+        }
+
+        document.addEventListener('input', function (event) {
+            if (event.target.classList.contains('gia-input')) {
+                formatPriceInput(event.target);
+            }
+        });
+    </script>
+    <!--Xóa sp tạm -->
+    <!--    <script>-->
+    <!--        $(document).ready(function () {-->
+    <!--            let isDeleting = false;-->
+    <!--            $('.delete-button').on('click', function (e) {-->
+    <!--                e.preventDefault(); // Ngăn chặn hành động mặc định-->
+
+    <!--                let sanPhamTamId = $(this).data('id'); // Lấy ID sản phẩm từ data-id-->
+    <!--                console.log(sanPhamTamId);-->
+
+    <!--                Swal.fire({-->
+    <!--                    title: 'Bạn có chắc chắn muốn xóa?',-->
+    <!--                    icon: 'warning',-->
+    <!--                    showCancelButton: true,-->
+    <!--                    confirmButtonText: 'Có',-->
+    <!--                    cancelButtonText: 'Không'-->
+    <!--                }).then((result) => {-->
+    <!--                    if (result.isConfirmed) {-->
+    <!--                        isDeleting = true;-->
+    <!--                        // Gửi yêu cầu xóa đến server-->
+    <!--                        $.ajax({-->
+    <!--                            url: `/admin/san-pham/delete-tam/${sanPhamTamId}`, // URL xóa sản phẩm tạm-->
+    <!--                            type: 'DELETE',-->
+    <!--                            success: function (response) {-->
+    <!--                                // Xóa hàng khỏi bảng-->
+    <!--                                $(`tr[data-id=${sanPhamTamId}]`).remove();-->
+
+    <!--                                Swal.fire({-->
+    <!--                                    toast: true,-->
+    <!--                                    icon: 'success',-->
+    <!--                                    title: 'Xóa biến thể thành công.',-->
+    <!--                                    position: 'top-end',-->
+    <!--                                    showConfirmButton: false,-->
+    <!--                                    timer: 3000,-->
+    <!--                                    timerProgressBar: true-->
+    <!--                                });-->
+    <!--                            },-->
+    <!--                            error: function (xhr) {-->
+    <!--                                Swal.fire({-->
+    <!--                                    toast: true,-->
+    <!--                                    icon: 'error',-->
+    <!--                                    title: xhr.responseText, // Thông báo lỗi trả về từ server-->
+    <!--                                    position: 'top-end',-->
+    <!--                                    showConfirmButton: false,-->
+    <!--                                    timer: 3000,-->
+    <!--                                    timerProgressBar: true-->
+    <!--                                });-->
+    <!--                            },-->
+    <!--                            complete: function () {-->
+    <!--                                isDeleting = false;-->
+    <!--                            }-->
+    <!--                        });-->
+    <!--                    }-->
+    <!--                });-->
+    <!--            });-->
+    <!--        });-->
+    <!--    </script>-->
 </div>
 </body>
 </html>

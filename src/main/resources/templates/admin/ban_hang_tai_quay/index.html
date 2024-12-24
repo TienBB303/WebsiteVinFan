@@ -121,58 +121,64 @@
                 <h2><strong>Thông tin sản phẩm</strong></h2>
             </div>
             <hr>
-            <table class="table table-striped dataTable-table mt-3">
-                <thead>
-                <tr>
-                    <th>STT</th>
-                    <th>Sản phẩm</th>
-                    <th>Số lượng</th>
-                    <th>Thành tiền</th>
-                    <th>Hành động</th>
-                </tr>
-                </thead>
-                <tbody th:each="item, iter : ${listHDCT}">
-                <tr>
-                    <td th:text="${iter.count}"></td>
-                    <td>
-                        <div th:text="${item.sanPhamChiTiet.sanPham.ten}"></div>
-                    </td>
+            <div th:if="${#lists.isEmpty(listHDCT)}" class="d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                <img src="https://shop.nebulacare.in/Content/Images/nodata.jpg" style="max-width: 1000px; max-height: 200px;">
+            </div>
 
-                    <td>
-                        <!-- Nút Giảm -->
-                        <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                th:data-id-hoa-don-giam="${item.hoaDon.id}"
-                                th:data-id-san-pham-chi-tiet-giam="${item.sanPhamChiTiet.id}">
-                            -
-                        </button>
-                        <!-- Ô nhập số lượng -->
-                        <input type="number" class="form-control quantity-input"
-                               th:value="${item.soLuong}"
-                               min="1"
-                               style="width: 60px; text-align: center; display: inline-block;" disabled/>
-                        <!-- Nút Tăng -->
-                        <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                th:data-id-hoa-don="${item.hoaDon.id}"
-                                th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
-                            +
-                        </button>
-                    </td>
+            <div th:if="${!#lists.isEmpty(listHDCT)}">
+                <table class="table table-striped dataTable-table mt-3">
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody th:each="item, iter : ${listHDCT}">
+                    <tr>
+                        <td th:text="${iter.count}"></td>
+                        <td>
+                            <div th:text="${item.sanPhamChiTiet.sanPham.ten}"></div>
+                        </td>
 
-                    <td class="giaVND" th:text="${item.thanhTien}"></td>
-
-                    <td>
-                        <form th:action="@{/ban-hang-tai-quay/xoa}" method="post">
-                            <input type="hidden" name="_method" value="DELETE"/>
-                            <input type="hidden" name="idHD" th:value="${item.hoaDon.id}"/>
-                            <input type="hidden" name="idSP" th:value="${item.sanPhamChiTiet.id}"/>
-                            <button type="submit" class="btn btn-outline-danger">
-                                <i class="bi bi-trash"></i>
+                        <td>
+                            <!-- Nút Giảm -->
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
+                                    th:data-id-hoa-don-giam="${item.hoaDon.id}"
+                                    th:data-id-san-pham-chi-tiet-giam="${item.sanPhamChiTiet.id}">
+                                -
                             </button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                            <!-- Ô nhập số lượng -->
+                            <input type="number" class="form-control quantity-input"
+                                   th:value="${item.soLuong}"
+                                   min="1"
+                                   style="width: 60px; text-align: center; display: inline-block;" disabled/>
+                            <!-- Nút Tăng -->
+                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
+                                    th:data-id-hoa-don="${item.hoaDon.id}"
+                                    th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
+                                +
+                            </button>
+                        </td>
+
+                        <td class="giaVND" th:text="${item.thanhTien}"></td>
+
+                        <td>
+                            <form th:action="@{/ban-hang-tai-quay/xoa}" method="post">
+                                <input type="hidden" name="_method" value="DELETE"/>
+                                <input type="hidden" name="idHD" th:value="${item.hoaDon.id}"/>
+                                <input type="hidden" name="idSP" th:value="${item.sanPhamChiTiet.id}"/>
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="container mt-5">
@@ -295,30 +301,34 @@
                         <div class="form-section">
                             <input type="email" class="form-control" th:value="${TTkhachHang?.email ?: ''}">
                         </div>
-                        <input type="text" class="form-control" name="chiTietDiaChi"
-                               th:value="${diachiMacDinh?.soNhaNgoDuong ?: ''}">
+                        <div class="form-section">
+                            <input type="text" class="form-control" name="chiTietDiaChi"
+                                   th:value="${diachiMacDinh?.soNhaNgoDuong ?: ''}">
+                        </div>
 
-                        <div class="row mb-4">
-                            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh?.tinhThanhPho ?: ''}"/>
-                            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh?.quanHuyen ?: ''}"/>
-                            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh?.xaPhuong ?: ''}"/>
-                            <div class="col-md-4">
-                                <select class="form-control" id="city" aria-label=".form-select-sm"
-                                        name="tinhThanhPho">
-                                    <option value="" selected>Chọn tỉnh thành</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-control" id="district" aria-label=".form-select-sm"
-                                        name="quanHuyen">
-                                    <option value="" selected>Chọn quận huyện</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-control" id="ward" aria-label=".form-select-sm"
-                                        name="xaPhuong">
-                                    <option value="" selected>Chọn phường xã</option>
-                                </select>
+                        <div class="form-section">
+                            <div class="row mb-4">
+                                <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh?.tinhThanhPho ?: ''}"/>
+                                <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh?.quanHuyen ?: ''}"/>
+                                <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh?.xaPhuong ?: ''}"/>
+                                <div class="col-md-4">
+                                    <select class="form-control" id="city" aria-label=".form-select-sm"
+                                            name="tinhThanhPho">
+                                        <option value="" selected>Chọn tỉnh thành</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control" id="district" aria-label=".form-select-sm"
+                                            name="quanHuyen">
+                                        <option value="" selected>Chọn quận huyện</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control" id="ward" aria-label=".form-select-sm"
+                                            name="xaPhuong">
+                                        <option value="" selected>Chọn phường xã</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="form-section">

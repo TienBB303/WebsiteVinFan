@@ -81,49 +81,6 @@ public class KhachHangController {
                       @RequestParam("quanHuyen") String quanHuyen,
                       @RequestParam("xaPhuong") String xaPhuong,
                       @RequestParam("soNhaNgoDuong") String soNhaNgoDuong, Model model) {
-
-        // Kiểm tra các trường bắt buộc không được để trống
-//        if (khachHang.getMa().isEmpty()
-//                ) {
-//            model.addAttribute("mavali", "Không được để trống");
-//            return null;
-//        }
-        if (khachHang.getTen().isEmpty()
-        ) {
-            model.addAttribute("tenvali", "Không được để trống");
-            return null;
-        }
-
-        if (khachHang.getEmail().isEmpty()) {
-            model.addAttribute("emailvali", "Không được để trống");
-            return null;
-        }
-        if (khachHang.getMatKhau().isEmpty()) {
-            model.addAttribute("matkhauvali", "Không được để trống");
-            return null;
-        }if (khachHang.getGioiTinh().isEmpty() ) {
-            model.addAttribute("gioitinhvali", "Không được để trống");
-            return null;
-        }
-        if (khachHang.getSoDienThoai().isEmpty() ) {
-            model.addAttribute("sdtvali", "Không được để trống");
-            return null;
-        }
-
-//        // Kiểm tra trùng lặp số điện thoại
-//        KhachHang existingKhachHangBySoDienThoai = khachHangRepo.findBySoDienThoai(khachHang.getSoDienThoai());
-//        if (existingKhachHangBySoDienThoai != null) {
-//            model.addAttribute("trungsdt", "Số điện thoại đã tồn tại");
-//            return null;
-//        }
-////
-//        // Kiểm tra trùng lặp email
-//        KhachHang existingKhachHangByEmail = khachHangRepo.findByEmail(khachHang.getEmail());
-//        if (existingKhachHangByEmail != null) {
-//            model.addAttribute("trungemail", "Email đã tồn tại");
-//            return null;
-//        }
-
         LocalDate currentDate = LocalDate.now();
         Date sqlDate = Date.valueOf(currentDate);
         khachHang.setNgayTao(sqlDate);

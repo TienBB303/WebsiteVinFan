@@ -182,7 +182,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="updateKieuQuat" method="post" action="/admin/thuoc-tinh/chat-lieu-khung/update">
-                        <input type="hidden" id="mauSacId" name="id">
+                        <input type="hidden" id="chatLieuKhungId" name="id">
                         <div class="mb-3">
                             <label for="ten_chat_lieu_khungUpdate" class="form-label">Tên chất liệu khung</label>
                             <input type="text" class="form-control" id="ten_chat_lieu_khungUpdate" name="ten_chat_lieu_khung_update" placeholder="Nhập tên chất liệu khung mới">
@@ -299,14 +299,14 @@
         $(document).on('click', '.hienThiThongTinModal', function () {
             const id = $(this).data('id');
             console.log("ID lấy được:", id);
-            $('#mauSacId').val(id); // Gắn ID vào input ẩn trong form
+            $('#chatLieuKhungId').val(id); // Gắn ID vào input ẩn trong form
 
             $.ajax({
                 url: `/admin/thuoc-tinh/chat-lieu-khung/detail/${id}`,
                 type: 'GET',
                 success: function (response) {
                     console.log("Response:", response);
-                    $('#mauSacId').val(response.id);
+                    $('#chatLieuKhungId').val(response.id);
                     $('#ten_chat_lieu_khungUpdate').val(response.ten);
                 },
                 error: function (xhr) {
@@ -324,14 +324,14 @@
         $('#updateKieuQuat').on('submit', function (e) {
             e.preventDefault(); // Ngăn submit mặc định của form
 
-            const mauSacId = $('#mauSacId').val();
+            const chatLieuKhungId = $('#chatLieuKhungId').val();
             const ten_chat_lieu_khung = $('#ten_chat_lieu_khungUpdate').val();
 
             $.ajax({
                 url: `/admin/thuoc-tinh/chat-lieu-khung/update`,
                 type: 'POST',
                 data: {
-                    id: mauSacId,
+                    id: chatLieuKhungId,
                     ten_chat_lieu_khung_update: ten_chat_lieu_khung
                 },
                 success: function (response) {

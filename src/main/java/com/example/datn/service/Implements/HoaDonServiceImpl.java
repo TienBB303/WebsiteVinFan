@@ -368,6 +368,9 @@ public class HoaDonServiceImpl implements HoaDonService {
 
             if (soLuongTon >= soLuongBan) {
                 spct.setSo_luong(soLuongTon - soLuongBan); // Trừ số lượng
+                if (spct.getSo_luong() == 0){
+                    spct.setTrang_thai(false);
+                }
                 spctRepo.save(spct);
             } else {
                 throw new RuntimeException("Số lượng tồn kho không đủ cho sản phẩm: " + spct.getSanPham().getTen());
