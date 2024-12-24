@@ -43,7 +43,7 @@ public class HangController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<Hang> searchPage = ttService.search(ten_hang, trang_thai, PageRequest.of(page, size));
+        Page<Hang> searchPage = ttService.search(ten_hang.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_hang", ten_hang);
         model.addAttribute("trang_thai", trang_thaiStr);

@@ -46,7 +46,7 @@ public class KieuQuatController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<KieuQuat> searchPage = kieuQuatService.search(ten_kieu, trang_thai, PageRequest.of(page, size));
+        Page<KieuQuat> searchPage = kieuQuatService.search(ten_kieu.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listKQ", searchPage);
         model.addAttribute("ten_kieu", ten_kieu);
         model.addAttribute("trang_thai", trang_thaiStr);

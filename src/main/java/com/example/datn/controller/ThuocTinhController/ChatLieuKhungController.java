@@ -43,7 +43,7 @@ public class ChatLieuKhungController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
-        Page<ChatLieuKhung> searchPage = chatLieuKhungService.search(ten_chat_lieu_khung, trang_thai, PageRequest.of(page, size)); // sửa ở đây(5)
+        Page<ChatLieuKhung> searchPage = chatLieuKhungService.search(ten_chat_lieu_khung.trim(), trang_thai, PageRequest.of(page, size)); // sửa ở đây(5)
         model.addAttribute("listCLK", searchPage); // sửa ở đây(6)
         model.addAttribute("ten_chat_lieu_khung", ten_chat_lieu_khung);
         model.addAttribute("trang_thai", trang_thaiStr);

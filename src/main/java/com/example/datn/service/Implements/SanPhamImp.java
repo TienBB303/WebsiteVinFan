@@ -82,6 +82,7 @@ public class SanPhamImp implements SanPhamService {
     public String taoMaTuDong() {
         String lastCode = sanPhamRepo.findMaxCode();
         int nextCode = 1;
+
         if (lastCode != null && !lastCode.isEmpty()) {
             try {
                 // Lấy phần số từ mã cuối cùng và tăng nó lên 1
@@ -90,13 +91,22 @@ public class SanPhamImp implements SanPhamService {
                 e.printStackTrace();
             }
         }
-        // Trả về mã mới dưới dạng "SP" cộng với số đã tăng, định dạng thành 3 chữ số
-        return String.format("SP%03d", nextCode);
+
+        // Trả về mã mới dưới dạng "SP" cộng với số đã tăng, định dạng thành 4 chữ số tối đa
+        if (nextCode <= 999) {
+            return String.format("SP%03d", nextCode);  // Sử dụng 3 chữ số, max là SP999
+        } else {
+            return String.format("SP%d", nextCode);    // Nếu quá 999, sẽ không định dạng, để tạo ra mã SP1000, SP1001...
+        }
     }
 
+
     @Override
-    public Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
-        return spctRepo.searchProducts(query, minPrice, maxPrice, pageable);
+    public Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai, Pageable pageable) {
+        if (trang_thai == null) {
+            return spctRepo.searchProductsWithouttrangThai(query, minPrice, maxPrice, pageable);
+        }
+        return spctRepo.searchProducts(query, minPrice, maxPrice,trang_thai, pageable);
     }
 
     @Override
