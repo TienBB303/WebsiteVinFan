@@ -1,13 +1,10 @@
 package com.example.datn.controller.phieu_giam_gia_controller;
 
 import com.example.datn.entity.phieu_giam.PhieuGiam;
-import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
-import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
 import com.example.datn.repository.SPCTRepo;
-import com.example.datn.repository.SanPhamRepo;
 import com.example.datn.service.phieu_giam_service.PhieuGiamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +17,6 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,8 +28,7 @@ public class PhieuGiamController {
 
     private final PhieuGiamRepo pggRepo;
     private final PhieuGiamService pggSV;
-    private final SanPhamRepo spRepo;
-    private final PhieuGiamSanPhamRepo pggspRepo;
+//    private final PhieuGiamSanPhamRepo pggspRepo;
     private final SPCTRepo spctRepo;
 
     @GetMapping("/index")
@@ -60,13 +55,17 @@ public class PhieuGiamController {
             if (pgg.getNgayKT() != null &&
                     pgg.getNgayKT().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now()) &&
                     pgg.isTrangThai()) {
-                // Nếu hết hạn thì cập nhật trạng thái
+
+                // Nếu phiếu giảm giá đã hết hạn, cập nhật trạng thái
                 pgg.setTrangThai(false);
                 pggRepo.save(pgg);
 
-                // Xóa các liên kết trong bảng phieu_giam_san_pham nếu cần
-                List<PhieuGiamSanPham> links = pggspRepo.findByPhieuGiamId(pgg.getId());
-                links.forEach(pggspRepo::delete);
+                // Xóa các sản phẩm liên kết trong phiếu giảm giá (nếu cần)
+                if (pgg.getSpct() != null) {
+                    pgg.setSpct(null); // Loại bỏ liên kết với sản phẩm
+                }
+
+                pggRepo.save(pgg); // Lưu lại sau khi xóa liên kết
             }
         });
 
@@ -104,9 +103,10 @@ public class PhieuGiamController {
         List<SanPhamChiTiet> sanPhamChiTietList = spctRepo.findAll();
 
         // Lấy danh sách sản phẩm đã áp dụng phiếu giảm giá
-        Map<Long, Boolean> appliedProductMap = pggspRepo.findAll().stream()
+        Map<Long, Boolean> appliedProductMap = pggRepo.findAll().stream()
+                .filter(pggsp -> pggsp.getSpct() != null) // Bỏ qua nếu sản phẩm chi tiết là null
                 .collect(Collectors.toMap(
-                        pggsp -> pggsp.getSanPhamChiTiet().getId(),
+                        pggsp -> pggsp.getSpct().getId(),
                         pggsp -> true,
                         (existing, replacement) -> existing
                 ));
@@ -118,7 +118,7 @@ public class PhieuGiamController {
     }
     @GetMapping("/discount")
     public String showDiscountProducts(Model model) {
-        List<PhieuGiamSanPham> discountProducts = pggspRepo.findAll(); // Truy vấn tất cả thông tin
+        List<PhieuGiam> discountProducts = pggRepo.findAll(); // Truy vấn tất cả thông tin
         model.addAttribute("discountProducts", discountProducts); // Thêm vào model
         return "/admin/phieu_giam/cart"; // Trả về view
     }
@@ -133,39 +133,27 @@ public class PhieuGiamController {
             phieuGiam.setNguoiTao("admin");
             phieuGiam.setMa(pggSV.taoMaTuDong());
 
-            // Kiểm tra và gán SanPhamChiTiet nếu spctId không null
+            // Xử lý chỉ khi `spctId` không null
             if (spctId != null) {
                 // Lấy thông tin sản phẩm chi tiết
                 SanPhamChiTiet spct = spctRepo.findById(spctId)
                         .orElseThrow(() -> new IllegalArgumentException("Sản phẩm chi tiết không tồn tại."));
 
                 // Kiểm tra nếu sản phẩm chi tiết đã có phiếu giảm giá
-                if (pggspRepo.findBySanPhamChiTietId(spctId).isPresent()) {
+                if (pggRepo.findBySanPhamChiTietId(spctId).isPresent()) {
                     throw new IllegalArgumentException("Sản phẩm đã áp dụng phiếu giảm giá.");
                 }
 
-                // Gán sản phẩm chi tiết và sản phẩm vào phiếu giảm giá
+                // Gán sản phẩm chi tiết vào phiếu giảm giá
                 phieuGiam.setSpct(spct);
+
+                // Tính giá sau giảm
+                BigDecimal giaSauGiam = spct.getGia().subtract(phieuGiam.getGiaTriGiam()).max(BigDecimal.ZERO);
+                phieuGiam.setGiaSauGiam(giaSauGiam); // Gán giá sau giảm trực tiếp vào phiếu giảm giá
             }
 
             // Lưu Phiếu Giảm Giá
-            phieuGiam = pggRepo.save(phieuGiam);
-
-            // Nếu có sản phẩm chi tiết, lưu vào PhieuGiamSanPham
-            if (spctId != null) {
-                SanPhamChiTiet spct = phieuGiam.getSpct();
-                BigDecimal giaSauGiam = spct.getGia().subtract(phieuGiam.getGiaTriGiam()).max(BigDecimal.ZERO);
-
-                // Tạo và lưu đối tượng PhieuGiamSanPham
-                PhieuGiamSanPham pggsp = new PhieuGiamSanPham();
-                pggsp.setPhieuGiam(phieuGiam);
-                pggsp.setSanPhamChiTiet(spct);
-                pggsp.setSanPham(spct.getSanPham());
-                pggsp.setGiaSauGiam(giaSauGiam);
-
-                // Lưu vào cơ sở dữ liệu
-                pggspRepo.save(pggsp);
-            }
+            pggRepo.save(phieuGiam);
 
             return "redirect:/admin/phieu-giam/index";
         } catch (Exception e) {
@@ -173,10 +161,11 @@ public class PhieuGiamController {
             List<SanPhamChiTiet> sanPhamChiTietList = spctRepo.findAll();
 
             // Lấy danh sách sản phẩm đã áp dụng phiếu giảm giá
-            Map<Long, Boolean> appliedProductMap = pggspRepo.findAll().stream()
+            Map<Long, Boolean> appliedProductMap = pggRepo.findAll().stream()
+                    .filter(p -> p.getSpct() != null)
                     .collect(Collectors.toMap(
-                            pggsp -> pggsp.getSanPhamChiTiet().getId(),
-                            pggsp -> true,
+                            p -> p.getSpct().getId(),
+                            p -> true,
                             (existing, replacement) -> existing
                     ));
 
@@ -195,26 +184,22 @@ public class PhieuGiamController {
         PhieuGiam phieuGiam = pggRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Phiếu giảm giá không tồn tại với ID: " + id));
 
-        // Lấy danh sách sản phẩm chi tiết liên quan đến phiếu giảm giá
-        List<PhieuGiamSanPham> pggspList = pggspRepo.findByPhieuGiamId(id);
+
+        // Lấy sản phẩm chi tiết liên quan đến phiếu giảm giá
+        SanPhamChiTiet spct = phieuGiam.getSpct();
 
         String sanPhamThongTin = "Không có sản phẩm áp dụng";
         BigDecimal giaSanPham = BigDecimal.ZERO;
 
-        if (!pggspList.isEmpty()) {
-            PhieuGiamSanPham pggsp = pggspList.get(0); // Lấy sản phẩm đầu tiên trong danh sách
-            SanPhamChiTiet spct = pggsp.getSanPhamChiTiet();
 
-            if (spct != null) {
-                // Định dạng thông tin sản phẩm chi tiết
-                sanPhamThongTin = spct.getSanPham().getTen() + " - " +
-                        spct.getMauSac().getTen() + " - Công suất: " +
-                        spct.getCongSuat().getTen() + "W - Giá: " +
-                        (spct.getGia() != null ? spct.getGia().toString() + " VND" : "Chưa có giá");
-                giaSanPham = spct.getGia() != null ? spct.getGia() : BigDecimal.ZERO;
-            }
+        if (spct != null) {
+            // Định dạng thông tin sản phẩm chi tiết
+            sanPhamThongTin = spct.getSanPham().getTen() + " - " +
+                    spct.getMauSac().getTen() + " - Công suất: " +
+                    spct.getCongSuat().getTen() + "W - Giá: " +
+                    (spct.getGia() != null ? spct.getGia().toString() + " VND" : "Chưa có giá");
+            giaSanPham = spct.getGia() != null ? spct.getGia() : BigDecimal.ZERO;
         }
-
         // Gửi dữ liệu sang View
         model.addAttribute("pgg", phieuGiam);
         model.addAttribute("sanPhamThongTin", sanPhamThongTin); // Thông tin sản phẩm
@@ -239,42 +224,29 @@ public class PhieuGiamController {
             existingPhieuGiam.setGiaTriGiam(phieuGiam.getGiaTriGiam());
             existingPhieuGiam.setTrangThai(phieuGiam.isTrangThai());
 
-            // Lấy danh sách sản phẩm chi tiết liên quan
-            List<PhieuGiamSanPham> links = pggspRepo.findByPhieuGiamId(phieuGiam.getId());
+            // Lấy sản phẩm chi tiết liên quan
+            SanPhamChiTiet spct = existingPhieuGiam.getSpct();
 
             // Kiểm tra nếu không có sản phẩm chi tiết liên quan
-            if (links.isEmpty()) {
+            if (spct == null) {
                 throw new IllegalArgumentException("Không tìm thấy sản phẩm chi tiết liên quan đến phiếu giảm giá.");
             }
 
-            for (PhieuGiamSanPham link : links) {
-                // Lấy thông tin sản phẩm chi tiết từ cơ sở dữ liệu
-                SanPhamChiTiet spct = spctRepo.findById(link.getSanPhamChiTiet().getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Sản phẩm chi tiết không tồn tại."));
-
-                // Kiểm tra nếu giá trị giảm vượt quá mức tối đa
-                BigDecimal giaSanPham = spct.getGia();
-                if (giaSanPham == null) {
-                    throw new IllegalArgumentException("Sản phẩm không có thông tin giá. Vui lòng kiểm tra lại.");
-                }
-
-                BigDecimal maxGiam = calculateMaxDiscount(giaSanPham);
-                if (phieuGiam.getGiaTriGiam().compareTo(maxGiam) > 0) {
-                    throw new IllegalArgumentException(
-                            "Giá trị giảm không được vượt quá " + maxGiam + " VND cho mức giá sản phẩm " + giaSanPham + " VND.");
-                }
-
-                // Cập nhật số tiền giảm mới
-                BigDecimal giaSauGiam = giaSanPham.subtract(phieuGiam.getGiaTriGiam()).max(BigDecimal.ZERO);
-                link.setGiaSauGiam(giaSauGiam);
-
-                // Đảm bảo không ghi đè id và idspct thành null
-                link.setSanPhamChiTiet(spct);
-                link.setPhieuGiam(existingPhieuGiam);
-
-                // Lưu lại liên kết
-                pggspRepo.save(link);
+            // Kiểm tra nếu giá trị giảm vượt quá mức tối đa
+            BigDecimal giaSanPham = spct.getGia();
+            if (giaSanPham == null) {
+                throw new IllegalArgumentException("Sản phẩm không có thông tin giá. Vui lòng kiểm tra lại.");
             }
+
+            BigDecimal maxGiam = calculateMaxDiscount(giaSanPham);
+            if (phieuGiam.getGiaTriGiam().compareTo(maxGiam) > 0) {
+                throw new IllegalArgumentException(
+                        "Giá trị giảm không được vượt quá " + maxGiam + " VND cho mức giá sản phẩm " + giaSanPham + " VND.");
+            }
+
+            // Tính giá sau giảm và cập nhật vào phiếu giảm giá
+            BigDecimal giaSauGiam = giaSanPham.subtract(phieuGiam.getGiaTriGiam()).max(BigDecimal.ZERO);
+            existingPhieuGiam.setGiaSauGiam(giaSauGiam);
 
             // Lưu phiếu giảm giá được cập nhật
             pggRepo.save(existingPhieuGiam);
