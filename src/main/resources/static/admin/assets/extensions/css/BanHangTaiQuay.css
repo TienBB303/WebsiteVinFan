@@ -1,4 +1,7 @@
 /**/
+body{
+    background-color: #f5f5f5;
+}
 table tbody {
     display: block;
     max-height: 350px; /* Thay đổi chiều cao tối đa của tbody */
@@ -76,3 +79,69 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(25px);
 }
+
+/*button add sp*/
+.custom-plus-button {
+    background: none; /* Loại bỏ màu nền */
+    border: none; /* Loại bỏ viền */
+    font-size: 24px; /* Tăng kích thước font */
+    font-weight: bold; /* Tăng độ đậm của dấu cộng */
+    color: #28a745; /* Màu xanh lá nổi bật */
+    cursor: pointer; /* Con trỏ chuột khi hover */
+}
+
+.custom-plus-button:hover {
+    color: #218838; /* Màu xanh đậm hơn khi hover */
+    transform: scale(1.5); /* Phóng to khi hover */
+}
+
+.custom-plus-button:focus {
+    outline: none; /* Loại bỏ hiệu ứng outline khi focus */
+}
+
+/*.notification {*/
+/*    position: fixed;*/
+/*    top: 10px;*/
+/*    right: 10px;*/
+/*    background-color: #f5f5f5;*/
+/*    color: #0d1326;*/
+/*    padding: 15px;*/
+/*    border-radius: 10px;*/
+/*    z-index: 1000;*/
+/*    display: none;*/
+/*}*/
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: #f5f5f5;
+    color: #1a1a1a;
+    padding: 10px 15px;
+    border: 1px solid #f5f5f5;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none; /* Ẩn mặc định */
+}
+
+.notification.show {
+    display: flex; /* Hiện thông báo */
+    animation: fadeOut 3s forwards; /* Kích hoạt animation */
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+
+
+

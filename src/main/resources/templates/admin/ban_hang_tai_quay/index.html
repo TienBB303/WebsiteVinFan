@@ -3,15 +3,53 @@
 <head th:replace="/admin/custom_css/headQA :: headQA"></head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 <body>
+<div th:if="${errorMessageTSL}" class="notification error d-flex align-items-center" id="errorMessage">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorMessageTSL}"></p>
+</div>
+<div th:if="${errorAdd}" class="notification error d-flex align-items-center" id="errorAdd">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorAdd}"></p>
+</div>
+
+<script>
+    window.addEventListener("DOMContentLoaded", function () {
+        const notification = document.getElementById("errorAdd");
+        if (notification) {
+            // Hiển thị thông báo
+            notification.classList.add("show");
+
+            // Tự động xóa thông báo sau 3 giây
+            setTimeout(() => {
+                notification.remove(); // Loại bỏ phần tử khỏi DOM
+            }, 3000);
+        }
+    });
+</script>
+
+<script>
+    window.addEventListener("DOMContentLoaded", function () {
+        const notification = document.getElementById("errorMessage");
+        if (notification) {
+            // Hiển thị thông báo
+            notification.classList.add("show");
+
+            // Tự động xóa thông báo sau 3 giây
+            setTimeout(() => {
+                notification.remove(); // Loại bỏ phần tử khỏi DOM
+            }, 3000);
+        }
+    });
+</script>
+
 <div class="container-fluid">
     <div class="container mt-4">
-        <!-- Nút Tạo hóa đơn -->
-        <div class="d-flex justify-content-end mb-4">
-            <form method="post" th:action="@{/ban-hang-tai-quay/tao-hoa-don}">
-                <button class="btn btn-primary">+Tạo hóa đơn</button>
-            </form>
-        </div>
-
         <!-- Danh sách hóa đơn -->
         <div class="dataTable-container  mb-4">
             <ul class="nav nav-tabs d-flex justify-content-start custom-tabs">
@@ -20,6 +58,13 @@
                        th:classappend="${hd.id == idHD} ? 'active'"
                        th:text="${hd.ma}"
                        th:href="@{/ban-hang-tai-quay/hdct(idHD=${hd.id})}"></a>
+                </li>
+                <li class="nav-item">
+                    <form method="post" th:action="@{/ban-hang-tai-quay/tao-hoa-don}" class="d-inline">
+                        <button type="submit" class="btn custom-plus-button">
+                            +
+                        </button>
+                    </form>
                 </li>
             </ul>
         </div>
@@ -121,8 +166,10 @@
                 <h2><strong>Thông tin sản phẩm</strong></h2>
             </div>
             <hr>
-            <div th:if="${#lists.isEmpty(listHDCT)}" class="d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
-                <img src="https://shop.nebulacare.in/Content/Images/nodata.jpg" style="max-width: 1000px; max-height: 200px;">
+            <div th:if="${#lists.isEmpty(listHDCT)}"
+                 class="d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                <img src="https://shop.nebulacare.in/Content/Images/nodata.jpg"
+                     style="max-width: 1000px; max-height: 200px;">
             </div>
 
             <div th:if="${!#lists.isEmpty(listHDCT)}">
@@ -147,24 +194,29 @@
                         <td class="giaVND" th:text="${item.gia}"></td>
                         <td class="giaVND" th:text="${item.giaGiam != null ? item.giaGiam + ' VND' : '0 VND'}"></td>
                         <td>
-                            <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                    th:data-id-hoa-don-giam="${item.hoaDon.id}"
-                                    th:data-id-san-pham-chi-tiet-giam="${item.sanPhamChiTiet.id}">
-                                -
-                            </button>
-                            <!-- Ô nhập số lượng -->
-                            <input type="number" class="form-control quantity-input"
-                                   th:value="${item.soLuong}"
-                                   min="1"
-                                   style="width: 60px; text-align: center; display: inline-block;" disabled/>
-                            <!-- Nút Tăng -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                    th:data-id-hoa-don="${item.hoaDon.id}"
-                                    th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
-                                +
-                            </button>
+                            <div class="d-flex align-items-center">
+                                <!-- Nút giảm số lượng -->
+                                <form th:action="@{/ban-hang-tai-quay/giam-so-luong}" method="post" class="me-1">
+                                    <input type="hidden" name="idHoaDon" th:value="${item.hoaDon.id}"/>
+                                    <input type="hidden" name="idSanPhamChiTiet" th:value="${item.sanPhamChiTiet.id}"/>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">-</button>
+                                </form>
+
+                                <!-- Ô nhập số lượng -->
+                                <input type="number" class="form-control quantity-input mx-1"
+                                       th:value="${item.soLuong}"
+                                       min="1"
+                                       style="width: 50px;" disabled/>
+
+                                <!-- Nút tăng số lượng -->
+                                <form th:action="@{/ban-hang-tai-quay/tang-so-luong}" method="post" class="ms-1">
+                                    <input type="hidden" name="idHoaDon" th:value="${item.hoaDon.id}"/>
+                                    <input type="hidden" name="idSanPhamChiTiet" th:value="${item.sanPhamChiTiet.id}"/>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">+</button>
+                                </form>
+                            </div>
                         </td>
+
 
                         <td class="giaVND" th:text="${item.thanhTien}"></td>
 
@@ -389,9 +441,13 @@
                         </div>
 
                         <!-- Tiền hàng -->
-                        <div class="form-section d-flex align-items-center mb-3">
-                            <label class="form-label me-3">Tổng tiền hàng:</label>
-                            <p class="total-price mb-0 text-danger fw-bold giaVND" th:text="${tongTien} + ' VND'"></p>
+                        <div id="tong-tien-hang">
+                            <!-- Tiền hàng -->
+                            <div class="form-section d-flex align-items-center mb-3">
+                                <label class="form-label me-3">Tổng tiền hàng:</label>
+                                <p class="total-price mb-0 text-danger fw-bold giaVND"
+                                   th:text="${tongTien} + ' VND'"></p>
+                            </div>
                         </div>
                         <!-- Phí vận chuyển -->
                         <div class="form-section d-flex align-items-center mb-3">
@@ -416,6 +472,8 @@
                         <button class="btn btn-dark w-100 confirm-btn mb-5" th:disabled="${idHD == null}">Xác nhận đặt
                             hàng
                         </button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -693,96 +751,6 @@
         }
     </script>
 
-    <meta name="_csrf" content="${_csrf.token}"/>
-    <meta name="_csrf_header" content="${_csrf.headerName}"/>
-    <script>
-        $(document).on('click', '.btn-increase', function () {
-            const button = $(this); // Lấy đối tượng nút hiện tại
-            const idHoaDon = button.attr('data-id-hoa-don'); // Lấy ID hóa đơn từ thuộc tính data
-            const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet'); // Lấy ID sản phẩm chi tiết từ thuộc tính data
-
-            $.ajax({
-                url: `/ban-hang-tai-quay/tang-so-luong`, // Endpoint xử lý tăng số lượng
-                type: 'POST',
-                data: {
-                    idHoaDon: idHoaDon,
-                    idSanPhamChiTiet: idSanPhamChiTiet
-                },
-                success: function (response) {
-                    // Hiển thị thông báo thành công
-                    Swal.fire({
-                        toast: true,
-                        icon: 'success',
-                        title: response, // Thông báo từ server
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true
-                    }).then(() => {
-                        location.reload();
-                    });
-                },
-                error: function (xhr) {
-                    // Hiển thị thông báo lỗi
-                    Swal.fire({
-                        toast: true,
-                        icon: 'error',
-                        title: xhr.responseText, // Thông báo lỗi từ server
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            });
-        });
-    </script>
-
-    <script>
-        $(document).on('click', '.btn-increase', function () {
-            const button = $(this); // Sử dụng 'this' để lấy đối tượng nút hiện tại
-            const idHoaDon = button.attr('data-id-hoa-don-giam');
-            const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet-giam');
-            $.ajax({
-
-                url: `/ban-hang-tai-quay/giam-so-luong`,
-                type: 'POST',
-                data: {
-                    idHoaDon: idHoaDon,
-                    idSanPhamChiTiet: idSanPhamChiTiet
-                },
-                success: function (response) {
-                    Swal.fire({
-                        toast: true,
-                        icon: 'success',
-                        title: response, // Thông báo thành công từ server
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true
-                    }).then(() => {
-                        location.reload();
-                    });
-                },
-                error: function (xhr) {
-                    Swal.fire({
-                        toast: true,
-                        icon: 'error',
-                        title: xhr.responseText, // Thông báo lỗi từ server
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            });
-
-        });
-    </script>
 </div>
 </body>
 </html>
