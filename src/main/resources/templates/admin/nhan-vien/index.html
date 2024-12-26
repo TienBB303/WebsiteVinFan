@@ -22,7 +22,8 @@
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">nhân viên</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">nhân
+                                    viên</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -47,8 +48,8 @@
                                                        placeholder="Tìm kiếm" name="keyword" th:value="${keyword}">
                                             </div>
                                             <div class="col col-lg-2">
-                                                <button class="btn btn-warning" type="submit">
-                                                    Reset
+                                                <button class="btn btn-outline-warning" type="submit" style="width: 60px">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -81,7 +82,8 @@
                                     <div id="nhan_vien_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <a th:href="@{/admin/nhan-vien/from-them}" class="btn btn-outline-success">Thêm
+                                                <a th:href="@{/admin/nhan-vien/from-them}"
+                                                   class="btn btn-outline-success">Thêm
                                                     mới</a>
                                                 <table class="table table-striped dataTable-table" id="customerTable">
                                                     <thead>
@@ -113,7 +115,9 @@
                                                         <td th:text="${nhanVien.trangThai != null ? (nhanVien.trangThai ? 'Hoạt động' : 'Ngừng hoạt động') : 'Chưa xác định'}"></td>
                                                         <td>
                                                             <a th:href="@{/admin/nhan-vien/from-sua/{id}(id=${nhanVien.id})}"
-                                                               class="btn btn-secondary">Sửa</a>
+                                                               class="btn btn-outline-warning" style="width: 60px">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                     </tbody>

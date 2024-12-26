@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +52,10 @@ public class HoaDonController {
                         @RequestParam(name = "endDate", required = false) String endDate,
                         Model model) {
         Page<HoaDon> list;
+        // Đảm bảo page không nhỏ hơn 0
+        if (page < 0) {
+            page = 0;
+        }
 
         LocalDate start = null;
         LocalDate end = null;

@@ -17,36 +17,15 @@
     </div>
     <p class="mb-0" th:text="${errorAdd}"></p>
 </div>
+<div th:if="${errorTHD}" class="notification error d-flex align-items-center" id="errorTHD">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorTHD}"></p>
+</div>
 
-<script>
-    window.addEventListener("DOMContentLoaded", function () {
-        const notification = document.getElementById("errorAdd");
-        if (notification) {
-            // Hiển thị thông báo
-            notification.classList.add("show");
 
-            // Tự động xóa thông báo sau 3 giây
-            setTimeout(() => {
-                notification.remove(); // Loại bỏ phần tử khỏi DOM
-            }, 3000);
-        }
-    });
-</script>
-
-<script>
-    window.addEventListener("DOMContentLoaded", function () {
-        const notification = document.getElementById("errorMessage");
-        if (notification) {
-            // Hiển thị thông báo
-            notification.classList.add("show");
-
-            // Tự động xóa thông báo sau 3 giây
-            setTimeout(() => {
-                notification.remove(); // Loại bỏ phần tử khỏi DOM
-            }, 3000);
-        }
-    });
-</script>
 
 <div class="container-fluid">
     <div class="container mt-4">
@@ -342,7 +321,7 @@
 
             <!-- Form thông tin khách hàng -->
             <form th:action="@{/ban-hang-tai-quay/thanh-toan}"
-                  method="post">
+                  method="post" id="thanhToanForm">
                 <div class="row mb-3 mb-md-5">
                     <div class="col-6" id="deliveryForm" style="visibility: hidden;">
                         <div class="form-section">
@@ -469,7 +448,8 @@
                         </div>
 
                         <!-- Nút xác nhận -->
-                        <button class="btn btn-dark w-100 confirm-btn mb-5" th:disabled="${idHD == null}">Xác nhận đặt
+                        <button type="submit" class="btn btn-dark w-100 confirm-btn mb-5" th:disabled="${idHD == null}">
+                            Xác nhận đặt
                             hàng
                         </button>
                     </div>
@@ -478,7 +458,6 @@
         </div>
     </div>
 
-</div>
 </div>
 
 
@@ -749,6 +728,51 @@
                 }
             };
         }
+    </script>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            const notification = document.getElementById("errorAdd");
+            if (notification) {
+                // Hiển thị thông báo
+                notification.classList.add("show");
+
+                // Tự động xóa thông báo sau 3 giây
+                setTimeout(() => {
+                    notification.remove(); // Loại bỏ phần tử khỏi DOM
+                }, 3000);
+            }
+        });
+    </script>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            const notification = document.getElementById("errorMessage");
+            if (notification) {
+                // Hiển thị thông báo
+                notification.classList.add("show");
+
+                // Tự động xóa thông báo sau 3 giây
+                setTimeout(() => {
+                    notification.remove(); // Loại bỏ phần tử khỏi DOM
+                }, 3000);
+            }
+        });
+    </script>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            const notification = document.getElementById("errorTHD");
+            if (notification) {
+                // Hiển thị thông báo
+                notification.classList.add("show");
+
+                // Tự động xóa thông báo sau 3 giây
+                setTimeout(() => {
+                    notification.remove(); // Loại bỏ phần tử khỏi DOM
+                }, 3000);
+            }
+        });
     </script>
 
 </div>

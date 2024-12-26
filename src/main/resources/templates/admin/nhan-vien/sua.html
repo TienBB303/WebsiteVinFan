@@ -38,7 +38,17 @@
                 <div class="card-body">
                     <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
                         <div class="box-header">
-
+                            <div class="row">
+                                <div class="border rounded p-3 mb-4">
+                                    <div class="d-flex justify-content-between">
+                                        <!-- Nút trở về -->
+                                        <a th:href="@{/admin/nhan-vien/index}"
+                                           class="btn btn-outline-primary">
+                                            <i class="bi bi-arrow-return-left"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
@@ -306,9 +316,7 @@
                                     <!-- Submit button -->
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <button type="submit" class="btn btn-primary btn-lg">Cập nhật</button>
-                                            <a href="@{/admin/nhan-vien/index}" class="btn btn-secondary btn-lg">Quay
-                                                lại danh sách</a>
+                                            <button type="submit" class="btn btn-outline-warning">Cập nhật</button>
                                         </div>
                                     </div>
                                 </form>
