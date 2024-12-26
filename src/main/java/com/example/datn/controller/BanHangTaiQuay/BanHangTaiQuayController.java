@@ -123,7 +123,7 @@ public class BanHangTaiQuayController {
             hoaDonService.timSanPhamChiTietTheoHoaDon(request.getIdHD());
             hoaDonService.updateTongTienHoaDon(request.getIdHD());
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorAdd",e.getMessage());
+            redirectAttributes.addFlashAttribute("errorAdd", e.getMessage());
             System.out.println(e.getMessage());
         }
         return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
@@ -141,7 +141,8 @@ public class BanHangTaiQuayController {
             @RequestParam("chiTietDiaChi") String chitiet,
             @RequestParam("ghichu") String ghiChu,
             @RequestParam("tenKhangHang") String tenKhangHang
-    ) {
+            ) {
+
         HoaDon hoaDon = hoaDonService.findById(idhd)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
         NhanVien nhanVien = nhanVienRepository.profileNhanVien();
@@ -176,6 +177,7 @@ public class BanHangTaiQuayController {
 
         // Trừ số lượng sản phẩm trong hóa đơn
         hoaDonService.truSoLuongSanPham(idhd);
+
 
         return "redirect:/ban-hang-tai-quay/index";
     }
@@ -213,19 +215,6 @@ public class BanHangTaiQuayController {
     }
 
 
-    //    @PostMapping("tang-so-luong")
-//    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-//                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet
-//    ) {
-//        try {
-//            hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-//            hoaDonService.updateTongTienHoaDon(idHoaDon);
-//            return ResponseEntity.ok().body("Thêm thành công");
-//        } catch (RuntimeException e) {
-//            // Trả về thông báo lỗi
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
     @PostMapping("tang-so-luong")
     public String tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
                               @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet,
@@ -245,18 +234,6 @@ public class BanHangTaiQuayController {
     }
 
 
-//    @PostMapping("giam-so-luong")
-//    public ResponseEntity<?> giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-//                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
-//        try {
-//            hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-//            hoaDonService.updateTongTienHoaDon(idHoaDon);
-//            return ResponseEntity.ok("Giảm số lượng thành công.");
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-
     @PostMapping("giam-so-luong")
     public String giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
                               @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
@@ -271,11 +248,15 @@ public class BanHangTaiQuayController {
 
     @PostMapping("/tao-hoa-don")
     public String taoHoaDon(RedirectAttributes redirectAttributes) {
-        HoaDon hoaDon = new HoaDon();
-        NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-        hoaDon.setNhanVien(nhanVien);
-        banHangTaiQuayService.taoHoaDonCho(hoaDon);
-        redirectAttributes.addFlashAttribute("message", "Tạo hóa đơn thành công");
+        try {
+            HoaDon hoaDon = new HoaDon();
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+            banHangTaiQuayService.taoHoaDonCho(hoaDon);
+            redirectAttributes.addFlashAttribute("message", "Tạo hóa đơn thành công");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorTHD", e.getMessage());
+        }
         return "redirect:/ban-hang-tai-quay/index";
     }
 
