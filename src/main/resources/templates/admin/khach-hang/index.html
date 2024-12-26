@@ -25,7 +25,8 @@
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">khách hàng</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">Khách
+                                    hàng</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -51,8 +52,8 @@
                                             </div>
 
                                             <div class="col col-lg-2">
-                                                <button class="btn btn-warning" type="submit">
-                                                    Reset
+                                                <button class="btn btn-outline-warning" type="submit" style="width: 60px">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -122,7 +123,9 @@
                                                         <td th:text="${khachHang.trangThai ? 'Hoạt động' : 'Không hoạt động'}"></td>
                                                         <td>
                                                             <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id})}"
-                                                               class="btn btn-secondary" >Sửa</a>
+                                                               class="btn btn-outline-warning" style="width: 60px">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                     </tbody>

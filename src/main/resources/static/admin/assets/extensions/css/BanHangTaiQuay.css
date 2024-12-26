@@ -80,24 +80,19 @@ input:checked + .slider:before {
     transform: translateX(25px);
 }
 
-/*button add sp*/
 .custom-plus-button {
-    background: none; /* Loại bỏ màu nền */
-    border: none; /* Loại bỏ viền */
-    font-size: 24px; /* Tăng kích thước font */
-    font-weight: bold; /* Tăng độ đậm của dấu cộng */
-    color: #28a745; /* Màu xanh lá nổi bật */
-    cursor: pointer; /* Con trỏ chuột khi hover */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    transition: all 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà */
 }
 
 .custom-plus-button:hover {
-    color: #218838; /* Màu xanh đậm hơn khi hover */
-    transform: scale(1.5); /* Phóng to khi hover */
+    background-color: #0056b3; /* Màu nền khi hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng mạnh khi hover */
 }
 
-.custom-plus-button:focus {
-    outline: none; /* Loại bỏ hiệu ứng outline khi focus */
-}
 
 /*.notification {*/
 /*    position: fixed;*/
