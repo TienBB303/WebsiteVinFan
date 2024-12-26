@@ -20,6 +20,21 @@
 
 <script>
     window.addEventListener("DOMContentLoaded", function () {
+        const notification = document.getElementById("errorAdd");
+        if (notification) {
+            // Hiển thị thông báo
+            notification.classList.add("show");
+
+            // Tự động xóa thông báo sau 3 giây
+            setTimeout(() => {
+                notification.remove(); // Loại bỏ phần tử khỏi DOM
+            }, 3000);
+        }
+    });
+</script>
+
+<script>
+    window.addEventListener("DOMContentLoaded", function () {
         const notification = document.getElementById("errorMessage");
         if (notification) {
             // Hiển thị thông báo
@@ -735,97 +750,6 @@
             };
         }
     </script>
-
-    <!--    <meta name="_csrf" content="${_csrf.token}"/>-->
-    <!--    <meta name="_csrf_header" content="${_csrf.headerName}"/>-->
-    <!--    <script>-->
-    <!--        $(document).on('click', '.btn-increase', function () {-->
-    <!--            const button = $(this); // Lấy đối tượng nút hiện tại-->
-    <!--            const idHoaDon = button.attr('data-id-hoa-don'); // Lấy ID hóa đơn từ thuộc tính data-->
-    <!--            const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet'); // Lấy ID sản phẩm chi tiết từ thuộc tính data-->
-
-    <!--            $.ajax({-->
-    <!--                url: `/ban-hang-tai-quay/tang-so-luong`, // Endpoint xử lý tăng số lượng-->
-    <!--                type: 'POST',-->
-    <!--                data: {-->
-    <!--                    idHoaDon: idHoaDon,-->
-    <!--                    idSanPhamChiTiet: idSanPhamChiTiet-->
-    <!--                },-->
-    <!--                success: function (response) {-->
-    <!--                    // Hiển thị thông báo thành công-->
-    <!--                    Swal.fire({-->
-    <!--                        toast: true,-->
-    <!--                        icon: 'success',-->
-    <!--                        title: response, // Thông báo từ server-->
-    <!--                        position: 'top-end',-->
-    <!--                        showConfirmButton: false,-->
-    <!--                        timer: 1000,-->
-    <!--                        timerProgressBar: true-->
-    <!--                    }).then(() => {-->
-    <!--                        location.reload();-->
-    <!--                    });-->
-    <!--                },-->
-    <!--                error: function (xhr) {-->
-    <!--                    // Hiển thị thông báo lỗi-->
-    <!--                    Swal.fire({-->
-    <!--                        toast: true,-->
-    <!--                        icon: 'error',-->
-    <!--                        title: xhr.responseText, // Thông báo lỗi từ server-->
-    <!--                        position: 'top-end',-->
-    <!--                        showConfirmButton: false,-->
-    <!--                        timer: 1000,-->
-    <!--                        timerProgressBar: true-->
-    <!--                    }).then(() => {-->
-    <!--                        location.reload();-->
-    <!--                    });-->
-    <!--                }-->
-    <!--            });-->
-    <!--        });-->
-    <!--    </script>-->
-
-    <!--    <script>-->
-    <!--        $(document).on('click', '.btn-increase', function () {-->
-    <!--            const button = $(this); // Sử dụng 'this' để lấy đối tượng nút hiện tại-->
-    <!--            const idHoaDon = button.attr('data-id-hoa-don-giam');-->
-    <!--            const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet-giam');-->
-    <!--            $.ajax({-->
-
-    <!--                url: `/ban-hang-tai-quay/giam-so-luong`,-->
-    <!--                type: 'POST',-->
-    <!--                data: {-->
-    <!--                    idHoaDon: idHoaDon,-->
-    <!--                    idSanPhamChiTiet: idSanPhamChiTiet-->
-    <!--                },-->
-    <!--                success: function (response) {-->
-    <!--                    Swal.fire({-->
-    <!--                        toast: true,-->
-    <!--                        icon: 'success',-->
-    <!--                        title: response, // Thông báo thành công từ server-->
-    <!--                        position: 'top-end',-->
-    <!--                        showConfirmButton: false,-->
-    <!--                        timer: 1000,-->
-    <!--                        timerProgressBar: true-->
-    <!--                    }).then(() => {-->
-    <!--                        location.reload();-->
-    <!--                    });-->
-    <!--                },-->
-    <!--                error: function (xhr) {-->
-    <!--                    Swal.fire({-->
-    <!--                        toast: true,-->
-    <!--                        icon: 'error',-->
-    <!--                        title: xhr.responseText, // Thông báo lỗi từ server-->
-    <!--                        position: 'top-end',-->
-    <!--                        showConfirmButton: false,-->
-    <!--                        timer: 1000,-->
-    <!--                        timerProgressBar: true-->
-    <!--                    }).then(() => {-->
-    <!--                        location.reload();-->
-    <!--                    });-->
-    <!--                }-->
-    <!--            });-->
-    <!--        });-->
-    <!--    </script>-->
-
 
 </div>
 </body>
