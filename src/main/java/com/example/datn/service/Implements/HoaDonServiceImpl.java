@@ -93,20 +93,22 @@ public class HoaDonServiceImpl implements HoaDonService {
         List<HoaDonChiTiet> hoaDonChiTietList = hoaDonChiTietRepo.findByHoaDon_Id(hoaDonId);
 
         hoaDonChiTietList.forEach(hdct -> {
+            BigDecimal giaGoc = hdct.getSanPhamChiTiet().getGia(); // Lấy giá gốc
             Optional<PhieuGiam> optionalPgg = phieuGiamRepo.findBySanPhamChiTietId(hdct.getSanPhamChiTiet().getId());
 
-            // Tính giá giảm (nếu có)
+            // Tính giá giảm từ phiếu giảm giá
             BigDecimal giaGiam = optionalPgg.map(PhieuGiam::getGiaTriGiam).orElse(BigDecimal.ZERO);
 
-            // Tính giá sau giảm
-            BigDecimal giaSauGiam = hdct.getGia().subtract(giaGiam);
+            // Cập nhật giá sau giảm nếu chưa tính
+            if (hdct.getGiaSauGiam() == null || hdct.getGiaSauGiam().compareTo(BigDecimal.ZERO) == 0) {
+                BigDecimal giaSauGiam = giaGoc.subtract(giaGiam).max(BigDecimal.ZERO);
+                hdct.setGiaSauGiam(giaSauGiam); // Cập nhật giá sau giảm
+                hdct.setThanhTien(giaSauGiam.multiply(BigDecimal.valueOf(hdct.getSoLuong()))); // Thành tiền dựa trên giá sau giảm
+                hoaDonChiTietRepo.save(hdct); // Lưu thay đổi vào DB
+            }
 
-            // Cập nhật lại `giaGiam` và `ThanhTien`
+            // Cập nhật giá giảm (dùng Transient, không lưu vào DB)
             hdct.setGiaGiam(giaGiam);
-            hdct.setThanhTien(giaSauGiam.multiply(BigDecimal.valueOf(hdct.getSoLuong())));
-
-            // Lưu thay đổi vào cơ sở dữ liệu (nếu cần thiết)
-            hoaDonChiTietRepo.save(hdct);
         });
 
         return hoaDonChiTietList;
@@ -346,7 +348,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 hdct.setSoLuong(soLuongTrongHoaDon + 1);
 
                 // Cập nhật lại thành tiền
-                BigDecimal gia = hdct.getGia();
+                BigDecimal gia = hdct.getGiaSauGiam();
                 hdct.setThanhTien(gia.multiply(BigDecimal.valueOf(hdct.getSoLuong())));
 
                 // Lưu lại bản ghi HoaDonChiTiet đã cập nhật
@@ -377,7 +379,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             hdct.setSoLuong(hdct.getSoLuong() - 1);
 
             // Cập nhật lại thành tiền
-            BigDecimal gia = hdct.getGia();
+            BigDecimal gia = hdct.getGiaSauGiam();
             hdct.setThanhTien(gia.multiply(BigDecimal.valueOf(hdct.getSoLuong())));
 
             // Lưu lại bản ghi HoaDonChiTiet đã cập nhật

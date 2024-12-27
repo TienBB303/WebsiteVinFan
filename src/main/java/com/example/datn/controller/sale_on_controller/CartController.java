@@ -29,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -244,22 +245,49 @@ public class CartController {
 
     @GetMapping("/orderinfor")
     public String orderInfor(HttpSession session, Model model) {
-        // Lấy danh sách sản phẩm từ session
+        // Kiểm tra khách hàng đã đăng nhập hay chưa
+        KhachHang khachHang = khachHangRepo.profileKhachHang();
+        if (khachHang == null) {
+            // Nếu không phải khách hàng đăng nhập, thêm thông báo lỗi
+            model.addAttribute("error", "NotCustomer");
+            return "redirect:/admin/product-catalog";
+        } else {
+            // Nếu là khách hàng, thêm thông tin khách hàng vào model
+            model.addAttribute("khachHang", khachHang);
+
+            DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(khachHang.getId());
+            model.addAttribute("diachiMacDinh", diaChi);
+        }
+
         List<CartItem> cartItems = getCartFromSession(session);
 
-        KhachHang khachHang = khachHangRepo.profileKhachHang();
-        model.addAttribute("khachHang",khachHang);
+        if (cartItems == null || cartItems.isEmpty()) {
+            model.addAttribute("error", "CartIsEmpty");
+            return "admin/website/orderInfor";
+        }
 
-        DiaChi diaChi =  diaChiRepository.DiaChimacDinhvsfindByKhachHangId(khachHang.getId());
-        model.addAttribute("diachiMacDinh",diaChi);
+        List<String> errors = new ArrayList<>();
+        for (CartItem item : cartItems) {
+            SanPhamChiTiet productDetails = spctRepo.findById(item.getProductId()).orElse(null);
+            if (productDetails != null) {
+                if (item.getQuantity() > productDetails.getSo_luong()) {
+                    errors.add("Sản phẩm " + productDetails.getSanPham().getTen() +
+                            " không đủ tồn kho (Chỉ còn " + productDetails.getSo_luong() + ").");
+                }
+            } else {
+                errors.add("Sản phẩm với ID " + item.getProductId() + " không tồn tại.");
+            }
+        }
 
+        if (!errors.isEmpty()) {
+            model.addAttribute("error", "OutOfStock");
+            model.addAttribute("errorMessages", errors);
+        }
 
-        // Tính tổng tiền
         double totalPrice = cartItems.stream()
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
 
-        // Đưa thông tin giỏ hàng và tổng tiền vào model để Thymeleaf có thể truy cập
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPrice);
 
@@ -289,20 +317,22 @@ public class CartController {
                                  @RequestParam("tinhThanhPho") String tinhThanhPho,
                                  @RequestParam("quanHuyen") String quanHuyen,
                                  @RequestParam("xaPhuong") String xaPhuong,
-                                 @RequestParam("soNhaNgoDuong") String soNhaNgoDuong
-    ) {
+                                 @RequestParam("soNhaNgoDuong") String soNhaNgoDuong,
+                                 RedirectAttributes redirectAttributes) {
         // Lấy giỏ hàng từ session
         List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
         if (cartItems == null || cartItems.isEmpty()) {
-            return "redirect:/cart/orderinfor?error=CartIsEmpty";
+            redirectAttributes.addFlashAttribute("error", "CartIsEmpty");
+            return "redirect:/cart/orderinfor";
         }
 
-        // Lấy thông tin khách hàng từ tài khoản đăng nhập
+        // Kiểm tra khách hàng đăng nhập
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Lấy email đăng nhập
+        String email = authentication.getName();
         KhachHang khachHang = khachHangRepo.findByEmail(email).orElse(null);
         if (khachHang == null) {
-            return "redirect:/login?error=UserNotLoggedIn"; // Nếu không tìm thấy khách hàng
+            redirectAttributes.addFlashAttribute("error", "UserNotLoggedIn");
+            return "redirect:/login";
         }
 
         // Tạo hóa đơn
@@ -310,12 +340,10 @@ public class CartController {
         hoaDon.setMa(hoaDonService.generateOrderCode());
         hoaDon.setTenNguoiNhan(request.getName());
         hoaDon.setSdtNguoiNhan(request.getPhone());
-        // Ghép địa chỉ
-        String diaChi = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + soNhaNgoDuong;
-        hoaDon.setDiaChi(diaChi);
+        hoaDon.setDiaChi(tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + soNhaNgoDuong);
         hoaDon.setNgayTao(LocalDate.now());
-        hoaDon.setTrangThai(1); // Trạng thái chờ xác nhận
-        hoaDon.setLoaiHoaDon(false); // Mặc định là false (tương đương 0)
+        hoaDon.setTrangThai(1); // Chờ xác nhận
+        hoaDon.setLoaiHoaDon(false);
         hoaDon.setPhiVanChuyen(BigDecimal.valueOf(30000));
         hoaDon.setKhachHang(khachHang);
         hoaDonService.save(hoaDon);
@@ -323,21 +351,19 @@ public class CartController {
         // Tổng tiền hóa đơn
         BigDecimal total = BigDecimal.ZERO;
 
-        // Tạo chi tiết hóa đơn
         for (CartItem item : cartItems) {
             SanPhamChiTiet sanPhamChiTiet = entityManager.find(SanPhamChiTiet.class, item.getProductId());
             if (sanPhamChiTiet == null) {
-                return "redirect:/cart/orderinfor?error=ProductNotFound";
+                redirectAttributes.addFlashAttribute("error", "ProductNotFound");
+                return "redirect:/cart/orderinfor";
             }
 
-            // Tìm giá giảm (nếu có) từ PhieuGiam
-            BigDecimal finalPrice = sanPhamChiTiet.getGia(); // Giá mặc định là giá gốc
+            BigDecimal finalPrice = sanPhamChiTiet.getGia();
             Optional<PhieuGiam> phieuGiam = phieuGiamRepo.findBySanPhamChiTietId(sanPhamChiTiet.getId());
             if (phieuGiam.isPresent() && phieuGiam.get().getGiaTriGiam() != null) {
                 finalPrice = finalPrice.subtract(phieuGiam.get().getGiaTriGiam());
             }
 
-            // Tạo chi tiết hóa đơn
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
             hoaDonChiTiet.setHoaDon(hoaDon);
             hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
@@ -346,31 +372,24 @@ public class CartController {
             hoaDonChiTiet.setThanhTien(finalPrice.multiply(BigDecimal.valueOf(item.getQuantity())));
             hoaDonChiTiet.setTrangThai(1);
 
-            // Cộng vào tổng tiền hóa đơn
             total = total.add(hoaDonChiTiet.getThanhTien());
-
             hoaDonService.saveHoaDonChiTiet(hoaDonChiTiet);
         }
 
-        // Lưu lịch sử hóa đơn
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setHoaDon(hoaDon);
         lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
         lichSuHoaDon.setNgayTao(LocalDate.now());
         lichSuHoaDonRepo.save(lichSuHoaDon);
 
-        // Cập nhật tổng tiền và phí vận chuyển cho hóa đơn
         total = total.add(hoaDon.getPhiVanChuyen());
         hoaDon.setTongTien(total);
         hoaDonService.save(hoaDon);
 
-        // Xóa giỏ hàng khỏi session sau khi thanh toán
         session.removeAttribute("cart");
 
-        // Thêm hóa đơn vào model để gửi đến view
         model.addAttribute("hoaDon", hoaDon);
-
-        return "admin/website/orderSuccess";
+        return "admin/website/orderSuccess"; // Trả về trực tiếp trang thành công
     }
     @PostMapping("/check-stock")
     public ResponseEntity<Map<String, Object>> checkStock(@RequestBody List<CartItemRequest> cartItems) {

@@ -133,6 +133,7 @@ public class BanHangTaiQuayController {
     public String thanhToan(
             @RequestParam("idHD") Long idhd,
             @RequestParam("tongTienSauGiam") BigDecimal tongTienSauGiam,
+            @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam, // Thêm ID phiếu giảm giá
             @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
             @RequestParam("tinhThanhPho") String tinhThanhPho,
             @RequestParam("soDienThoaiKhachHang") String soDienThoaiKhachHang,
@@ -141,7 +142,7 @@ public class BanHangTaiQuayController {
             @RequestParam("chiTietDiaChi") String chitiet,
             @RequestParam("ghichu") String ghiChu,
             @RequestParam("tenKhangHang") String tenKhangHang
-            ) {
+    ) {
 
         HoaDon hoaDon = hoaDonService.findById(idhd)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
@@ -162,6 +163,13 @@ public class BanHangTaiQuayController {
         // Lưu tổng tiền sau giảm
         hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
 
+        // Lưu ID phiếu giảm giá nếu có
+        if (idPhieuGiam != null) {
+            PhieuGiam phieuGiam = phieuGiamRepo.findById(idPhieuGiam)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu giảm giá với ID: " + idPhieuGiam));
+            hoaDon.setPhieuGiamGia(phieuGiam); // Liên kết phiếu giảm giá với hóa đơn
+        }
+
         // Lưu hóa đơn vào cơ sở dữ liệu
         hoaDonService.save(hoaDon);
 
@@ -177,7 +185,6 @@ public class BanHangTaiQuayController {
 
         // Trừ số lượng sản phẩm trong hóa đơn
         hoaDonService.truSoLuongSanPham(idhd);
-
 
         return "redirect:/ban-hang-tai-quay/index";
     }
