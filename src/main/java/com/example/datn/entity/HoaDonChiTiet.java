@@ -36,6 +36,10 @@ public class HoaDonChiTiet {
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal gia;
 
+    @Column(name = "gia_sau_giam")
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
+    BigDecimal giaSauGiam;
+
     @Column(name = "thanh_tien")
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal thanhTien;

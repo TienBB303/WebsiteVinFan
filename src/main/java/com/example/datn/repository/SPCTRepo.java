@@ -39,10 +39,11 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
     @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.id = :sanPhamId")
     List<SanPhamChiTiet> findBySanPhamId(@Param("sanPhamId") Long sanPhamId);
 
-    List<SanPhamChiTiet> findByIdNotIn(List<Long> ids);
+    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.id NOT IN :ids AND spct.trang_thai = true")
+    List<SanPhamChiTiet> findByIdNotIn(@Param("ids") List<Long> ids);
 
-    @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham.ten LIKE %:ten%")
-    List<SanPhamChiTiet> timKiemTheoTen(String ten);
+    @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.trang_thai = true AND sp.sanPham.ten LIKE %:ten%")
+    List<SanPhamChiTiet> timKiemTheoTen(@Param("ten") String ten);
 
     @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham.ten LIKE %:ten%")
     SanPhamChiTiet timKiem1SPCTTheoTenSP(String ten);
@@ -58,10 +59,10 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
     @Query("SELECT sp FROM SanPhamChiTiet sp JOIN sp.sanPham s WHERE sp.id = :productId")
     Optional<SanPhamChiTiet> findChiTietById(@Param("productId") Long productId);
 
-    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.ma = :maSanPham")
+    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.ma = :maSanPham AND spct.trang_thai = true")
     List<SanPhamChiTiet> findBySanPhamMa(@Param("maSanPham") String maSanPham);
 
-    @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp WHERE sp.ma = :maSanPham")
+    @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp WHERE sp.ma = :maSanPham AND spct.trang_thai = true")
     List<SanPhamChiTiet> findAllBySanPhamMa(@Param("maSanPham") String maSanPham);
 
 }
