@@ -25,13 +25,13 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
 
     @Query("SELECT p.spct.id FROM PhieuGiam p")
     List<Long> findAllSanPhamChiTietIds();
-    @Query("SELECT pg FROM PhieuGiam pg WHERE pg.spct IS NOT NULL")
-    List<PhieuGiam> findAllWithLinkedSpct(); // Lấy tất cả ID của SanPhamChiTiet có trong bảng phieu_giam_san_pham
+    @Query("SELECT pg FROM PhieuGiam pg WHERE pg.spct IS NOT NULL AND pg.spct.trang_thai = true")
+    List<PhieuGiam> findAllWithLinkedSpct();
 
     @Query("SELECT pgs FROM PhieuGiam pgs " +
             "JOIN pgs.spct spct " +
             "JOIN spct.sanPham sp " +
-            "WHERE LOWER(sp.ten) LIKE LOWER(CONCAT('%', :ten, '%'))")
+            "WHERE spct.trang_thai = true AND LOWER(sp.ten) LIKE LOWER(CONCAT('%', :ten, '%'))")
     List<PhieuGiam> timKiemSanPhamCoGiamGia(@Param("ten") String ten);
 
     @Query("SELECT pgs FROM PhieuGiam pgs " +
@@ -40,9 +40,9 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
             "WHERE sp.ma = :maSanPham")
     List<PhieuGiam> findBySanPhamMa(@Param("maSanPham") String maSanPham);
 
-    Optional<PhieuGiam> findByMaAndLoaiPhieuGiam(String ma, boolean loaiPhieuGiam);
-
     List<PhieuGiam> findByLoaiPhieuGiam(boolean loaiPhieuGiam);
+
+
 
 
 }

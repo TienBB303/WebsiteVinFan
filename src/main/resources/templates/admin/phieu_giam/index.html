@@ -157,7 +157,8 @@
                                 <ul class="pagination justify-content-center">
                                     <!-- Nút Trang Đầu -->
                                     <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
-                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=0)}"
+                                        <a class="page-link"
+                                           th:href="@{/admin/phieu-giam/index(page=0, keyword=${keyword}, status=${status})}"
                                            aria-label="First">
                                             <span>&laquo;&laquo;</span>
                                         </a>
@@ -166,7 +167,7 @@
                                     <!-- Nút Trang Trước -->
                                     <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
-                                           th:href="@{/admin/phieu-giam/index(page=${currentPage - 1})}"
+                                           th:href="@{/admin/phieu-giam/index(page=${currentPage - 1}, keyword=${keyword}, status=${status})}"
                                            aria-label="Previous">
                                             <span>&laquo;</span>
                                         </a>
@@ -175,25 +176,25 @@
                                     <!-- Số Trang -->
                                     <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item"
                                         th:classappend="${currentPage == i ? 'active' : ''}">
-                                        <a class="page-link" th:href="@{/admin/phieu-giam/index(page=${i})}">[[${i +
-                                            1}]]</a>
+                                        <a class="page-link"
+                                           th:href="@{/admin/phieu-giam/index(page=${i}, keyword=${keyword}, status=${status})}">
+                                            [[${i + 1}]]
+                                        </a>
                                     </li>
 
                                     <!-- Nút Trang Sau -->
-                                    <li class="page-item"
-                                        th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
                                         <a class="page-link"
-                                           th:href="@{/admin/phieu-giam/index(page=${currentPage + 1})}"
+                                           th:href="@{/admin/phieu-giam/index(page=${currentPage + 1}, keyword=${keyword}, status=${status})}"
                                            aria-label="Next">
                                             <span>&raquo;</span>
                                         </a>
                                     </li>
 
                                     <!-- Nút Trang Cuối -->
-                                    <li class="page-item"
-                                        th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
                                         <a class="page-link"
-                                           th:href="@{/admin/phieu-giam/index(page=${totalPages - 1})}"
+                                           th:href="@{/admin/phieu-giam/index(page=${totalPages - 1}, keyword=${keyword}, status=${status})}"
                                            aria-label="Last">
                                             <span>&raquo;&raquo;</span>
                                         </a>
