@@ -52,7 +52,8 @@
                                             </div>
 
                                             <div class="col col-lg-2">
-                                                <button class="btn btn-outline-warning" type="submit" style="width: 60px">
+                                                <button class="btn btn-outline-warning" type="submit"
+                                                        style="width: 60px">
                                                     <i class="bi bi-arrow-counterclockwise"></i>
                                                 </button>
                                             </div>
@@ -101,9 +102,6 @@
                                                         <th>Số Điện Thoại</th>
                                                         <th>Email</th>
                                                         <th>Ngày Sinh</th>
-                                                        <!--                                                <th>Ngày Tạo</th>-->
-                                                        <!--                                                <th>Ngày Sửa</th>-->
-                                                        <!--                                                <th>Địa Chỉ</th>-->
                                                         <th>Trạng Thái</th>
                                                         <th>Thao Tác</th>
                                                     </tr>
@@ -111,25 +109,24 @@
                                                     <tbody>
                                                     <tr th:each="khachHang, stat : ${listsKhachhang}">
                                                         <td th:text="${stat.index + 1}"></td>
-                                                        <td th:text="${khachHang.ma}"></td>
-                                                        <td th:text="${khachHang.ten}"></td>
-                                                        <td th:text="${khachHang.gioiTinh}"></td>
-                                                        <td th:text="${khachHang.soDienThoai}"></td>
-                                                        <td th:text="${khachHang.email}"></td>
-                                                        <td th:text="${#dates.format(khachHang.ngaySinh,'dd/MM/yyyy')}"></td>
-                                                        <!--                                                <td th:text="${#dates.format(khachHang.ngayTao,'dd/MM/yyyy')}"></td>-->
-                                                        <!--                                                <td th:text="${#dates.format(khachHang.ngaySua,'dd/MM/yyyy')}"></td>-->
-
-                                                        <td th:text="${khachHang.trangThai ? 'Hoạt động' : 'Không hoạt động'}"></td>
+                                                        <td th:text="${khachHang.ma ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.ten ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.gioiTinh ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.soDienThoai ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.email ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.ngaySinh != null ? #dates.format(khachHang.ngaySinh,'dd/MM/yyyy') : 'N/A'}"></td>
+                                                        <td th:text="${khachHang.trangThai != null ? (khachHang.trangThai ? 'Hoạt động' : 'Không hoạt động') : 'N/A'}"></td>
                                                         <td>
-                                                            <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id})}"
-                                                               class="btn btn-outline-warning" style="width: 60px">
+                                                            <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id ?: 0})}"
+                                                               class="btn btn-outline-warning" style="width: 60px"
+                                                               >
                                                                 <i class="bi bi-pencil-square"></i>
                                                             </a>
                                                         </td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
+
                                             </div>
                                         </div>
 

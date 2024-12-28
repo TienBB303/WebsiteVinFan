@@ -45,25 +45,12 @@ public class LoginController {
                         @RequestParam(value = "username", required = false) String username,
                         Model model) {
         if (error != null) {
-            model.addAttribute("error", "Tài khoản bị vô hiệu hóa");
+
+            model.addAttribute("error", "Tên tài khoản hoặc mật khẩu không đúng.");
         }
-
-        // Kiểm tra trạng thái tài khoản
-        if (username != null) {
-            Optional<NhanVien> nhanVienOpt = nhanVienRepository.findByEmail(username);
-            Optional<KhachHang> khachHangOpt = khachHangRepository.findByEmail(username);
-
-            if (nhanVienOpt.isPresent() && !Boolean.TRUE.equals(nhanVienOpt.get().getTrangThai())) {
-                model.addAttribute("error", "Tài khoản nhân viên của bạn đã bị vô hiệu hóa.");
-            } else if (khachHangOpt.isPresent() && !Boolean.TRUE.equals(khachHangOpt.get().getTrangThai())) {
-                model.addAttribute("error", "Tài khoản khách hàng của bạn đã bị vô hiệu hóa.");
-            }
-        }
-
-        model.addAttribute("username", username); // Giữ lại username khi nhập sai
+        model.addAttribute("username", username);  // Giữ lại username khi nhập sai
         return "/admin/login";
     }
-
 
     @GetMapping("/403")
     public String KhongCoQuyen(Model model) {
