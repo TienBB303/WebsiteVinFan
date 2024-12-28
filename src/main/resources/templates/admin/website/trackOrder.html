@@ -16,10 +16,12 @@
 <div class="container mx-auto p-6">
     <!-- Thanh điều hướng -->
     <div class="flex justify-center space-x-6 mb-6">
-        <button onclick="showForm('accountInfo')" class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
+        <button onclick="showForm('accountInfo')"
+                class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
             Thông tin tài khoản
         </button>
-        <button onclick="showForm('orders')" class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
+        <button onclick="showForm('orders')"
+                class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
             Đơn mua
         </button>
     </div>
@@ -38,7 +40,8 @@
             </div>
             <div class="mb-4 flex items-center">
                 <label for="soDienThoai" class="w-1/3 text-gray-600 font-medium">Số Điện Thoại:</label>
-                <span id="soDienThoai" name="soDienThoai" class="w-2/3 text-gray-900" th:text="${khachHang.soDienThoai}"></span>
+                <span id="soDienThoai" name="soDienThoai" class="w-2/3 text-gray-900"
+                      th:text="${khachHang.soDienThoai}"></span>
             </div>
             <div class="mb-4 flex items-center">
                 <label for="email" class="w-1/3 text-gray-600 font-medium">Email:</label>
@@ -69,9 +72,10 @@
                 <tr th:each="hoaDon : ${hoaDons}" class="text-gray-800 hover:bg-gray-50">
                     <td class="px-4 py-2 border text-center" th:text="${hoaDon.ma}"></td>
                     <td class="px-4 py-2 border text-center" th:text="${hoaDon.ngayTao}"></td>
-                    <td class="px-4 py-2 border text-center" th:text="${hoaDon.tongTien}"></td>
+                    <td class="px-4 py-2 border text-center giaVND" th:text="${hoaDon.tongTien}"></td>
                     <td class="px-4 py-2 border text-center">
-                        <a th:href="@{/admin/hoa-don-kh/{id}(id=${hoaDon.id})}" class="text-blue-500 hover:underline">Xem chi tiết</a>
+                        <a th:href="@{/admin/hoa-don-kh/{id}(id=${hoaDon.id})}" class="text-blue-500 hover:underline">Xem
+                            chi tiết</a>
                     </td>
                 </tr>
                 </tbody>
@@ -85,6 +89,16 @@
         document.querySelectorAll('.bg-white').forEach(form => form.classList.add('hidden'));
         document.getElementById(formId).classList.remove('hidden');
     }
+</script>
+<script>
+    document.querySelectorAll('.giaVND').forEach(element => {
+        const originalValue = parseFloat(element.innerText);
+        element.innerText = originalValue.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+        });
+    });
 </script>
 </body>
 </html>
