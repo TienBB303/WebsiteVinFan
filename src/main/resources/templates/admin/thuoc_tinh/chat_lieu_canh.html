@@ -119,7 +119,7 @@
                                     th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listCLC.number - 2), T(java.lang.Math).min(listCLC.totalPages - 1, listCLC.number + 2))}"
                                     th:classappend="${i == listCLC.number ? 'active' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/chat-lieu-canh/view?page=' + ${i} + '&ten_chat_lieu_canh=' + ${ten_chat_lieu_canh} + '&trang_thai=' + ${trang_thai}}"
+                                       th:href="@{'/admin/thuoc-tinh/chat-lieu-canh/view?page=' + ${i >= 0 ? i : 0} +  '&ten_chat_lieu_canh=' + ${ten_chat_lieu_canh} + '&trang_thai=' + ${trang_thai}}"
                                        th:text="${i + 1}"></a>
                                 </li>
                                 <!-- trang sau -->

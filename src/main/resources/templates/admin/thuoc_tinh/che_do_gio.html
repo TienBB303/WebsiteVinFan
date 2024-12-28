@@ -119,7 +119,7 @@
                                     th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listCDG.number - 2), T(java.lang.Math).min(listCDG.totalPages - 1, listCDG.number + 2))}"
                                     th:classappend="${i == listCDG.number ? 'active' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/che-do-gio/view?page=' + ${i} + '&ten_che_do_gio=' + ${ten_che_do_gio} + '&trang_thai=' + ${trang_thai}}"
+                                       th:href="@{'/admin/thuoc-tinh/che-do-gio/view?page=' + ${i >= 0 ? i : 0} +  '&ten_che_do_gio=' + ${ten_che_do_gio} + '&trang_thai=' + ${trang_thai}}"
                                        th:text="${i + 1}"></a>
                                 </li>
                                 <!-- trang sau -->

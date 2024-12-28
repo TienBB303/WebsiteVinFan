@@ -166,8 +166,11 @@
                                         <li class="page-item"
                                             th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listSP.number - 2), T(java.lang.Math).min(listSP.totalPages - 1, listSP.number + 2))}"
                                             th:classappend="${i == listSP.number ? 'active' : ''}">
+<!--                                            <a class="page-link"-->
+<!--                                               th:href="@{'/admin/san-pham?page=' + ${i} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"-->
+<!--                                               th:text="${i + 1}"></a>-->
                                             <a class="page-link"
-                                               th:href="@{'/admin/san-pham?page=' + ${i} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/san-pham?page=' + ${i >= 0 ? i : 0} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
                                                th:text="${i + 1}"></a>
                                         </li>
                                         <!-- trang sau -->
