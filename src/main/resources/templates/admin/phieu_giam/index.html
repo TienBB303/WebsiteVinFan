@@ -85,32 +85,35 @@
             <section class="row">
                 <div class="card">
                     <div class="card-header">
-                        <a href="/admin/phieu-giam/store">
-                            <button class="btn btn-outline-success" style="width: 60px">
-                                +
-                            </button>
-                        </a>
+                        <a class="btn btn-outline-success" href="/admin/phieu-giam/store" style="width: 70px"><i class="bi bi-plus"></i></a>
                     </div>
                     <div class="card-body">
                         <div class="dataTable-wrapper">
                             <div class="dataTable-top">
-                                <form action="/admin/phieu-giam/index" method="GET"
-                                      class="row gx-3 gy-2 align-items-center">
-                                    <div class="col-auto">
-                                        <input type="text" class="form-control" name="keyword"
-                                               placeholder="Tìm kiếm theo tên">
-                                    </div>
-                                    <div class="col-auto">
-                                        <select class="form-select" name="status">
-                                            <option value="">Tất cả trạng thái</option>
-                                            <option value="true">Áp dụng</option>
-                                            <option value="false">Ngừng áp dụng</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-outline-primary">
-                                            <i class="bi bi-search"></i>
-                                        </button>
+                                <form action="/admin/phieu-giam/index" method="GET">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm theo tên">
+                                        </div>
+                                        <div class="col-2">
+                                            <select class="form-select" name="status">
+                                                <option value="">Tất cả trạng thái</option>
+                                                <option value="true">Áp dụng</option>
+                                                <option value="false">Ngừng áp dụng</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-2 d-flex">
+                                            <div>
+                                                <button class="btn btn-outline-primary" type="submit" style="width: 70px; margin-right: 10px">
+                                                    <i class="bi bi-search"></i>
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <a class="btn btn-outline-warning" href="/admin/phieu-giam/index" style="width: 70px">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -118,19 +121,41 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th>Mã phiếu giảm giá</th>
-                                        <th>Tên phiếu giảm giá</th>
-                                        <th>Loại phiếu giảm giá</th>
-                                        <th>Ngày bắt đầu</th>
-                                        <th>Ngày kết thúc</th>
-                                        <th>Giá trị giảm</th>
-                                        <th>Tên sản phẩm áp dụng</th> <!-- Cột mới -->
-                                        <th>Trạng thái</th>
-                                        <th>Chi tiết</th>
+<!--                                        <th data-sortable="" style="width: 5%;">-->
+<!--                                            <a href="#" class="dataTable-sorter">STT</a>-->
+<!--                                        </th>-->
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Mã phiếu</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Tên phiếu</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Loại phiếu</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Bắt đầu</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Kết thúc</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Giá trị giảm</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 15%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Sản phẩm áp dụng</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Trạng thái</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Hành động</a>
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="pgg : ${ListPGG}" style="cursor: pointer;">
+                                    <tr th:each="pgg, stt : ${ListPGG}" style="cursor: pointer;">
+<!--                                        <td style="text-align: center" th:text="${(ListPGG.number * ListPGG.size) + stt.index + 1}"></td>-->
                                         <td th:text="${pgg.ma}">Mã phiếu giảm</td>
                                         <td th:text="${pgg.ten}">Tên phiếu giảm</td>
                                         <td th:text="${pgg.loaiPhieuGiam ? 'Giảm giá hóa đơn' : 'Giảm sản phẩm'}">Loại
@@ -138,11 +163,19 @@
                                         </td>
                                         <td th:text="${pgg.ngayBD}">Ngày bắt đầu</td>
                                         <td th:text="${pgg.ngayKT}">Ngày kết thúc</td>
-                                        <td th:text="${pgg.giaTriGiam}">Giá trị giảm</td>
+                                        <td class="giaVND" th:text="${pgg.giaTriGiam}">Giá trị giảm</td>
                                         <td th:text="${pgg.spct.sanPham.ten != null ? pgg.spct.sanPham.ten : 'Không áp dụng sản phẩm'}">
                                             Tên sản phẩm
-                                        </td> <!-- Hiển thị tên sản phẩm -->
-                                        <td th:text="${pgg.trangThai ? 'Áp dụng' : 'Ngừng áp dụng'}"></td>
+                                        </td>
+<!--                                        <td th:text="${pgg.trangThai ? 'Áp dụng' : 'Ngừng áp dụng'}"></td>-->
+                                        <td style="text-align: center">
+                                            <span th:if="${pgg.trangThai}" class="badge bg-light-success">
+                                                On
+                                            </span>
+                                            <span th:unless="${pgg.trangThai}" class="badge bg-light-danger">
+                                                Off
+                                            </span>
+                                        </td>
                                         <td>
                                             <a th:href="@{/admin/phieu-giam/edit/{id}(id=${pgg.id})}"
                                                class="btn btn-outline-warning" style="width: 60px">
@@ -225,6 +258,15 @@
     document.querySelectorAll('#giaTriGiam').forEach(function (element) {
         var amount = parseInt(element.innerText);
         element.innerText = formatCurrency(amount);
+    });
+    // Chuyển giá table về vng
+    document.querySelectorAll('.giaVND').forEach(element => {
+        const originalValue = parseFloat(element.innerText);
+        element.innerText = originalValue.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+        });
     });
 </script>
 </body>
