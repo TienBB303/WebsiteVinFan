@@ -1,24 +1,26 @@
 package com.example.datn.controller.sale_on_controller;
 
 import com.example.datn.entity.*;
-import com.example.datn.entity.phieu_giam.PhieuGiamSanPham;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
+import com.example.datn.entity.thuoc_tinh.HinhAnh;
 import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
+import com.example.datn.repository.ThuocTinhRepo.HinhAnhRepo;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
-import com.example.datn.repository.phieu_giam_repo.PhieuGiamSanPhamRepo;
+import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.HoaDonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.sql.SQLOutput;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,8 +30,10 @@ public class ProductCatalog {
 
     private final HoaDonService hoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
+//    @Autowired
+//    private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
     @Autowired
-    private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
+    private PhieuGiamRepo phieuGiamRepo;
     @Autowired
     private SPCTRepo spctRepo;
     @Autowired
@@ -37,6 +41,8 @@ public class ProductCatalog {
 
     @Autowired
     private KhachHangRepo khachHangRepo;
+    @Autowired
+    private HinhAnhRepo hinhAnhRepo;
 
     @GetMapping("/product-catalog")
     public String productCatalog(
@@ -47,101 +53,91 @@ public class ProductCatalog {
             @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
             @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
             @RequestParam(value = "sortOrder", required = false, defaultValue = "newest") String sortOrder,
-            @RequestParam(value = "filter", required = false, defaultValue = "all") String filter) { // Add filter parameter
+            @RequestParam(value = "filter", required = false, defaultValue = "all") String filter) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<SanPhamChiTiet> sanPhamKhongGiamGia = new ArrayList<>();
+        List<PhieuGiam> sanPhamGiamGia = new ArrayList<>();
 
-        List<SanPhamChiTiet> sanPhamKhongGiamGia;
-        List<PhieuGiamSanPham> sanPhamGiamGia;
-
+        // Logic xử lý
         if (query != null && !query.trim().isEmpty()) {
-            sanPhamGiamGia = phieuGiamSanPhamRepo.timKiemSanPhamCoGiamGia(query);
+            sanPhamGiamGia = phieuGiamRepo.timKiemSanPhamCoGiamGia(query);
             List<Long> sanPhamCoGiamGiaIds = sanPhamGiamGia.stream()
-                    .map(p -> p.getSanPhamChiTiet().getId())
+                    .map(pg -> pg.getSpct().getId())
                     .collect(Collectors.toList());
-
             sanPhamKhongGiamGia = spctRepo.timKiemTheoTen(query)
                     .stream()
                     .filter(sp -> !sanPhamCoGiamGiaIds.contains(sp.getId()))
                     .collect(Collectors.toList());
-
         } else if (maSanPham != null && !maSanPham.isEmpty()) {
             sanPhamKhongGiamGia = spctRepo.findBySanPhamMa(maSanPham);
-            sanPhamGiamGia = phieuGiamSanPhamRepo.findBySanPhamMa(maSanPham);
+            sanPhamGiamGia = phieuGiamRepo.findBySanPhamMa(maSanPham);
         } else {
-            List<Long> sanPhamCoGiamGiaIds = phieuGiamSanPhamRepo.findAllSanPhamChiTietIds();
+            sanPhamGiamGia = phieuGiamRepo.findAllWithLinkedSpct();
+            List<Long> sanPhamCoGiamGiaIds = sanPhamGiamGia.stream()
+                    .map(pg -> pg.getSpct().getId())
+                    .collect(Collectors.toList());
             sanPhamKhongGiamGia = spctRepo.findByIdNotIn(sanPhamCoGiamGiaIds);
-            sanPhamGiamGia = phieuGiamSanPhamRepo.findAll();
         }
 
-        // Apply filter
         if ("discounted".equalsIgnoreCase(filter)) {
             sanPhamKhongGiamGia.clear();
         } else if ("non-discounted".equalsIgnoreCase(filter)) {
             sanPhamGiamGia.clear();
         }
 
-        // Filter by kieuQuatId if provided
+        // Lọc thêm
         if (kieuQuatId != null) {
             sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream()
-                    .filter(sp -> sp.getSanPham().getKieuQuat().getId().equals(kieuQuatId))
+                    .filter(sp -> sp.getSanPham().getKieuQuat() != null && sp.getSanPham().getKieuQuat().getId().equals(kieuQuatId))
                     .collect(Collectors.toList());
 
             sanPhamGiamGia = sanPhamGiamGia.stream()
-                    .filter(pg -> pg.getSanPhamChiTiet().getSanPham().getKieuQuat().getId().equals(kieuQuatId))
+                    .filter(pg -> pg.getSpct().getSanPham().getKieuQuat() != null && pg.getSpct().getSanPham().getKieuQuat().getId().equals(kieuQuatId))
                     .collect(Collectors.toList());
         }
 
-        // Filter by price range if provided
+        // Lọc theo khoảng giá
         if (minPrice != null || maxPrice != null) {
             BigDecimal finalMinPrice = minPrice != null ? minPrice : BigDecimal.ZERO;
             BigDecimal finalMaxPrice = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
 
             sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream()
-                    .filter(sp -> sp.getGia().compareTo(finalMinPrice) >= 0 && sp.getGia().compareTo(finalMaxPrice) <= 0)
+                    .filter(sp -> sp.getGia() != null && sp.getGia().compareTo(finalMinPrice) >= 0 && sp.getGia().compareTo(finalMaxPrice) <= 0)
                     .collect(Collectors.toList());
 
             sanPhamGiamGia = sanPhamGiamGia.stream()
-                    .filter(pg -> pg.getGiaSauGiam().compareTo(finalMinPrice) >= 0 && pg.getGiaSauGiam().compareTo(finalMaxPrice) <= 0)
+                    .filter(pg -> pg.getGiaSauGiam() != null && pg.getGiaSauGiam().compareTo(finalMinPrice) >= 0
+                            && pg.getGiaSauGiam().compareTo(finalMaxPrice) <= 0)
                     .collect(Collectors.toList());
         }
 
-        // Sort by creation date
-        Comparator<SanPhamChiTiet> sanPhamComparator = Comparator.comparing(SanPhamChiTiet::getNgay_tao);
-        Comparator<PhieuGiamSanPham> phieuGiamComparator = Comparator.comparing(pg -> pg.getSanPhamChiTiet().getNgay_tao());
+        // Loại bỏ sản phẩm trùng lặp theo mã sản phẩm
+        sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream()
+                .filter(distinctByKey(sp -> sp.getSanPham().getMa() != null ? sp.getSanPham().getMa() : sp.getId()))
+                .collect(Collectors.toList());
 
-        if ("newest".equalsIgnoreCase(sortOrder)) {
-            sanPhamComparator = sanPhamComparator.reversed();
-            phieuGiamComparator = phieuGiamComparator.reversed();
-        }
+        sanPhamGiamGia = sanPhamGiamGia.stream()
+                .filter(distinctByKey(pg -> pg.getSpct().getSanPham().getMa() != null ? pg.getSpct().getSanPham().getMa() : pg.getId()))
+                .collect(Collectors.toList());
 
-        sanPhamKhongGiamGia = sanPhamKhongGiamGia.stream().sorted(sanPhamComparator).collect(Collectors.toList());
-        sanPhamGiamGia = sanPhamGiamGia.stream().sorted(phieuGiamComparator).collect(Collectors.toList());
-
-        // Remove duplicates by product code
-        Map<String, SanPhamChiTiet> uniqueProducts = new LinkedHashMap<>();
-        sanPhamKhongGiamGia.forEach(sp -> uniqueProducts.put(sp.getSanPham().getMa(), sp));
-
-        Map<String, PhieuGiamSanPham> uniqueDiscountedProducts = new LinkedHashMap<>();
-        sanPhamGiamGia.forEach(pgg -> uniqueDiscountedProducts.put(
-                pgg.getSanPhamChiTiet().getSanPham().getMa(), pgg
-        ));
-
-        model.addAttribute("sanPhamKhongGiamGia", uniqueProducts.values());
-        model.addAttribute("sanPhamGiamGia", uniqueDiscountedProducts.values());
+        model.addAttribute("sanPhamKhongGiamGia", sanPhamKhongGiamGia);
+        model.addAttribute("sanPhamGiamGia", sanPhamGiamGia);
         model.addAttribute("query", query);
         model.addAttribute("kieuQuatId", kieuQuatId);
         model.addAttribute("maSanPham", maSanPham);
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("sortOrder", sortOrder);
-        model.addAttribute("filter", filter); // Pass filter to the view
+        model.addAttribute("filter", filter);
         model.addAttribute("kieuQuats", kieuQuatRepo.findAll());
 
-        String currentPrincipalName = authentication.getName();
-
-
         return "/admin/website/productCatalog";
+    }
+
+    // Helper method để lọc trùng lặp
+    private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
     @GetMapping("/detail/{id}")
@@ -157,7 +153,7 @@ public class ProductCatalog {
 
             bienTheList.forEach(bienThe -> {
                 // Tìm giá sau giảm cho từng biến thể
-                Optional<PhieuGiamSanPham> phieuGiam = phieuGiamSanPhamRepo.findBySanPhamChiTietId(bienThe.getId());
+                Optional<PhieuGiam> phieuGiam = phieuGiamRepo.findBySanPhamChiTietId(bienThe.getId());
                 phieuGiam.ifPresent(giam -> giaSauGiamMap.put(bienThe.getId(), giam.getGiaSauGiam()));
             });
 
@@ -167,6 +163,9 @@ public class ProductCatalog {
                     ? giaSauGiamMap.getOrDefault(defaultBienThe.getId(), defaultBienThe.getGia())
                     : BigDecimal.ZERO;
 
+            // Lấy danh sách hình ảnh liên quan đến SanPhamChiTiet
+            List<HinhAnh> danhSachHinhAnh = hinhAnhRepo.findAllBySanPhamChiTietId(currentProduct.getId());
+
             // Truyền dữ liệu sang Thymeleaf
             model.addAttribute("sanPham", currentProduct.getSanPham());
             model.addAttribute("sanPhamChiTiet", currentProduct); // Truyền SanPhamChiTiet
@@ -174,6 +173,7 @@ public class ProductCatalog {
             model.addAttribute("giaSauGiamMap", giaSauGiamMap);
             model.addAttribute("defaultBienThe", defaultBienThe); // Biến thể mặc định
             model.addAttribute("defaultGiaSauGiam", defaultGiaSauGiam); // Giá của biến thể mặc định
+            model.addAttribute("danhSachHinhAnh", danhSachHinhAnh); // Thêm danh sách hình ảnh
 
             return "admin/website/detailSP";
         }
@@ -184,19 +184,20 @@ public class ProductCatalog {
     @GetMapping("/track-order")
     public String trackOrder(Model model) {
         KhachHang khachHang = khachHangRepo.profileKhachHang();
-        List<HoaDon> hoaDons = hoaDonService.getHoaDonByIdKH(khachHang.getId());
 
         if (khachHang == null) {
-            model.addAttribute("errorMessage", "Không tìm thấy thông tin kh.");
-            return "/admin/error"; // Điều hướng đến trang lỗi
-        } else {
-
-            // Thêm danh sách hóa đơn vào model
-            model.addAttribute("hoaDons", hoaDons);
-            model.addAttribute("khachHang", khachHang);
+            model.addAttribute("errorMessage", "Chỉ khách hàng mới được phép truy cập thông tin đơn hàng!");
+            return "redirect:/admin/product-catalog"; // Trả về trang hiện tại để thông báo
         }
-        return "admin/website/trackOrder";
+
+        List<HoaDon> hoaDons = hoaDonService.getHoaDonByIdKH(khachHang.getId());
+        model.addAttribute("hoaDons", hoaDons);
+        model.addAttribute("khachHang", khachHang);
+
+        return "admin/website/trackOrder"; // Nếu là khách hàng, trả về trang thông tin đơn hàng
     }
+
+
     @GetMapping("/hoa-don-kh/{id}")
     public String detailOrder(@PathVariable long id, Model model) {
         //Lấy thông tin lịch sử hóa đơn theo id hóa đơn
@@ -210,5 +211,21 @@ public class ProductCatalog {
         model.addAttribute("khachHang", khachHang);
 
         return "admin/website/detailDH";
+    }
+    @GetMapping("/spct/images/{id}")
+    @ResponseBody
+    public Map<String, Object> getImagesBySpctId(@PathVariable Long id) {
+        SanPhamChiTiet spct = spctRepo.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+
+        // Lấy danh sách hình ảnh liên quan đến SPCT
+        List<HinhAnh> danhSachHinhAnh = hinhAnhRepo.findAllBySanPhamChiTietId(spct.getId());
+        List<String> imageUrls = danhSachHinhAnh.stream()
+                .map(HinhAnh::getHinh_anh_1) // Sử dụng trường ảnh trong HinhAnh
+                .collect(Collectors.toList());
+
+        // Trả về JSON chứa danh sách ảnh
+        Map<String, Object> response = new HashMap<>();
+        response.put("images", imageUrls);
+        return response;
     }
 }

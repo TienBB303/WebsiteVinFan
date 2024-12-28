@@ -15,24 +15,24 @@ public class PhieuGiamImpl implements PhieuGiamService {
     @Autowired
     private PhieuGiamRepo pgRepo;
     @Autowired
-    private SPCTRepo spctRepo;
-    @Autowired
     private SanPhamRepo sanPhamRepository;
 
     @Override
     public String taoMaTuDong() {
+        // Lấy mã cuối cùng từ cơ sở dữ liệu
         String lastCode = pgRepo.findMaxCode();
-        int nextCode = 1;
+        int nextCode = 1; // Mặc định bắt đầu từ 1 nếu không có mã trước đó
         if (lastCode != null && !lastCode.isEmpty()) {
             try {
-                // Lấy phần số từ mã cuối cùng và tăng nó lên 1
+                // Lấy phần số từ mã và tăng giá trị
                 nextCode = Integer.parseInt(lastCode.replaceAll("[^0-9]", "")) + 1;
             } catch (NumberFormatException e) {
+                // Ghi log lỗi nếu không thể chuyển đổi số, mã sẽ reset về 1
                 e.printStackTrace();
             }
         }
-        // Trả về mã mới dưới dạng "SP" cộng với số đã tăng, định dạng thành 3 chữ số
-        return String.format("PGG%03d", nextCode);
+        // Tạo mã mới với định dạng "PGG" cộng số (định dạng 4 chữ số)
+        return String.format("PGG%04d", nextCode);
     }
 
 
@@ -41,11 +41,5 @@ public class PhieuGiamImpl implements PhieuGiamService {
     public SanPham findById(Long id) {
         Optional<SanPham> sanPham = sanPhamRepository.findById(id);
         return sanPham.orElse(null); // Trả về null nếu không tìm thấy
-    }
-
-    @Override
-    public SanPhamChiTiet findDetailById(Long id) {  // Đổi tên phương thức
-        Optional<SanPhamChiTiet> sanPhamChiTiet = spctRepo.findById(id);
-        return sanPhamChiTiet.orElse(null); // Trả về null nếu không tìm thấy
     }
 }

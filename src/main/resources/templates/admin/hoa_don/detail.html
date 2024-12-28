@@ -3,6 +3,42 @@
 <head th:replace="/admin/custom_css/headQA :: headQA" xmlns:th="http://www.thymeleaf.org">
 </head>
 <body>
+<div th:if="${errorAdd}" class="notification error d-flex align-items-center" id="errorAdd">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorAdd}"></p>
+</div>
+<div th:if="${errorTSL}" class="notification error d-flex align-items-center" id="errorTSL">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorTSL}"></p>
+</div>
+<div th:if="${errorGSL}" class="notification error d-flex align-items-center" id="errorGSL">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorGSL}"></p>
+</div>
+<div th:if="${errorMessage}" class="notification error d-flex align-items-center" id="errorMessage">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorMessage}"></p>
+</div>
+<div th:if="${successMessage}" class="notification error d-flex align-items-center" id="successMessage">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-success rounded-circle"
+         style="width: 30px; height: 30px; color: greenyellow; font-size: 18px;">
+        V
+    </div>
+    <p class="mb-0" th:text="${successMessage}"></p>
+</div>
+
 <!-- Site wrapper -->
 <div class="wrapper">
     <!-- </header>-->
@@ -17,30 +53,22 @@
 
     <!-- Main-->
     <div id="main">
-        <header class="mb-3">
-            <a href="#" class="burger-btn d-block d-xl-none">
-                <i class="bi bi-justify fs-3"></i>
-            </a>
-        </header>
-
-        <!--        <div class="page-heading">-->
-        <!--            <div class="page-title">-->
-        <!--                <div class="row">-->
-        <!--                    <div class="col-12 col-md-6 order-md-1 order-last">-->
-        <!--                        <h3>Khung, thay tiêu đề ở đây</h3>-->
-        <!--                        <p class="text-subtitle text-muted">chữ nhỏ, k dùng thì xóa</p>-->
-        <!--                    </div>-->
-        <!--                    <div class="col-12 col-md-6 order-md-2 order-first">-->
-        <!--                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">-->
-        <!--                            <ol class="breadcrumb">-->
-        <!--                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>-->
-        <!--                                <li class="breadcrumb-item active" aria-current="page"><a href="#">Quản lý ...</a></li>-->
-        <!--                            </ol>-->
-        <!--                        </nav>-->
-        <!--                    </div>-->
-        <!--                </div>-->
-        <!--            </div>-->
-        <!--        </div>-->
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Hóa đơn chi tiết</h3>
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/hoa-don/index">Home</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Main content -->
         <main class="page-content">
@@ -172,11 +200,7 @@
                     </form>
                 </div>
             </div>
-            <!-- Thông báo lỗi -->
-            <div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
 
-            <!-- Thông báo thành công -->
-            <div th:if="${successMessage}" style="color: green;" th:text="${successMessage}"></div>
 
             <!-- Payment History Section -->
             <div class="card mb-4">
@@ -346,6 +370,7 @@
                         <th>STT</th>
                         <th>Tên sản phẩm</th>
                         <th>Giá bán</th>
+                        <th>Giá giảm</th>
                         <th>Số lượng</th>
                         <th>Thành tiền</th>
                         <th>Hành động</th>
@@ -356,26 +381,31 @@
                         <td th:text="${iter.count}"></td>
                         <td th:text="${item.sanPhamChiTiet.sanPham.ten}"></td>
                         <td class="giaVND" th:text="${item.gia}"></td>
+                        <td class="giaVND" th:text="${item.giaGiam != null ? item.giaGiam + ' VND' : '0 VND'}"></td>
                         <td>
-                            <!-- Nút Giảm -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                    th:if="${ hoaDon.trangThai == 1 || hoaDon.trangThai == 0}"
-                                    th:data-id-hoa-don-giam="${item.hoaDon.id}"
-                                    th:data-id-san-pham-chi-tiet-giam="${item.sanPhamChiTiet.id}">
-                                -
-                            </button>
-                            <!-- Ô nhập số lượng -->
-                            <input type="number" class="form-control quantity-input"
-                                   th:value="${item.soLuong}"
-                                   min="1"
-                                   style="width: 60px; text-align: center; display: inline-block;" disabled/>
-                            <!-- Nút Tăng -->
-                            <button type="button" class="btn btn-light-secondary btn-sm btn-increase"
-                                    th:if="${hoaDon.trangThai == 1 || hoaDon.trangThai == 0}"
-                                    th:data-id-hoa-don="${item.hoaDon.id}"
-                                    th:data-id-san-pham-chi-tiet="${item.sanPhamChiTiet.id}">
-                                +
-                            </button>
+                            <div class="d-flex align-items-center">
+                                <!-- Nút giảm số lượng -->
+                                <form th:action="@{/hoa-don/giam-so-luong}" method="post" class="me-1"
+                                      th:if="${ hoaDon.trangThai == 1 || hoaDon.trangThai == 0 }">
+                                    <input type="hidden" name="idHoaDon" th:value="${item.hoaDon.id}"/>
+                                    <input type="hidden" name="idSanPhamChiTiet" th:value="${item.sanPhamChiTiet.id}"/>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">-</button>
+                                </form>
+
+                                <!-- Ô nhập số lượng -->
+                                <input type="number" class="form-control quantity-input mx-1"
+                                       th:value="${item.soLuong}"
+                                       min="1"
+                                       style="width: 50px;" disabled/>
+
+                                <!-- Nút tăng số lượng -->
+                                <form th:action="@{/hoa-don/tang-so-luong}" method="post" class="ms-1"
+                                      th:if="${ hoaDon.trangThai == 1 || hoaDon.trangThai == 0 }">
+                                    <input type="hidden" name="idHoaDon" th:value="${item.hoaDon.id}"/>
+                                    <input type="hidden" name="idSanPhamChiTiet" th:value="${item.sanPhamChiTiet.id}"/>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">+</button>
+                                </form>
+                            </div>
                         </td>
                         <td class="giaVND" th:text="${item.thanhTien}"></td>
                         <td>
@@ -789,7 +819,7 @@
 
 
         </script>
-<!--format gia-->
+        <!--format gia-->
         <script>
             document.querySelectorAll('.giaVND').forEach(element => {
                 const originalValue = parseFloat(element.innerText);
@@ -801,120 +831,79 @@
             });
         </script>
 
-        <meta name="_csrf" content="${_csrf.token}"/>
-        <meta name="_csrf_header" content="${_csrf.headerName}"/>
         <script>
-            $(document).on('click', '.btn-increase', function () {
-                const button = $(this); // Lấy đối tượng nút hiện tại
-                const idHoaDon = button.attr('data-id-hoa-don'); // Lấy ID hóa đơn từ thuộc tính data
-                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet'); // Lấy ID sản phẩm chi tiết từ thuộc tính data
+            window.addEventListener("DOMContentLoaded", function () {
+                const notification = document.getElementById("errorAdd");
+                if (notification) {
+                    // Hiển thị thông báo
+                    notification.classList.add("show");
 
-                $.ajax({
-                    url: `/hoa-don/tang-so-luong`, // Endpoint xử lý tăng số lượng
-                    type: 'POST',
-                    data: {
-                        idHoaDon: idHoaDon,
-                        idSanPhamChiTiet: idSanPhamChiTiet
-                    },
-                    success: function (response) {
-                        // Hiển thị thông báo thành công
-                        Swal.fire({
-                            toast: true,
-                            icon: 'success',
-                            title: response, // Thông báo từ server
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 1000,
-                            timerProgressBar: true
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function (xhr) {
-                        // Hiển thị thông báo lỗi
-                        Swal.fire({
-                            toast: true,
-                            icon: 'error',
-                            title: xhr.responseText, // Thông báo lỗi từ server
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 1000,
-                            timerProgressBar: true
-                        }).then(() => {
-                            location.reload();
-                        });
-                    }
-                });
+                    // Tự động xóa thông báo sau 3 giây
+                    setTimeout(() => {
+                        notification.remove(); // Loại bỏ phần tử khỏi DOM
+                    }, 3000);
+                }
             });
         </script>
-
-
         <script>
-            $(document).on('click', '.btn-increase', function () {
-                const button = $(this); // Sử dụng 'this' để lấy đối tượng nút hiện tại
-                const idHoaDon = button.attr('data-id-hoa-don-giam');
-                const idSanPhamChiTiet = button.attr('data-id-san-pham-chi-tiet-giam');
-                $.ajax({
+            window.addEventListener("DOMContentLoaded", function () {
+                const notification = document.getElementById("errorTSL");
+                if (notification) {
+                    // Hiển thị thông báo
+                    notification.classList.add("show");
 
-                    url: `/hoa-don/giam-so-luong`,
-                    type: 'POST',
-                    data: {
-                        idHoaDon: idHoaDon,
-                        idSanPhamChiTiet: idSanPhamChiTiet
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            toast: true,
-                            icon: 'success',
-                            title: response, // Thông báo thành công từ server
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 1000,
-                            timerProgressBar: true
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            toast: true,
-                            icon: 'error',
-                            title: xhr.responseText, // Thông báo lỗi từ server
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true
-                        }).then(() => {
-                            location.reload();
-                        });
-                    }
-                });
-
+                    // Tự động xóa thông báo sau 3 giây
+                    setTimeout(() => {
+                        notification.remove(); // Loại bỏ phần tử khỏi DOM
+                    }, 3000);
+                }
             });
         </script>
-    <!--thông báo lỗi số lượng k đủ và xác nhận thành công-->
-        <script th:if="${errorMessage}" th:inline="javascript">
-            showAlert([[${errorMessage}]], 'danger');
-        </script>
-
-        <script th:if="${successMessage}" th:inline="javascript">
-            showAlert([[${successMessage}]], 'success');
-        </script>
-
         <script>
-            // Hiển thị thông báo động
-            function showAlert(message, type) {
-                const alertBox = document.createElement('div');
-                alertBox.className = `alert alert-${type}`; // Dùng Bootstrap hoặc CSS tùy chỉnh
-                alertBox.innerText = message;
-                document.body.prepend(alertBox);
+            window.addEventListener("DOMContentLoaded", function () {
+                const notification = document.getElementById("errorGSL");
+                if (notification) {
+                    // Hiển thị thông báo
+                    notification.classList.add("show");
 
-                // Tự động ẩn sau 5 giây
-                setTimeout(() => alertBox.remove(), 2000);
-            }
+                    // Tự động xóa thông báo sau 3 giây
+                    setTimeout(() => {
+                        notification.remove(); // Loại bỏ phần tử khỏi DOM
+                    }, 3000);
+                }
+            });
+        </script>
+        <script>
+            window.addEventListener("DOMContentLoaded", function () {
+                const notification = document.getElementById("successMessage");
+                if (notification) {
+                    // Hiển thị thông báo
+                    notification.classList.add("show");
+
+                    // Tự động xóa thông báo sau 3 giây
+                    setTimeout(() => {
+                        notification.remove(); // Loại bỏ phần tử khỏi DOM
+                    }, 3000);
+                }
+            });
+        </script>
+        <script>
+            window.addEventListener("DOMContentLoaded", function () {
+                const notification = document.getElementById("errorMessage");
+                if (notification) {
+                    // Hiển thị thông báo
+                    notification.classList.add("show");
+
+                    // Tự động xóa thông báo sau 3 giây
+                    setTimeout(() => {
+                        notification.remove(); // Loại bỏ phần tử khỏi DOM
+                    }, 3000);
+                }
+            });
         </script>
 
     </div>
+
 
 </div>
 

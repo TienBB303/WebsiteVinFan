@@ -36,8 +36,13 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer>{
     default KhachHang profileKhachHang() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        return findByEmail(email).orElse(null);
+
+        // Tìm khách hàng theo email và kiểm tra trạng thái
+        return findByEmail(email)
+                .filter(KhachHang::getTrangThai) // Chỉ trả về khách hàng nếu trạng thái hoạt động
+                .orElse(null); // Trả về null nếu tài khoản bị vô hiệu hóa
     }
+
 
 
 }

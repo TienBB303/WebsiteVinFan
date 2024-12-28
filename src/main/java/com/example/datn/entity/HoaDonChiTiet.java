@@ -36,10 +36,18 @@ public class HoaDonChiTiet {
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal gia;
 
+    @Column(name = "gia_sau_giam")
+    @NumberFormat(style = NumberFormat.Style.CURRENCY)
+    BigDecimal giaSauGiam;
+
     @Column(name = "thanh_tien")
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     BigDecimal thanhTien;
 
     @Column(name = "trang_thai")
     Integer trangThai;
+
+    @Transient // Không lưu vào database, chỉ sử dụng tạm
+    BigDecimal giaGiam;
+
 }

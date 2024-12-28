@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +52,10 @@ public class HoaDonController {
                         @RequestParam(name = "endDate", required = false) String endDate,
                         Model model) {
         Page<HoaDon> list;
+        // Đảm bảo page không nhỏ hơn 0
+        if (page < 0) {
+            page = 0;
+        }
 
         LocalDate start = null;
         LocalDate end = null;
@@ -102,64 +104,65 @@ public class HoaDonController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam long id, Model model) {
-        //Lấy thông tin hóa đơn
+        // Lấy thông tin hóa đơn
         Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
-        HoaDon hoaDon = new HoaDon();
-        if (hoaDonOptional.isPresent()) {
-            hoaDon = hoaDonOptional.get();
-        }
+        HoaDon hoaDon = hoaDonOptional.orElse(new HoaDon());
         model.addAttribute("hoaDon", hoaDon);
 
+        // Xử lý địa chỉ
         String chuoi = hoaDon.getDiaChi();
         if (chuoi == null || chuoi.isEmpty()) {
-            // Cung cấp giá trị mặc định nếu chuoi là null hoặc rỗng
+            // Cung cấp giá trị mặc định nếu chuỗi là null hoặc rỗng
             chuoi = "N/A,N/A,N/A,N/A";
         }
-
         String[] mang = chuoi.split(",");
         model.addAttribute("tinh", mang.length > 0 ? mang[0] : "N/A");
         model.addAttribute("huyen", mang.length > 1 ? mang[1] : "N/A");
         model.addAttribute("xa", mang.length > 2 ? mang[2] : "N/A");
         model.addAttribute("chitietdiachi", mang.length > 3 ? mang[3] : "N/A");
 
-
-        //Lấy thông tin sp in hoa don
-        List<ListSpNewInHoaDonResponse> list = this.hoaDonService.getSanPhamInHoaDon();
+        // Lấy danh sách sản phẩm mới trong hóa đơn
+        List<ListSpNewInHoaDonResponse> list = hoaDonService.getSanPhamInHoaDon();
         model.addAttribute("listSPInHoaDon", list);
 
-        List<HoaDonChiTiet> listHDCT = this.hoaDonService.timSanPhamChiTietTheoHoaDon(id);
+        // Lấy thông tin sản phẩm chi tiết trong hóa đơn
+        List<HoaDonChiTiet> listHDCT = hoaDonService.timSanPhamChiTietTheoHoaDon(id);
         model.addAttribute("listHDCT", listHDCT);
 
-        //Lấy thông tin sp in hoaDonChiTiet
-        List<SanPhamChiTiet> listSPCTInHDCT = this.hoaDonService.getSPCTInHDCT();
+        // Lấy danh sách sản phẩm chi tiết liên quan trong hóa đơn
+        List<SanPhamChiTiet> listSPCTInHDCT = hoaDonService.getSPCTInHDCT();
         model.addAttribute("listSPCTInHDCT", listSPCTInHDCT);
 
-        //Lấy thông tin thanh toan theo id hóa đơn
-        LichSuThanhToanResponse lichSuThanhToanResponse = this.hoaDonService.getLSTTByHoaDonId(id);
+        // Lấy thông tin thanh toán theo ID hóa đơn
+        LichSuThanhToanResponse lichSuThanhToanResponse = hoaDonService.getLSTTByHoaDonId(id);
         model.addAttribute("listLSTT", lichSuThanhToanResponse);
 
-        //Lấy thông tin pgg theo id hóa đơn
+        // Lấy thông tin phiếu giảm giá theo ID hóa đơn
         PggInHoaDonResponse hoaDonPGG = hoaDonService.getPGGbyHoaDonId(id);
         model.addAttribute("listPGG", hoaDonPGG);
 
-        //Lấy thông tin lịch sử hóa đơn theo id hóa đơn
+        // Lấy thông tin lịch sử hóa đơn theo ID hóa đơn
         List<LichSuHoaDon> lichSuHoaDonList = lichSuHoaDonRepo.findLichSuHoaDonByIdHoaDon(id);
         model.addAttribute("listHistory", lichSuHoaDonList);
 
+        // Trả về trang chi tiết hóa đơn
         return "/admin/hoa_don/detail";
     }
 
     @PostMapping("/addSPCT")
     public String addSPToHoaDonChiTiet(
-            @ModelAttribute AddSPToHoaDonChiTietRequest request
+            @ModelAttribute AddSPToHoaDonChiTietRequest request,
+            RedirectAttributes redirectAttributes
     ) {
         System.out.println("Giá là" + request.getGia());
         System.out.println("sl là" + request.getSoLuong());
         try {
             hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
+            hoaDonService.updateTongTienHoaDon(request.getIdHD());
             System.out.println("Thêm sản phẩm thành công!");
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorAdd", e.getMessage());
+
         }
         return "redirect:/hoa-don/detail?id=" + request.getIdHD();
     }
@@ -186,7 +189,7 @@ public class HoaDonController {
                 // Cập nhật trạng thái của HoaDon thành "Đã Xác Nhận"
                 hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaXacNhan());
                 hoaDonService.save(hoaDon);
-                hoaDonService.updateTongTienHoaDon();
+                hoaDonService.updateTongTienHoaDon(id);
 
                 // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
                 LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
@@ -196,7 +199,6 @@ public class HoaDonController {
                 lichSuHoaDon.setNguoiTao(nhanVien.getTen());
 
                 lichSuHoaDonRepo.save(lichSuHoaDon);
-
 
 
                 // Gửi thông báo thành công
@@ -294,29 +296,31 @@ public class HoaDonController {
     }
 
     @PostMapping("tang-so-luong")
-    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet
+    public String tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                              @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet,
+                              RedirectAttributes redirectAttributes
     ) {
         try {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-            hoaDonService.updateTongTienHoaDon();
-            return ResponseEntity.ok().body("Thêm thành công");
+            hoaDonService.updateTongTienHoaDon(idHoaDon);
         } catch (RuntimeException e) {
-            // Trả về thông báo lỗi
-            return ResponseEntity.badRequest().body(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorTSL",e.getMessage());
         }
+        return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }
 
     @PostMapping("giam-so-luong")
-    public ResponseEntity<?> giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+    public String giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                              @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet,
+                              RedirectAttributes redirectAttributes
+    ) {
         try {
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
-            hoaDonService.updateTongTienHoaDon();
-            return ResponseEntity.ok("Giảm số lượng thành công.");
+            hoaDonService.updateTongTienHoaDon(idHoaDon);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorGSL",e.getMessage());
         }
+        return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }
 
 
