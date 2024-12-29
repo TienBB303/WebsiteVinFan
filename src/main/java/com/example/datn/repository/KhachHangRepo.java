@@ -42,6 +42,8 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer>{
                 .filter(KhachHang::getTrangThai) // Chỉ trả về khách hàng nếu trạng thái hoạt động
                 .orElse(null); // Trả về null nếu tài khoản bị vô hiệu hóa
     }
+    @Query("SELECT MAX(kh.ma) FROM KhachHang kh")
+    String findMaxCode();
 
 
 
