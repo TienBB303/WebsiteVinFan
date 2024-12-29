@@ -4,10 +4,12 @@ package com.example.datn.controller;
 
 
 import com.example.datn.entity.ChucVu;
+import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.NhanVien;
 import com.example.datn.repository.ChucVuRepository;
 import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.service.CloudinaryService;
+import com.example.datn.service.nhan_vien_service.NhanVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -37,6 +39,9 @@ public class NhanVienController {
     private NhanVienRepository nhanVienRepository;
 
     @Autowired
+    NhanVienService nhanVienService;
+
+    @Autowired
     private ChucVuRepository chucVuRepository;
 
     @Autowired
@@ -44,30 +49,26 @@ public class NhanVienController {
 
     @GetMapping("/index")
     public String loadTable(
-            Model model,
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "trang_thai", defaultValue = "") String trangThai,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            @RequestParam(name = "trangThai", required = false) Boolean trangThai,
-            @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-
+            Model model){
         if (page < 0) {
             page = 0;
         }
-
+        Boolean trang_thai = null;
+        if ("1".equals(trangThai.trim())) {
+            trang_thai = true;
+        } else if ("0".equals(trangThai.trim())) {
+            trang_thai = false;
+        }
         PageRequest pageable = PageRequest.of(page, size);
-        Page<NhanVien> nhanVienPage = nhanVienRepository.searchNhanVien(keyword, trangThai, startDate, endDate, pageable);
-
-        model.addAttribute("listsNhanVien", nhanVienPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", nhanVienPage.getTotalPages());
+        Page<NhanVien> nhanVienPage = nhanVienService.search(keyword.trim(), trang_thai, pageable);
+        model.addAttribute("listsNhanVien", nhanVienPage);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("trangThai", trangThai);
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-
-        return "/admin/nhan-vien/index"; // Đường dẫn đến trang index của nhân viên
+        model.addAttribute("trang_thai", trang_thai);
+        return "admin/nhan-vien/index";
     }
 
     @GetMapping("/from-them")
