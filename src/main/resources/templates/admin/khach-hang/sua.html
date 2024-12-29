@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+
     <style>
         .error-message {
             font-size: 0.875em;
@@ -450,7 +451,7 @@
             });
         });
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form[action="/admin/khach-hang/them-dia-chi"]');
+            const form = document.querySelector('form[action="/admin/sua-khach-hang/them-dia-chi"]');
 
             form.addEventListener('submit', function (event) {
                 let isValid = true;
