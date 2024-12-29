@@ -81,6 +81,9 @@
                                     </p>
                                     <p class="mb-3">
                                         <i class="bi bi-house-door-fill me-2"></i>
+                                        <input type="hidden" name="tinhThanhPho" th:value="${nhanVien.tinhThanhPho}">
+                                        <input type="hidden" name="quanHuyen" th:value="${nhanVien.quanHuyen}">
+                                        <input type="hidden" name="xaPhuong" th:value="${nhanVien.xaPhuong}">
                                         <strong>Địa Chỉ:</strong> <span
                                             th:text="${nhanVien.soNhaNgoDuong + ', ' + nhanVien.xaPhuong + ', ' + nhanVien.quanHuyen + ', ' + nhanVien.tinhThanhPho}"></span>
                                     </p>
@@ -109,6 +112,73 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script th:inline="javascript">
+
+        var idTinh = document.getElementById("tinhThanhPho").value;
+        var idHuyen = document.getElementById("quanHuyen").value;
+        var idXa = document.getElementById("xaPhuong").value;
+
+        console.log(idTinh)
+        console.log(idHuyen)
+        console.log(idXa)
+
+        var citis = document.getElementById("city");
+        var districts = document.getElementById("district");
+        var wards = document.getElementById("ward");
+
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        axios(Parameter).then(function (result) {
+            renderCity(result.data);
+            // Preselect city, district, and ward after data is loaded
+            citis.value = idTinh;
+            citis.dispatchEvent(new Event('change'));
+
+            setTimeout(function () {
+                districts.value = idHuyen;
+                districts.dispatchEvent(new Event('change'));
+            }, 500);
+
+            setTimeout(function () {
+                wards.value = idXa;
+            }, 1000);
+        });
+
+        function renderCity(data) {
+            for (const x of data) {
+                citis.options[citis.options.length] = new Option(x.Name, x.Id);
+            }
+
+            citis.onchange = function () {
+                districts.length = 1;
+                wards.length = 1;
+
+                if (this.value != "") {
+                    const result = data.filter(n => n.Id === this.value);
+                    for (const k of result[0].Districts) {
+                        districts.options[districts.options.length] = new Option(k.Name, k.Id);
+                    }
+                }
+            };
+
+            districts.onchange = function () {
+                wards.length = 1;
+                const dataCity = data.filter((n) => n.Id === citis.value);
+
+                if (this.value != "") {
+                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+                    for (const w of dataWards) {
+                        wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                    }
+                }
+            };
+        }
+    </script>
 </div>
 </body>
 </html>
