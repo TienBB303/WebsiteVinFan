@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -78,12 +80,11 @@ public class NhanVienController {
     }
 
     @PostMapping("/add")
-    public String addNhanVien(@ModelAttribute NhanVien nhanVien, @RequestParam("file") MultipartFile file) {
+    public String addNhanVien(@ModelAttribute NhanVien nhanVien, @RequestParam("file") MultipartFile file,Model model) {
         try {
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("Chưa có tệp hình ảnh được chọn.");
             }
-
             Map uploadResult = cloudinaryService.upload(file);
             String imageUrl = (String) uploadResult.get("url");
             nhanVien.setHinhAnh(imageUrl);
@@ -102,6 +103,20 @@ public class NhanVienController {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return "redirect:/admin/nhan-vien/add?error=" + e.getMessage();
+        }
+    }
+    @RestController
+    @RequestMapping("/api")
+    public class NhanVienAPIController {
+
+        @Autowired
+        private NhanVienRepository nhanVienRepository;
+
+        @PostMapping("/check-email")
+        public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestBody Map<String, String> request) {
+            String email = request.get("email");
+            boolean exists = nhanVienRepository.findByEmail(email) != null;
+            return ResponseEntity.ok(Collections.singletonMap("exists", exists));
         }
     }
 

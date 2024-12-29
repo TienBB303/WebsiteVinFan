@@ -30,8 +30,7 @@
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">Thêm
-                                    nhân viên</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">thêm nhân viên</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -41,27 +40,16 @@
         <div class="page-content">
             <section class="card">
                 <div class="card-body">
-                    <form th:action="@{/admin/nhan-vien/add}" method="post" th:object="${nhanVien}"
-                          enctype="multipart/form-data">
-                        <div class="box-header">
-                            <div class="row">
-                                <div class="border rounded p-3 mb-4">
-                                    <div class="d-flex justify-content-between">
-                                        <!-- Nút trở về -->
-                                        <a th:href="@{/admin/nhan-vien/index}" class="btn btn-outline-primary">
-                                            <i class="bi bi-arrow-return-left"></i>
-                                        </a>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <br>
+                    <form th:action="@{/admin/nhan-vien/add}" method="post" th:object="${nhanVien}" enctype="multipart/form-data">
                         <div class="row">
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary">Thêm</button>
+                            </div>
                             <div class="col-md-4">
-                                <input type="file" name="file" class="form-control" required/>
+                                <a th:href="@{/admin/nhan-vien/index}" class="btn btn-secondary">Quay lại trang danh sách</a>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="file" name="file" class="form-control" required />
                             </div>
                         </div>
                         <br>
@@ -81,21 +69,18 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label">Căn cước công dân</label>
-                                        <input type="text" class="form-control" name="canCuocCongDan"
-                                               th:field="*{canCuocCongDan}">
+                                        <input type="text" class="form-control" name="canCuocCongDan" th:field="*{canCuocCongDan}">
 
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Mật khẩu</label>
-                                        <input type="password" class="form-control" name="matKhau"
-                                               th:field="*{matKhau}">
+                                        <input type="password" class="form-control" name="matKhau" th:field="*{matKhau}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label">Số điện thoại</label>
-                                        <input type="text" class="form-control" name="soDienThoai"
-                                               th:field="*{soDienThoai}">
+                                        <input type="text" class="form-control" name="soDienThoai" th:field="*{soDienThoai}">
 
                                     </div>
                                     <div class="col-md-6">
@@ -109,11 +94,11 @@
                                             <label>Giới Tính</label><br>
                                             <div>
                                                 <label>
-                                                    <input type="radio" th:field="*{gioiTinh}" value="true"/>
+                                                    <input type="radio" th:field="*{gioiTinh}" value="true" />
                                                     Nam
                                                 </label>
                                                 <label>
-                                                    <input type="radio" th:field="*{gioiTinh}" value="false"/>
+                                                    <input type="radio" th:field="*{gioiTinh}" value="false" />
                                                     Nữ
                                                 </label>
                                             </div>
@@ -123,8 +108,7 @@
                                         <label class="form-label">Chức vụ</label>
                                         <select class="form-control" name="chucVu" th:field="*{chucVu}">
                                             <option value="" selected>Chọn chức vụ</option>
-                                            <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}"
-                                                    th:text="${chucVu.viTri}"></option>
+                                            <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}" th:text="${chucVu.viTri}"></option>
                                         </select>
 
                                     </div>
@@ -160,18 +144,12 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label class="form-label">Số nhà/ngõ đường</label>
-                                        <input type="text" class="form-control" name="soNhaNgoDuong"
-                                               th:field="*{soNhaNgoDuong}">
+                                        <input type="text" class="form-control" name="soNhaNgoDuong" th:field="*{soNhaNgoDuong}">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center" style="height: 10vh;">
-                            <button type="submit" class="btn btn-outline-primary">Thêm</button>
-                        </div>
-
                     </form>
-                    <!-- Nút Thêm -->
                 </div>
             </section>
         </div>
@@ -234,27 +212,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form');
 
-            form.addEventListener('submit', function (event) {
+            form.addEventListener('submit', async function (event) {
                 let isValid = true;
 
                 // Lấy các trường cần validate
-                const file = form.file.files[0];
-                const ten = form.ten.value.trim();
                 const email = form.email.value.trim();
-                const canCuocCongDan = form.canCuocCongDan.value.trim();
-                const matKhau = form.matKhau.value.trim();
-                const soDienThoai = form.soDienThoai.value.trim();
-                const ngaySinh = form.ngaySinh.value.trim();
-                const gioiTinh = form.gioiTinh.value;
-                const chucVu = form.chucVu.value.trim();
-                const tinhThanhPho = form.tinhThanhPho.value.trim();
-                const quanHuyen = form.quanHuyen.value.trim();
-                const xaPhuong = form.xaPhuong.value.trim();
-                const soNhaNgoDuong = form.soNhaNgoDuong.value.trim();
-
-                // Xóa các thông báo lỗi trước đó
-                const errorMessages = document.querySelectorAll('.error-message');
-                errorMessages.forEach(msg => msg.remove());
 
                 // Hàm hiển thị lỗi
                 function showError(input, message) {
@@ -265,15 +227,9 @@
                     isValid = false;
                 }
 
-                // Validate file
-                if (!file) {
-                    showError(form.file, 'Vui lòng chọn một tệp để tải lên.');
-                }
-
-                // Validate tên
-                if (!ten) {
-                    showError(form.ten, 'Tên không được để trống.');
-                }
+                // Xóa các thông báo lỗi trước đó
+                const errorMessages = document.querySelectorAll('.error-message');
+                errorMessages.forEach(msg => msg.remove());
 
                 // Validate email
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -281,77 +237,45 @@
                     showError(form.email, 'Email không được để trống.');
                 } else if (!emailRegex.test(email)) {
                     showError(form.email, 'Email không hợp lệ.');
-                }
-
-                // Validate căn cước công dân
-                if (!canCuocCongDan) {
-                    showError(form.canCuocCongDan, 'Căn cước công dân không được để trống.');
-                }
-
-                // Validate mật khẩu
-                if (!matKhau) {
-                    showError(form.matKhau, 'Mật khẩu không được để trống.');
-                } else if (matKhau.length < 6) {
-                    showError(form.matKhau, 'Mật khẩu phải có ít nhất 6 ký tự.');
-                }
-
-                // Validate số điện thoại
-                const phoneRegex = /^[0-9]{10,11}$/;
-                if (!soDienThoai) {
-                    showError(form.soDienThoai, 'Số điện thoại không được để trống.');
-                } else if (!phoneRegex.test(soDienThoai)) {
-                    showError(form.soDienThoai, 'Số điện thoại không hợp lệ.');
-                }
-
-                // Validate ngày sinh
-                if (!ngaySinh) {
-                    showError(form.ngaySinh, 'Ngày sinh không được để trống.');
                 } else {
-                    const birthDate = new Date(ngaySinh);
-                    const today = new Date();
-                    const age = today.getFullYear() - birthDate.getFullYear();
-                    const month = today.getMonth() - birthDate.getMonth();
+                    try {
+                        const response = await fetch('/api/check-email', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email }),
+                        });
+                        const result = await response.json();
 
-                    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
-                        age--; // Nếu sinh nhật chưa tới trong năm nay, giảm tuổi đi 1
+                        if (result.exists) {
+                            Swal.fire({
+                                title: 'Lỗi!',
+                                text: 'Email đã tồn tại. Vui lòng nhập email khác.',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                            });
+                            isValid = false;
+                        }
+                    } catch (error) {
+                        console.error('Lỗi khi kiểm tra email:', error);
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Không thể kiểm tra email. Vui lòng thử lại.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                        isValid = false;
                     }
-
-                    if (age < 18) {
-                        showError(form.ngaySinh, 'Bạn phải lớn hơn 18 tuổi.');
-                    }
-                }
-
-                // Validate chức vụ
-                if (!chucVu) {
-                    showError(form.chucVu, 'Vui lòng chọn chức vụ.');
-                }
-
-                // Validate địa chỉ
-                if (!tinhThanhPho) {
-                    showError(form.tinhThanhPho, 'Vui lòng chọn Tỉnh/Thành phố.');
-                }
-                if (!quanHuyen) {
-                    showError(form.quanHuyen, 'Vui lòng chọn Quận/Huyện.');
-                }
-                if (!xaPhuong) {
-                    showError(form.xaPhuong, 'Vui lòng chọn Phường/Xã.');
-                }
-                if (!soNhaNgoDuong) {
-                    showError(form.soNhaNgoDuong, 'Vui lòng chọn số nhà ngõ đường.');
                 }
 
                 // Nếu form không hợp lệ, ngăn không cho gửi
                 if (!isValid) {
                     event.preventDefault(); // Ngăn chặn gửi form
-                    Swal.fire({
-                        title: 'Lỗi!',
-                        text: 'Vui lòng kiểm tra lại thông tin nhập vào.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
                 }
             });
         });
+
     </script>
 
 </div>
