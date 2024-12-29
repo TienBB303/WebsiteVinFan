@@ -34,133 +34,152 @@
             </div>
         </div>
         <div class="page-content">
-            <section class="card">
-                <div class="card-body">
-                    <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
-                        <div class="box-header">
-
-                        </div>
-                        <div class="card-body">
-                            <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
-                                <div class="box-header">
-                                    <form th:action="@{/admin/khach-hang/index}" method="get"
-                                          class="form-inline my-2 my-lg-0">
-                                        <div class="row justify-content-md-center">
-                                            <div class="col col-lg-10">
-                                                <input id="searchInput" class="form-control mr-sm-12" type="search"
-                                                       placeholder="Tìm kiếm" name="keyword" th:value="${keyword}">
-                                            </div>
-
-                                            <div class="col col-lg-2">
-                                                <button class="btn btn-outline-warning" type="submit"
-                                                        style="width: 60px">
-                                                    <i class="bi bi-arrow-counterclockwise"></i>
+            <section class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <a class="btn btn-outline-success" href="/admin/khach-hang/from-them" style="width: 70px"><i class="bi bi-plus"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <div class="dataTable-wrapper">
+                            <div class="dataTable-top">
+                                <form method="get" action="/admin/khach-hang/index">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <input id="searchInput" class="form-control mr-sm-12" type="search"
+                                                   placeholder="Tìm kiếm" name="keyword" th:value="${keyword}">
+                                        </div>
+                                        <div class="col-2">
+                                            Từ ngày: <input id="fromDateFilter" class="form-control mr-sm-2" type="date" name="fromDate">
+                                        </div>
+                                        <div class="col-2">
+                                            Đến ngày: <input id="toDateFilter" class="form-control mr-sm-2" type="date" name="toDate">
+                                        </div>
+                                        <div class="col-2">
+                                            Đến ngày: <select id="statusFilter" class="form-control mr-sm-2"
+                                                              name="status">
+                                            <option value="">Tất cả trạng thái</option>
+                                            <option value="">Hoạt động</option>
+                                            <option value="0">Không hoạt động</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-2 d-flex">
+                                            <div>
+                                                <button class="btn btn-outline-primary" type="submit" style="width: 70px; margin-right: 10px">
+                                                    <i class="bi bi-search"></i>
                                                 </button>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <div class="row">
-                                            <div class="col-4">
-                                                Đến ngày: <select id="statusFilter" class="form-control mr-sm-2"
-                                                                  name="status">
-                                                <option value="">Tất cả trạng thái</option>
-                                                <option value="">Hoạt động</option>
-                                                <option value="0">Không hoạt động</option>
-                                            </select>
-                                            </div>
-                                            <div class="col-3">
-                                                Từ ngày: <input id="fromDateFilter" class="form-control mr-sm-2"
-                                                                type="date"
-                                                                name="fromDate">
-                                            </div>
-                                            <div class="col-3">
-                                                Đến ngày: <input id="toDateFilter" class="form-control mr-sm-2"
-                                                                 type="date"
-                                                                 name="toDate">
-                                            </div>
-                                        </div>
-
-                                    </form>
-                                    <br>
-
-                                </div>
-
-                                <div class="box-body">
-                                    <div id="san_pham_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <a th:href="@{/admin/khach-hang/from-them} "
-                                                   class="btn btn-outline-success">Thêm mới</a>
-
-                                                <table class="table table-striped dataTable-table" id="customerTable">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>STT</th>
-                                                        <th>Mã</th>
-                                                        <th>Tên</th>
-                                                        <th>Giới Tính</th>
-                                                        <th>Số Điện Thoại</th>
-                                                        <th>Email</th>
-                                                        <th>Ngày Sinh</th>
-                                                        <th>Trạng Thái</th>
-                                                        <th>Thao Tác</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr th:each="khachHang, stat : ${listsKhachhang}">
-                                                        <td th:text="${stat.index + 1}"></td>
-                                                        <td th:text="${khachHang.ma ?: 'N/A'}"></td>
-                                                        <td th:text="${khachHang.ten ?: 'N/A'}"></td>
-                                                        <td th:text="${khachHang.gioiTinh ?: 'N/A'}"></td>
-                                                        <td th:text="${khachHang.soDienThoai ?: 'N/A'}"></td>
-                                                        <td th:text="${khachHang.email ?: 'N/A'}"></td>
-                                                        <td th:text="${khachHang.ngaySinh != null ? #dates.format(khachHang.ngaySinh,'dd/MM/yyyy') : 'N/A'}"></td>
-                                                        <td th:text="${khachHang.trangThai != null ? (khachHang.trangThai ? 'Hoạt động' : 'Không hoạt động') : 'N/A'}"></td>
-                                                        <td>
-                                                            <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id ?: 0})}"
-                                                               class="btn btn-outline-warning" style="width: 60px"
-                                                               >
-                                                                <i class="bi bi-pencil-square"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item"
-                                                            th:classappend="${currentPage == 0} ? 'disabled'">
-                                                            <a class="page-link"
-                                                               th:href="@{/admin/khach-hang/index(page=${currentPage - 1}, keyword=${keyword})}">Previous</a>
-                                                        </li>
-
-                                                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                                                            th:classappend="${currentPage == i} ? 'page-item active' : 'page-item'">
-                                                            <a class="page-link"
-                                                               th:href="@{/admin/khach-hang/index(page=${i}, keyword=${keyword})}">[[${i
-                                                                + 1}]]</a>
-                                                        </li>
-
-                                                        <li class="page-item"
-                                                            th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                                                            <a class="page-link"
-                                                               th:href="@{/admin/khach-hang/index(page=${currentPage + 1}, keyword=${keyword})}">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
+                                            <div>
+                                                <a class="btn btn-outline-warning" href="/admin/san-pham" style="width: 70px">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <!-- Footer box -->
-                                    </div>
-                                </div>
+                                </form>
+                            </div>
+                            <div class="dataTable-container" style="padding-top: 10px">
+                                <table class="table table-striped table-bordered dataTable-table" id="table1">
+                                    <thead>
+                                    <tr>
+                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">STT</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Mã nhân viên</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 25%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Tên nhân viên</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Giới tính</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Số điện thoại</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Email</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Ngày sinh</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Trạng thái</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 15%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Hành động</a>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="khachHang, stat : ${listsKhachhang}">
+                                        <td th:text="${stat.index + 1}"></td>
+                                        <td th:text="${khachHang.ma ?: 'N/A'}"></td>
+                                        <td th:text="${khachHang.ten ?: 'N/A'}"></td>
+                                        <td th:text="${khachHang.gioiTinh ?: 'N/A'}"></td>
+                                        <td th:text="${khachHang.soDienThoai ?: 'N/A'}"></td>
+                                        <td th:text="${khachHang.email ?: 'N/A'}"></td>
+                                        <td th:text="${khachHang.ngaySinh != null ? #dates.format(khachHang.ngaySinh,'dd/MM/yyyy') : 'N/A'}"></td>
+<!--                                        <td th:text="${khachHang.trangThai != null ? (khachHang.trangThai ? 'Hoạt động' : 'Không hoạt động') : 'N/A'}"></td>-->
+                                        <td style="text-align: center">
+                                            <span th:if="${khachHang.trangThai}" class="badge bg-light-success">
+                                                On
+                                            </span>
+                                            <span th:unless="${khachHang.trangThai}" class="badge bg-light-danger">
+                                                Off
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id ?: 0})}"
+                                               class="btn btn-outline-warning" style="width: 60px">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        <!-- Nút Trang đầu -->
+                                        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                            <a class="page-link" th:href="@{'/admin/khach-hang/index(page=0, keyword=${keyword})'}" aria-label="Trang đầu">
+                                                <span aria-hidden="true">««</span>
+                                                <span class="sr-only">Trang đầu</span>
+                                            </a>
+                                        </li>
+
+                                        <!-- Trang trước -->
+                                        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                            <a class="page-link" th:href="@{'/admin/khach-hang/index(page=' + ${currentPage - 1} + ', keyword=' + ${keyword} + ')'}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                                <span class="sr-only">Trang trước</span>
+                                            </a>
+                                        </li>
+
+                                        <!-- Số trang -->
+                                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                                            <a class="page-link" th:href="@{'/admin/khach-hang/index(page=' + ${i} + ', keyword=' + ${keyword} + ')'}" th:text="${i + 1}"></a>
+                                        </li>
+
+                                        <!-- Trang sau -->
+                                        <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                            <a class="page-link" th:href="@{'/admin/khach-hang/index(page=' + ${currentPage + 1} + ', keyword=' + ${keyword} + ')'}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Trang sau</span>
+                                            </a>
+                                        </li>
+
+                                        <!-- Nút Trang cuối -->
+                                        <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                            <a class="page-link" th:href="@{'/admin/khach-hang/index(page=' + ${totalPages - 1} + ', keyword=' + ${keyword} + ')'}" aria-label="Trang cuối">
+                                                <span aria-hidden="true">»»</span>
+                                                <span class="sr-only">Trang cuối</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>

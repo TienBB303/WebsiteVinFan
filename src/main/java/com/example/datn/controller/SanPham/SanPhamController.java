@@ -1,4 +1,4 @@
-package com.example.datn.controller;
+package com.example.datn.controller.SanPham;
 
 import com.example.datn.entity.*;
 import com.example.datn.entity.thuoc_tinh.*;
@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -192,8 +193,8 @@ public class SanPhamController {
             @ModelAttribute NhanVien nhanVien,
             HttpSession session, Model model) {
 
-        if (inputMa != null && inputMa.length() > 5) {
-            return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 5 ký tự.");
+        if (inputMa != null && inputMa.length() > 7) {
+            return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
         }
         String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
         SanPham sp = sanPhamRepo.findByMa(ma);
@@ -294,48 +295,50 @@ public class SanPhamController {
         }
 
         session.setAttribute("listSPCTTam", listSPCTTam);
+        System.out.println("list : " + listSPCTTam.size());
         model.addAttribute("listSPCTTam", listSPCTTam);
         return ResponseEntity.ok(listSPCTTam);
     }
-
     // Nhận giá trị từ sản phẩm tạm
     @PostMapping("/san-pham/confirm")
     public ResponseEntity<String> confirmProducts(
-            @RequestParam(value = "gia", required = false) List<String> giasStr,
-            @RequestParam(value = "so_luong", required = false) List<Integer> soLuongs,
-            HttpSession session, Model model) {
+            @RequestParam(value = "gia") List<String> giasStr,
+            @RequestParam(value = "so_luong") List<String> soLuongsStr,
+            HttpSession session) {
 
         List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
-
-        // Kiểm tra sản phẩm tạm null hay không
+        System.out.println(giasStr.size());
         if (sanPhamChiTietTamList == null || sanPhamChiTietTamList.isEmpty()) {
             return ResponseEntity.badRequest().body("Không có sản phẩm để xác nhận.");
         }
         if (giasStr == null || giasStr.size() != sanPhamChiTietTamList.size()) {
             return ResponseEntity.badRequest().body("Giá không được để trống.");
         }
-        if (soLuongs == null || soLuongs.size() != sanPhamChiTietTamList.size()) {
+        if (soLuongsStr == null || soLuongsStr.size() != sanPhamChiTietTamList.size()) {
             return ResponseEntity.badRequest().body("Số lượng không được để trống.");
         }
-        // Cập nhật giá và số lượng cho từng sản phẩm tạm
         for (int i = 0; i < sanPhamChiTietTamList.size(); i++) {
             SanPhamChiTietTam spTam = sanPhamChiTietTamList.get(i);
             BigDecimal gia = epKieuDecimal(giasStr.get(i));
-            Integer soLuong = soLuongs.get(i);
-
+            Integer soLuong = null;
+            try {
+                soLuong = Integer.parseInt(soLuongsStr.get(i));
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Số lượng phải nằm trong khoảng 0 - 500.");
+            }
             if (gia == null) {
-                return ResponseEntity.badRequest().body("Giá không được để trống.");
+                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Giá không được để trống.");
             }
             if (soLuong == null) {
-                return ResponseEntity.badRequest().body("Số lượng không được để trống.");
+                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Số lượng không được để trống.");
             }
             if (gia.compareTo(new BigDecimal(10000)) < 0) {
-                return ResponseEntity.badRequest().body("Giá sản phẩm phải lớn hơn 10.000.");
+                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Giá sản phẩm phải lớn hơn 10.000.");
             } else if (gia.compareTo(new BigDecimal(20000000)) > 0) {
-                return ResponseEntity.badRequest().body("Giá sản phẩm không vượt quá 20 triệu.");
+                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Giá sản phẩm không vượt quá 20 triệu.");
             }
             if (soLuong < 0 || soLuong > 500) {
-                return ResponseEntity.badRequest().body("Số lượng phải nằm trong khoảng 0 - 500.");
+                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Số lượng phải nằm trong khoảng 0 - 500.");
             }
             if (soLuong <= 0) {
                 spTam.setTrang_thai(false); // Tắt trạng thái nếu hết hàng

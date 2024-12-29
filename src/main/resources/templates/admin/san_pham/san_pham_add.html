@@ -251,10 +251,10 @@
                                     <td th:text="${spTam.cheDoGio.ten}"></td>
                                     <td th:text="${spTam.congSuat.ten}"></td>
                                     <td>
-                                        <input type="text" th:value="${spTam.gia}" name="gia" class="form-control gia-input"/>
+                                        <input type="number" th:value="${spTam.gia}" name="gia" class="form-control gia-input" oninput="validateInputLength(this, 8)"/>
                                     </td>
                                     <td>
-                                        <input type="number" th:value="${spTam.so_luong}" name="so_luong" class="form-control"/>
+                                        <input type="number" th:value="${spTam.so_luong}" name="so_luong" class="form-control" max="999" oninput="validateInputLength(this, 3)"/>
                                     </td>
 <!--                                    <td>-->
 <!--                                        <button type="button" class="btn btn-danger delete-button" data-id="${spTam.id}">-->
@@ -280,6 +280,37 @@
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!--thoogn báo inline-->
+    <script th:inline="javascript">
+        /* Kiểm tra thông báo thành công/thất bại từ backend */
+        const successMessage = [[${successMessage}]];
+        const errorMessage = [[${errorMessage}]];
+
+        if (successMessage) {
+            Swal.fire({
+                toast: true,
+                icon: 'success',
+                title: 'Thành công',
+                text: successMessage,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+        if (errorMessage) {
+            Swal.fire({
+                toast: true,
+                icon: 'error',
+                title: 'Lỗi',
+                text: errorMessage,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+    </script>
     <!--Tao Bien The-->
     <script>
         $(document).ready(function () {
@@ -358,7 +389,6 @@
                     return;
                 }
 
-                // Gửi yêu cầu AJAX
                 $.ajax({
                     url: '/admin/san-pham/add-bien-the',
                     type: 'POST',
@@ -374,12 +404,10 @@
                             timerProgressBar: true
                         });
 
-                        // Xử lý dữ liệu trả về từ server để cập nhật bảng mà không reload trang
                         console.log(response);
                         let tableBody = $('tbody');  // Đoạn tbody của bảng biến thể
-                        tableBody.empty();  // Xóa dữ liệu cũ (nếu có)
+                        tableBody.empty();  // Xóa dữ liệu cũ
 
-                        // Duyệt qua từng sản phẩm biến thể trả về từ server
                         $.each(response, function (index, item) {
                             let newRow = `
                             <tr>
@@ -388,10 +416,10 @@
                                 <td>${item.sanPhamTam.kieuQuat.ten}</td>
                                 <td>${item.cheDoGio.ten}</td>
                                 <td>${item.congSuat.ten}</td>
-                                <td><input type="text" value="${item.gia}" name="gia" class="form-control gia-input"/></td>
-                                <td><input type="number" value="${item.so_luong}" name="so_luong" class="form-control"/></td>
+                                <td><input type="number" value="${item.gia}" name="gia" class="form-control gia-input" oninput="validateInputLength(this, 8)"/></td>
+                                <td><input type="number" value="${item.so_luong}" name="so_luong" class="form-control" max="999" oninput="validateInputLength(this, 3)"/></td>
                             </tr>`;
-                            tableBody.append(newRow);  // Thêm dòng mới vào bảng
+                            tableBody.append(newRow);
                         });
                         $('#confirmFormCard').show();
                     },
@@ -413,15 +441,12 @@
     <!--Confirm -->
     <script>
         $('#confirmSP').submit(function (event) {
-            event.preventDefault();  // Ngăn form reload trang
-
-            // Nếu kiểm tra thành công, tiếp tục gửi form
+            event.preventDefault();
             $.ajax({
-                url: '/admin/san-pham/confirm',  // URL của endpoint xử lý form
+                url: '/admin/san-pham/confirm',
                 type: 'POST',
-                data: $(this).serialize(),  // Lấy tất cả dữ liệu trong form
+                data: $(this).serialize(),
                 success: function (response) {
-                    // Hiển thị thông báo thành công bằng SweetAlert
                     Swal.fire({
                         toast: true,
                         icon: 'success',
@@ -431,14 +456,12 @@
                         timer: 3000,
                         timerProgressBar: true
                     }).then(() => {
-                        // Chuyển hướng sau 3 giây
                         setTimeout(function () {
-                            window.location.href = '/admin/san-pham/viewAdd'; // URL của trang add mới
+                            window.location.href = '/admin/san-pham/viewAdd';
                         }, 1000);
                     });
                 },
                 error: function (xhr) {
-                    // Hiển thị lỗi bằng SweetAlert nếu có lỗi từ phía server
                     Swal.fire({
                         toast: true,
                         icon: 'error',
@@ -452,7 +475,6 @@
             });
         });
     </script>
-
     <!--multi select cho các option thêm : màu sắc, công suất, chê sdodoj gió-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -482,26 +504,36 @@
             reader.readAsDataURL(file);
         }
     </script>
-
+    <!--định dạng ký tự-->
     <script>
-        function formatPriceInput(element) {
-            let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
-            if (value.length > 8) {
-                value = value.slice(0, 8); // Giới hạn tối đa 8 chữ số
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
             }
-            if (value) {
-                // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam
-                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            }
-            element.value = value ? value : '';
         }
-
-        document.addEventListener('input', function (event) {
-            if (event.target.classList.contains('gia-input')) {
-                formatPriceInput(event.target);
-            }
-        });
     </script>
+<!--format giá-->
+<!--    <script>-->
+<!--        function formatPriceInput(element) {-->
+<!--            let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số-->
+<!--            if (value.length > 8) {-->
+<!--                value = value.slice(0, 8); // Giới hạn tối đa 8 chữ số-->
+<!--            }-->
+<!--            if (value) {-->
+<!--                // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam-->
+<!--                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");-->
+<!--            }-->
+<!--            element.value = value ? value : '';-->
+<!--        }-->
+
+<!--        document.addEventListener('input', function (event) {-->
+<!--            if (event.target.classList.contains('gia-input')) {-->
+<!--                formatPriceInput(event.target);-->
+<!--            }-->
+<!--        });-->
+
+<!--    </script>-->
+
     <!--Xóa sp tạm -->
     <!--    <script>-->
     <!--        $(document).ready(function () {-->
