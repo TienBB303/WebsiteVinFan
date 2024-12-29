@@ -210,6 +210,7 @@
         background-color: #17a2b8;
         color: white;
     }
+
     .btn-group .btn {
         border-radius: 20px; /* Làm nút bo tròn */
         font-weight: bold;
@@ -272,10 +273,12 @@
 
                 <!-- Button thông tin đơn hàng -->
                 <li class="nav-item mx-2">
-                    <a href="/admin/track-order" class="btn btn-outline-info d-flex align-items-center">
+                    <a href="/admin/track-order" class="btn btn-outline-info d-flex align-items-center"
+                       th:onclick="|return checkCustomerPermission('${currentPrincipalName}')|">
                         <i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng
                     </a>
                 </li>
+
                 <!-- Thanh tìm kiếm -->
                 <li class="nav-item">
                     <form th:action="@{/admin/product-catalog}" method="get" class="d-flex align-items-center">
@@ -370,48 +373,42 @@
 <section class="py-5">
     <div class="container">
         <h1 class="text-center mb-5">Danh mục sản phẩm quạt của chúng tôi</h1>
-            <!-- Thanh điều hướng với các tùy chọn -->
-            <div class="btn-group mb-4">
-                <!-- Nút Khoảng giá mở modal -->
-                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#priceFilterModal">Khoảng giá</button>
+        <!-- Thanh điều hướng với các tùy chọn -->
+        <div class="btn-group mb-4">
+            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#priceFilterModal">Khoảng
+                giá
+            </button>
+            <a class="btn btn-outline-secondary" th:href="@{/admin/product-catalog(sortOrder='popular')}">Bán chạy
+                nhất</a>
+            <a th:href="@{/admin/product-catalog(sortOrder='newest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+               class="btn btn-outline-secondary">Mới nhất</a>
+            <a th:href="@{/admin/product-catalog(sortOrder='oldest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+               class="btn btn-outline-secondary">Cũ nhất</a>
+            <a class="btn btn-outline-secondary"
+               th:href="@{/admin/product-catalog(filter='discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">Sản
+                phẩm giảm giá</a>
+            <a class="btn btn-outline-secondary"
+               th:href="@{/admin/product-catalog(filter='non-discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">Sản
+                phẩm không giảm giá</a>
+        </div>
 
-                <!-- Nút Bán chạy nhất (dẫn liên kết) -->
-                <a class="btn btn-outline-secondary" th:href="@{/admin/product-catalog(sortOrder='popular')}">Bán chạy nhất</a>
-
-                <a th:href="@{/admin/product-catalog(sortOrder='newest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-                   class="btn btn-outline-secondary">Mới nhất</a>
-
-                <a th:href="@{/admin/product-catalog(sortOrder='oldest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-                   class="btn btn-outline-secondary">Cũ nhất</a>
-                <a class="btn btn-outline-secondary"
-                   th:href="@{/admin/product-catalog(filter='discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
-                    Sản phẩm giảm giá
-                </a>
-                <a class="btn btn-outline-secondary"
-                   th:href="@{/admin/product-catalog(filter='non-discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
-                    Sản phẩm không giảm giá
-                </a>
-            </div>
         <!-- Kiểm tra nếu không có sản phẩm nào -->
-        <div th:if="${sanPhamGiamGia != null and #lists.isEmpty(sanPhamGiamGia) and
-             sanPhamKhongGiamGia != null and #lists.isEmpty(sanPhamKhongGiamGia)}">
+        <div th:if="${sanPhamGiamGia != null and #lists.isEmpty(sanPhamGiamGia) and sanPhamKhongGiamGia != null and #lists.isEmpty(sanPhamKhongGiamGia)}">
             <p>Không có sản phẩm nào</p>
         </div>
-        <!-- Nếu có sản phẩm -->
-        <div th:unless="${sanPhamGiamGia.empty and sanPhamKhongGiamGia.empty}">
-            <div class="row g-4" id="product-list">
 
-                <!-- Hiển thị sản phẩm có giảm giá -->
+        <!-- Sản phẩm giảm giá -->
+        <div  id="discounted-section" th:if="${!#lists.isEmpty(sanPhamGiamGia)}" class="mb-5">
+            <h2 class="text-center mb-4">Sản phẩm có giảm giá</h2>
+            <div id="discounted-products" class="row g-4">
                 <th:block th:each="phieuGiamGia : ${sanPhamGiamGia}">
-                    <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="col-lg-3 col-md-4 col-sm-6 product">
                         <div class="card product-card h-100">
                             <div class="card-body d-flex flex-column">
-                                <img class="card-img-top"
-                                     src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
-                                     alt="Anime Girl"
+                                <img th:src="@{${phieuGiamGia.spct.hinhAnh.hinh_anh_1}}" alt="Product Image"
                                      style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title product-title"
-                                    th:text="${phieuGiamGia.spct.sanPham.ten}">Tên sản phẩm</h5>
+                                <h5 class="card-title product-title" th:text="${phieuGiamGia.spct.sanPham.ten}">Tên sản
+                                    phẩm</h5>
                                 <p class="card-text text-danger" th:if="${phieuGiamGia.giaTriGiam > 0}">
                                     Giảm: <span class="discount-price"
                                                 th:text="${#numbers.formatDecimal(phieuGiamGia.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
@@ -429,12 +426,9 @@
                                     <a th:href="@{/admin/detail/{id}(id=${phieuGiamGia.spct.id})}"
                                        class="btn btn-primary w-100">Xem chi tiết</a>
                                     <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
-                                        <input type="hidden" name="productId"
-                                               th:value="${phieuGiamGia.spct.id}"/>
-                                        <input type="hidden" name="name"
-                                               th:value="${phieuGiamGia.spct.sanPham.ten}"/>
-                                        <input type="hidden" name="price"
-                                               th:value="${phieuGiamGia.spct.gia}"/>
+                                        <input type="hidden" name="productId" th:value="${phieuGiamGia.spct.id}"/>
+                                        <input type="hidden" name="name" th:value="${phieuGiamGia.spct.sanPham.ten}"/>
+                                        <input type="hidden" name="price" th:value="${phieuGiamGia.spct.gia}"/>
                                         <input type="hidden" name="discountedPrice"
                                                th:value="${phieuGiamGia.giaSauGiam}"/>
                                         <input type="hidden" name="quantity" value="1"/>
@@ -445,15 +439,18 @@
                         </div>
                     </div>
                 </th:block>
+            </div>
+        </div>
 
-                <!-- Hiển thị sản phẩm không có giảm giá -->
+        <!-- Sản phẩm không giảm giá -->
+        <div th:if="${!#lists.isEmpty(sanPhamKhongGiamGia)}">
+            <h2 class="text-center mb-4">Sản phẩm không giảm giá</h2>
+            <div id="non-discounted-products" class="row g-4">
                 <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
-                    <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="col-lg-3 col-md-4 col-sm-6 product">
                         <div class="card product-card h-100">
                             <div class="card-body d-flex flex-column">
-                                <img class="card-img-top"
-                                     src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg"
-                                     alt="Anime Girl"
+                                <img th:src="@{${sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
                                      style="height: 200px; object-fit: cover;">
                                 <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản
                                     phẩm</h5>
@@ -479,12 +476,14 @@
                 </th:block>
             </div>
         </div>
+
         <!-- Nút phân trang -->
-        <div class="d-flex justify-content-center mt-4" id="pagination">
-            <!-- Các nút phân trang sẽ được tạo động ở đây -->
+        <div id="pagination" class="d-flex justify-content-center mt-4">
+            <!-- Nút phân trang sẽ được tạo động tại đây -->
         </div>
     </div>
 </section>
+
 <!-- Modal Lọc Giá -->
 <div class="modal fade" id="priceFilterModal" tabindex="-1" aria-labelledby="priceFilterModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -497,11 +496,13 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="minPrice" class="form-label">Giá từ:</label>
-                        <input type="number" name="minPrice" id="minPrice" class="form-control" placeholder="Nhập giá thấp nhất">
+                        <input type="number" name="minPrice" id="minPrice" class="form-control"
+                               placeholder="Nhập giá thấp nhất">
                     </div>
                     <div class="mb-3">
                         <label for="maxPrice" class="form-label">Đến:</label>
-                        <input type="number" name="maxPrice" id="maxPrice" class="form-control" placeholder="Nhập giá cao nhất">
+                        <input type="number" name="maxPrice" id="maxPrice" class="form-control"
+                               placeholder="Nhập giá cao nhất">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -536,92 +537,88 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const allProducts = Array.from(document.querySelectorAll("#product-list > div")); // Sản phẩm
-        const productsPerPage = 8; // Số sản phẩm trên mỗi trang
+        const productsPerPage = 4; // Số sản phẩm trên mỗi trang
         let currentPage = 1;
 
-        const pagination = document.getElementById("pagination");
+        const discountedSection = document.getElementById("discounted-section");
+        const nonDiscountedSection = document.getElementById("non-discounted-section");
 
-        function renderProducts() {
-            const start = (currentPage - 1) * productsPerPage;
+        const discountedProducts = Array.from(document.querySelectorAll("#discounted-products .product"));
+        const nonDiscountedProducts = Array.from(document.querySelectorAll("#non-discounted-products .product"));
+
+        const paginationContainer = document.getElementById("pagination");
+
+        function renderProducts(products, page, section) {
+            const start = (page - 1) * productsPerPage;
             const end = start + productsPerPage;
+            let hasVisibleProducts = false;
 
-            allProducts.forEach((product, index) => {
-                product.style.display = index >= start && index < end ? "block" : "none";
-            });
-        }
-
-        function renderPagination() {
-            pagination.innerHTML = "";
-            const totalPages = Math.ceil(allProducts.length / productsPerPage);
-
-            // Nút mũi tên về trang đầu (<<)
-            const firstButton = document.createElement("button");
-            firstButton.className = "pagination-arrow";
-            firstButton.disabled = currentPage === 1;
-            firstButton.innerHTML = "&laquo;"; // Mũi tên đôi trái
-            firstButton.addEventListener("click", () => {
-                currentPage = 1;
-                loadPage();
-            });
-            pagination.appendChild(firstButton);
-
-            // Nút mũi tên trái (<)
-            const prevButton = document.createElement("button");
-            prevButton.className = "pagination-arrow";
-            prevButton.disabled = currentPage === 1;
-            prevButton.innerHTML = "&lt;"; // Mũi tên trái
-            prevButton.addEventListener("click", () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadPage();
+            products.forEach((product, index) => {
+                const isVisible = index >= start && index < end;
+                product.style.display = isVisible ? "block" : "none";
+                if (isVisible) {
+                    hasVisibleProducts = true;
                 }
             });
-            pagination.appendChild(prevButton);
 
-            // Nút số trang hiển thị giới hạn 3 trang xung quanh
-            for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {
+            // Ẩn hoặc hiển thị tiêu đề của khối nếu không có sản phẩm hiển thị
+            if (section) {
+                section.style.display = hasVisibleProducts ? "block" : "none";
+            }
+        }
+
+        function renderPagination(totalPages) {
+            paginationContainer.innerHTML = "";
+
+            // Nút mũi tên về trang trước
+            const prevButton = document.createElement("button");
+            prevButton.className = "btn btn-outline-primary mx-1";
+            prevButton.innerHTML = "&laquo;";
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener("click", () => {
+                currentPage--;
+                updatePagination();
+            });
+            paginationContainer.appendChild(prevButton);
+
+            // Các nút số trang
+            for (let i = 1; i <= totalPages; i++) {
                 const pageButton = document.createElement("button");
+                pageButton.className = "btn btn-outline-primary mx-1";
                 pageButton.innerText = i;
-                pageButton.className = currentPage === i ? "active" : "";
+                pageButton.disabled = i === currentPage;
+
                 pageButton.addEventListener("click", () => {
                     currentPage = i;
-                    loadPage();
+                    updatePagination();
                 });
-                pagination.appendChild(pageButton);
+                paginationContainer.appendChild(pageButton);
             }
 
-            // Nút mũi tên phải (>)
+            // Nút mũi tên về trang tiếp theo
             const nextButton = document.createElement("button");
-            nextButton.className = "pagination-arrow";
+            nextButton.className = "btn btn-outline-primary mx-1";
+            nextButton.innerHTML = "&raquo;";
             nextButton.disabled = currentPage === totalPages;
-            nextButton.innerHTML = "&gt;"; // Mũi tên phải
             nextButton.addEventListener("click", () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadPage();
-                }
+                currentPage++;
+                updatePagination();
             });
-            pagination.appendChild(nextButton);
-
-            // Nút mũi tên về trang cuối (>>)
-            const lastButton = document.createElement("button");
-            lastButton.className = "pagination-arrow";
-            lastButton.disabled = currentPage === totalPages;
-            lastButton.innerHTML = "&raquo;"; // Mũi tên đôi phải
-            lastButton.addEventListener("click", () => {
-                currentPage = totalPages;
-                loadPage();
-            });
-            pagination.appendChild(lastButton);
+            paginationContainer.appendChild(nextButton);
         }
 
-        function loadPage() {
-            renderProducts();
-            renderPagination();
+        function updatePagination() {
+            const totalDiscountedPages = Math.ceil(discountedProducts.length / productsPerPage);
+            const totalNonDiscountedPages = Math.ceil(nonDiscountedProducts.length / productsPerPage);
+            const totalPages = Math.max(totalDiscountedPages, totalNonDiscountedPages);
+
+            renderProducts(discountedProducts, currentPage, discountedSection);
+            renderProducts(nonDiscountedProducts, currentPage, nonDiscountedSection);
+
+            renderPagination(totalPages);
         }
 
-        loadPage();
+        updatePagination();
     });
 </script>
 
@@ -756,5 +753,20 @@
         });
     });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const errorMessage = /*[[${errorMessage}]]*/ 'null';
+
+        if (errorMessage && errorMessage !== 'null') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: errorMessage,
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

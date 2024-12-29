@@ -35,70 +35,37 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
         int count = (int) listHoaDon.stream()
                 .filter(sl -> sl.getTrangThai() == trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHoaDonCho())
                 .count();
-        if (count < 5) {
-            //tao hoa don
-            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-            hoaDon.setNhanVien(nhanVien);
-
-            hoaDon.setMa(hoaDonService.generateOrderCode());
-            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHoaDonCho());
-            hoaDon.setNgayTao(LocalDate.now());
-            hoaDon.setLoaiHoaDon(true);
-            // Lấy khách hàng và thêm tên vào hoaDon
-            KhachHang khachHang = getKhachHangLe(1L);
-            hoaDon.setKhachHang(khachHang);
-            hoaDon.setTenNguoiNhan(khachHang.getTen());
-            HinhThucThanhToanResponse hinhThucThanhToanResponse = hoaDonService.getHinhThucThanhToan();
-            hoaDon.setHinhThucThanhToan(hinhThucThanhToanResponse.getTienMat());
-            hoaDon.setNguoiTao(nhanVien.getTen());
-
-            hoaDonRepo.saveAndFlush(hoaDon);
-
-            //tao lich su hoa don
-            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setHoaDon(hoaDon);
-            lichSuHoaDon.setNgayTao(hoaDon.getNgayTao());
-            lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
-            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
-
-            lichSuHoaDonRepo.save(lichSuHoaDon);
-
+        if (count >= 10) {
+            // Thông báo khi số lượng hóa đơn chờ vượt quá 10
+            throw new IllegalStateException("Số lượng hóa đơn chờ tối qua là 10");
         }
-    }
+        //tao hoa don
+        NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+        hoaDon.setNhanVien(nhanVien);
 
-    @Override
-    public void addSPToHoaDonCho(Long idSP) {
-//        System.out.println("id sp là : " + idSP);
-//        if (myHoaDon == null) {
-//            throw new IllegalStateException("Vui lòng chọn hóa đơn.");
-//        }
-//        List<SPCTRequest> listSPCT = hoaDonCho.get(myHoaDon);
-//        if (listSPCT == null) {
-//            listSPCT = new ArrayList<>();
-//            hoaDonCho.put(myHoaDon, listSPCT);
-//        }
-//        //call spct
-//        SanPhamChiTiet sanPhamChiTiet = spctRepo.findById(idSP).orElseThrow();
-//        // tạo 1 đối tượng sp mới
-//        SPCTRequest request = new SPCTRequest(sanPhamChiTiet.getId(), sanPhamChiTiet.getSanPham().getTen(),
-//                sanPhamChiTiet.getSo_luong(), sanPhamChiTiet.getGia());
-//        // Thêm sản phẩm vào danh sách hiện tại
-//        int soLuongUpdateKhiTrung = 1;
-//        boolean checkSP = false;
-//        for (int i = 0; i < listSPCT.size(); i++) {
-//            if (listSPCT.get(i).getIdSP().equals(request.getIdSP())) {
-//                SPCTRequest sanPhamGet = listSPCT.get(i);
-//                SPCTRequest spUpdate = new SPCTRequest(sanPhamGet.getIdSP(), sanPhamGet.getTenSP(),
-//                        sanPhamGet.getSoLuong() + soLuongUpdateKhiTrung, sanPhamGet.getGia());
-//                // sanPhamUpdate.setSoLuong(soLuongUpdateKhiTrung + sanPhamUpdate.getSoLuong());
-//                listSPCT.set(i, spUpdate);
-//                checkSP = true;
-//            }
-//        }
-//        if (checkSP == false) {
-//            listSPCT.add(request);
-//        }
-//        System.out.println("Danh sách hóa đơn chi tiết sau khi thêm: " + listSPCT);
+        hoaDon.setMa(hoaDonService.generateOrderCode());
+        hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHoaDonCho());
+        hoaDon.setNgayTao(LocalDate.now());
+        hoaDon.setLoaiHoaDon(true);
+        // Lấy khách hàng và thêm tên vào hoaDon
+        KhachHang khachHang = getKhachHangLe(1L);
+        hoaDon.setKhachHang(khachHang);
+
+        hoaDon.setTenNguoiNhan(khachHang.getTen());
+        HinhThucThanhToanResponse hinhThucThanhToanResponse = hoaDonService.getHinhThucThanhToan();
+        hoaDon.setHinhThucThanhToan(hinhThucThanhToanResponse.getTienMat());
+        hoaDon.setNguoiTao(nhanVien.getTen());
+
+        hoaDonRepo.saveAndFlush(hoaDon);
+
+        //tao lich su hoa don
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setHoaDon(hoaDon);
+        lichSuHoaDon.setNgayTao(hoaDon.getNgayTao());
+        lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
+        lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+
+        lichSuHoaDonRepo.save(lichSuHoaDon);
     }
 
     @Override
@@ -123,8 +90,6 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
     public KhachHang getKhachHangLe(Long id) {
         return khachHangRepo.findById(id).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
     }
-
-
 
 
 }

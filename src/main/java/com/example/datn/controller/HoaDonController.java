@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +52,10 @@ public class HoaDonController {
                         @RequestParam(name = "endDate", required = false) String endDate,
                         Model model) {
         Page<HoaDon> list;
+        // Đảm bảo page không nhỏ hơn 0
+        if (page < 0) {
+            page = 0;
+        }
 
         LocalDate start = null;
         LocalDate end = null;
@@ -149,15 +151,18 @@ public class HoaDonController {
 
     @PostMapping("/addSPCT")
     public String addSPToHoaDonChiTiet(
-            @ModelAttribute AddSPToHoaDonChiTietRequest request
+            @ModelAttribute AddSPToHoaDonChiTietRequest request,
+            RedirectAttributes redirectAttributes
     ) {
         System.out.println("Giá là" + request.getGia());
         System.out.println("sl là" + request.getSoLuong());
         try {
             hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
+            hoaDonService.updateTongTienHoaDon(request.getIdHD());
             System.out.println("Thêm sản phẩm thành công!");
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorAdd", e.getMessage());
+
         }
         return "redirect:/hoa-don/detail?id=" + request.getIdHD();
     }
@@ -194,7 +199,6 @@ public class HoaDonController {
                 lichSuHoaDon.setNguoiTao(nhanVien.getTen());
 
                 lichSuHoaDonRepo.save(lichSuHoaDon);
-
 
 
                 // Gửi thông báo thành công
@@ -292,29 +296,31 @@ public class HoaDonController {
     }
 
     @PostMapping("tang-so-luong")
-    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet
+    public String tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                              @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet,
+                              RedirectAttributes redirectAttributes
     ) {
         try {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
-            return ResponseEntity.ok().body("Thêm thành công");
         } catch (RuntimeException e) {
-            // Trả về thông báo lỗi
-            return ResponseEntity.badRequest().body(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorTSL",e.getMessage());
         }
+        return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }
 
     @PostMapping("giam-so-luong")
-    public ResponseEntity<?> giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+    public String giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                              @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet,
+                              RedirectAttributes redirectAttributes
+    ) {
         try {
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
-            return ResponseEntity.ok("Giảm số lượng thành công.");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorGSL",e.getMessage());
         }
+        return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }
 
 

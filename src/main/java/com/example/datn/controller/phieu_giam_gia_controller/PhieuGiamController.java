@@ -9,6 +9,8 @@ import com.example.datn.service.phieu_giam_service.PhieuGiamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -224,29 +227,29 @@ public class PhieuGiamController {
             existingPhieuGiam.setGiaTriGiam(phieuGiam.getGiaTriGiam());
             existingPhieuGiam.setTrangThai(phieuGiam.isTrangThai());
 
-            // Lấy sản phẩm chi tiết liên quan
-            SanPhamChiTiet spct = existingPhieuGiam.getSpct();
+            // Kiểm tra trạng thái: nếu chuyển về "ngừng áp dụng", xóa liên kết sản phẩm
+            if (!phieuGiam.isTrangThai()) { // Nếu trạng thái là "ngừng áp dụng"
+                existingPhieuGiam.setSpct(null); // Xóa liên kết sản phẩm
+                System.out.println("Liên kết với sản phẩm đã được xóa do trạng thái chuyển về ngừng áp dụng.");
+            } else {
+                // Nếu trạng thái vẫn là "áp dụng", kiểm tra và cập nhật giá sau giảm
+                SanPhamChiTiet spct = existingPhieuGiam.getSpct();
+                if (spct != null) {
+                    BigDecimal giaSanPham = spct.getGia();
+                    if (giaSanPham == null) {
+                        throw new IllegalArgumentException("Sản phẩm không có thông tin giá. Vui lòng kiểm tra lại.");
+                    }
 
-            // Kiểm tra nếu không có sản phẩm chi tiết liên quan
-            if (spct == null) {
-                throw new IllegalArgumentException("Không tìm thấy sản phẩm chi tiết liên quan đến phiếu giảm giá.");
+                    BigDecimal maxGiam = calculateMaxDiscount(giaSanPham);
+                    if (phieuGiam.getGiaTriGiam().compareTo(maxGiam) > 0) {
+                        throw new IllegalArgumentException(
+                                "Giá trị giảm không được vượt quá " + maxGiam + " VND cho mức giá sản phẩm " + giaSanPham + " VND.");
+                    }
+
+                    BigDecimal giaSauGiam = giaSanPham.subtract(phieuGiam.getGiaTriGiam()).max(BigDecimal.ZERO);
+                    existingPhieuGiam.setGiaSauGiam(giaSauGiam);
+                }
             }
-
-            // Kiểm tra nếu giá trị giảm vượt quá mức tối đa
-            BigDecimal giaSanPham = spct.getGia();
-            if (giaSanPham == null) {
-                throw new IllegalArgumentException("Sản phẩm không có thông tin giá. Vui lòng kiểm tra lại.");
-            }
-
-            BigDecimal maxGiam = calculateMaxDiscount(giaSanPham);
-            if (phieuGiam.getGiaTriGiam().compareTo(maxGiam) > 0) {
-                throw new IllegalArgumentException(
-                        "Giá trị giảm không được vượt quá " + maxGiam + " VND cho mức giá sản phẩm " + giaSanPham + " VND.");
-            }
-
-            // Tính giá sau giảm và cập nhật vào phiếu giảm giá
-            BigDecimal giaSauGiam = giaSanPham.subtract(phieuGiam.getGiaTriGiam()).max(BigDecimal.ZERO);
-            existingPhieuGiam.setGiaSauGiam(giaSauGiam);
 
             // Lưu phiếu giảm giá được cập nhật
             pggRepo.save(existingPhieuGiam);

@@ -30,7 +30,8 @@
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">thêm nhân viên</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">Thêm
+                                    nhân viên</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -40,16 +41,27 @@
         <div class="page-content">
             <section class="card">
                 <div class="card-body">
-                    <form th:action="@{/admin/nhan-vien/add}" method="post" th:object="${nhanVien}" enctype="multipart/form-data">
+                    <form th:action="@{/admin/nhan-vien/add}" method="post" th:object="${nhanVien}"
+                          enctype="multipart/form-data">
+                        <div class="box-header">
+                            <div class="row">
+                                <div class="border rounded p-3 mb-4">
+                                    <div class="d-flex justify-content-between">
+                                        <!-- Nút trở về -->
+                                        <a th:href="@{/admin/nhan-vien/index}" class="btn btn-outline-primary">
+                                            <i class="bi bi-arrow-return-left"></i>
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <br>
                         <div class="row">
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary">Thêm</button>
-                            </div>
                             <div class="col-md-4">
-                                <a th:href="@{/admin/nhan-vien/index}" class="btn btn-secondary">Quay lại trang danh sách</a>
-                            </div>
-                            <div class="col-md-4">
-                                <input type="file" name="file" class="form-control" required />
+                                <input type="file" name="file" class="form-control" required/>
                             </div>
                         </div>
                         <br>
@@ -69,18 +81,21 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label">Căn cước công dân</label>
-                                        <input type="text" class="form-control" name="canCuocCongDan" th:field="*{canCuocCongDan}">
+                                        <input type="text" class="form-control" name="canCuocCongDan"
+                                               th:field="*{canCuocCongDan}">
 
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Mật khẩu</label>
-                                        <input type="password" class="form-control" name="matKhau" th:field="*{matKhau}">
+                                        <input type="password" class="form-control" name="matKhau"
+                                               th:field="*{matKhau}">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label">Số điện thoại</label>
-                                        <input type="text" class="form-control" name="soDienThoai" th:field="*{soDienThoai}">
+                                        <input type="text" class="form-control" name="soDienThoai"
+                                               th:field="*{soDienThoai}">
 
                                     </div>
                                     <div class="col-md-6">
@@ -94,11 +109,11 @@
                                             <label>Giới Tính</label><br>
                                             <div>
                                                 <label>
-                                                    <input type="radio" th:field="*{gioiTinh}" value="true" />
+                                                    <input type="radio" th:field="*{gioiTinh}" value="true"/>
                                                     Nam
                                                 </label>
                                                 <label>
-                                                    <input type="radio" th:field="*{gioiTinh}" value="false" />
+                                                    <input type="radio" th:field="*{gioiTinh}" value="false"/>
                                                     Nữ
                                                 </label>
                                             </div>
@@ -108,7 +123,8 @@
                                         <label class="form-label">Chức vụ</label>
                                         <select class="form-control" name="chucVu" th:field="*{chucVu}">
                                             <option value="" selected>Chọn chức vụ</option>
-                                            <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}" th:text="${chucVu.viTri}"></option>
+                                            <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}"
+                                                    th:text="${chucVu.viTri}"></option>
                                         </select>
 
                                     </div>
@@ -144,12 +160,18 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label class="form-label">Số nhà/ngõ đường</label>
-                                        <input type="text" class="form-control" name="soNhaNgoDuong" th:field="*{soNhaNgoDuong}">
+                                        <input type="text" class="form-control" name="soNhaNgoDuong"
+                                               th:field="*{soNhaNgoDuong}">
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="d-flex justify-content-center align-items-center" style="height: 10vh;">
+                            <button type="submit" class="btn btn-outline-primary">Thêm</button>
+                        </div>
+
                     </form>
+                    <!-- Nút Thêm -->
                 </div>
             </section>
         </div>

@@ -1,7 +1,6 @@
 package com.example.datn.controller.BanHangTaiQuay;
 
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
-import com.example.datn.dto.request.DiscountRequest;
 import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.repository.*;
@@ -11,18 +10,14 @@ import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -117,23 +112,28 @@ public class BanHangTaiQuayController {
 
         return "admin/ban_hang_tai_quay/index";
     }
+
     @PostMapping("/addSPCT")
     public String addSPToHoaDonChiTiet(
-            @ModelAttribute AddSPToHoaDonChiTietRequest request
+            @ModelAttribute AddSPToHoaDonChiTietRequest request,
+            RedirectAttributes redirectAttributes
     ) {
         try {
             hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
             hoaDonService.timSanPhamChiTietTheoHoaDon(request.getIdHD());
             hoaDonService.updateTongTienHoaDon(request.getIdHD());
         } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorAdd", e.getMessage());
             System.out.println(e.getMessage());
         }
         return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
     }
+
     @PostMapping("/thanh-toan")
     public String thanhToan(
             @RequestParam("idHD") Long idhd,
             @RequestParam("tongTienSauGiam") BigDecimal tongTienSauGiam,
+            @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam, // Thêm ID phiếu giảm giá
             @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
             @RequestParam("tinhThanhPho") String tinhThanhPho,
             @RequestParam("soDienThoaiKhachHang") String soDienThoaiKhachHang,
@@ -143,6 +143,7 @@ public class BanHangTaiQuayController {
             @RequestParam("ghichu") String ghiChu,
             @RequestParam("tenKhangHang") String tenKhangHang
     ) {
+
         HoaDon hoaDon = hoaDonService.findById(idhd)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
         NhanVien nhanVien = nhanVienRepository.profileNhanVien();
@@ -162,6 +163,13 @@ public class BanHangTaiQuayController {
         // Lưu tổng tiền sau giảm
         hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
 
+        // Lưu ID phiếu giảm giá nếu có
+        if (idPhieuGiam != null) {
+            PhieuGiam phieuGiam = phieuGiamRepo.findById(idPhieuGiam)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu giảm giá với ID: " + idPhieuGiam));
+            hoaDon.setPhieuGiamGia(phieuGiam); // Liên kết phiếu giảm giá với hóa đơn
+        }
+
         // Lưu hóa đơn vào cơ sở dữ liệu
         hoaDonService.save(hoaDon);
 
@@ -180,6 +188,7 @@ public class BanHangTaiQuayController {
 
         return "redirect:/ban-hang-tai-quay/index";
     }
+
     @PostMapping("/addKH")
     public String addKHToHoaDonChiTiet(
             @RequestParam("idHD") Long idhd, // Sử dụng @RequestParam thay cho @ModelAttribute
@@ -195,7 +204,7 @@ public class BanHangTaiQuayController {
 
         DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(Math.toIntExact(idKh));
         String diaChiHoaDon = diaChi.getTinhThanhPho() +
-                ","  + diaChi.getQuanHuyen() + ","
+                "," + diaChi.getQuanHuyen() + ","
                 + diaChi.getXaPhuong() + ","
                 + diaChi.getSoNhaNgoDuong();
         System.out.println("dia chi nhan la:" + diaChiHoaDon);
@@ -214,37 +223,47 @@ public class BanHangTaiQuayController {
 
 
     @PostMapping("tang-so-luong")
-    public ResponseEntity<?> tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet
-    ) {
+    public String tangSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                              @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet,
+                              RedirectAttributes redirectAttributes) {
         try {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
-            return ResponseEntity.ok().body("Thêm thành công");
+
+            // Thêm thông báo thành công
+            redirectAttributes.addFlashAttribute("messageTSL", "Cập nhật số lượng sản phẩm thành công!");
         } catch (RuntimeException e) {
-            // Trả về thông báo lỗi
-            return ResponseEntity.badRequest().body(e.getMessage());
+            // Thêm thông báo lỗi
+            redirectAttributes.addFlashAttribute("errorMessageTSL", e.getMessage());
         }
+
+        return "redirect:/ban-hang-tai-quay/hdct?idHD=" + idHoaDon;
     }
 
+
     @PostMapping("giam-so-luong")
-    public ResponseEntity<?> giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
-                                         @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
+    public String giamSoLuong(@RequestParam("idHoaDon") Long idHoaDon,
+                              @RequestParam("idSanPhamChiTiet") Long idSanPhamChiTiet) {
         try {
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
-            return ResponseEntity.ok("Giảm số lượng thành công.");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
         }
+        return "redirect:/ban-hang-tai-quay/hdct?idHD=" + idHoaDon;
     }
 
     @PostMapping("/tao-hoa-don")
-    public String taoHoaDon() {
-        HoaDon hoaDon = new HoaDon();
-        NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-        hoaDon.setNhanVien(nhanVien);
-        banHangTaiQuayService.taoHoaDonCho(hoaDon);
+    public String taoHoaDon(RedirectAttributes redirectAttributes) {
+        try {
+            HoaDon hoaDon = new HoaDon();
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+            banHangTaiQuayService.taoHoaDonCho(hoaDon);
+            redirectAttributes.addFlashAttribute("message", "Tạo hóa đơn thành công");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorTHD", e.getMessage());
+        }
         return "redirect:/ban-hang-tai-quay/index";
     }
 
@@ -253,17 +272,18 @@ public class BanHangTaiQuayController {
             @RequestParam("idHD") Long idHD,
             @RequestParam("idSP") Long idSP) {
         try {
-            hoaDonService.deleteSPInHD( idSP);
+            hoaDonService.deleteSPInHD(idSP);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "redirect:/ban-hang-tai-quay/hdct?idHD=" + idHD;
     }
+
     @PostMapping("dia-chi-mac-dinh")
     public String suaDiaChiMacDinh(@RequestParam("khachHangId") Integer khachHangId,
-                                   @ModelAttribute("diaChiId") Integer diaChiId){
+                                   @ModelAttribute("diaChiId") Integer diaChiId) {
         List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHangId);
-        for (DiaChi diaChi: diaChiList) {
+        for (DiaChi diaChi : diaChiList) {
             if (diaChi.getId().equals(diaChiId)) {
                 diaChi.setTrangThai(true); // Địa chỉ được chọn làm mặc định
             } else {
@@ -271,12 +291,13 @@ public class BanHangTaiQuayController {
             }
             diaChiRepository.save(diaChi); // Lưu vào database
         }
-        return "redirect:/admin/khach-hang/from-sua/"+khachHangId;
+        return "redirect:/admin/khach-hang/from-sua/" + khachHangId;
     }
+
     @GetMapping("xoa/{id}")
     public String xoa(@RequestParam("khachHangId") Integer khachHangId,
-                      @PathVariable("id") Integer id){
+                      @PathVariable("id") Integer id) {
         diaChiRepository.deleteById(id);
-        return "redirect:/admin/khach-hang/from-sua/"+khachHangId;
+        return "redirect:/admin/khach-hang/from-sua/" + khachHangId;
     }
 }

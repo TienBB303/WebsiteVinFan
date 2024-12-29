@@ -42,7 +42,13 @@ public class ChatLieuCanhController {
         } else if ("0".equals(trang_thaiStr)) {
             trang_thai = false;
         }
+//        if (page < 0) {
+//            page = 0;
+//        }
         Page<ChatLieuCanh> searchPage = chatLieuCanhService.search(ten_chat_lieu_canh.trim(), trang_thai, PageRequest.of(page, size));
+        if (searchPage.isEmpty() && page < 0) {
+            searchPage = chatLieuCanhService.search(ten_chat_lieu_canh.trim(), trang_thai, PageRequest.of(0, size));
+        }
         model.addAttribute("listCLC", searchPage);
         model.addAttribute("ten_chat_lieu_canh", ten_chat_lieu_canh);
         model.addAttribute("trang_thai", trang_thaiStr);

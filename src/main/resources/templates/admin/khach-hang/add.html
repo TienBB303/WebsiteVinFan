@@ -34,15 +34,14 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-12 col-md-6 order-md-1 order-last">
-                        <h3>Thêm mới khách hàng </h3>
-                        <p class="text-subtitle text-muted">các sản phẩm quạt</p>
+                        <h3>Thêm khách hàng </h3>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">thêm khách hàng
-                                    </a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a>Thêm khách hàng
+                                </a></li>
                             </ol>
                         </nav>
                     </div>
@@ -55,120 +54,115 @@
             <section class="card">
                 <div class="card-body">
                     <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
-                        <div class="box-header">
 
-                        </div>
-                            <div class="box-body">
-                                <div class="col-md-8">
-                                    <form th:action="@{/admin/khach-hang/add}" method="post">
-                                        <div class="row">
-                                            <div class="col-md-2">
-                                                <button type="submit" class="btn btn-primary">Thêm</button>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <a th:href="@{/admin/khach-hang/index}" class="btn btn-secondary">Quay
-                                                    lại
-                                                    trang
-                                                    danh sách</a>
-                                            </div>
-                                            <div class="col-md-6">
-
-                                            </div>
+                        <div class="box-body">
+                            <div class="col-md-8">
+                                <form th:action="@{/admin/khach-hang/add}" method="post">
+                                    <div class="row">
+                                        <div class="d-flex justify-content-between">
+                                            <!-- Nút trở về -->
+                                            <a th:href="@{/admin/khach-hang/index}"
+                                               class="btn btn-outline-primary">
+                                                <i class="bi bi-arrow-return-left"></i>
+                                            </a>
+                                            <!-- Nút sửa -->
+                                            <button type="submit" class="btn btn-outline-success">Thêm
+                                            </button>
                                         </div>
-                                        <br>
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Tên</label>
-                                                        <input type="text" class="form-control" name="ten">
-
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Email</label>
-                                                        <input type="email" class="form-control" name="email">
-
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Mật khẩu</label>
-                                                        <input type="password" class="form-control" name="matKhau">
-
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Số điện thoại</label>
-                                                        <input type="text" class="form-control" name="soDienThoai">
-
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <label class="form-label">Ngày sinh</label>
-                                                        <input type="date" class="form-control" name="ngaySinh">
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label class="form-label">Giới tính</label>
-                                                        <div>
-                                                            <input class="form-check-input" type="radio" name="gioiTinh"
-                                                                   id="gridRadios1"
-                                                                   value="Nam" checked>
-                                                            <label class="form-check-label"
-                                                                   for="gridRadios1">Nam</label>
-                                                            <input class="form-check-input" type="radio" name="gioiTinh"
-                                                                   id="gridRadios2"
-                                                                   value="Nữ">
-                                                            <label class="form-check-label" for="gridRadios2">Nữ</label>
-                                                        </div>
-                                                    </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Tên</label>
+                                                    <input type="text" class="form-control" name="ten">
+                                                    <span th:text="${tenvali}"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Tỉnh/Thành phố</label>
-                                                        <select class="form-control" id="city" name="tinhThanhPho">
-                                                            <option value="" selected>Chọn tỉnh thành</option>
-                                                        </select>
-                                                    </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control" name="email">
+                                                    <span th:text="${emailvali}"></span>
+
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Quận/Huyện</label>
-                                                        <select class="form-control" id="district" name="quanHuyen">
-                                                            <option value="" selected>Chọn quận huyện</option>
-                                                        </select>
-                                                    </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Mật khẩu</label>
+                                                    <input type="password" class="form-control" name="matKhau">
+                                                    <span th:text="${matkhauvali}"></span>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Phường/Xã</label>
-                                                        <select class="form-control" id="ward" name="xaPhuong">
-                                                            <option value="" selected>Chọn phường xã</option>
-                                                        </select>
-                                                    </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Số điện thoại</label>
+                                                    <input type="text" class="form-control" name="soDienThoai">
+                                                    <span th:text="${sdtvali}"></span>
+                                                    </span>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Số nhà/ngõ đường</label>
-                                                        <input type="text" class="form-control" name="soNhaNgoDuong">
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Ngày sinh</label>
+                                                    <input type="date" class="form-control" name="ngaySinh">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Giới tính</label>
+                                                    <div>
+                                                        <input class="form-check-input" type="radio" name="gioiTinh"
+                                                               id="gridRadios1"
+                                                               value="Nam" checked>
+                                                        <label class="form-check-label"
+                                                               for="gridRadios1">Nam</label>
+                                                        <input class="form-check-input" type="radio" name="gioiTinh"
+                                                               id="gridRadios2"
+                                                               value="Nữ">
+                                                        <label class="form-check-label" for="gridRadios2">Nữ</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Tỉnh/Thành phố</label>
+                                                    <select class="form-control" id="city" name="tinhThanhPho">
+                                                        <option value="" selected>Chọn tỉnh thành</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Quận/Huyện</label>
+                                                    <select class="form-control" id="district" name="quanHuyen">
+                                                        <option value="" selected>Chọn quận huyện</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Phường/Xã</label>
+                                                    <select class="form-control" id="ward" name="xaPhuong">
+                                                        <option value="" selected>Chọn phường xã</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Số nhà/ngõ đường</label>
+                                                    <input type="text" class="form-control" name="soNhaNgoDuong">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                    </form>
-                                </div>
-                                <div class="col-md-2">
-
-                                </div>
+                                </form>
                             </div>
 
+                        </div>
                     </div>
                 </div>
             </section>

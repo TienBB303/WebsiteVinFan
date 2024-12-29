@@ -4,6 +4,9 @@
 <body>
 <div class="wrapper">
     <div>
+        <!-- <header th:replace="/admin/fragments/header :: header"> -->
+    </div>
+    <div>
         <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
     </div>
     <div id="main">
@@ -16,14 +19,14 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-12 col-md-6 order-md-1 order-last">
-                        <h3>Nhân Viên</h3>
+                        <h3>Khách Hàng</h3>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">nhân
-                                    viên</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">Khách
+                                    hàng</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -32,23 +35,28 @@
         </div>
         <div class="page-content">
             <section class="card">
+                <div class="card-header">
+                    <a class="btn btn-outline-success" href="/admin/khach-hang/from-them" style="width: 70px"><i class="bi bi-plus"></i></a>
+                </div>
                 <div class="card-body">
                     <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
                         <div class="box-header">
-                            <!-- Tiêu đề bảng nếu cần -->
+
                         </div>
                         <div class="card-body">
                             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
                                 <div class="box-header">
-                                    <form th:action="@{/admin/nhan-vien/index}" method="get"
+                                    <form th:action="@{/admin/khach-hang/index}" method="get"
                                           class="form-inline my-2 my-lg-0">
                                         <div class="row justify-content-md-center">
                                             <div class="col col-lg-10">
                                                 <input id="searchInput" class="form-control mr-sm-12" type="search"
                                                        placeholder="Tìm kiếm" name="keyword" th:value="${keyword}">
                                             </div>
+
                                             <div class="col col-lg-2">
-                                                <button class="btn btn-outline-warning" type="submit" style="width: 60px">
+                                                <button class="btn btn-outline-warning" type="submit"
+                                                        style="width: 60px">
                                                     <i class="bi bi-arrow-counterclockwise"></i>
                                                 </button>
                                             </div>
@@ -56,35 +64,37 @@
                                         <br>
                                         <div class="row">
                                             <div class="col-4">
-                                                Trạng thái:
-                                                <select id="statusFilter" class="form-control mr-sm-2" name="status">
-                                                    <option value="">Tất cả trạng thái</option>
-                                                    <option value="1">Hoạt động</option>
-                                                    <option value="0">Ngừng hoạt động</option>
-                                                </select>
+                                                Đến ngày: <select id="statusFilter" class="form-control mr-sm-2"
+                                                                  name="status">
+                                                <option value="">Tất cả trạng thái</option>
+                                                <option value="">Hoạt động</option>
+                                                <option value="0">Không hoạt động</option>
+                                            </select>
                                             </div>
                                             <div class="col-3">
-                                                Từ ngày:
-                                                <input id="fromDateFilter" class="form-control mr-sm-2" type="date"
-                                                       name="fromDate">
+                                                Từ ngày: <input id="fromDateFilter" class="form-control mr-sm-2"
+                                                                type="date"
+                                                                name="fromDate">
                                             </div>
                                             <div class="col-3">
-                                                Đến ngày:
-                                                <input id="toDateFilter" class="form-control mr-sm-2" type="date"
-                                                       name="toDate">
+                                                Đến ngày: <input id="toDateFilter" class="form-control mr-sm-2"
+                                                                 type="date"
+                                                                 name="toDate">
                                             </div>
                                         </div>
+
                                     </form>
                                     <br>
+
                                 </div>
 
                                 <div class="box-body">
-                                    <div id="nhan_vien_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                                    <div id="san_pham_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <a th:href="@{/admin/nhan-vien/from-them}"
-                                                   class="btn btn-outline-success">Thêm
-                                                    mới</a>
+                                                <a th:href="@{/admin/khach-hang/from-them} "
+                                                   class="btn btn-outline-success">Thêm mới</a>
+
                                                 <table class="table table-striped dataTable-table" id="customerTable">
                                                     <thead>
                                                     <tr>
@@ -92,36 +102,34 @@
                                                         <th>Mã</th>
                                                         <th>Tên</th>
                                                         <th>Giới Tính</th>
-                                                        <th>Ngày Sinh</th>
                                                         <th>Số Điện Thoại</th>
                                                         <th>Email</th>
-                                                        <th>ngày sinh</th>
-                                                        <th>Chức Vụ</th>
+                                                        <th>Ngày Sinh</th>
                                                         <th>Trạng Thái</th>
                                                         <th>Thao Tác</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr th:each="nhanVien, stat : ${listsNhanVien}">
+                                                    <tr th:each="khachHang, stat : ${listsKhachhang}">
                                                         <td th:text="${stat.index + 1}"></td>
-                                                        <td th:text="${nhanVien.ma}"></td>
-                                                        <td th:text="${nhanVien.ten}"></td>
-                                                        <td th:text="${nhanVien.gioiTinh ? 'Nam' : 'Nữ'}"></td>
-                                                        <td th:text="${#dates.format(nhanVien.ngaySinh, 'yyyy-MM-dd')}"></td>
-                                                        <td th:text="${nhanVien.soDienThoai}"></td>
-                                                        <td th:text="${nhanVien.email}"></td>
-                                                        <td th:text="${#dates.format(nhanVien.ngaySinh,'dd/MM/yyyy')}"></td>
-                                                        <td th:text="${nhanVien.chucVu.viTri}"></td>
-                                                        <td th:text="${nhanVien.trangThai != null ? (nhanVien.trangThai ? 'Hoạt động' : 'Ngừng hoạt động') : 'Chưa xác định'}"></td>
+                                                        <td th:text="${khachHang.ma ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.ten ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.gioiTinh ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.soDienThoai ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.email ?: 'N/A'}"></td>
+                                                        <td th:text="${khachHang.ngaySinh != null ? #dates.format(khachHang.ngaySinh,'dd/MM/yyyy') : 'N/A'}"></td>
+                                                        <td th:text="${khachHang.trangThai != null ? (khachHang.trangThai ? 'Hoạt động' : 'Không hoạt động') : 'N/A'}"></td>
                                                         <td>
-                                                            <a th:href="@{/admin/nhan-vien/from-sua/{id}(id=${nhanVien.id})}"
-                                                               class="btn btn-outline-warning" style="width: 60px">
+                                                            <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id ?: 0})}"
+                                                               class="btn btn-outline-warning" style="width: 60px"
+                                                            >
                                                                 <i class="bi bi-pencil-square"></i>
                                                             </a>
                                                         </td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
+
                                             </div>
                                         </div>
 
@@ -132,18 +140,20 @@
                                                         <li class="page-item"
                                                             th:classappend="${currentPage == 0} ? 'disabled'">
                                                             <a class="page-link"
-                                                               th:href="@{/admin/nhan-vien/index(page=${currentPage - 1}, keyword=${keyword})}">Trước</a>
+                                                               th:href="@{/admin/khach-hang/index(page=${currentPage - 1}, keyword=${keyword})}">Previous</a>
                                                         </li>
+
                                                         <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                                             th:classappend="${currentPage == i} ? 'page-item active' : 'page-item'">
                                                             <a class="page-link"
-                                                               th:href="@{/admin/nhan-vien/index(page=${i}, keyword=${keyword})}">[[${i
+                                                               th:href="@{/admin/khach-hang/index(page=${i}, keyword=${keyword})}">[[${i
                                                                 + 1}]]</a>
                                                         </li>
+
                                                         <li class="page-item"
                                                             th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                                                             <a class="page-link"
-                                                               th:href="@{/admin/nhan-vien/index(page=${currentPage + 1}, keyword=${keyword})}">Tiếp</a>
+                                                               th:href="@{/admin/khach-hang/index(page=${currentPage + 1}, keyword=${keyword})}">Next</a>
                                                         </li>
                                                     </ul>
                                                 </nav>
@@ -193,13 +203,14 @@
                 $('#customerTable tbody tr').each(function () {
                     var row = $(this);
                     var rowData = row.find('td');
-                    var matchSearch = rowData.toArray().some(td => $(td).text().toLowerCase().includes(searchText));
-                    var matchStatus = status === "" || (status === "1" && rowData.eq(11).text().trim() === "Hoạt động") || (status === "0" && rowData.eq(11).text().trim() === "Ngừng hoạt động");
 
-                    // So sánh ngày sinh
-                    var birthDate = new Date(rowData.eq(4).text());
-                    var matchFromDate = fromDate === "" || birthDate >= new Date(fromDate);
-                    var matchToDate = toDate === "" || birthDate <= new Date(toDate);
+                    var matchSearch = rowData.filter(function () {
+                        return $(this).text().toLowerCase().indexOf(searchText) !== -1;
+                    }).length > 0;
+
+                    var matchStatus = status === '' || status === rowData.eq(9).text().toLowerCase(); // Vị trí cột trạng thái
+                    var matchFromDate = fromDate === '' || new Date(rowData.eq(6).text()) >= new Date(fromDate); // Vị trí cột ngày sinh
+                    var matchToDate = toDate === '' || new Date(rowData.eq(6).text()) <= new Date(toDate); // Vị trí cột ngày sinh
 
                     if (matchSearch && matchStatus && matchFromDate && matchToDate) {
                         row.show();
@@ -210,5 +221,6 @@
             }
         });
     </script>
+</div>
 </body>
 </html>
