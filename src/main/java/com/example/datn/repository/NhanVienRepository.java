@@ -38,6 +38,6 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
         String email = authentication.getName();
         return findByEmail(email).orElse(null);
     }
-
-
+    @Query("SELECT MAX(nv.ma) FROM NhanVien nv")
+    String findMaxCode();
 }
