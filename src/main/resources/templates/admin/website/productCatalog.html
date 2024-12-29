@@ -295,22 +295,41 @@
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                 </li>
+                <li class="nav-item mx-3">
+                    <!-- Khi khách hàng đã đăng nhập -->
+                    <div th:if="${khachHang} != null">
+                        <a class="nav-link d-flex align-items-center" th:href="@{/admin/sua-thong-tin/{id}(id=${khachHang.id})}">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </div>
 
-                <div th:block class="d-flex align-items-center">
-                    <!-- Thêm d-flex và align-items-center cho div chứa nút đăng xuất và đăng nhập -->
-                    <div th:if="${currentPrincipalName} != anonymousUser">
-                        <form th:action="@{/logout}" method="post" class="d-flex align-items-center">
+                    <!-- Khi khách hàng chưa đăng nhập -->
+                    <div th:if="${khachHang} == null">
+                        <a class="nav-link d-flex align-items-center" th:href="@{/login}">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </div>
+                </li>
+
+
+                <div class="d-flex align-items-center">
+                    <!-- Khi người dùng đã đăng nhập -->
+                    <div th:if="${khachHang} != null">
+                        <form th:action="@{/logout}" method="post" class="mb-0">
                             <button type="submit" class="btn btn-outline-danger d-flex align-items-center">
-                                Đăng Xuất
+                                <i class="fas fa-sign-out-alt me-2"></i> Đăng Xuất
                             </button>
                         </form>
                     </div>
-                    <div th:if="${currentPrincipalName} == anonymousUser">
-                        <button type="submit" class="btn btn-outline-primary d-flex align-items-center">
-                            <a th:href="@{/login}" class="text-decoration-none text-dark">Đăng nhập</a>
-                        </button>
+
+                    <!-- Khi người dùng chưa đăng nhập -->
+                    <div th:if="${khachHang} == null">
+                        <a th:href="@{/login}" class="btn btn-outline-primary text-decoration-none d-flex align-items-center">
+                            <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
+                        </a>
                     </div>
                 </div>
+
 
             </ul>
         </div>
@@ -766,6 +785,22 @@
             });
         }
     });
+    document.querySelector(".nav-link").addEventListener("click", function(e) {
+        if (!isLoggedIn) { // Biến kiểm tra đăng nhập
+            e.preventDefault();
+            Swal.fire({
+                title: "Bạn chưa đăng nhập",
+                text: "Vui lòng đăng nhập để tiếp tục",
+                icon: "warning",
+                confirmButtonText: "Đăng nhập ngay"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+        }
+    });
+
 </script>
 
 </body>
