@@ -3,6 +3,7 @@ package com.example.datn.controller.sale_on_controller;
 import com.example.datn.entity.*;
 import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.entity.thuoc_tinh.HinhAnh;
+import com.example.datn.repository.DiaChiRepository;
 import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
 import com.example.datn.repository.ThuocTinhRepo.HinhAnhRepo;
@@ -17,6 +18,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -43,6 +46,10 @@ public class ProductCatalog {
     private KhachHangRepo khachHangRepo;
     @Autowired
     private HinhAnhRepo hinhAnhRepo;
+
+    @Autowired
+    private DiaChiRepository diaChiRepository;
+
 
     @GetMapping("/product-catalog")
     public String productCatalog(
@@ -119,6 +126,11 @@ public class ProductCatalog {
         sanPhamGiamGia = sanPhamGiamGia.stream()
                 .filter(distinctByKey(pg -> pg.getSpct().getSanPham().getMa() != null ? pg.getSpct().getSanPham().getMa() : pg.getId()))
                 .collect(Collectors.toList());
+        KhachHang khachHang = khachHangRepo.profileKhachHang();
+        model.addAttribute("khachHang", khachHang);
+
+
+
 
         model.addAttribute("sanPhamKhongGiamGia", sanPhamKhongGiamGia);
         model.addAttribute("sanPhamGiamGia", sanPhamGiamGia);
@@ -130,6 +142,7 @@ public class ProductCatalog {
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("filter", filter);
         model.addAttribute("kieuQuats", kieuQuatRepo.findAll());
+
 
         return "/admin/website/productCatalog";
     }
@@ -191,11 +204,18 @@ public class ProductCatalog {
         }
 
         List<HoaDon> hoaDons = hoaDonService.getHoaDonByIdKH(khachHang.getId());
-        model.addAttribute("hoaDons", hoaDons);
         model.addAttribute("khachHang", khachHang);
+        List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHang.getId());  // lấy danh sách địa chỉ
+        diaChiList.sort((d1, d2) -> Boolean.compare(
+                d2.getTrangThai() != null ? d2.getTrangThai() : false,
+                d1.getTrangThai() != null ? d1.getTrangThai() : false
+        ));
+        model.addAttribute("diaChiList", diaChiList);
 
         return "admin/website/trackOrder"; // Nếu là khách hàng, trả về trang thông tin đơn hàng
     }
+
+
 
 
     @GetMapping("/hoa-don-kh/{id}")
@@ -228,4 +248,64 @@ public class ProductCatalog {
         response.put("images", imageUrls);
         return response;
     }
+    @PostMapping("/sua-khach-hang")
+    public String sua(@ModelAttribute("khachHang") KhachHang khachHang){
+        KhachHang khachHang1 = khachHangRepo.profileKhachHang();
+        LocalDate currentDate = LocalDate.now();
+        Date sqlDate = Date.valueOf(currentDate);
+        khachHang1.setNgaySua(sqlDate);
+        khachHang1.setTen(khachHang.getTen());
+        khachHang1.setSoDienThoai(khachHang.getSoDienThoai());
+        khachHang1.setMatKhau(khachHang.getMatKhau());
+        khachHang1.setNgaySinh(khachHang.getNgaySinh());
+        khachHang1.setGioiTinh(khachHang.getGioiTinh());
+        // Lưu khách hàng vào cơ sở dữ liệu
+        khachHangRepo.save(khachHang1);
+        return "redirect:/admin/track-order";
+    }
+
+    @PostMapping("/sua-khach-hang/them-dia-chi")
+    public String ThemDiaChi(@RequestParam("khachHangId") Integer khachHangId,
+                             @RequestParam("tinhThanhPho") String tinhThanhPho,
+                             @RequestParam("quanHuyen") String quanHuyen,
+                             @RequestParam("xaPhuong") String xaPhuong,
+                             @RequestParam("soNhaNgoDuong") String soNhaNgoDuong) {
+        KhachHang khachHang = khachHangRepo.findById(khachHangId).orElseThrow(() -> new IllegalArgumentException("Khách hàng không tồn tại"));
+        List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHangId);
+        for (DiaChi diaChi: diaChiList) {
+            diaChi.setTrangThai(false); // Các địa chỉ khác không phải là mặc định
+            diaChiRepository.save(diaChi); // Lưu vào database
+        }
+        DiaChi diaChi = new DiaChi();
+        diaChi.setKhachHang(khachHang);  // Gán khách hàng đã có
+        diaChi.setTinhThanhPho(tinhThanhPho);
+        diaChi.setQuanHuyen(quanHuyen);
+        diaChi.setXaPhuong(xaPhuong);
+        diaChi.setSoNhaNgoDuong(soNhaNgoDuong);
+        diaChi.setTrangThai(true);
+        diaChiRepository.save(diaChi);
+
+        return "redirect:/admin/track-order";  // Chuyển hướng về trang sửa khách hàng
+    }
+    @PostMapping("/sua-khach-hang/dia-chi-mac-dinh")
+    public String suaDiaChiMacDinh(@RequestParam("khachHangId") Integer khachHangId,
+                                   @ModelAttribute("diaChiId") Integer diaChiId){
+        List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHangId);
+        for (DiaChi diaChi: diaChiList) {
+            if (diaChi.getId().equals(diaChiId)) {
+                diaChi.setTrangThai(true); // Địa chỉ được chọn làm mặc định
+            } else {
+                diaChi.setTrangThai(false); // Các địa chỉ khác không phải là mặc định
+            }
+            diaChiRepository.save(diaChi); // Lưu vào database
+        }
+        return "redirect:/admin/track-order";
+    }
+    @GetMapping("/sua-khach-hang/xoa/{id}")
+    public String xoa(@RequestParam("khachHangId") Integer khachHangId,
+                      @PathVariable("id") Integer id){
+        diaChiRepository.deleteById(id);
+        return "redirect:/admin/track-order";
+    }
+
 }
