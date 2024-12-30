@@ -42,8 +42,6 @@ public class SanPhamController {
     CongSuatRepo congSuatRepo;
     @Autowired
     DeQuatRepo deQuatRepo;
-//    @Autowired
-//    DieuKhienTuXaRepo dieuKhienTuXaRepo;
     @Autowired
     DuongKinhCanhRepo duongKinhCanhRepo;
     @Autowired
@@ -104,11 +102,6 @@ public class SanPhamController {
     public List<CheDoGio> listCheDoGio() {
         return cheDoGioRepo.findAll();
     }
-
-//    @ModelAttribute("listDieuKhienTuXa")
-//    public List<DieuKhienTuXa> listDieuKhienTuXa() {
-//        return dieuKhienTuXaRepo.findAll();
-//    }
 
     @ModelAttribute("listDuongKinhCanh")
     public List<DuongKinhCanh> listDuongKinhCanh() {

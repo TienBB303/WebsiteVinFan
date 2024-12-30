@@ -17,10 +17,10 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
 //  nhận các giá trị khi phân trang và tìm kiếm
     @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp " +
             "WHERE (LOWER(sp.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "       OR LOWER(sp.ma) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "       OR LOWER(sp.mo_ta) LIKE LOWER(CONCAT('%', :query, '%'))) " +
-            "  AND (:trang_thai IS NULL OR spct.trang_thai = :trang_thai) " +
-            "  AND spct.gia BETWEEN :minPrice AND :maxPrice")
+            "OR LOWER(sp.ma) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(sp.mo_ta) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+            "AND (:trang_thai IS NULL OR spct.trang_thai = :trang_thai) " +
+            "AND spct.gia BETWEEN :minPrice AND :maxPrice")
     Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai, Pageable pageable);
 
     @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp " +
