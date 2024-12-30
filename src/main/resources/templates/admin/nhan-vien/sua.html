@@ -38,17 +38,7 @@
                 <div class="card-body">
                     <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
                         <div class="box-header">
-                            <div class="row">
-                                <div class="border rounded p-3 mb-4">
-                                    <div class="d-flex justify-content-between">
-                                        <!-- Nút trở về -->
-                                        <a th:href="@{/admin/nhan-vien/index}"
-                                           class="btn btn-outline-primary">
-                                            <i class="bi bi-arrow-return-left"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                         <div class="card-body">
                             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
@@ -221,7 +211,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Ngày sinh</label>
-                                                <input type="date" class="form-control" name="ngaySinh" th:field="*{ngaySinh}">
+                                                <input type="date" class="form-control" th:field="*{ngaySinh}">
                                             </div>
                                         </div>
                                     </div>
@@ -269,6 +259,9 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <input type="hidden" id="tinhThanhPho" th:value="${nhanVien.tinhThanhPho}"/>
+                                        <input type="hidden" id="quanHuyen" th:value="${nhanVien.quanHuyen}"/>
+                                        <input type="hidden" id="xaPhuong" th:value="${nhanVien.xaPhuong}"/>
 
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -284,7 +277,7 @@
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label">Quận/Huyện</label>-->
+                                                <label class="form-label">Quận/Huyện</label>
                                                 <select class="form-control" id="district" aria-label=".form-select-sm"
                                                         name="quanHuyen">
                                                     <option value="" selected>Chọn quận huyện</option>
@@ -294,9 +287,9 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="ward">Phường/Xã</label>
-                                                <select class="form-control" id="ward" name="xaPhuong"
-                                                        th:value="${nhanVien.xaPhuong}">
+                                                <label class="form-label">Phường/Xã</label>
+                                                <select class="form-control" id="ward" aria-label=".form-select-sm"
+                                                        name="xaPhuong">
                                                     <option value="" selected>Chọn phường xã</option>
                                                 </select>
                                             </div>
@@ -305,18 +298,21 @@
 
                                     <!-- Số nhà/ngõ đường -->
                                     <div class="row mb-3">
-                                            <div class="form-group">
-                                                <label>Số nhà/ngõ đường</label>
-                                                <label class="form-label">Số nhà/ngõ đường</label>
-                                                <input class="form-control" type="text"
-                                                      name="soNhaNgoDuong" th:field="*{soNhaNgoDuong}">
-                                            </div>
+                                        <div class="form-group">
+                                            <label>Số nhà/ngõ đường</label>
+                                            <label class="form-label">Số nhà/ngõ đường</label>
+                                            <input class="form-control" type="text"
+                                                   name="soNhaNgoDuong" th:field="*{soNhaNgoDuong}">
+                                        </div>
                                     </div>
 
                                     <!-- Submit button -->
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <button type="submit" class="btn btn-outline-warning">Cập nhật</button>
+                                            <button type="submit" class="btn btn-primary btn-lg">Cập nhật</button>
+
+                                            <a th:href="@{/admin/nhan-vien/index}" class="btn btn-secondary">Quay lại
+                                                danh sách</a>
                                         </div>
                                     </div>
                                 </form>

@@ -50,6 +50,7 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
         // Lấy khách hàng và thêm tên vào hoaDon
         KhachHang khachHang = getKhachHangLe(1L);
         hoaDon.setKhachHang(khachHang);
+
         hoaDon.setTenNguoiNhan(khachHang.getTen());
         HinhThucThanhToanResponse hinhThucThanhToanResponse = hoaDonService.getHinhThucThanhToan();
         hoaDon.setHinhThucThanhToan(hinhThucThanhToanResponse.getTienMat());

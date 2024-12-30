@@ -4,15 +4,18 @@ package com.example.datn.controller;
 
 
 import com.example.datn.entity.ChucVu;
+import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.NhanVien;
 import com.example.datn.repository.ChucVuRepository;
 import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.service.CloudinaryService;
+import com.example.datn.service.nhan_vien_service.NhanVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +39,9 @@ public class NhanVienController {
     private NhanVienRepository nhanVienRepository;
 
     @Autowired
+    NhanVienService nhanVienService;
+
+    @Autowired
     private ChucVuRepository chucVuRepository;
 
     @Autowired
@@ -42,30 +49,26 @@ public class NhanVienController {
 
     @GetMapping("/index")
     public String loadTable(
-            Model model,
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "trang_thai", defaultValue = "") String trangThai,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            @RequestParam(name = "trangThai", required = false) Boolean trangThai,
-            @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-
+            Model model){
         if (page < 0) {
             page = 0;
         }
-
+        Boolean trang_thai = null;
+        if ("1".equals(trangThai.trim())) {
+            trang_thai = true;
+        } else if ("0".equals(trangThai.trim())) {
+            trang_thai = false;
+        }
         PageRequest pageable = PageRequest.of(page, size);
-        Page<NhanVien> nhanVienPage = nhanVienRepository.searchNhanVien(keyword, trangThai, startDate, endDate, pageable);
-
-        model.addAttribute("listsNhanVien", nhanVienPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", nhanVienPage.getTotalPages());
+        Page<NhanVien> nhanVienPage = nhanVienService.search(keyword.trim(), trang_thai, pageable);
+        model.addAttribute("listsNhanVien", nhanVienPage);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("trangThai", trangThai);
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-
-        return "/admin/nhan-vien/index"; // Đường dẫn đến trang index của nhân viên
+        model.addAttribute("trang_thai", trang_thai);
+        return "admin/nhan-vien/index";
     }
 
     @GetMapping("/from-them")
@@ -78,12 +81,11 @@ public class NhanVienController {
     }
 
     @PostMapping("/add")
-    public String addNhanVien(@ModelAttribute NhanVien nhanVien, @RequestParam("file") MultipartFile file) {
+    public String addNhanVien(@ModelAttribute NhanVien nhanVien, @RequestParam("file") MultipartFile file,Model model) {
         try {
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("Chưa có tệp hình ảnh được chọn.");
             }
-
             Map uploadResult = cloudinaryService.upload(file);
             String imageUrl = (String) uploadResult.get("url");
             nhanVien.setHinhAnh(imageUrl);
@@ -102,6 +104,20 @@ public class NhanVienController {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return "redirect:/admin/nhan-vien/add?error=" + e.getMessage();
+        }
+    }
+    @RestController
+    @RequestMapping("/api")
+    public class NhanVienAPIController {
+
+        @Autowired
+        private NhanVienRepository nhanVienRepository;
+
+        @PostMapping("/check-email")
+        public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestBody Map<String, String> request) {
+            String email = request.get("email");
+            boolean exists = nhanVienRepository.findByEmail(email) != null;
+            return ResponseEntity.ok(Collections.singletonMap("exists", exists));
         }
     }
 

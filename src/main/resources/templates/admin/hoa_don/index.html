@@ -51,34 +51,36 @@
                             <div class="dataTable-top">
                                 <form method="get" action="/hoa-don/index">
                                     <div class="row">
-                                        <div class="col-12 col-lg-2">
+                                        <div class="col-4">
                                             <input type="text" id="searchInput" class="form-control" name="query"
                                                    placeholder="Tìm kiếm hóa đơn...." th:value="${query}">
                                         </div>
-                                        <div class="col-12 col-lg-2">
+                                        <div class="col-2">
                                             <input type="date" class="form-control" id="startDate" name="startDate"
                                                    placeholder="Từ ngày" th:value="${startDate}">
                                         </div>
-                                        <div class="col-12 col-lg-2">
+                                        <div class="col-2">
                                             <input type="date" class="form-control" id="endDate" name="endDate"
                                                    placeholder="Đến ngày" th:value="${endDate}">
                                         </div>
-                                        <div class="col-12 col-lg-2">
+                                        <div class="col-2">
                                             <select class="form-select" id="method" name="method">
                                                 <option value="all" th:selected="${method == 'all'}">Tất cả</option>
                                                 <option value="1" th:selected="${method == true}">Tại quầy</option>
                                                 <option value="0" th:selected="${method == false}">Online</option>
                                             </select>
                                         </div>
-                                        <div class="col-12 col-lg-2">
-                                            <button class="btn btn-outline-primary" type="submit" style="width: 100px; margin-right: 10px">
-                                                <i class="bi bi-search"></i>
-                                            </button>
-                                        </div>
-                                        <div class="col-12 col-lg-2">
-                                            <a class="btn btn-outline-warning" href="/hoa-don/index" style="width: 60px">
-                                                <i class="bi bi-arrow-counterclockwise"></i>
-                                            </a>
+                                        <div class="col-2 d-flex">
+                                            <div>
+                                                <button class="btn btn-outline-primary" type="submit" style="width: 70px; margin-right: 10px">
+                                                    <i class="bi bi-search"></i>
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <a class="btn btn-outline-warning" href="/admin/khach-hang/index" style="width: 70px">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -131,38 +133,31 @@
                                 <table class="table table-striped dataTable-table" id="table1">
                                     <thead>
                                     <tr>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">STT</a>
                                         </th>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Mã hóa đơn</a>
                                         </th>
-
-<!--                                        <th data-sortable="">-->
-<!--                                            <a href="#" class="dataTable-sorter">Mã nhân viên</a>-->
-<!--                                        </th>-->
-<!--                                        <th data-sortable="">-->
-<!--                                            <a href="#" class="dataTable-sorter">Mã khách hàng</a>-->
-<!--                                        </th>-->
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 15%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Tên khách hàng</a>
                                         </th>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">SDT khách hàng</a>
                                         </th>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Loại hóa đơn</a>
                                         </th>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Ngày tạo</a>
                                         </th>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 15%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Tổng tiền</a>
                                         </th>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Trạng thái</a>
                                         </th>
-                                        <th data-sortable="">
+                                        <th data-sortable="" style="width: 15%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Hành động</a>
                                         </th>
                                     </tr>
@@ -213,42 +208,51 @@
 
                             <div class="dataTable-bottom">
                                 <nav aria-label="Page navigation" class="d-flex justify-content-center">
-                                    <ul class="pagination justify-content-end">
-                                        <!-- Previous Page Link -->
-                                        <!-- Previous Page Link -->
+                                    <ul class="pagination justify-content-center">
+                                        <!-- Nút Trang đầu -->
+                                        <li class="page-item" th:classappend="${list.first ? 'disabled' : ''}">
+                                            <a class="page-link"
+                                               th:href="@{'/hoa-don/index?page=0&size=' + ${list.size} + '&query=' + ${query} + '&trangThai=' + ${status} + '&method=' + ${method} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate}}"
+                                               aria-label="Trang đầu">
+                                                <span aria-hidden="true">««</span>
+                                            </a>
+                                        </li>
+                                        <!-- Nút Trang trước -->
                                         <li class="page-item" th:classappend="${list.first ? 'disabled' : ''}">
                                             <a class="page-link"
                                                th:if="${!list.first}"
                                                th:href="@{'/hoa-don/index?page=' + (${list.number - 1}) + '&size=' + ${list.size} + '&query=' + ${query} + '&trangThai=' + ${status} + '&method=' + ${method} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate}}"
-                                               aria-label="Previous">
+                                               aria-label="Trang trước">
                                                 <span aria-hidden="true">&laquo;</span>
-                                                <span class="sr-only">Previous</span>
                                             </a>
                                         </li>
-
-
-                                        <!-- Page Number Links -->
-                                        <li class="page-item" th:each="i : ${#numbers.sequence(0, list.totalPages - 1)}"
+                                        <!-- Số trang -->
+                                        <li class="page-item"
+                                            th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, list.number - 2), T(java.lang.Math).min(list.totalPages - 1, list.number + 2))}"
                                             th:classappend="${i == list.number ? 'active' : ''}">
                                             <a class="page-link"
                                                th:href="@{'/hoa-don/index?page=' + ${i} + '&size=' + ${list.size} + '&query=' + ${query} + '&trangThai=' + ${status} + '&method=' + ${method} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate}}"
                                                th:text="${i + 1}"></a>
                                         </li>
-
-                                        <!-- Next Page Link -->
+                                        <!-- Nút Trang sau -->
                                         <li class="page-item" th:classappend="${list.last ? 'disabled' : ''}">
                                             <a class="page-link"
                                                th:href="@{'/hoa-don/index?page=' + (${list.number + 1}) + '&size=' + ${list.size} + '&query=' + ${query} + '&trangThai=' + ${status} + '&method=' + ${method} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate}}"
-                                               aria-label="Next" th:if="${!list.last}">
+                                               aria-label="Trang sau" th:if="${!list.last}">
                                                 <span aria-hidden="true">&raquo;</span>
-                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </li>
+                                        <!-- Nút Trang cuối -->
+                                        <li class="page-item" th:classappend="${list.last ? 'disabled' : ''}">
+                                            <a class="page-link"
+                                               th:href="@{'/hoa-don/index?page=' + (${list.totalPages - 1}) + '&size=' + ${list.size} + '&query=' + ${query} + '&trangThai=' + ${status} + '&method=' + ${method} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate}}"
+                                               aria-label="Trang cuối">
+                                                <span aria-hidden="true">»»</span>
                                             </a>
                                         </li>
                                     </ul>
                                 </nav>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -265,9 +269,6 @@
 <!-- Script -->
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
-<!--    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>-->
-<!--    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>-->
     <script>
         document.querySelectorAll('.giaVND').forEach(element => {
             const originalValue = parseFloat(element.innerText);

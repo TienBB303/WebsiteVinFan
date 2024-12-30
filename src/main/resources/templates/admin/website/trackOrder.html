@@ -9,17 +9,26 @@
         body {
             background-color: #f5f5f5; /* Màu xám nhạt */
         }
+         .error-message {
+             font-size: 0.875em;
+             color: red;
+             margin-top: 5px;
+         }
     </style>
+    <link rel="stylesheet" th:href="@{'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'}">
+
 </head>
 <body class="bg-gray-100 font-sans antialiased">
 
 <div class="container mx-auto p-6">
     <!-- Thanh điều hướng -->
     <div class="flex justify-center space-x-6 mb-6">
-        <button onclick="showForm('accountInfo')" class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
+        <button onclick="showForm('accountInfo')"
+                class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
             Thông tin tài khoản
         </button>
-        <button onclick="showForm('orders')" class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
+        <button onclick="showForm('orders')"
+                class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
             Đơn mua
         </button>
     </div>
@@ -27,24 +36,160 @@
     <!-- Nội dung -->
     <div id="accountInfo" class="bg-white shadow rounded p-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Thông tin tài khoản</h3>
-        <form>
-            <div class="mb-4 flex items-center">
-                <label for="ten" class="w-1/3 text-gray-600 font-medium">Tên:</label>
-                <span id="ten" name="ten" class="w-2/3 text-gray-900" th:text="${khachHang.ten}"></span>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div  class="row">
+
+                        <div class="col-md-12">
+                            <!--                                            cho pham sua kh-->
+                            <form th:action="@{/admin/sua-khach-hang}" th:object="${khachHang}" method="post">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary">Sửa</button>
+                                    </div>
+
+                                </div>
+                                <br>
+                                <br>
+                                <input type="hidden" th:field="*{id}"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label for="ten" class="form-label">Tên</label>
+                                                <input type="text" class="form-control" name="ten" id="ten" th:field="*{ten}"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="form-label">Số Điện thoại</label>
+                                                <input type="text" class="form-control" name="soDienThoai" th:field="*{soDienThoai}"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="form-label">mật khẩu</label>
+                                                <input type="text" class="form-control" name="matKhau" id="matKhau"
+                                                       th:field="*{matKhau}"/>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Ngày sinh</label>
+                                                <input type="date" class="form-control" name="ngaySinh" id="ngaySinh"
+                                                       th:field="*{ngaySinh}"/>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Giới tính</label>
+                                                <div>
+                                                    <input class="form-check-input" type="radio" name="gioiTinh"
+                                                           id="gridRadios1"
+                                                           value="Nam" checked>
+                                                    <label class="form-check-label" for="gridRadios1">Nam</label>
+                                                    <input class="form-check-input" type="radio" name="gioiTinh"
+                                                           id="gridRadios2"
+                                                           value="Nữ">
+                                                    <label class="form-check-label" for="gridRadios2">Nữ</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div  class="row">
+                        <div class="col-md-12">
+                            <button  onclick="disPlayBlook()">Thêm địa chỉ</button>
+                            <br>
+                            <div id="magic" style=" display: none;border: #008FFB solid 2px; border-radius: 20px;padding: 5px 10px 5px 10px">
+                                <form th:action="@{/admin/sua-khach-hang/them-dia-chi}" method="post">
+                                    <!-- Truyền ID của khách hàng -->
+                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tỉnh/Thành phố</label>
+                                            <select class="form-control" id="city2" name="tinhThanhPho">
+                                                <option value="" selected>Chọn tỉnh thành</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Quận/Huyện</label>
+                                            <select class="form-control" id="district2" name="quanHuyen">
+                                                <option value="" selected>Chọn quận huyện</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Phường/Xã</label>
+                                            <select class="form-control" id="ward2" name="xaPhuong">
+                                                <option value="" selected>Chọn phường xã</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Số nhà/ngõ đường</label>
+                                            <input type="text" class="form-control" name="soNhaNgoDuong">
+                                        </div>
+                                    </div>
+                                    <button type="submit" onclick="disPlayBlook()" class="btn btn-outline-warning" style="width: 70px" >
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <br>
+
+                            <div id="danhSachDiaChi" th:each="diaChi, stat : ${diaChiList}">
+                                <form th:action="@{/admin/sua-khach-hang/dia-chi-mac-dinh}"
+                                      method="post">
+                                    <div style="padding: 5px 10px 5px 10px">
+                                        <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
+                                        <input type="hidden" name="diaChiId" th:value="${diaChi.id}"/>
+                                        <input type="hidden" th:id="'tinhThanhPho' + ${stat.index}" th:value="${diaChi.tinhThanhPho}" />
+                                        <input type="hidden"th:id="'quanHuyen' + ${stat.index}" th:value="${diaChi.quanHuyen}" />
+                                        <input type="hidden" th:id="'xaPhuong' + ${stat.index}" th:value="${diaChi.xaPhuong}" />
+
+
+                                        <h6 th:id="'city' + ${stat.index}">Tỉnh: </h6>
+                                        <h6 th:id="'district' + ${stat.index}">Quận / Huyện: </h6>
+                                        <h6 th:id="'ward' + ${stat.index}">Xã / Phường: </h6>
+                                        <h6 th:text="${diaChi.soNhaNgoDuong}">chi tiết địa chỉ</h6>
+
+                                        <!--                                                        <button-->
+                                        <!--                                                                th:id="'radio'+ ${diaChi.id}"-->
+                                        <!--                                                                name="checkDiaChiMacDinh"-->
+                                        <!--                                                                type="submit"-->
+                                        <!--                                                                th:value="${diaChi.id}"-->
+                                        <!--                                                        >mac dinh</button>-->
+                                        <input type="radio" th:id="'radio' + ${diaChi.id} "
+                                               name="checkDiaChiMacDinh"
+                                               th:value="${diaChi.id}" th:checked="${diaChi.trangThai == true}"  onchange="this.form.submit()" />
+                                    </div>
+                                </form>
+                                <a class="btn btn-secondary"
+                                   th:href="@{/admin/sua-khach-hang/xoa/{id}(id=${diaChi.id}, khachHangId=${khachHang.id})}">
+                                    Xóa
+                                </a>
+                                <hr>
+                                <br>
+                                <br>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="mb-4 flex items-center">
-                <label for="gioiTinh" class="w-1/3 text-gray-600 font-medium">Giới Tính:</label>
-                <span id="gioiTinh" name="gioiTinh" class="w-2/3 text-gray-900" th:text="${khachHang.gioiTinh}"></span>
-            </div>
-            <div class="mb-4 flex items-center">
-                <label for="soDienThoai" class="w-1/3 text-gray-600 font-medium">Số Điện Thoại:</label>
-                <span id="soDienThoai" name="soDienThoai" class="w-2/3 text-gray-900" th:text="${khachHang.soDienThoai}"></span>
-            </div>
-            <div class="mb-4 flex items-center">
-                <label for="email" class="w-1/3 text-gray-600 font-medium">Email:</label>
-                <span id="email" name="email" class="w-2/3 text-gray-900" th:text="${khachHang.email}"></span>
-            </div>
-        </form>
+        </div>
     </div>
 
     <div id="orders" class="bg-white shadow rounded p-6 hidden">
@@ -69,15 +214,17 @@
                 <tr th:each="hoaDon : ${hoaDons}" class="text-gray-800 hover:bg-gray-50">
                     <td class="px-4 py-2 border text-center" th:text="${hoaDon.ma}"></td>
                     <td class="px-4 py-2 border text-center" th:text="${hoaDon.ngayTao}"></td>
-                    <td class="px-4 py-2 border text-center" th:text="${hoaDon.tongTien}"></td>
+                    <td class="px-4 py-2 border text-center giaVND" th:text="${hoaDon.tongTien}"></td>
                     <td class="px-4 py-2 border text-center">
-                        <a th:href="@{/admin/hoa-don-kh/{id}(id=${hoaDon.id})}" class="text-blue-500 hover:underline">Xem chi tiết</a>
+                        <a th:href="@{/admin/hoa-don-kh/{id}(id=${hoaDon.id})}" class="text-blue-500 hover:underline">Xem
+                            chi tiết</a>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
 </div>
 
 <script>
@@ -85,6 +232,294 @@
         document.querySelectorAll('.bg-white').forEach(form => form.classList.add('hidden'));
         document.getElementById(formId).classList.remove('hidden');
     }
+</script>
+<script>
+    document.querySelectorAll('.giaVND').forEach(element => {
+        const originalValue = parseFloat(element.innerText);
+        element.innerText = originalValue.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+        });
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:replace="/admin/fragments/script :: script"></script>
+<script th:inline="javascript">
+    // Lấy danh sách địa chỉ từ Thymeleaf (chuyển từ dạng Thymeleaf sang JSON)
+
+    var listDiaChi = /*[[${diaChiList}]]*/ [];
+
+    // Duyệt qua danh sách địa chỉ
+    // listDiaChi.forEach(function(diaChi) {
+    //     console.log("Tỉnh/Thành phố: " + diaChi.tinhThanhPho);
+    //     console.log("Quận/Huyện: " + diaChi.quanHuyen);
+    //     console.log("Xã/Phường: " + diaChi.xaPhuong);
+    // });
+    // Thực hiện vòng lặp qua danh sách địa chỉ
+    listDiaChi.forEach(function (diaChi, index) {
+        // Lấy giá trị từ các trường input dựa theo chỉ số
+        var idTinh = document.getElementById('tinhThanhPho' + index).value;
+        var idHuyen = document.getElementById('quanHuyen' + index).value;
+        var idXa = document.getElementById('xaPhuong' + index).value;
+
+        // Phần tử hiển thị kết quả
+        var citis = document.getElementById('city' + index);
+        var districts = document.getElementById('district' + index);
+        var wards = document.getElementById('ward' + index);
+
+        // Cấu hình Axios để lấy dữ liệu từ GitHub
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        // Gọi API để lấy dữ liệu địa giới hành chính
+        axios(Parameter).then(function (result) {
+            renderCity(result.data, idTinh, idHuyen, idXa, citis, districts, wards);
+        });
+
+        // Hàm xử lý dữ liệu địa giới hành chính
+        function renderCity(data, idTinh, idHuyen, idXa, citis, districts, wards) {
+            var selectedCity = data.find(city => city.Id == idTinh);
+            if (selectedCity) {
+                citis.textContent = "Tỉnh: " + selectedCity.Name;
+
+                var selectedDistrict = selectedCity.Districts.find(district => district.Id == idHuyen);
+                if (selectedDistrict) {
+                    districts.textContent = "Quận / Huyện: " + selectedDistrict.Name;
+
+                    var selectedWard = selectedDistrict.Wards.find(ward => ward.Id == idXa);
+                    if (selectedWard) {
+                        wards.textContent = "Xã / Phường: " + selectedWard.Name;
+                    } else {
+                        wards.textContent = "Xã / Phường: Không tìm thấy";
+                    }
+                } else {
+                    districts.textContent = "Quận / Huyện: Không tìm thấy";
+                    wards.textContent = "Xã / Phường: Không tìm thấy";
+                }
+            } else {
+                citis.textContent = "Tỉnh: Không tìm thấy";
+                districts.textContent = "Quận / Huyện: Không tìm thấy";
+                wards.textContent = "Xã / Phường: Không tìm thấy";
+            }
+        }
+    });
+    var cities2 = document.getElementById("city2");
+    var districts2 = document.getElementById("district2");
+    var wards2 = document.getElementById("ward2");
+
+    var parameter = {
+        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+        method: "GET",
+        responseType: "json",
+    };
+
+    axios(parameter).then(function (result) {
+        renderCity2(result.data);
+    });
+
+    function renderCity2(data) {
+        for (const city of data) {
+            cities2.options[cities2.options.length] = new Option(city.Name, city.Id);
+        }
+        cities2.onchange = function () {
+            districts2.length = 1;
+            wards2.length = 1;
+            if (this.value !== "") {
+                const result = data.find(n => n.Id === this.value);
+                if (result) {
+                    for (const district of result.Districts) {
+                        districts2.options[districts2.options.length] = new Option(district.Name, district.Id);
+                    }
+                }
+            }
+        };
+
+        districts2.onchange = function () {
+            wards2.length = 1;
+            const selectedCity = data.find(n => n.Id === cities2.value);
+            if (this.value !== "") {
+                const result = selectedCity.Districts.find(n => n.Id === this.value);
+                if (result) {
+                    for (const ward of result.Wards) {
+                        wards2.options[wards2.options.length] = new Option(ward.Name, ward.Id);
+                    }
+                }
+            }
+        };
+    }
+
+
+    function disPlayBlook(){
+        var p = document.getElementById("magic");
+        if(p.style.display == "block"){
+            p.style.display = "none"
+        }else{
+            p.style.display = "block"
+        }
+    }
+    function diachiMacDinh(){
+        var nameButton = document.getElementsByName("checkDiaChiMacDinh")
+        // var buttonMacDinh = document.getElementsByName("checkDiaChiMacDinh")
+        for(var i =0 ; i < nameButton.length; i++ ){
+            if(nameButton.values() == null){
+                console.log("khong co dc mac dinh")
+            }else if(nameButton.values() == true){
+                buttonMacDinh[i].parentElement.style.color = "red"
+            }else{
+                buttons[i].parentElement.style.color = "blue";
+            }
+        }
+    }
+    // window.onload = diachiMacDinh
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', function (event) {
+            let isValid = true;
+
+            // Lấy các trường cần validate
+            const ten = form.ten.value.trim();
+            const soDienThoai = form.soDienThoai.value.trim();
+            const ngaySinh = form.ngaySinh.value.trim();
+
+
+            // Xóa các thông báo lỗi trước đó
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => msg.remove());
+
+            // Hàm hiển thị lỗi
+            function showError(input, message) {
+                const error = document.createElement('div');
+                error.className = 'error-message text-danger';
+                error.innerText = message;
+                input.parentElement.appendChild(error);
+                isValid = false;
+            }
+
+            // Validate tên
+            if (!ten) {
+                showError(form.ten, 'Tên không được để trống.');
+            }
+
+
+
+            if (!matKhau) {
+                showError(form.matKhau, 'Mật khẩu không được để trống.');
+            } else if (matKhau.length < 6) {
+                showError(form.matKhau, 'Mật khẩu phải có ít nhất 6 ký tự.');
+            }
+
+
+            const phoneRegex = /^[0-9]{10,11}$/;
+            if (!soDienThoai) {
+                showError(form.soDienThoai, 'Số điện thoại không được để trống.');
+            } else if (!phoneRegex.test(soDienThoai)) {
+                showError(form.soDienThoai, 'Số điện thoại không hợp lệ.');
+            }
+
+            // Validate ngày sinh
+            if (!ngaySinh) {
+                showError(form.ngaySinh, 'Ngày sinh không được để trống.');
+            } else {
+                const birthDate = new Date(ngaySinh);
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const month = today.getMonth() - birthDate.getMonth();
+
+                if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+                    age--; // Nếu sinh nhật chưa tới trong năm nay, giảm tuổi đi 1
+                }
+
+                if (age < 18) {
+                    showError(form.ngaySinh, 'Bạn phải lớn hơn 18 tuổi.');
+                }
+            }
+
+
+            if (!tinhThanhPho) {
+                showError(form.tinhThanhPho, 'Vui lòng chọn Tỉnh/Thành phố.');
+            }
+            if (!quanHuyen) {
+                showError(form.quanHuyen, 'Vui lòng chọn Quận/Huyện.');
+            }
+            if (!xaPhuong) {
+                showError(form.xaPhuong, 'Vui lòng chọn Phường/Xã.');
+            }
+            if (!soNhaNgoDuong) {
+                showError(form.soNhaNgoDuong, 'Vui lòng chọn số nhà ngõ đường.');
+            }
+
+            // Nếu form không hợp lệ, ngăn không cho gửi
+            if (!isValid) {
+                event.preventDefault(); // Ngăn chặn gửi form
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng kiểm tra lại thông tin nhập vào.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form[action="/admin/khach-hang/them-dia-chi"]');
+
+        form.addEventListener('submit', function (event) {
+            let isValid = true;
+
+            // Lấy các trường cần validate
+            const tinhThanhPho = form.tinhThanhPho.value.trim();
+            const quanHuyen = form.quanHuyen.value.trim();
+            const xaPhuong = form.xaPhuong.value.trim();
+            const soNhaNgoDuong = form.soNhaNgoDuong.value.trim();
+
+            // Xóa các thông báo lỗi trước đó
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => msg.remove());
+
+            // Hàm hiển thị lỗi
+            function showError(input, message) {
+                const error = document.createElement('div');
+                error.className = 'error-message text-danger';
+                error.innerText = message;
+                input.parentElement.appendChild(error);
+                isValid = false;
+            }
+
+            // Validate địa chỉ
+            if (!tinhThanhPho) {
+                showError(form.tinhThanhPho, 'Vui lòng chọn Tỉnh/Thành phố.');
+            }
+            if (!quanHuyen) {
+                showError(form.quanHuyen, 'Vui lòng chọn Quận/Huyện.');
+            }
+            if (!xaPhuong) {
+                showError(form.xaPhuong, 'Vui lòng chọn Phường/Xã.');
+            }
+            if (!soNhaNgoDuong) {
+                showError(form.soNhaNgoDuong, 'Vui lòng nhập số nhà/ngõ đường.');
+            }
+
+            // Nếu form không hợp lệ
+            if (!isValid) {
+                event.preventDefault(); // Ngăn chặn gửi form
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng kiểm tra lại thông tin nhập vào.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
 </script>
 </body>
 </html>

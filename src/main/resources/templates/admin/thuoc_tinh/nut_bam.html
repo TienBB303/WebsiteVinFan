@@ -119,7 +119,7 @@
                                     th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listTT.number - 2), T(java.lang.Math).min(listTT.totalPages - 1, listTT.number + 2))}"
                                     th:classappend="${i == listTT.number ? 'active' : ''}">
                                     <a class="page-link"
-                                       th:href="@{'/admin/thuoc-tinh/nut-bam/view?page=' + ${i} + '&ten_nut_bam=' + ${ten_nut_bam} + '&trang_thai=' + ${trang_thai}}"
+                                       th:href="@{'/admin/thuoc-tinh/nut-bam/view?page=' + ${i >= 0 ? i : 0} +  '&ten_nut_bam=' + ${ten_nut_bam} + '&trang_thai=' + ${trang_thai}}"
                                        th:text="${i + 1}"></a>
                                 </li>
                                 <!-- trang sau -->

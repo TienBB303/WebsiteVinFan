@@ -29,7 +29,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((requests) -> requests
                                 .requestMatchers("/", "/login", "/logout", "/forgot-password", "/reset-password", "/error", "/admin/product-catalog", "/register").permitAll()
-//                        .requestMatchers("/admin/product-catalog").hasAnyAuthority("ROLE_KHACHHANG")
+                        .requestMatchers("/admin/sua-khach-hang/**").hasAnyAuthority("ROLE_KHACHHANG")
                                 .requestMatchers("/thong-ke/index", "/admin/nhan-vien/**").hasAnyAuthority("Quản lý")
                                 .requestMatchers("/admin/khach-hang/**", "/trang-ca-nhan/index", "/ban-hang-tai-quay/ban-hang", "/hoa-don/**", "/admin/phieu-giam/**").hasAnyAuthority("Nhân viên bán hàng", "Quản lý")
                                 .requestMatchers(HttpMethod.POST, "/ban-hang-tai-quay/**","/admin/san-pham/**", "/cart/**").permitAll()  // Cho phép POST

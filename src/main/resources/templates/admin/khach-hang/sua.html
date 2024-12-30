@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+
     <style>
         .error-message {
             font-size: 0.875em;
@@ -34,12 +35,13 @@
                 <div class="row">
                     <div class="col-12 col-md-6 order-md-1 order-last">
                         <h3>Sửa Khách Hàng</h3>
+                        <p class="text-subtitle text-muted">các sản phẩm quạt</p>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a>Sửa khách hàng</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">sửa khách hàng</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -49,275 +51,155 @@
 
         <div class="page-content">
             <section class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <a class="btn btn-outline-primary" href="/admin/khach-hang/index" style="width: 70px">
+                        <i class="bi bi-arrow-return-left"></i>
+                    </a>
+                </div>
                 <div class="card-body">
-                    <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
-                        <div class="box-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form th:action="@{/admin/khach-hang/update}" th:object="${khachHang}" method="post">
+                                <input type="hidden" th:field="*{id}"/>
+                                <div class="form-section">
+                                    <div class="mb-3">
+                                        <label for="ma" class="form-label">Mã</label>
+                                        <input type="text" class="form-control" name="ma" id="ma" th:field="*{ma}"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="ten" class="form-label">Tên</label>
+                                        <input type="text" class="form-control" name="ten" id="ten" th:field="*{ten}"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="soDienThoai" class="form-label">Số Điện Thoại</label>
+                                        <input id="soDienThoai" type="text" class="form-control" name="soDienThoai" th:field="*{soDienThoai}"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="text" class="form-control" name="email" id="email" th:field="*{email}"/>
+                                    </div>
+
+                                    <input type="hidden" class="form-control" name="matKhau" id="matKhau" th:field="*{matKhau}"/>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="ngayTao" class="form-label">Ngày Tạo</label>
+                                            <input type="date" class="form-control" name="ngayTao" id="ngayTao" th:field="*{ngayTao}" disabled/>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="nguoiTao" class="form-label">Người Tạo</label>
+                                            <input type="text" class="form-control" name="nguoiTao" id="nguoiTao" th:field="*{nguoiTao}" disabled/>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Ngày sinh</label>
+                                            <input type="date" class="form-control" name="ngaySinh" id="ngaySinh" th:field="*{ngaySinh}"/>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Giới tính</label>
+                                            <div>
+                                                <input class="form-check-input" type="radio" name="gioiTinh"
+                                                       id="gridRadios1"
+                                                       value="Nam" checked>
+                                                <label class="form-check-label" for="gridRadios1">Nam</label>
+                                                <input class="form-check-input" type="radio" name="gioiTinh"
+                                                       id="gridRadios2"
+                                                       value="Nữ">
+                                                <label class="form-check-label" for="gridRadios2">Nữ</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Trạng thái</label>
+                                            <select class="form-control" name="trangThai" id="trangThai" th:field="*{trangThai}">
+                                                <option value="0" th:selected="*{trangThai == 0}">Ngừng Hoạt Động</option>
+                                                <option value="1" th:selected="*{trangThai == 1}">Đang Hoạt Động</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <button type="submit" class="btn btn-outline-primary">Sửa</button>
+                                    </div>
+                            </form>
                         </div>
-                        <div class="box-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="row">
+                    </div>
 
-                                        <div class="col-md-12">
-                                            <!--                                            cho pham sua kh-->
-                                            <form th:action="@{/admin/khach-hang/update}" th:object="${khachHang}"
-                                                  method="post">
-                                                <div class="row">
-                                                    <div class="border rounded p-3 mb-4">
-                                                        <div class="d-flex justify-content-between">
-                                                            <!-- Nút trở về -->
-                                                            <a th:href="@{/admin/khach-hang/index}"
-                                                               class="btn btn-outline-primary">
-                                                                <i class="bi bi-arrow-return-left"></i>
-                                                            </a>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <button class="btn btn-outline-info" onclick="disPlayBlook()" style="text-align: center;">Thêm địa chỉ</button>
+                            <div id="magic" style="display: none; border: #008FFB solid 2px; border-radius: 20px; padding: 10px;">
+                                <form th:action="@{/admin/khach-hang/them-dia-chi}" method="post">
+                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
 
-                                                            <!-- Nút sửa -->
-                                                            <button type="submit" class="btn btn-outline-warning">Sửa
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <input type="hidden" th:field="*{id}"/>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <label for="ma" class="form-label">Mã</label>
-                                                                <input type="text" class="form-control" name="ma"
-                                                                       id="ma" th:field="*{ma}"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <label for="ten" class="form-label">Tên</label>
-                                                                <input type="text" class="form-control" name="ten"
-                                                                       id="ten" th:field="*{ten}"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">Số Điện thoại</label>
-                                                                <input type="text" class="form-control"
-                                                                       name="soDienThoai" th:field="*{soDienThoai}"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label for="email" class="form-label">Email</label>
-                                                                    <input type="text" class="form-control" name="email"
-                                                                           id="email"
-                                                                           th:field="*{email}"/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <input type="hidden" class="form-control" name="matKhau"
-                                                                       id="matKhau"
-                                                                       th:field="*{matKhau}"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <label for="ngayTao" class="form-label">Ngày Tạo</label>
-                                                                <input type="date" class="form-control" name="ngayTao"
-                                                                       id="ngayTao"
-                                                                       th:field="*{ngayTao}"
-                                                                       disabled/>
-                                                            </div>
-                                                        </div>
-                                                        <hr>
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <label class="form-label">Ngày sinh</label>
-                                                                <input type="date" class="form-control" name="ngaySinh"
-                                                                       id="ngaySinh"
-                                                                       th:field="*{ngaySinh}"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label class="form-label">Giới tính</label>
-                                                                <div>
-                                                                    <input class="form-check-input" type="radio"
-                                                                           name="gioiTinh"
-                                                                           id="gridRadios1"
-                                                                           value="Nam" checked>
-                                                                    <label class="form-check-label" for="gridRadios1">Nam</label>
-                                                                    <input class="form-check-input" type="radio"
-                                                                           name="gioiTinh"
-                                                                           id="gridRadios2"
-                                                                           value="Nữ">
-                                                                    <label class="form-check-label"
-                                                                           for="gridRadios2">Nữ</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label class="form-label">Trạng thái</label>
-                                                                <select class="form-control" name="trangThai"
-                                                                        id="trangThai" th:field="*{trangThai}">
-                                                                    <option value="0" th:selected="*{trangThai == 0}">
-                                                                        Ngừng Hoạt
-                                                                        Động
-                                                                    </option>
-                                                                    <option value="1" th:selected="*{trangThai == 1}">
-                                                                        Đang Hoạt Động
-                                                                    </option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </form>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tỉnh/Thành phố</label>
+                                            <select class="form-control" id="city2" name="tinhThanhPho">
+                                                <option value="" selected>Chọn tỉnh thành</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Quận/Huyện</label>
+                                            <select class="form-control" id="district2" name="quanHuyen">
+                                                <option value="" selected>Chọn quận huyện</option>
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button onclick="disPlayBlook()" type="submit"
-                                                    class="btn btn-outline-success">Thêm địa chỉ
-                                            </button>
-                                            <br>
-                                            <div id="magic"
-                                                 style=" display: none;border: #008FFB solid 2px; border-radius: 20px;padding: 5px 10px 5px 10px">
-                                                <form th:action="@{/admin/khach-hang/them-dia-chi}" method="post">
-                                                    <!-- Truyền ID của khách hàng -->
-                                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
 
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Tỉnh/Thành phố</label>
-                                                            <select class="form-control" id="city2" name="tinhThanhPho">
-                                                                <option value="" selected>Chọn tỉnh thành</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Quận/Huyện</label>
-                                                            <select class="form-control" id="district2"
-                                                                    name="quanHuyen">
-                                                                <option value="" selected>Chọn quận huyện</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Phường/Xã</label>
-                                                            <select class="form-control" id="ward2" name="xaPhuong">
-                                                                <option value="" selected>Chọn phường xã</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Số nhà/ngõ đường</label>
-                                                            <input type="text" class="form-control"
-                                                                   name="soNhaNgoDuong">
-                                                        </div>
-                                                    </div>
-                                                    <br>
-                                                    <button onclick="disPlayBlook()" type="submit"
-                                                            class="btn btn-outline-success">Chọn
-                                                    </button>
-                                                </form>
-                                            </div>
-                                            <div id="formSuaDiaChi"
-                                                 style=" display: none;border: #008FFB solid 2px; border-radius: 20px;padding: 5px 10px 5px 10px">
-                                                <form th:action="@{/admin/khach-hang/them-dia-chi}" method="post">
-                                                    <!-- Truyền ID của khách hàng -->
-                                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
-
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Tỉnh/Thành phố</label>
-                                                            <select class="form-control" id="city2" name="tinhThanhPho">
-                                                                <option value="" selected>Chọn tỉnh thành</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Quận/Huyện</label>
-                                                            <select class="form-control" id="district2"
-                                                                    name="quanHuyen">
-                                                                <option value="" selected>Chọn quận huyện</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Phường/Xã</label>
-                                                            <select class="form-control" id="ward2" name="xaPhuong">
-                                                                <option value="" selected>Chọn phường xã</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label">Số nhà/ngõ đường</label>
-                                                            <input type="text" class="form-control"
-                                                                   name="soNhaNgoDuong">
-                                                        </div>
-                                                    </div>
-                                                    <br>
-                                                    <button type="submit" onclick="disPlayBlook()"
-                                                            class="btn btn-outline-success">Thêm địa chỉ
-                                                    </button>
-
-                                                </form>
-                                            </div>
-                                            <br>
-
-                                            <div id="danhSachDiaChi" th:each="diaChi, stat : ${diaChiList}">
-                                                <form th:action="@{/admin/khach-hang/dia-chi-mac-dinh}"
-                                                      method="post">
-                                                    <div style="padding: 5px 10px 5px 10px">
-                                                        <input type="hidden" name="khachHangId"
-                                                               th:value="${khachHang.id}"/>
-                                                        <input type="hidden" name="diaChiId" th:value="${diaChi.id}"/>
-                                                        <input type="hidden" th:id="'tinhThanhPho' + ${stat.index}"
-                                                               th:value="${diaChi.tinhThanhPho}"/>
-                                                        <input type="hidden" th:id="'quanHuyen' + ${stat.index}"
-                                                               th:value="${diaChi.quanHuyen}"/>
-                                                        <input type="hidden" th:id="'xaPhuong' + ${stat.index}"
-                                                               th:value="${diaChi.xaPhuong}"/>
-
-
-                                                        <h6 th:id="'city' + ${stat.index}">Tỉnh: </h6>
-                                                        <h6 th:id="'district' + ${stat.index}">Quận / Huyện: </h6>
-                                                        <h6 th:id="'ward' + ${stat.index}">Xã / Phường: </h6>
-                                                        <h6 th:text="${diaChi.soNhaNgoDuong}">chi tiết địa chỉ</h6>
-
-                                                        <!--                                                        <button-->
-                                                        <!--                                                                th:id="'radio'+ ${diaChi.id}"-->
-                                                        <!--                                                                name="checkDiaChiMacDinh"-->
-                                                        <!--                                                                type="submit"-->
-                                                        <!--                                                                th:value="${diaChi.id}"-->
-                                                        <!--                                                        >mac dinh</button>-->
-                                                        <input type="radio" th:id="'radio' + ${diaChi.id} "
-                                                               name="checkDiaChiMacDinh"
-                                                               th:value="${diaChi.id}"
-                                                               th:checked="${diaChi.trangThai == true}"
-                                                               onchange="this.form.submit()"/>
-                                                    </div>
-                                                </form>
-                                                <a class="btn btn-outline-danger"
-                                                   th:href="@{/admin/khach-hang/xoa/{id}(id=${diaChi.id}, khachHangId=${khachHang.id})}">
-                                                    Xóa
-                                                </a>
-                                                <hr>
-                                                <br>
-                                                <br>
-                                            </div>
-
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Phường/Xã</label>
+                                            <select class="form-control" id="ward2" name="xaPhuong">
+                                                <option value="" selected>Chọn phường xã</option>
+                                            </select>
                                         </div>
-
-                                        <div class="col-md-2">
-
+                                        <div class="col-md-6">
+                                            <label class="form-label">Số nhà/ngõ đường</label>
+                                            <input type="text" class="form-control" name="soNhaNgoDuong"/>
                                         </div>
                                     </div>
-                                </div>
+                                    <button type="submit" onclick="disPlayBlook()" class="btn btn-outline-warning" style="width: 70px;">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
 
+                        <div id="danhSachDiaChi" th:each="diaChi, stat : ${diaChiList}">
+                            <form th:action="@{/admin/khach-hang/dia-chi-mac-dinh}" method="post">
+                                <div style="padding: 10px; border: #008FFB solid 2px; border-radius: 20px;">
+                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
+                                    <input type="hidden" name="diaChiId" th:value="${diaChi.id}"/>
+                                    <input type="hidden" th:id="'tinhThanhPho' + ${stat.index}" th:value="${diaChi.tinhThanhPho}" />
+                                    <input type="hidden" th:id="'quanHuyen' + ${stat.index}" th:value="${diaChi.quanHuyen}" />
+                                    <input type="hidden" th:id="'xaPhuong' + ${stat.index}" th:value="${diaChi.xaPhuong}" />
+
+                                    <h6 th:id="'city' + ${stat.index}">Tỉnh: </h6>
+                                    <h6 th:id="'district' + ${stat.index}">Quận / Huyện: </h6>
+                                    <h6 th:id="'ward' + ${stat.index}">Xã / Phường: </h6>
+                                    <h6 th:text="${diaChi.soNhaNgoDuong}">Chi tiết địa chỉ</h6>
+
+                                    <input type="radio" th:id="'radio' + ${diaChi.id}" name="checkDiaChiMacDinh"
+                                           th:value="${diaChi.id}" th:checked="${diaChi.trangThai == true}" onchange="this.form.submit()"/>
+                                </div>
+                            </form>
+                            <a class="btn btn-danger" th:href="@{/admin/khach-hang/xoa/{id}(id=${diaChi.id}, khachHangId=${khachHang.id})}">
+                                Xóa
+                            </a>
+                            <hr>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
+    </div>
     </div>
     <!-- Footer-->
     <div>
@@ -440,29 +322,27 @@
         }
 
 
-        function disPlayBlook() {
+        function disPlayBlook(){
             var p = document.getElementById("magic");
-            if (p.style.display == "block") {
+            if(p.style.display == "block"){
                 p.style.display = "none"
-            } else {
+            }else{
                 p.style.display = "block"
             }
         }
-
-        function diachiMacDinh() {
+        function diachiMacDinh(){
             var nameButton = document.getElementsByName("checkDiaChiMacDinh")
             // var buttonMacDinh = document.getElementsByName("checkDiaChiMacDinh")
-            for (var i = 0; i < nameButton.length; i++) {
-                if (nameButton.values() == null) {
+            for(var i =0 ; i < nameButton.length; i++ ){
+                if(nameButton.values() == null){
                     console.log("khong co dc mac dinh")
-                } else if (nameButton.values() == true) {
+                }else if(nameButton.values() == true){
                     buttonMacDinh[i].parentElement.style.color = "red"
-                } else {
+                }else{
                     buttons[i].parentElement.style.color = "blue";
                 }
             }
         }
-
         // window.onload = diachiMacDinh
     </script>
     <script>
@@ -557,18 +437,21 @@
 
                 // Nếu form không hợp lệ, ngăn không cho gửi
                 if (!isValid) {
-                    event.preventDefault(); // Ngăn chặn gửi form
+                    event.preventDefault();
                     Swal.fire({
-                        title: 'Lỗi!',
-                        text: 'Vui lòng kiểm tra lại thông tin nhập vào.',
+                        toast: true,
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        title: "Vui lòng kiểm tra lại thông tin khách hàng nhập vào.",
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
                     });
                 }
             });
         });
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form[action="/admin/khach-hang/them-dia-chi"]');
+            const form = document.querySelector('form[action="/admin/sua-khach-hang/them-dia-chi"]');
 
             form.addEventListener('submit', function (event) {
                 let isValid = true;
@@ -606,20 +489,25 @@
                     showError(form.soNhaNgoDuong, 'Vui lòng nhập số nhà/ngõ đường.');
                 }
 
-                // Nếu form không hợp lệ
                 if (!isValid) {
-                    event.preventDefault(); // Ngăn chặn gửi form
+                    event.preventDefault();
                     Swal.fire({
-                        title: 'Lỗi!',
-                        text: 'Vui lòng kiểm tra lại thông tin nhập vào.',
+                        toast: true,
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        title: "Vui lòng kiểm tra lại thông tin địa chỉ nhập vào.",
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
                     });
                 }
             });
         });
 
     </script>
+
+
+
 
 
 </div>
