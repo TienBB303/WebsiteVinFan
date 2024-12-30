@@ -204,6 +204,7 @@ public class ProductCatalog {
         }
 
         List<HoaDon> hoaDons = hoaDonService.getHoaDonByIdKH(khachHang.getId());
+        model.addAttribute("hoaDons", hoaDons);
         model.addAttribute("khachHang", khachHang);
         List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHang.getId());  // lấy danh sách địa chỉ
         diaChiList.sort((d1, d2) -> Boolean.compare(
