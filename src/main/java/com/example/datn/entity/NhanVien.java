@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Entity
 @Table(name = "nhan_vien")
@@ -85,4 +86,7 @@ public class NhanVien {
 
     @Column(name = "reset_token")
     private String resetToken;
+
+    public void setChucVu(Optional<ChucVu> chucVu1) {
+    }
 }

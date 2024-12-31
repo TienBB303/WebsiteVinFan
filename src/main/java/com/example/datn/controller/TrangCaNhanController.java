@@ -16,6 +16,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Controller
@@ -30,6 +31,8 @@ public class TrangCaNhanController {
 
     @Autowired
     private NhanVienRepository nhanVienRepository;
+
+
 
     @GetMapping("/index")
     public String getUserInfo(Model model) {
@@ -53,7 +56,9 @@ public class TrangCaNhanController {
         return "/admin/thong-tin-ca-nhan/sua-nhan-vien";
     }
     @PostMapping("/update")
-    public String suaNhanVien(NhanVien nhanVien,@RequestParam("file") MultipartFile file) throws IOException {
+    public String suaNhanVien(NhanVien nhanVien ,
+                              @RequestParam("chucVu") Integer chucVu,
+                              @RequestParam("file") MultipartFile file) throws IOException {
 
         Map uploadResult = cloudinaryService.upload(file);
         String imageUrl =(String) uploadResult.get("url");
@@ -61,11 +66,11 @@ public class TrangCaNhanController {
 
         LocalDate currentDate = LocalDate.now();
         Date sqlDate = Date.valueOf(currentDate);
-        nhanVien.setNgaySua(sqlDate);
-
         if (nhanVien.getGioiTinh() == null) {
             nhanVien.setGioiTinh(false); // Hoặc một giá trị mặc định khác
         }
+        Optional<ChucVu> chucVu1 = chucVuRepository.findById(chucVu);
+        nhanVien.setChucVu(chucVu1);
         nhanVienRepository.save(nhanVien);
         return "redirect:/trang-ca-nhan/index";
     }
