@@ -258,6 +258,13 @@
             color: #111827;
             margin-top: 5px; /* Khoảng cách giữa tên sản phẩm và giá */
         }
+        .payment-option.selected {
+            border-color: #2563eb; /* Màu viền khi được chọn */
+            background-color: #e0f2fe; /* Màu nền khi được chọn */
+            transform: translateY(-3px); /* Tạo hiệu ứng nổi lên */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+        }
+
     </style>
 <body>
 
@@ -308,15 +315,15 @@
             </div>
 
             <div class="payment-method">
-                <div class="payment-option">
-                    <input type="radio" id="cod" name="paymentMethod" value="COD">
+                <div class="payment-option" onclick="selectPaymentMethod(this, 'COD')">
+                    <input type="radio" id="cod" name="paymentMethod" value="COD" style="display:none;">
                     <img src="https://via.placeholder.com/40" alt="COD">
                     <label for="cod">Thanh toán khi nhận hàng (COD)</label>
                 </div>
-                <div class="payment-option">
-                    <input type="radio" id="credit" name="paymentMethod" value="CreditCard">
-                    <img src="https://via.placeholder.com/40" alt="Credit Card">
-                    <label for="credit">Thanh toán bằng thẻ tín dụng</label>
+                <div class="payment-option" onclick="selectPaymentMethod(this, 'BANK_TRANSFER')">
+                    <input type="radio" id="bank-transfer" name="paymentMethod" value="BANK_TRANSFER" style="display:none;">
+                    <img src="https://via.placeholder.com/40" alt="Bank Transfer">
+                    <label for="bank-transfer">Chuyển khoản</label>
                 </div>
             </div>
 
@@ -327,7 +334,7 @@
     <div class="order-summary">
         <h3>Giỏ hàng của bạn</h3>
         <div th:each="item : ${cartItems}" class="product-item">
-            <img src="https://gamek.mediacdn.vn/133514250583805952/2021/10/3/ani3-16332425354691599897585.jpg" alt="Product Image">
+            <img th:src="${item.imageUrl}" alt="Product Image">
             <span class="badge-quantity" th:text="${item.quantity}">1</span> <!-- Quantity Badge -->
             <div class="product-info">
                 <p th:text="${item.name + ' (' + item.color + ',' + item.capacity + ')'}">
@@ -347,6 +354,23 @@
 <!-- JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function selectPaymentMethod(element, method) {
+        // Loại bỏ lớp 'selected' khỏi tất cả các phương thức thanh toán
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        // Thêm lớp 'selected' vào phương thức thanh toán được chọn
+        element.classList.add('selected');
+
+        // Cập nhật giá trị của radio input
+        document.querySelector(`input[value="${method}"]`).checked = true;
+    }
+
+
+
+</script>
 <script th:inline="javascript">
     document.querySelector('#checkout-form').addEventListener('submit', function (event) {
         event.preventDefault(); // Ngăn form gửi dữ liệu ngay lập tức
@@ -354,6 +378,7 @@
         // Lấy giá trị các trường
         const name = document.querySelector('input[name="name"]').value.trim();
         const phone = document.querySelector('input[name="phone"]').value.trim();
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
 
         // Hàm hiển thị thông báo lỗi với SweetAlert
         function showToast(message, type = 'error') {
@@ -376,6 +401,10 @@
 
         if (!phone.match(/^[0-9]{10}$/)) {
             showToast('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)!');
+            return;
+        }
+        if (!paymentMethod) {
+            showToast('Vui lòng chọn phương thức thanh toán!');
             return;
         }
 
@@ -481,11 +510,10 @@
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:inline="javascript">
-    const errorType = /*[[${error}]]*/ 'null';
     const errorMessages = /*[[${errorMessages}]]*/ [];
     const successMessage = /*[[${success}]]*/ null;
+    const errorType = /*[[${error != null ? error : 'null'}]]*/ 'null';
 
     if (errorType === 'CartIsEmpty') {
         Swal.fire({

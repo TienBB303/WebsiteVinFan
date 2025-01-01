@@ -161,8 +161,8 @@
                                         <td th:text="${pgg.loaiPhieuGiam ? 'Giảm giá hóa đơn' : 'Giảm sản phẩm'}">Loại
                                             phiếu giảm
                                         </td>
-                                        <td th:text="${pgg.ngayBD}">Ngày bắt đầu</td>
-                                        <td th:text="${pgg.ngayKT}">Ngày kết thúc</td>
+                                        <td th:text="${#dates.format(pgg.ngayBD, 'yyyy-MM-dd')}">Ngày bắt đầu</td>
+                                        <td th:text="${#dates.format(pgg.ngayKT, 'yyyy-MM-dd')}">Ngày kết thúc</td>
                                         <td class="giaVND" th:text="${pgg.giaTriGiam}">Giá trị giảm</td>
                                         <td th:text="${pgg.spct.sanPham.ten != null ? pgg.spct.sanPham.ten : 'Không áp dụng sản phẩm'}">
                                             Tên sản phẩm
