@@ -16,7 +16,6 @@ public class ThongKeResponse {
     Integer day;
     BigDecimal tongTien;
     Long tongSanPham;
-
     public ThongKeResponse(String type, Integer date, BigDecimal tongTien, Long tongSanPham) {
         if("YEAR".equals(type)){
             this.year = date;
