@@ -422,8 +422,14 @@
                             <div class="card-body d-flex flex-column">
                                 <img th:src="@{${phieuGiamGia.spct.hinhAnh.hinh_anh_1}}" alt="Product Image"
                                      style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title product-title" th:text="${phieuGiamGia.spct.sanPham.ten}">Tên sản
-                                    phẩm</h5>
+                                <h5 class="card-title product-title" th:text="${phieuGiamGia.spct.sanPham.ten + ' - ' + phieuGiamGia.spct.mauSac.ten + ' - ' + phieuGiamGia.spct.congSuat.ten}"></h5>
+                                    <h6 class="card-title product-title" th:if="${phieuGiamGia.spct.so_luong > 0}"
+                                        th:text="'Còn' + ${phieuGiamGia.spct.so_luong}">
+                                    </h6>
+                                    <h6 class="card-title product-title" th:if="${phieuGiamGia.spct.so_luong <= 0}">
+                                        Hết hàng
+                                    </h6>
+                                </h6>
                                 <p class="card-text text-danger" th:if="${phieuGiamGia.giaTriGiam > 0}">
                                     Giảm: <span class="discount-price"
                                                 th:text="${#numbers.formatDecimal(phieuGiamGia.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
@@ -467,8 +473,13 @@
                             <div class="card-body d-flex flex-column">
                                 <img th:src="@{${sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
                                      style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản
-                                    phẩm</h5>
+                                <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten + ' - ' + sanPhamChiTiet.mauSac.ten + ' - ' + sanPhamChiTiet.congSuat.ten}"></h5>
+                                <h6 class="card-title product-title" th:if="${sanPhamChiTiet.so_luong > 0}"
+                                    th:text="'Còn: ' + ${sanPhamChiTiet.so_luong}">
+                                </h6>
+                                <h6 class="card-title product-title" th:if="${sanPhamChiTiet.so_luong <= 0}">
+                                    Hết hàng
+                                </h6>
                                 <p class="card-text">
                                     <span class="product-price main-price"
                                           th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0VND</span>

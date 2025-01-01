@@ -539,13 +539,13 @@ public class SanPhamController {
                 return ResponseEntity.badRequest().body("Không tìm thấy thông tin nhân viên cập nhật");
             }
             sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
-
+            sanPhamChiTiet.setTrang_thai(trangThai);
             // Kiểm tra trạng thái
-            if (soLuong == 0) {
-                sanPhamChiTiet.setTrang_thai(false);
-            } else {
-                sanPhamChiTiet.setTrang_thai(trangThai);
-            }
+//            if (soLuong == 0) {
+//                sanPhamChiTiet.setTrang_thai(false);
+//            } else {
+//                sanPhamChiTiet.setTrang_thai(trangThai);
+//            }
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
                 sanPham.setTrang_thai(true);
             } else {

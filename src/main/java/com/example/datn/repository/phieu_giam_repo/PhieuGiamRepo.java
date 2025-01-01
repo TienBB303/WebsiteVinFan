@@ -42,7 +42,7 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
 
     List<PhieuGiam> findByLoaiPhieuGiam(boolean loaiPhieuGiam);
 
-
-
+    @Query("SELECT p FROM PhieuGiam p WHERE p.trangThai = true")
+    List<PhieuGiam> findActiveDiscounts();
 
 }
