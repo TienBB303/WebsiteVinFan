@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public interface HoaDonService {
 
     Optional<SanPhamChiTiet> findByIdSanPhamChiTiet(Long id);
 
-    Page<HoaDon> searchHoaDon(String query, Pageable pageable);
+    Page<HoaDon> searchHoaDon(String query, Boolean loaiHoaDon, LocalDate tuNgay, LocalDate denNgay, Integer trang_thai, Pageable pageable);
 
     Page<HoaDon> getAllHoaDonByTrangThai(Integer trangThai, Pageable pageable);
 
