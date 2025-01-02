@@ -134,6 +134,7 @@ public class PhieuGiamController {
             // Thiết lập thông tin cơ bản cho phiếu giảm giá
             phieuGiam.setNgayTao(Date.valueOf(LocalDate.now()));
             phieuGiam.setNguoiTao("admin");
+            phieuGiam.setTrangThai(true);
             phieuGiam.setMa(pggSV.taoMaTuDong());
 
             // Xử lý chỉ khi `spctId` không null
