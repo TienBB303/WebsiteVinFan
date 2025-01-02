@@ -55,10 +55,8 @@ public class BanHangTaiQuayController {
             Model model,
             @RequestParam("idHD") Long idHD
     ) {
-        // Lấy danh sách mã giảm giá có loại phiếu là 1 và đang hoạt động
-        List<PhieuGiam> phieuGiamList = phieuGiamRepo.findByLoaiPhieuGiam(true).stream()
-                .filter(PhieuGiam::isTrangThai) // Chỉ lấy phiếu giảm giá đang hoạt động
-                .toList();
+        // Lấy danh sách mã giảm giá có loại phiếu là 1
+        List<PhieuGiam> phieuGiamList = phieuGiamRepo.findByLoaiPhieuGiam(true); // true = loại phiếu là 1
         model.addAttribute("phieuGiamList", phieuGiamList);
 
         // Cập nhật tổng tiền trước khi lấy dữ liệu
@@ -114,7 +112,6 @@ public class BanHangTaiQuayController {
 
         return "admin/ban_hang_tai_quay/index";
     }
-
 
     @PostMapping("/addSPCT")
     public String addSPToHoaDonChiTiet(
