@@ -102,6 +102,7 @@
                                     <thead class="table-light">
                                     <tr>
                                         <th>STT</th>
+                                        <th> </th>
                                         <th>Tên sản phẩm</th>
                                         <th>Màu sắc</th>
                                         <th>Công suất</th>
@@ -113,6 +114,10 @@
                                     <tbody id="productTable">
                                     <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
                                         <td th:text="${iter.count}"></td>
+                                        <td>
+                                            <img class="item-image" th:src="@{${item.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                                                 style="height: 100px; width: 100px; object-fit: cover;">
+                                        </td>
                                         <td th:text="${item.sanPham.ten}"></td>
                                         <td th:text="${item.mauSac.ten}"></td>
                                         <td th:text="${item.congSuat.ten}"></td>
@@ -163,6 +168,7 @@
                     <thead>
                     <tr>
                         <th>STT</th>
+                        <th> </th>
                         <th>Sản phẩm</th>
                         <th>Giá bán</th>
                         <th>Giá giảm</th>
@@ -174,6 +180,10 @@
                     <tbody th:each="item, iter : ${listHDCT}">
                     <tr>
                         <td th:text="${iter.count}"></td>
+                        <td>
+                            <img class="item-image" th:src="@{${item.sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                                 style="height: 100px; width: 100px; object-fit: cover;">
+                        </td>
                         <td>
                             <div th:text="${item.sanPhamChiTiet.sanPham.ten}"></div>
                         </td>

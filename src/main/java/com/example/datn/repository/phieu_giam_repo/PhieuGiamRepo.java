@@ -40,9 +40,8 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
             "WHERE sp.ma = :maSanPham")
     List<PhieuGiam> findBySanPhamMa(@Param("maSanPham") String maSanPham);
 
+    @Query("SELECT p FROM PhieuGiam p WHERE p.loaiPhieuGiam = :loaiPhieuGiam AND p.trangThai = true")
     List<PhieuGiam> findByLoaiPhieuGiam(boolean loaiPhieuGiam);
 
-    @Query("SELECT p FROM PhieuGiam p WHERE p.trangThai = true")
-    List<PhieuGiam> findActiveDiscounts();
 
 }
