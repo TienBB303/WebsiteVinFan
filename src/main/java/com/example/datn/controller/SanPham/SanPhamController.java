@@ -143,6 +143,8 @@ public class SanPhamController {
             maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
         Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(query.trim(), minPrice, maxPrice, trang_thai, PageRequest.of(page, size));
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         model.addAttribute("listSP", searchPage);
         model.addAttribute("query", query);
         model.addAttribute("minPrice", minPrice);
