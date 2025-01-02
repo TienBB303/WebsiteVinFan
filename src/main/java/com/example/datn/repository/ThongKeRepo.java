@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -66,4 +67,16 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
             "ORDER BY SUM(hdct.soLuong) DESC")
     List<ThongKeSanPhamResponse> findSanPhamBanChay();
 
+//    TienBB
+//    @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
+//            "'DAY', " +
+//            "EXTRACT(DAY FROM hd.ngayTao), " +
+//            "sum(hdct.thanhTien), " +
+//            "sum(hdct.soLuong)) " +
+//            "FROM HoaDon hd " +
+//            "JOIN HoaDonChiTiet hdct ON hd.id = hdct.hoaDon.id " +
+//            "JOIN SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+//            "WHERE hd.ngayTao = CURRENT_DATE - 1 " +
+//            "GROUP BY EXTRACT(DAY FROM hd.ngayTao)")
+//    List<ThongKeResponse> getListYesterday();
 }

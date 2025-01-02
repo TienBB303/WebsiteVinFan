@@ -14,54 +14,95 @@
     <!-- Main-->
     <div id="main">
         <header th:replace="/admin/fragments/header :: header"></header>
-
-
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Thống kê</h3>
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <div class="card-footer">
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="page-content">
             <!--        dữ liệu thực hiện trong secsion-->
             <section class="row">
                 <div class="card">
                     <div class="card-header">
-                        <h1 class="mt-1">Thống Kê Bán Hàng</h1>
+                        <form method="get" action="/admin/thong-ke/index" style="padding-bottom: 20px">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label for="startDate">Từ ngày</label>
+                                    <input type="date" id="startDate" class="form-control" name="startDate"
+                                           th:value="${param.startDate}">
+                                </div>
+                                <div class="col-4">
+                                    <label for="endDate">Đến ngày</label>
+                                    <input type="date" id="endDate" class="form-control" name="endDate"
+                                           th:value="${param.endDate}">
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-primary" type="submit" id="sbmt">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="container">
+
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="dashboard-container-qa">
+                                    <div class="dashboard-qa" th:each="item : ${thongKeListDay}" th:if="${item.day == currentDay}">
+                                        <div>Kết quả bán hàng hôm nay</div>
+                                        <div>Sản phẩm bán ra: <span th:text="${item.tongSanPham}"></span></div>
+                                        <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="dashboard-container-qa">
-                            <div class="dashboard-qa" th:each="item : ${thongKeListDay}"
-                                 th:if="${item.day == currentDay}">
+                            <div class="dashboard-qa" th:each="item : ${thongKeListDay}" th:if="${item.day == currentDay}">
                                 <div>Ngày hôm nay</div>
-<!--                                <p><span th:text="${item.day}"></span></p>-->
-                                <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div >Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
+                                <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
+                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
 
-                            <div class="dashboard-qa" th:each="item : ${thongKeListWeek}"
-                                 th:if="${item.week == currentWeek}">
+                            <div class="dashboard-qa" th:each="item : ${thongKeListWeek}" th:if="${item.week == currentWeek}">
                                 <div>Tuần này</div>
-<!--                                <p><span th:text="${item.week}"></span></p>-->
+                                <!--                                <p><span th:text="${item.week}"></span></p>-->
                                 <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
                                 <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
 
-                            <div class="dashboard-qa" th:each="item : ${thongKeListMonth}"
-                                 th:if="${item.month == currentMonth}">
-                                <div>Tháng này</div>
-<!--                                <p><span th:text="${item.month}"></span></p>-->
+                            <div class="dashboard-qa" th:each="item : ${thongKeListMonth}" th:if="${item.month == currentMonth}">
+                                <div>Tháng : </div>
+                                <p><span th:text="${item.month}"></span></p>
                                 <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
                                 <div >Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
 
-                            <div class="dashboard-qa" th:each="item : ${thongKeListYear}"
-                                 th:if="${item.year == currentYear}">
-                                <div>Năm này</div>
-<!--                                <p><span th:text="${item.year}"></span></p>-->
+                            <div class="dashboard-qa" th:each="item : ${thongKeListYear}" th:if="${item.year == currentYear}">
+                                <div>Năm : </div>
+                                <p><span th:text="${item.year}"></span></p>
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
                                 <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
                             </div>
                         </div>
                     </div>
-
+                    <canvas id="productChart" width="400" height="200"></canvas>
                     <div class="container">
                         <div class="row">
                             <h1 class="mt-5">Sản Phẩm Bán Chạy</h1>
+                            <!-- Thêm canvas cho biểu đồ -->
                             <div class="col">
                                 <table class="table table-bordered mt-3">
                                     <thead class="table-info">
@@ -82,25 +123,13 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col text-center">
-                                Column
-                            </div>
                         </div>
                     </div>
+
 
                 </div>
             </section>
         </div>
-        <script>
-            document.querySelectorAll('.giaVND').forEach(element => {
-                const originalValue = parseFloat(element.innerText);
-                element.innerText = originalValue.toLocaleString('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                    currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
-                });
-            });
-        </script>
     </div>
     <!-- Footer-->
     <div>
@@ -109,6 +138,53 @@
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
+    <script>
+        document.querySelectorAll('.giaVND').forEach(element => {
+            const originalValue = parseFloat(element.innerText);
+            element.innerText = originalValue.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                currencyDisplay: 'code'
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/thong-ke/san-pham-ban-chay-api')
+                .then(response => response.json())
+                .then(listSPBanChay => {
+                    console.log(listSPBanChay);
+                    var productNames = listSPBanChay.map(item => item.tenSanPham);
+                    var soldQuantities = listSPBanChay.map(item => item.soLuongBan);
+
+                    var ctx = document.getElementById('productChart').getContext('2d');
+                    var productChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: productNames,
+                            datasets: [{
+                                label: 'Số Lượng Bán',
+                                data: soldQuantities,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching data: ', error));
+        });
+    </script>
 </div>
 </body>
 </html>
