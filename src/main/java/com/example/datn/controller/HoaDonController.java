@@ -47,32 +47,24 @@ public class HoaDonController {
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
                         @RequestParam(name = "size", defaultValue = "5") int size,
                         @RequestParam(name = "query", defaultValue = "") String query,
-                        @RequestParam(name = "loaiHoaDon", defaultValue = "") String loaiHoaDonStr,
-                        @RequestParam(name = "trangThai", defaultValue = "") Integer trangThai,
-//                        @RequestParam(name = "startDate", required = false) String startDate,
-//                        @RequestParam(name = "endDate", required = false) String endDate,
+                        @RequestParam(name = "loaiHoaDon", defaultValue = "") Boolean loaiHoaDon,
+                        @RequestParam(name = "trangThai", required = false) Integer trangThai,
                         @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tuNgay,
                         @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate denNgay,
                         Model model) {
         if (page < 0) {
             page = 0;
         }
-        Boolean loaiHoaDon = null;
-        if ("1".equals(loaiHoaDonStr.trim())) {
-            loaiHoaDon = true;
-        } else if ("0".equals(loaiHoaDonStr.trim())) {
-            loaiHoaDon = false;
-        }
 
-        Page<HoaDon> list = hoaDonService.searchHoaDon(query, loaiHoaDon,tuNgay, denNgay, trangThai, PageRequest.of(page,size));
+        Page<HoaDon> list = hoaDonService.searchHoaDon(query, loaiHoaDon, tuNgay, denNgay, trangThai, PageRequest.of(page, size));
         model.addAttribute("list", list);
         model.addAttribute("query", query);
-        model.addAttribute("loaiHoaDon", loaiHoaDon);
-        model.addAttribute("trangThai", trangThai != null ? trangThai : 6);
+        model.addAttribute("loaiHoaDon", loaiHoaDon != null ? loaiHoaDon : "");  // Thay `false` bằng giá trị mặc định mà bạn mong muốn
+        model.addAttribute("trangThai", trangThai != null ? trangThai : "");
         model.addAttribute("startDate", tuNgay != null ? tuNgay : "");
         model.addAttribute("endDate", denNgay != null ? denNgay : "");
-//        TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
-//        model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
+        TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
+        model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
 
         return "/admin/hoa_don/index";
     }
@@ -279,7 +271,7 @@ public class HoaDonController {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorTSL",e.getMessage());
+            redirectAttributes.addFlashAttribute("errorTSL", e.getMessage());
         }
         return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }
@@ -293,7 +285,7 @@ public class HoaDonController {
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorGSL",e.getMessage());
+            redirectAttributes.addFlashAttribute("errorGSL", e.getMessage());
         }
         return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }

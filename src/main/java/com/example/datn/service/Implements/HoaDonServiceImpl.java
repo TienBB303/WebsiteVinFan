@@ -37,7 +37,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     public Page<HoaDon> findAll(Pageable pageable) {
         return hoaDonRepo.findAll(pageable);
     }
-@Override
+
+    @Override
     public Optional<HoaDon> findByIdWithPhieuGiamGia(Long id) {
         return hoaDonRepo.findByIdWithPhieuGiamGia(id);
     }
@@ -144,10 +145,10 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public Page<HoaDon> searchHoaDon(String query, Boolean loaiHoaDon, LocalDate tuNgay, LocalDate denNgay, Integer trang_thai, Pageable pageable) {
-        if (trang_thai == null){
-            return hoaDonRepo.searchHoaDonKhongtrangThai(query,loaiHoaDon,tuNgay, denNgay, pageable);
+        if (trang_thai == null) {
+            return hoaDonRepo.searchHoaDonKhongtrangThai(query, loaiHoaDon, tuNgay, denNgay, pageable);
         }
-        return hoaDonRepo.searchHoaDon(query,loaiHoaDon,tuNgay, denNgay,trang_thai, pageable);
+        return hoaDonRepo.searchHoaDon(query, loaiHoaDon, tuNgay, denNgay, trang_thai, pageable);
     }
 
     @Override

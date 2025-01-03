@@ -102,7 +102,7 @@
                                     <thead class="table-light">
                                     <tr>
                                         <th>STT</th>
-                                        <th> </th>
+                                        <th></th>
                                         <th>Tên sản phẩm</th>
                                         <th>Màu sắc</th>
                                         <th>Công suất</th>
@@ -115,7 +115,8 @@
                                     <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
                                         <td th:text="${iter.count}"></td>
                                         <td>
-                                            <img class="item-image" th:src="@{${item.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                                            <img class="item-image" th:src="@{${item.hinhAnh.hinh_anh_1}}"
+                                                 alt="Product Image"
                                                  style="height: 100px; width: 100px; object-fit: cover;">
                                         </td>
                                         <td th:text="${item.sanPham.ten}"></td>
@@ -140,7 +141,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
                             <!-- Footer của modal -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -168,7 +168,7 @@
                     <thead>
                     <tr>
                         <th>STT</th>
-                        <th> </th>
+                        <th></th>
                         <th>Sản phẩm</th>
                         <th>Giá bán</th>
                         <th>Giá giảm</th>
@@ -181,7 +181,8 @@
                     <tr>
                         <td th:text="${iter.count}"></td>
                         <td>
-                            <img class="item-image" th:src="@{${item.sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                            <img class="item-image" th:src="@{${item.sanPhamChiTiet.hinhAnh.hinh_anh_1}}"
+                                 alt="Product Image"
                                  style="height: 100px; width: 100px; object-fit: cover;">
                         </td>
                         <td>
@@ -202,7 +203,7 @@
                                 <input type="number" class="form-control quantity-input mx-1"
                                        th:value="${item.soLuong}"
                                        min="1"
-                                       style="width: 50px;" disabled/>
+                                       style="width: 60px;" disabled/>
 
                                 <!-- Nút tăng số lượng -->
                                 <form th:action="@{/ban-hang-tai-quay/tang-so-luong}" method="post" class="ms-1">
