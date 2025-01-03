@@ -15,24 +15,26 @@ import java.util.List;
 @Repository
 public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
-            "'YEAR',"+
+            "'YEAR'," +
             "EXTRACT(YEAR FROM hd.ngayTao), " +
             "sum(hdct.thanhTien), " +
             "sum(hdct.soLuong))" +
-            "from HoaDon hd" +
-            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
-            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+            "from HoaDonChiTiet hdct " +
+            "join hdct.hoaDon hd " +
+            "join hdct.sanPhamChiTiet spct " +
+            " where hd.trangThai = 4 " +
             " group by EXTRACT(YEAR FROM hd.ngayTao)")
     List<ThongKeResponse> getListYear();
 
     @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
-            "'MONTH',"+
+            "'MONTH'," +
             "EXTRACT(MONTH FROM hd.ngayTao), " +
             "sum(hdct.thanhTien), " +
             "sum(hdct.soLuong))" +
-            "from HoaDon hd" +
-            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
-            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+            "from HoaDonChiTiet hdct " +
+            "join hdct.hoaDon hd " +
+            "join hdct.sanPhamChiTiet spct " +
+            " where hd.trangThai = 4 " +
             " group by EXTRACT(MONTH FROM hd.ngayTao)")
     List<ThongKeResponse> getListMonth();
 
@@ -41,9 +43,10 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
             "EXTRACT(week FROM hd.ngayTao), " +
             "sum(hdct.thanhTien), " +
             "sum(hdct.soLuong))" +
-            "from HoaDon hd" +
-            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
-            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
+            "from HoaDonChiTiet hdct" +
+            " join hdct.hoaDon hd " +
+            " join hdct.sanPhamChiTiet spct " +
+            " where hd.trangThai = 4 " +
             " group by EXTRACT(week FROM hd.ngayTao)")
     List<ThongKeResponse> getListWeek();
 
@@ -51,18 +54,22 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
             "'DAY'," +
             "EXTRACT(day FROM hd.ngayTao), " +
             "sum(hdct.thanhTien), " +
-            "sum(hdct.soLuong))" +
-            "from HoaDon hd" +
-            " join HoaDonChiTiet hdct on hd.id = hdct.id" +
-            " join SanPhamChiTiet spct on hdct.sanPhamChiTiet.id = spct.id" +
-            " group by EXTRACT(day FROM hd.ngayTao)")
+            "sum(hdct.soLuong)) " +
+            "from HoaDonChiTiet hdct " +
+            "join hdct.hoaDon hd " +
+            "join hdct.sanPhamChiTiet spct " +
+            "where hd.trangThai = 4 " +
+            "group by EXTRACT(day FROM hd.ngayTao)")
     List<ThongKeResponse> getListDay();
+
 
     @Query("SELECT new com.example.datn.dto.response.ThongKeSanPhamResponse(" +
             "sp.ten, SUM(hdct.soLuong), SUM(hdct.thanhTien)) " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN hdct.sanPhamChiTiet spct " +
             "JOIN spct.sanPham sp " +
+            "join hdct.hoaDon hd " +
+            " where hd.trangThai = 4 " +
             "GROUP BY sp.id, sp.ten " +
             "ORDER BY SUM(hdct.soLuong) DESC")
     List<ThongKeSanPhamResponse> findSanPhamBanChay();

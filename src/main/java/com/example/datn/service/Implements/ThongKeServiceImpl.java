@@ -47,7 +47,7 @@ public class ThongKeServiceImpl implements ThongKeService {
         return thongKeRepo.getListYear();
     }
 
-//    @Override
+    //    @Override
 //    public List<ThongKeSanPhamResponse> getSanPhamBanChay() {
 //        return thongKeRepo.findSanPhamBanChay();
 //    }
@@ -55,20 +55,23 @@ public class ThongKeServiceImpl implements ThongKeService {
         List<ThongKeSanPhamResponse> allProducts = thongKeRepo.findSanPhamBanChay();
         System.out.println("Dữ liệu từ repo: " + allProducts);
         return allProducts.stream()
-        .sorted(Comparator.comparingLong(ThongKeSanPhamResponse::getSoLuongBan).reversed())
-        .limit(10)
-        .collect(Collectors.toList());
+                .sorted(Comparator.comparingLong(ThongKeSanPhamResponse::getSoLuongBan).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
     }
+
     @Override
     public int getCurrentDay() {
         LocalDate currentDate = LocalDate.now();
         return currentDate.getDayOfMonth();
     }
+
     @Override
     public int getYesterday() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         return yesterday.getDayOfMonth();
     }
+
     @Override
     public int getCurrentWeek() {
         LocalDate currentDate = LocalDate.now();
@@ -87,7 +90,7 @@ public class ThongKeServiceImpl implements ThongKeService {
         return currentDate.getYear();
     }
 
-//    TIenBB
+    //    TIenBB
     public ThongKeResponse getDifferenceBetweenDays(List<ThongKeResponse> todayList, List<ThongKeResponse> yesterdayList, int currentDay) {
         ThongKeResponse today = todayList.stream()
                 .filter(item -> item.getDay() == currentDay)
