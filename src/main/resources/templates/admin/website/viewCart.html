@@ -83,21 +83,13 @@
                 <div class="card-body">
                     <h5 class="card-title text-center">Thông tin</h5>
                     <hr>
-                    <p class="d-flex justify-content-between">
-                        <label>Tạm tính</label>
-                        <span class="text-danger" th:text="${totalPrice} + ' VND'"></span>
-                    </p>
-                    <p class="d-flex justify-content-between">
-                        <label>Phí vận chuyển</label>
-                        <span class="text-muted">Flat rate</span>
-                    </p>
                     <p class="d-flex justify-content-between fw-bold total-price">
                         <label>Tổng cộng</label>
                         <span class="text-danger" th:text="${totalPrice} + ' VND'"></span>
                     </p>
                     <a href="#" class="btn btn-dark w-100 mb-2" id="checkout-btn">Thanh toán</a>
-                    <div>
-                        <a href="/admin/product-catalog" class="btn btn-link text-center">Tiếp tục mua sắm</a>
+                    <div class="text-center mt-2 border-bottom">
+                        <a href="/admin/product-catalog" class="btn btn-link">Tiếp tục mua sắm</a>
                     </div>
                 </div>
             </div>
