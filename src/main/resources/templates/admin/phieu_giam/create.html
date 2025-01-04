@@ -138,8 +138,8 @@
                                                 th:value="${spct.id}"
                                                 th:selected="${spct.id == sanPhamChiTietId}"
                                                 th:text="${spct.sanPham.ten + ' - ' + spct.mauSac.ten + ' - Công suất: ' + spct.congSuat + 'W - Giá: ' +
-                 (spct.gia != null ? spct.gia : 'Chưa có giá') +
-                 (appliedProductMap != null && appliedProductMap.containsKey(spct.id) ? ' - ĐÃ ÁP DỤNG' : '')}">
+            (spct.gia != null ? spct.gia : 'Chưa có giá') +
+            (appliedProductMap != null && appliedProductMap.containsKey(spct.id) ? ' - ĐÃ ÁP DỤNG' : '')}">
                                         </option>
                                     </select>
                                 </div>

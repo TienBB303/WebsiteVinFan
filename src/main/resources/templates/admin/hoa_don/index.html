@@ -9,7 +9,7 @@
 <!-- Site wrapper -->
 <div class="wrapper">
     <!-- </header>-->
-<!--                <header th:replace="/admin/fragments/header :: header">-->
+    <!--                <header th:replace="/admin/fragments/header :: header">-->
 
     <!-- Sidebar -->
     <div>
@@ -34,7 +34,8 @@
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="trang-ca-nhan/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/hoa-don/index">Hóa đơn</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/hoa-don/index">Hóa
+                                    đơn</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -55,91 +56,100 @@
                                                    placeholder="Tìm kiếm hóa đơn...." th:value="${query}">
                                         </div>
                                         <div class="col-2">
-                                            <input type="text" class="form-control flatpickr" id="startDate" name="startDate"
-                                                   placeholder="Từ ngày" th:value="${startDate}" th:attr="value=${startDate}">
+                                            <input type="text" class="form-control flatpickr" id="startDate"
+                                                   name="startDate"
+                                                   placeholder="Từ ngày" th:value="${startDate}"
+                                                   th:attr="value=${startDate}">
                                         </div>
                                         <div class="col-2">
-                                            <input type="text" class="form-control flatpickr" id="endDate" name="endDate"
-                                                   placeholder="Đến ngày" th:value="${endDate}" th:attr="value=${endDate}">
+                                            <input type="text" class="form-control flatpickr" id="endDate"
+                                                   name="endDate"
+                                                   placeholder="Đến ngày" th:value="${endDate}"
+                                                   th:attr="value=${endDate}">
                                         </div>
-                                        <div class="col-2">
-                                            <select class="form-select" id="trangThai" name="trangThai">
-                                                <option value="" th:selected="${trangThai == null || param.trangThai == ''}">Tất cả trạng thái</option>
-                                                <option value="1" th:selected="${trangThai == '1'}">Đang treo</option>
-                                                <option value="2" th:selected="${trangThai == '2'}">Chờ xác nhận</option>
-                                                <option value="3" th:selected="${trangThai == '3'}">Đã xác nhận</option>
-                                                <option value="4" th:selected="${trangThai == '4'}">Đang giao</option>
-                                                <option value="5" th:selected="${trangThai == '5'}">Hoàn thành</option>
-                                                <option value="6" th:selected="${trangThai == '6'}">Hủy</option>
-                                            </select>
-                                        </div>
+
                                         <div class="col-2">
                                             <select class="form-select" id="loaiHoaDon" name="loaiHoaDon">
-                                                <option value="" th:selected="${loaiHoaDon == null || param.trang_thai == ''}">Tất cả loại</option>
-                                                <option value="1" th:selected="${loaiHoaDon == '1'}">Tại quầy</i></option>
-                                                <option value="0" th:selected="${loaiHoaDon == '0'}">Online</i></option>
+                                                <option value="" th:selected="${loaiHoaDon == null}">Tất cả loại
+                                                </option>
+                                                <option value="true" th:selected="${loaiHoaDon == true}">Tại quầy
+                                                </option>
+                                                <option value="false" th:selected="${loaiHoaDon == false}">Online
+                                                </option>
                                             </select>
                                         </div>
+
                                         <div class="col-2 d-flex">
                                             <div>
-                                                <button class="btn btn-outline-primary" type="submit" style="width: 70px; margin-right: 10px">
+                                                <button class="btn btn-outline-primary" type="submit"
+                                                        style="width: 70px; margin-right: 10px">
+                                                    <input type="hidden" name="trangThai" th:value="${trangThai}">
                                                     <i class="bi bi-search"></i>
                                                 </button>
                                             </div>
                                             <div>
-                                                <a class="btn btn-outline-warning" href="/hoa-don/index" style="width: 70px">
+                                                <a class="btn btn-outline-warning" href="/hoa-don/index"
+                                                   style="width: 70px">
                                                     <i class="bi bi-arrow-counterclockwise"></i>
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="trangThai" th:value="${trangThai}">
                                 </form>
+
                             </div>
 
-<!--                            <div class="dataTable-container">-->
-<!--                                <ul class="nav nav-tabs">-->
-<!--                                    <li class="nav-item2">-->
-<!--                                        <a class="nav-link" th:classappend="${trangThai == 6} ? 'active'">-->
-<!--                                            Tất cả-->
-<!--                                        </a>-->
-<!--                                        &lt;!&ndash;th:href="@{/hoa-don/index}"&ndash;&gt;-->
-<!--                                    </li>-->
-<!--                                    <li class="nav-item2">-->
-<!--                                        <a class="nav-link" th:classappend="${trangThai == trangThaiHoaDon.hoaDonCho} ? 'active'">-->
-<!--                                            Đang treo-->
-<!--                                        </a>-->
-<!--                                        &lt;!&ndash;th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.hoaDonCho})}"&ndash;&gt;-->
-<!--                                    </li>-->
-<!--                                    <li class="nav-item2">-->
-<!--                                        <a class="nav-link" th:classappend="${trangThai == trangThaiHoaDon.choXacNhan} ? 'active'">-->
-<!--                                            Chờ xác nhận-->
-<!--                                        </a>-->
-<!--                                        &lt;!&ndash;th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.choXacNhan})}"&ndash;&gt;-->
-<!--                                    </li>-->
-<!--                                    <li class="nav-item2">-->
-<!--                                        <a class="nav-link" th:classappend="${trangThai == trangThaiHoaDon.daXacNhan} ? 'active'">-->
-<!--                                            Đã xác nhận-->
-<!--                                        </a>-->
-<!--                                        &lt;!&ndash;th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daXacNhan})}"&ndash;&gt;-->
-<!--                                    </li>-->
-<!--                                    <li class="nav-item2">-->
-<!--                                        <a class="nav-link" th:classappend="${trangThai == trangThaiHoaDon.dangGiaoHang} ? 'active'">-->
-<!--                                            Đang giao</a>-->
-<!--                                        &lt;!&ndash;th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.dangGiaoHang})}"&ndash;&gt;-->
-<!--                                    </li>-->
-<!--                                    <li class="nav-item2">-->
-<!--                                        <a class="nav-link" th:classappend="${trangThai == trangThaiHoaDon.daGiaoHang} ? 'active'">-->
-<!--                                            Hoàn thành</a>-->
-<!--                                        &lt;!&ndash;th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.daGiaoHang})}"&ndash;&gt;-->
-<!--                                    </li>-->
-<!--                                    <li class="nav-item2">-->
-<!--                                        <a class="nav-link" th:classappend="${trangThai == trangThaiHoaDon.huy} ? 'active'">-->
-<!--                                            Hủy-->
-<!--                                        </a>-->
-<!--                                        &lt;!&ndash;th:href="@{/hoa-don/index(trangThai=${trangThaiHoaDon.huy})}"&ndash;&gt;-->
-<!--                                    </li>-->
-<!--                                </ul>-->
-<!--                            </div>-->
+                            <div class="dataTable-container">
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item2">
+                                        <a class="nav-link"
+                                           th:href="@{/hoa-don/index}">
+                                            Tất cả
+                                        </a>
+                                    </li>
+                                    <li class="nav-item2">
+                                        <a class="nav-link" th:classappend="${trangThai == 0} ? 'active'"
+                                           th:href="@{/hoa-don/index(query=${query}, startDate=${startDate}, endDate=${endDate}, loaiHoaDon=${loaiHoaDon}, trangThai=${trangThaiHoaDon.hoaDonCho})}">
+                                            Đang treo
+                                        </a>
+                                    </li>
+                                    <li class="nav-item2">
+                                        <a class="nav-link"
+                                           th:classappend="${trangThai == 1} ? 'active'"
+                                           th:href="@{/hoa-don/index(query=${query}, startDate=${startDate}, endDate=${endDate}, loaiHoaDon=${loaiHoaDon},trangThai=${trangThaiHoaDon.choXacNhan})}">
+                                            Chờ xác nhận
+                                        </a>
+                                    </li>
+                                    <li class="nav-item2">
+                                        <a class="nav-link"
+                                           th:classappend="${trangThai == 2} ? 'active'"
+                                           th:href="@{/hoa-don/index(query=${query}, startDate=${startDate}, endDate=${endDate}, loaiHoaDon=${loaiHoaDon},trangThai=${trangThaiHoaDon.daXacNhan})}">
+                                            Đã xác nhận
+                                        </a>
+
+                                    </li>
+                                    <li class="nav-item2">
+                                        <a class="nav-link"
+                                           th:classappend="${trangThai == 3} ? 'active'"
+                                           th:href="@{/hoa-don/index(query=${query}, startDate=${startDate}, endDate=${endDate}, loaiHoaDon=${loaiHoaDon},trangThai=${trangThaiHoaDon.dangGiaoHang})}">
+                                            Đang giao</a>
+                                    </li>
+                                    <li class="nav-item2">
+                                        <a class="nav-link"
+                                           th:classappend="${trangThai == 4} ? 'active'"
+                                           th:href="@{/hoa-don/index(query=${query}, startDate=${startDate}, endDate=${endDate}, loaiHoaDon=${loaiHoaDon},trangThai=${trangThaiHoaDon.daGiaoHang})}">
+                                            Hoàn thành</a>
+                                    </li>
+                                    <li class="nav-item2">
+                                        <a class="nav-link"
+                                           th:classappend="${trangThai == 5} ? 'active'"
+                                           th:href="@{/hoa-don/index(query=${query}, startDate=${startDate}, endDate=${endDate}, loaiHoaDon=${loaiHoaDon},trangThai=${trangThaiHoaDon.huy})}">
+                                            Hủy
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                             <!--Bangr hoas donw-->
                             <div class="dataTable-container">
                                 <table class="table table-striped dataTable-table" id="table1">
@@ -209,7 +219,8 @@
                                     <ul class="pagination justify-content-center">
                                         <!-- Nút Trang đầu -->
                                         <li class="page-item" th:classappend="${list.first ? 'disabled' : ''}">
-                                            <a class="page-link" th:href="@{'/hoa-don/index?page=0&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}"
+                                            <a class="page-link"
+                                               th:href="@{'/hoa-don/index?page=0&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}"
                                                aria-label="Trang đầu">
                                                 <span aria-hidden="true">««</span>
                                             </a>
@@ -227,18 +238,23 @@
                                         <li class="page-item"
                                             th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, list.number - 2), T(java.lang.Math).min(list.totalPages - 1, list.number + 2))}"
                                             th:classappend="${i == list.number ? 'active' : ''}">
-                                            <a class="page-link" th:href="@{'/hoa-don/index?page=' + ${i} + '&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}"
+                                            <a class="page-link"
+                                               th:href="@{'/hoa-don/index?page=' + ${i} + '&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}"
                                                th:text="${i + 1}"></a>
                                         </li>
                                         <!-- Nút Trang sau -->
                                         <li class="page-item" th:classappend="${list.last ? 'disabled' : ''}">
-                                            <a class="page-link" th:href="@{'/hoa-don/index?page=' + (${list.number + 1}) + '&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}" aria-label="Trang sau" th:if="${!list.last}">
+                                            <a class="page-link"
+                                               th:href="@{'/hoa-don/index?page=' + (${list.number + 1}) + '&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}"
+                                               aria-label="Trang sau" th:if="${!list.last}">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>
                                         <!-- Nút Trang cuối -->
                                         <li class="page-item" th:classappend="${list.last ? 'disabled' : ''}">
-                                            <a class="page-link" th:href="@{'/hoa-don/index?page=' + (${list.totalPages - 1}) + '&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}" aria-label="Trang cuối">
+                                            <a class="page-link"
+                                               th:href="@{'/hoa-don/index?page=' + (${list.totalPages - 1}) + '&size=' + ${list.size} + '&query=' + ${query} + '&startDate=' + ${startDate} + '&endDate=' + ${endDate} + '&loaiHoaDon=' + ${loaiHoaDon} + '&trangThai=' + ${trangThai}}"
+                                               aria-label="Trang cuối">
                                                 <span aria-hidden="true">»»</span>
                                             </a>
                                         </li>
@@ -271,14 +287,14 @@
             });
         });
     </script>
-<!--    <script>-->
-<!--        document.addEventListener("DOMContentLoaded", function () {-->
-<!--            flatpickr(".flatpickr", {-->
-<!--                dateFormat: "Y-m-d", // Định dạng ngày sinh theo yyyy-mm-dd-->
-<!--                maxDate: "today", // Ngày chọn không được quá ngày hôm nay-->
-<!--            });-->
-<!--        });-->
-<!--    </script>-->
+    <!--    <script>-->
+    <!--        document.addEventListener("DOMContentLoaded", function () {-->
+    <!--            flatpickr(".flatpickr", {-->
+    <!--                dateFormat: "Y-m-d", // Định dạng ngày sinh theo yyyy-mm-dd-->
+    <!--                maxDate: "today", // Ngày chọn không được quá ngày hôm nay-->
+    <!--            });-->
+    <!--        });-->
+    <!--    </script>-->
     <script>
         flatpickr("#startDate", {
             dateFormat: "Y-m-d", // Ensure the correct format
