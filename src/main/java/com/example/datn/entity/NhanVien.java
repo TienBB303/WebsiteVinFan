@@ -87,6 +87,5 @@ public class NhanVien {
     @Column(name = "reset_token")
     private String resetToken;
 
-    public void setChucVu(Optional<ChucVu> chucVu1) {
-    }
+
 }

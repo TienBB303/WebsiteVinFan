@@ -69,9 +69,7 @@ public class TrangCaNhanController {
         if (nhanVien.getGioiTinh() == null) {
             nhanVien.setGioiTinh(false); // Hoặc một giá trị mặc định khác
         }
-        Optional<ChucVu> chucVu1 = chucVuRepository.findById(chucVu);
-        nhanVien.setChucVu(chucVu1);
-        nhanVienRepository.save(nhanVien);
+                nhanVienRepository.save(nhanVien);
         return "redirect:/trang-ca-nhan/index";
     }
 
