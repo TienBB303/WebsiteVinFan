@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface HoaDonService {
@@ -80,4 +81,6 @@ public interface HoaDonService {
 
     Page<HoaDon> getHoaDonByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
+//    TienBB
+    Map<Integer, Long> countHoaDonByTrangThai();
 }

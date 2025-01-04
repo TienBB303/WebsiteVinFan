@@ -166,7 +166,9 @@ public class SanPhamController {
 
 
     @GetMapping("/san-pham/viewAdd")
-    public String viewAddProduct() {
+    public String viewAddProduct(Model model) {
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/san_pham/san_pham_add";
     }
 
@@ -185,114 +187,152 @@ public class SanPhamController {
             @RequestParam("deQuat.id") Integer deQuatId,
             @RequestParam("chieuCao.id") Integer chieuCaoId,
             @RequestParam("hang.id") Integer hangId,
+            @RequestParam("hinhAnh.hinh_anh_1") MultipartFile file,
             @ModelAttribute NhanVien nhanVien,
             HttpSession session, Model model) {
-
-        if (inputMa != null && inputMa.length() > 7) {
-            return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
-        }
-        String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
-        SanPham sp = sanPhamRepo.findByMa(ma);
-        if (sp != null) {
-            // Tên và kiểu quạt phải trùng
-            if (!sp.getTen().trim().equalsIgnoreCase(ten.trim())) {
-                return ResponseEntity.badRequest().body(
-                        "Mã " + ma + " đã tồn tại, nhưng với tên: " + sp.getTen() + ". Vui lòng sử dụng cùng tên."
-                );
+        try {
+            if (inputMa != null && inputMa.length() > 7) {
+                return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
             }
-            if (!sp.getKieuQuat().getId().equals(kieuQuatId)) {
-                return ResponseEntity.badRequest().body(
-                        "Mã " + ma + " đã tồn tại, nhưng với kiểu quạt: " + sp.getKieuQuat().getTen() + ". Vui lòng chọn đúng kiểu quạt."
-                );
-            }
-        }
-        else {
-            List<SanPham> productsWithName = sanPhamRepo.findByTenIgnoreCase(ten.trim());
-            SanPham spTimMa = sanPhamRepo.findByTen(ten.trim());
-            if (!productsWithName.isEmpty()) {
-                return ResponseEntity.badRequest().body(
-                        "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + spTimMa.getMa()+" ."
-                );
-            }
-        }
-        List<SanPhamChiTiet> spcheck = spctRepo.timKiemTheoTen(ten.trim());
-        if (spcheck != null && !spcheck.isEmpty()) {
-            SanPhamChiTiet spDauTien = spcheck.get(0);
-            if (!spDauTien.getCheDoGio().getId().equals(cheDoGioId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chế độ gió phải là : " + spDauTien.getCheDoGio().getTen());
-            }
-            if (!spDauTien.getNutBam().getId().equals(nutBamId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " nút bấm phải là : " + spDauTien.getNutBam().getTen());
-            }
-            if (!spDauTien.getChatLieuCanh().getId().equals(chatLieuCanhId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu cánh phải là : " + spDauTien.getChatLieuCanh().getTen());
-            }
-            if (!spDauTien.getDuongKinhCanh().getId().equals(duongKinhCanhId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đường kính cánh phải là : " + spDauTien.getDuongKinhCanh().getTen());
-            }
-            if (!spDauTien.getChatLieuKhung().getId().equals(chatLieuKhungId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu khung phải là : " + spDauTien.getChatLieuKhung().getTen());
-            }
-            if (!spDauTien.getDeQuat().getId().equals(deQuatId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đế quạt cánh phải là : " + spDauTien.getDeQuat().getTen());
-            }
-            if (!spDauTien.getChieuCao().getId().equals(chieuCaoId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chiều cao phải là : " + spDauTien.getChieuCao().getTen());
-            }
-            if (!spDauTien.getHang().getId().equals(hangId)) {
-                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " hãng phải là : " + spDauTien.getHang().getTen());
-            }
-        }
-
-        // Cập nhật thông tin sản phẩm
-        SanPhamTam sanPhamTam = new SanPhamTam();
-        sanPhamTam.setMa(ma);
-        sanPhamTam.setTen(ten);
-        sanPhamTam.setKieuQuat(kieuQuatRepo.findById(kieuQuatId).orElse(null));
-        sanPhamTam.setDieu_khien_tu_xa(true);
-
-        sanPhamTam.setTrang_thai(true);
-        sanPhamTam.setNgay_tao(new Date());
-
-        List<SanPhamChiTietTam> listSPCTTam = new ArrayList<>();
-        int idTuTang = 1;
-        for (Integer mauSacId : mauSacIds) {
-            MauSac mauSac = mauSacRepo.findById(mauSacId).orElse(null);
-            for (Integer congSuatId : congSuatIds) {
-                CongSuat congSuat = congSuatRepo.findById(congSuatId).orElse(null);
-                // Kiểm tra trùng thuộc tính cho phép trùng tên
-                if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
+            String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
+            SanPham sp = sanPhamRepo.findByMa(ma);
+            if (sp != null) {
+                // Tên và kiểu quạt phải trùng
+                if (!sp.getTen().trim().equalsIgnoreCase(ten.trim())) {
                     return ResponseEntity.badRequest().body(
-                            "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
+                            "Mã " + ma + " đã tồn tại, nhưng với tên: " + sp.getTen() + ". Vui lòng sử dụng cùng tên."
                     );
                 }
-                SanPhamChiTietTam sanPhamChiTietTam = new SanPhamChiTietTam();
-                sanPhamChiTietTam.setId((long) idTuTang++);
-                sanPhamChiTietTam.setSanPhamTam(sanPhamTam);
-                sanPhamChiTietTam.setMauSac(mauSac);
-                sanPhamChiTietTam.setCongSuat(congSuat);
-                sanPhamChiTietTam.setCheDoGio(cheDoGioRepo.findById(cheDoGioId).orElse(null));
-                sanPhamChiTietTam.setNutBam(nutBamRepo.findById(nutBamId).orElse(null));
-                sanPhamChiTietTam.setChatLieuCanh(chatLieuCanhRepo.findById(chatLieuCanhId).orElse(null));
-                sanPhamChiTietTam.setDuongKinhCanh(duongKinhCanhRepo.findById(duongKinhCanhId).orElse(null));
-                sanPhamChiTietTam.setChatLieuKhung(chatLieuKhungRepo.findById(chatLieuKhungId).orElse(null));
-                sanPhamChiTietTam.setDeQuat(deQuatRepo.findById(deQuatId).orElse(null));
-                sanPhamChiTietTam.setChieuCao(chieuCaoRepo.findById(chieuCaoId).orElse(null));
-                sanPhamChiTietTam.setHang(hangRepo.findById(hangId).orElse(null));
-                sanPhamChiTietTam.setGia(new BigDecimal(100000));
-                sanPhamChiTietTam.setSo_luong(1);
-                sanPhamChiTietTam.setTrang_thai(true);
-                sanPhamChiTietTam.setNgay_tao(new Date());
-                sanPhamChiTietTam.setNguoi_tao(nhanVien.getTen());
-
-                listSPCTTam.add(sanPhamChiTietTam);
+                if (!sp.getKieuQuat().getId().equals(kieuQuatId)) {
+                    return ResponseEntity.badRequest().body(
+                            "Mã " + ma + " đã tồn tại, nhưng với kiểu quạt: " + sp.getKieuQuat().getTen() + ". Vui lòng chọn đúng kiểu quạt."
+                    );
+                }
             }
+            else {
+                List<SanPham> productsWithName = sanPhamRepo.findByTenIgnoreCase(ten.trim());
+                SanPham spTimMa = sanPhamRepo.findByTen(ten.trim());
+                if (!productsWithName.isEmpty()) {
+                    return ResponseEntity.badRequest().body(
+                            "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + spTimMa.getMa()+" ."
+                    );
+                }
+            }
+            List<SanPhamChiTiet> spcheck = spctRepo.timKiemTheoTen(ten.trim());
+            if (spcheck != null && !spcheck.isEmpty()) {
+                SanPhamChiTiet spDauTien = spcheck.get(0);
+                if (!spDauTien.getCheDoGio().getId().equals(cheDoGioId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chế độ gió phải là : " + spDauTien.getCheDoGio().getTen());
+                }
+                if (!spDauTien.getNutBam().getId().equals(nutBamId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " nút bấm phải là : " + spDauTien.getNutBam().getTen());
+                }
+                if (!spDauTien.getChatLieuCanh().getId().equals(chatLieuCanhId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu cánh phải là : " + spDauTien.getChatLieuCanh().getTen());
+                }
+                if (!spDauTien.getDuongKinhCanh().getId().equals(duongKinhCanhId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đường kính cánh phải là : " + spDauTien.getDuongKinhCanh().getTen());
+                }
+                if (!spDauTien.getChatLieuKhung().getId().equals(chatLieuKhungId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu khung phải là : " + spDauTien.getChatLieuKhung().getTen());
+                }
+                if (!spDauTien.getDeQuat().getId().equals(deQuatId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đế quạt cánh phải là : " + spDauTien.getDeQuat().getTen());
+                }
+                if (!spDauTien.getChieuCao().getId().equals(chieuCaoId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chiều cao phải là : " + spDauTien.getChieuCao().getTen());
+                }
+                if (!spDauTien.getHang().getId().equals(hangId)) {
+                    return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " hãng phải là : " + spDauTien.getHang().getTen());
+                }
+            }
+
+            // Cập nhật thông tin sản phẩm
+            SanPhamTam sanPhamTam = new SanPhamTam();
+            sanPhamTam.setMa(ma);
+            sanPhamTam.setTen(ten);
+            sanPhamTam.setKieuQuat(kieuQuatRepo.findById(kieuQuatId).orElse(null));
+            sanPhamTam.setDieu_khien_tu_xa(true);
+
+            sanPhamTam.setTrang_thai(true);
+            sanPhamTam.setNgay_tao(new Date());
+
+            List<SanPhamChiTietTam> listSPCTTam = new ArrayList<>();
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body("Sản phẩm phải có 1 ảnh.");
+            }
+            if (file != null && !file.isEmpty()) {
+                String contentType = file.getContentType();
+                if (contentType == null ||
+                        (!contentType.equals("image/png") &&
+                                !contentType.equals("image/jpeg") &&
+                                !contentType.equals("image/jpg"))) {
+                    return ResponseEntity.badRequest().body("File ảnh phải có định dạng PNG, JPG hoặc JPEG.");
+                }
+
+                Map<String, String> uploadAnh = cloudinaryService.upload(file);
+                String imageUrl = uploadAnh.get("url");
+
+                HinhAnh hinhAnh = new HinhAnh();
+                hinhAnh.setHinh_anh_1(imageUrl);
+                hinhAnhRepo.save(hinhAnh);
+
+                int idTuTang = 1;
+                for (Integer mauSacId : mauSacIds) {
+                    MauSac mauSac = mauSacRepo.findById(mauSacId).orElse(null);
+                    for (Integer congSuatId : congSuatIds) {
+                        CongSuat congSuat = congSuatRepo.findById(congSuatId).orElse(null);
+                        // Kiểm tra trùng thuộc tính cho phép trùng tên
+                        if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
+                            return ResponseEntity.badRequest().body(
+                                    "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
+                            );
+                        }
+                        SanPhamChiTietTam sanPhamChiTietTam = new SanPhamChiTietTam();
+                        sanPhamChiTietTam.setId((long) idTuTang++);
+                        sanPhamChiTietTam.setSanPhamTam(sanPhamTam);
+                        sanPhamChiTietTam.setMauSac(mauSac);
+                        sanPhamChiTietTam.setCongSuat(congSuat);
+                        sanPhamChiTietTam.setCheDoGio(cheDoGioRepo.findById(cheDoGioId).orElse(null));
+                        sanPhamChiTietTam.setNutBam(nutBamRepo.findById(nutBamId).orElse(null));
+                        sanPhamChiTietTam.setChatLieuCanh(chatLieuCanhRepo.findById(chatLieuCanhId).orElse(null));
+                        sanPhamChiTietTam.setDuongKinhCanh(duongKinhCanhRepo.findById(duongKinhCanhId).orElse(null));
+                        sanPhamChiTietTam.setChatLieuKhung(chatLieuKhungRepo.findById(chatLieuKhungId).orElse(null));
+                        sanPhamChiTietTam.setDeQuat(deQuatRepo.findById(deQuatId).orElse(null));
+                        sanPhamChiTietTam.setChieuCao(chieuCaoRepo.findById(chieuCaoId).orElse(null));
+                        sanPhamChiTietTam.setHang(hangRepo.findById(hangId).orElse(null));
+                        sanPhamChiTietTam.setHinhAnh(hinhAnh); //thêm ảnh
+                        sanPhamChiTietTam.setGia(new BigDecimal(100000));
+                        sanPhamChiTietTam.setSo_luong(1);
+                        sanPhamChiTietTam.setTrang_thai(true);
+                        sanPhamChiTietTam.setNgay_tao(new Date());
+                        sanPhamChiTietTam.setNguoi_tao(nhanVien.getTen());
+
+                        listSPCTTam.add(sanPhamChiTietTam);
+                    }
+                }
+            }
+
+            session.setAttribute("listSPCTTam", listSPCTTam);
+            System.out.println("list : " + listSPCTTam.size());
+            model.addAttribute("listSPCTTam", listSPCTTam);
+            return ResponseEntity.ok(listSPCTTam);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("lỗi");
         }
 
-        session.setAttribute("listSPCTTam", listSPCTTam);
-        System.out.println("list : " + listSPCTTam.size());
-        model.addAttribute("listSPCTTam", listSPCTTam);
-        return ResponseEntity.ok(listSPCTTam);
+
+//        Map<String, List<SanPhamChiTietTam>> productsByColor = new HashMap<>();
+//        for (SanPhamChiTietTam product : listSPCTTam) {
+//            String color = product.getMauSac().getTen();
+//            productsByColor.putIfAbsent(color, new ArrayList<>());
+//            productsByColor.get(color).add(product);
+//        }
+//
+//        session.setAttribute("listSPCTTam", listSPCTTam);
+//        session.setAttribute("productsByColor", productsByColor);
+//        model.addAttribute("productsByColor", productsByColor);
+
     }
     // Nhận giá trị từ sản phẩm tạm
     @PostMapping("/san-pham/confirm")
@@ -362,8 +402,7 @@ public class SanPhamController {
                 sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
                 sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
                 sanPhamChiTiet.setHang(spTam.getHang());
-                HinhAnh hinhAnh = new HinhAnh();
-                sanPhamChiTiet.setHinhAnh(hinhAnhRepo.save(hinhAnh));
+                sanPhamChiTiet.setHinhAnh(spTam.getHinhAnh());
                 sanPhamChiTiet.setGia(spTam.getGia());
                 sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
                 sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
@@ -407,9 +446,7 @@ public class SanPhamController {
                 sanPhamChiTiet.setDeQuat(spTam.getDeQuat());
                 sanPhamChiTiet.setChatLieuCanh(spTam.getChatLieuCanh());
                 sanPhamChiTiet.setHang(spTam.getHang());
-                HinhAnh hinhAnh = new HinhAnh();
-                sanPhamChiTiet.setHinhAnh(hinhAnhRepo.save(hinhAnh));
-
+                sanPhamChiTiet.setHinhAnh(spTam.getHinhAnh());
                 sanPhamChiTiet.setGia(spTam.getGia());
                 sanPhamChiTiet.setSo_luong(spTam.getSo_luong());
                 sanPhamChiTiet.setTrang_thai(spTam.getTrang_thai());
@@ -438,6 +475,8 @@ public class SanPhamController {
         if (sanPhamChiTiet == null) {
             return "redirect:/admin/san-pham";
         }
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         model.addAttribute("spUpdate", sanPhamChiTiet);
         return "admin/san_pham/san_pham_update";
     }
@@ -562,29 +601,4 @@ public class SanPhamController {
             return ResponseEntity.badRequest().body("Cập nhật sản phẩm không thành công!");
         }
     }
-//    @DeleteMapping("/delete-tam/{id}")
-//    public ResponseEntity<?> deleteSanPhamTam(@PathVariable Long id, HttpSession session) {
-//        if (id == null) {
-//            return ResponseEntity.badRequest().body("ID không hợp lệ!");
-//        }
-//        try {
-//            List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
-//            System.out.println("Received delete request for ID: " + id);
-//            if (sanPhamChiTietTamList != null) {
-//                boolean removed = sanPhamChiTietTamList.removeIf(spTam -> spTam.getId().equals(id));
-//                if (removed) {
-//                    session.setAttribute("listSPCTTam", sanPhamChiTietTamList);
-//                    return ResponseEntity.ok("Xóa biến thể thành công!");
-//                } else {
-//                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy biến thể với ID: " + id);
-//                }
-//            } else {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Danh sách biến thể tạm rỗng!");
-//            }
-//            } catch (Exception e) {
-//                // Log lỗi để dễ theo dõi (có thể dùng logger thay vì in ra console)
-//                System.err.println("Lỗi khi xóa biến thể: " + e.getMessage());
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi khi xóa biến thể!");
-//            }
-//        }
     }

@@ -40,4 +40,9 @@ public class NhanVienImpl implements NhanVienService {
         }
         return nhanVienRepository.searchNhanVien(keyword,trang_thai, pageable);
     }
+
+    @Override
+    public Boolean checkTrungEmailSdt(String email, String sdt) {
+        return nhanVienRepository.findTonTaiEmailvaSdt(email, sdt);
+    }
 }
