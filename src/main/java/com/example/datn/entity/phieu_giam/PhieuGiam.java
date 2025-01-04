@@ -63,7 +63,7 @@ public class PhieuGiam {
     @Column(name = "trang_thai")
     private boolean trangThai ;
 
-    @OneToOne(optional = true)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "id_san_pham_chi_tiet", referencedColumnName = "id", nullable = true)
     private SanPhamChiTiet spct;
 
