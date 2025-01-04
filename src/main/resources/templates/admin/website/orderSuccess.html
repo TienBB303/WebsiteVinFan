@@ -70,7 +70,11 @@
             <p><strong>Thông tin giao hàng:</strong></p>
             <p>Họ và tên: <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
             <p>Số điện thoại: <span th:text="${hoaDon.sdtNguoiNhan}"></span></p>
-            <p>Địa chỉ: <span th:text="${hoaDon.diaChi}"></span></p>
+            <p>
+                Địa chỉ: <span id="fullAddress"></span>
+                <input type="hidden" id="hiddenAddress" th:value="${hoaDon.diaChi}">
+            </p>
+
             <p>Phương thức thanh toán: <span
                     th:text="${hoaDon.loaiHoaDon ? 'Thanh toán khi nhận hàng (COD)' : 'Khác'}"></span></p>
             <p>Ghi chú: <span th:text="${hoaDon.ghiChu}"></span></p>
@@ -80,5 +84,62 @@
     <a href="/admin/product-catalog" class="btn btn-primary mt-4">Tiếp tục mua hàng</a>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lấy giá trị địa chỉ từ thẻ input ẩn
+        var addressString = document.getElementById('hiddenAddress').value;
+
+        // Tách chuỗi thành các phần
+        var addressParts = addressString.split(','); // Tách chuỗi
+        var idTinh = addressParts[0];
+        var idHuyen = addressParts[1];
+        var idXa = addressParts[2];
+        var soNha = addressParts.slice(3).join(','); // Phần còn lại là chi tiết địa chỉ
+
+        // Thẻ để hiển thị địa chỉ đầy đủ
+        var fullAddressElement = document.getElementById('fullAddress');
+
+        // Gọi API để lấy dữ liệu địa giới hành chính
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        axios(Parameter)
+            .then(function (response) {
+                var data = response.data;
+                renderFullAddress(data, idTinh, idHuyen, idXa, soNha, fullAddressElement);
+            })
+            .catch(function (error) {
+                console.error('Lỗi khi gọi API:', error);
+                fullAddressElement.textContent = 'Không thể tải địa chỉ đầy đủ!';
+            });
+
+        // Hàm xử lý và hiển thị địa chỉ đầy đủ
+        function renderFullAddress(data, idTinh, idHuyen, idXa, soNha, element) {
+            var selectedCity = data.find(city => city.Id == idTinh);
+            if (selectedCity) {
+                var selectedDistrict = selectedCity.Districts.find(district => district.Id == idHuyen);
+                if (selectedDistrict) {
+                    var selectedWard = selectedDistrict.Wards.find(ward => ward.Id == idXa);
+                    if (selectedWard) {
+                        element.textContent = `${soNha}, ${selectedWard.Name}, ${selectedDistrict.Name}, ${selectedCity.Name}`;
+                    } else {
+                        element.textContent = 'Không tìm thấy xã/phường';
+                    }
+                } else {
+                    element.textContent = 'Không tìm thấy quận/huyện';
+                }
+            } else {
+                element.textContent = 'Không tìm thấy tỉnh/thành phố';
+            }
+        }
+    });
+
+
+</script>
 </body>
 </html>
