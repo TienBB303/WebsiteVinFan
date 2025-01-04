@@ -127,18 +127,12 @@ public class SanPhamController {
     public String searchProducts(@RequestParam(value = "query", defaultValue = "") String query,
                                  @RequestParam(value = "minPrice", defaultValue = "0") String minPriceStr,
                                  @RequestParam(value = "maxPrice", defaultValue = "0") String maxPriceStr,
-                                 @RequestParam(value = "trang_thai", defaultValue = "") String trang_thaiStr,
+                                 @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
                                  @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "5") int size,
                                  Model model) {
         BigDecimal minPrice = epKieuDecimal(minPriceStr.trim());
         BigDecimal maxPrice = epKieuDecimal(maxPriceStr.trim());
-        Boolean trang_thai = null;
-        if ("1".equals(trang_thaiStr.trim())) {
-            trang_thai = true;
-        } else if ("0".equals(trang_thaiStr.trim())) {
-            trang_thai = false;
-        }
         if (maxPrice.compareTo(BigDecimal.ZERO) == 0) {
             maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
@@ -149,7 +143,7 @@ public class SanPhamController {
         model.addAttribute("query", query);
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
-        model.addAttribute("trang_thai", trang_thaiStr);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         return "admin/san_pham/san_pham_index";
     }
     private BigDecimal epKieuDecimal(String priceStr) {

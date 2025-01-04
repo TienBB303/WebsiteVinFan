@@ -4,6 +4,7 @@ import com.example.datn.entity.thuoc_tinh.ChatLieuKhung;
 import com.example.datn.entity.thuoc_tinh.CongSuat;
 import com.example.datn.repository.ThuocTinhRepo.CongSuatRepo;
 import com.example.datn.service.thuoc_tinh_service.CongSuatService;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,20 +33,14 @@ public class CongSuatController {
 
     @GetMapping("/view")
     public String timKiem(@RequestParam(value = "ten_cong_suat", defaultValue = "") String ten_cong_suat,
-                          @RequestParam(value = "trang_thai", defaultValue = "") String trang_thaiStr,
+                          @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
                           @RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "5") int size,
                           Model model) {
-        Boolean trang_thai = null;
-        if ("1".equals(trang_thaiStr)) {
-            trang_thai = true;
-        } else if ("0".equals(trang_thaiStr)) {
-            trang_thai = false;
-        }
         Page<CongSuat> searchPage = congSuatService.search(ten_cong_suat, trang_thai, PageRequest.of(page, size));
         model.addAttribute("listCS", searchPage);
         model.addAttribute("ten_cong_suat", ten_cong_suat);
-        model.addAttribute("trang_thai", trang_thaiStr);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         return "admin/thuoc_tinh/cong_suat";
     }
 

@@ -32,26 +32,17 @@ public class ChatLieuCanhController {
 
     @GetMapping("/view")
     public String timKiem(@RequestParam(value = "ten_chat_lieu_canh", defaultValue = "") String ten_chat_lieu_canh,
-                          @RequestParam(value = "trang_thai", defaultValue = "") String trang_thaiStr,
+                          @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
                           @RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "5") int size,
                           Model model) {
-        Boolean trang_thai = null;
-        if ("1".equals(trang_thaiStr)) {
-            trang_thai = true;
-        } else if ("0".equals(trang_thaiStr)) {
-            trang_thai = false;
-        }
-//        if (page < 0) {
-//            page = 0;
-//        }
         Page<ChatLieuCanh> searchPage = chatLieuCanhService.search(ten_chat_lieu_canh.trim(), trang_thai, PageRequest.of(page, size));
         if (searchPage.isEmpty() && page < 0) {
             searchPage = chatLieuCanhService.search(ten_chat_lieu_canh.trim(), trang_thai, PageRequest.of(0, size));
         }
         model.addAttribute("listCLC", searchPage);
         model.addAttribute("ten_chat_lieu_canh", ten_chat_lieu_canh);
-        model.addAttribute("trang_thai", trang_thaiStr);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         return "admin/thuoc_tinh/chat_lieu_canh";
     }
 
