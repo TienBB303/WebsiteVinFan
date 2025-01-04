@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     public Page<HoaDon> findAll(Pageable pageable) {
         return hoaDonRepo.findAll(pageable);
     }
-@Override
+
+    @Override
     public Optional<HoaDon> findByIdWithPhieuGiamGia(Long id) {
         return hoaDonRepo.findByIdWithPhieuGiamGia(id);
     }
@@ -142,8 +144,11 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public Page<HoaDon> searchHoaDon(String query, Pageable pageable) {
-        return hoaDonRepo.searchHoaDon(query, pageable);
+    public Page<HoaDon> searchHoaDon(String query, Boolean loaiHoaDon, LocalDate tuNgay, LocalDate denNgay, Integer trang_thai, Pageable pageable) {
+        if (trang_thai == null) {
+            return hoaDonRepo.searchHoaDonKhongtrangThai(query, loaiHoaDon, tuNgay, denNgay, pageable);
+        }
+        return hoaDonRepo.searchHoaDon(query, loaiHoaDon, tuNgay, denNgay, trang_thai, pageable);
     }
 
     @Override

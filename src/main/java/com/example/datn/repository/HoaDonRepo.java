@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,16 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
     @Query("select hd from HoaDon hd order by hd.ngayTao desc ")
     Page<HoaDon> findHoaDonAndSortDay(Pageable pageable);
 
+//    @Query("SELECT hd FROM HoaDon hd " +
+//            "LEFT JOIN hd.khachHang kh " +
+//            "LEFT JOIN hd.nhanVien nv " +
+//            "WHERE (LOWER(COALESCE(kh.ten, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+//            "OR LOWER(COALESCE(kh.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+//            "OR LOWER(COALESCE(kh.soDienThoai, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+//            "OR LOWER(COALESCE(nv.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+//            "OR LOWER(COALESCE(hd.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')))"
+//    )
+//    Page<HoaDon> searchHoaDon(String query, Pageable pageable);
     @Query("SELECT hd FROM HoaDon hd " +
             "LEFT JOIN hd.khachHang kh " +
             "LEFT JOIN hd.nhanVien nv " +
@@ -28,10 +39,25 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
             "OR LOWER(COALESCE(kh.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(COALESCE(kh.soDienThoai, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(COALESCE(nv.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(COALESCE(hd.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')))"
-    )
-    Page<HoaDon> searchHoaDon(String query, Pageable pageable);
+            "OR LOWER(COALESCE(hd.ma, '')) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+            "AND (:loaiHoaDon IS NULL OR hd.loaiHoaDon = :loaiHoaDon) " +
+            "AND (:tuNgay IS NULL OR hd.ngayTao >= :tuNgay) " +  // So sánh trực tiếp với LocalDate
+            "AND (:denNgay IS NULL OR hd.ngayTao <= :denNgay) " + // So sánh trực tiếp với LocalDate
+            "AND (:trangThai IS NULL OR hd.trangThai = :trangThai)")
+    Page<HoaDon> searchHoaDon(String query, Boolean loaiHoaDon, LocalDate tuNgay, LocalDate denNgay, Integer trangThai, Pageable pageable);
 
+    @Query("SELECT hd FROM HoaDon hd " +
+            "LEFT JOIN hd.khachHang kh " +
+            "LEFT JOIN hd.nhanVien nv " +
+            "WHERE (LOWER(COALESCE(kh.ten, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(kh.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(kh.soDienThoai, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(nv.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(hd.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')))" +
+            "AND (:tuNgay IS NULL OR hd.ngayTao >= :tuNgay) " + // So sánh trực tiếp với LocalDate
+            "AND (:denNgay IS NULL OR hd.ngayTao <= :denNgay) " + // So sánh trực tiếp với LocalDate
+            "AND (:loaiHoaDon IS NULL OR hd.loaiHoaDon = :loaiHoaDon)")
+    Page<HoaDon> searchHoaDonKhongtrangThai(String query, Boolean loaiHoaDon, LocalDate tuNgay, LocalDate denNgay, Pageable pageable);
 
     @Query("SELECT new com.example.datn.dto.response.PggInHoaDonResponse(" +
             "pgg.ma , pgg.ten, hd.tongTien, hd.tongTienSauGiamGia, hd.phiVanChuyen) " +

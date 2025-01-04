@@ -84,7 +84,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
                                 <div class="col-sm-8">
-                                    <input type="date" class="form-control" name="ngayBD">
+                                    <input type="date" class="form-control" name="ngayBD" id="ngayBD" readonly>
                                     <span id="ngayBDError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -118,16 +118,16 @@
                                     </select>
                                 </div>
                             </div>
-                            <!-- Trạng thái -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Trạng thái</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" name="trangThai" required>
-                                        <option value="true">Áp dụng</option>
-                                        <option value="false">Ngừng áp dụng</option>
-                                    </select>
-                                </div>
-                            </div>
+<!--                            &lt;!&ndash; Trạng thái &ndash;&gt;-->
+<!--                            <div class="form-group row">-->
+<!--                                <label class="col-sm-4 col-form-label">Trạng thái</label>-->
+<!--                                <div class="col-sm-8">-->
+<!--                                    <select class="form-control" name="trangThai" required>-->
+<!--                                        <option value="true">Áp dụng</option>-->
+<!--                                        <option value="false">Ngừng áp dụng</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                            </div>-->
                             <!-- Chọn sản phẩm -->
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Chọn sản phẩm chi tiết</label>
@@ -168,6 +168,22 @@
     <!-- Thêm SweetAlert2 CSS và JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Lấy phần tử input
+        const ngayBDInput = document.getElementById('ngayBD');
+
+        // Lấy ngày hiện tại
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+        const dd = String(today.getDate()).padStart(2, '0');
+
+        // Định dạng ngày theo yyyy-MM-dd
+        const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+        // Gán giá trị mặc định cho input
+        ngayBDInput.value = formattedDate;
+    </script>
     <script th:inline="javascript">
         function validateForm() {
             const currentDate = new Date();

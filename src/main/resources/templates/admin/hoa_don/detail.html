@@ -351,6 +351,7 @@
                     <thead>
                     <tr>
                         <th>STT</th>
+                        <th> </th>
                         <th>Tên sản phẩm</th>
                         <th>Giá bán</th>
                         <th>Giá giảm</th>
@@ -362,6 +363,10 @@
                     <tbody>
                     <tr th:each="item, iter : ${listHDCT}" th:data-id="${item.id}">
                         <td th:text="${iter.count}"></td>
+                        <td>
+                            <img class="item-image" th:src="@{${item.sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                                 style="height: 100px; width: 100px; object-fit: cover;">
+                        </td>
                         <td th:text="${item.sanPhamChiTiet.sanPham.ten}"></td>
                         <td class="giaVND" th:text="${item.gia}"></td>
                         <td class="giaVND" th:text="${item.giaGiam != null ? item.giaGiam + ' VND' : '0 VND'}"></td>

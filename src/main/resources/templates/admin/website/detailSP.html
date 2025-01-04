@@ -224,9 +224,6 @@
                 <div class="card shadow-sm p-3">
                     <!-- Title -->
                     <div class="row align-items-center">
-                        <div class="col-auto">
-                            <h2>Tên sản phẩm:</h2>
-                        </div>
                         <div class="col-auto fw-bold mt-1 text-success">
                             <h4 th:text="${sanPham.ten}"></h4>
                         </div>
@@ -282,8 +279,8 @@
                         <input type="hidden" name="productId" id="selectedProductId">
                         <input type="hidden" name="price" id="selectedPrice">
                         <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn btn-danger w-100 fw-bold" disabled id="addToCartButton">
-                            Thêm vào giỏ hàng
+                        <button type="submit" class="btn btn-outline-dark w-100 fw-bold" disabled id="addToCartButton">
+                            <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
                         </button>
                     </form>
                 </div>

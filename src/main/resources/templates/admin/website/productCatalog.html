@@ -252,6 +252,11 @@
     .modal-footer .btn-primary:hover {
         background-color: #bd2130;
     }
+    .accordion-collapse {
+        max-height: 200px; /* Đặt chiều cao tối đa */
+        overflow-y: auto; /* Thêm cuộn dọc khi nội dung vượt quá chiều cao */
+    }
+
 </style>
 <body>
 
@@ -298,7 +303,8 @@
                 <li class="nav-item mx-3">
                     <!-- Khi khách hàng đã đăng nhập -->
                     <div th:if="${khachHang} != null">
-                        <a class="nav-link d-flex align-items-center" th:href="@{/admin/sua-thong-tin/{id}(id=${khachHang.id})}">
+                        <a class="nav-link d-flex align-items-center"
+                           th:href="@{/admin/sua-thong-tin/{id}(id=${khachHang.id})}">
                             <i class="fas fa-user"></i>
                         </a>
                     </div>
@@ -324,39 +330,20 @@
 
                     <!-- Khi người dùng chưa đăng nhập -->
                     <div th:if="${khachHang} == null">
-                        <a th:href="@{/login}" class="btn btn-outline-primary text-decoration-none d-flex align-items-center">
+                        <a th:href="@{/login}"
+                           class="btn btn-outline-primary text-decoration-none d-flex align-items-center">
                             <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
                         </a>
                     </div>
                 </div>
-
-
             </ul>
         </div>
-
-
     </div>
 </nav>
 <!-- Form lọc kiểu quạt-->
-<nav class="navbar navbar-expand-lg navbar-custom-2">
-    <div class="container-fluid justify-content-center">
-        <!-- Tất cả sản phẩm -->
-        <a class="nav-link fw-bold" th:href="@{/admin/product-catalog(filter='all')}">Tất cả sản phẩm</a>
-
-        <!-- Danh sách kiểu quạt -->
-        <ul class="navbar-nav">
-            <li class="nav-item" th:each="kieu : ${kieuQuats}">
-                <a class="nav-link"
-                   th:href="@{/admin/product-catalog(kieuQuatId=${kieu.id})}"
-                   th:text="${kieu.ten}"
-                   th:classappend="${kieu.id == kieuQuatId} ? 'active' : ''">Kiểu quạt</a>
-            </li>
-        </ul>
-    </div>
-</nav>
 
 <!-- Slideshow -->
-<div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1000">
+<div id="carouselExample" class="carousel slide mt-5" data-bs-ride="carousel" data-bs-interval="1000">
     <div class="carousel-inner">
         <div class="carousel-item active">
             <div style="width: 100%; overflow: hidden;">
@@ -390,115 +377,203 @@
 </div>
 <!-- Product Catalog Section -->
 <section class="py-5">
-    <div class="container">
-        <h1 class="text-center mb-5">Danh mục sản phẩm quạt của chúng tôi</h1>
-        <!-- Thanh điều hướng với các tùy chọn -->
-        <div class="btn-group mb-4">
-            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#priceFilterModal">Khoảng
-                giá
-            </button>
-            <a class="btn btn-outline-secondary" th:href="@{/admin/product-catalog(sortOrder='popular')}">Bán chạy
-                nhất</a>
-            <a th:href="@{/admin/product-catalog(sortOrder='newest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-               class="btn btn-outline-secondary">Mới nhất</a>
-            <a th:href="@{/admin/product-catalog(sortOrder='oldest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-               class="btn btn-outline-secondary">Cũ nhất</a>
-            <a class="btn btn-outline-secondary"
-               th:href="@{/admin/product-catalog(filter='discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">Sản
-                phẩm giảm giá</a>
-            <a class="btn btn-outline-secondary"
-               th:href="@{/admin/product-catalog(filter='non-discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">Sản
-                phẩm không giảm giá</a>
+    <div class="row ">
+        <div class="col-md-3">
+            <h3 class="text-center mt-2">Danh mục sản phẩm</h3>
+            <div class="container mt-4">
+                <div class="collapse show" id="filterSection">
+                    <div class="accordion mt-2" id="filtersAccordion">
+                        <!-- Mới nhất -->
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="headingNewest">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseNewest" aria-expanded="false"
+                                        aria-controls="collapseNewest">
+                                    Mới nhất
+                                </button>
+                            </h2>
+                            <div id="collapseNewest" class="accordion-collapse collapse" aria-labelledby="headingNewest"
+                                 data-bs-parent="#filtersAccordion">
+                                <div class="accordion-body">
+                                    <a class="text-decoration-none text-primary"
+                                       th:href="@{/admin/product-catalog(sortOrder='newest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
+                                        Xem sản phẩm mới nhất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Cũ nhất -->
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="headingOldest">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseOldest" aria-expanded="false"
+                                        aria-controls="collapseOldest">
+                                    Cũ nhất
+                                </button>
+                            </h2>
+                            <div id="collapseOldest" class="accordion-collapse collapse" aria-labelledby="headingOldest"
+                                 data-bs-parent="#filtersAccordion">
+                                <div class="accordion-body">
+                                    <a class="text-decoration-none text-primary"
+                                       th:href="@{/admin/product-catalog(sortOrder='oldest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
+                                        Xem sản phẩm cũ nhất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sản phẩm giảm giá -->
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="headingDiscounted">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseDiscounted"
+                                        aria-expanded="false" aria-controls="collapseDiscounted">
+                                    Sản phẩm giảm giá
+                                </button>
+                            </h2>
+                            <div id="collapseDiscounted" class="accordion-collapse collapse"
+                                 aria-labelledby="headingDiscounted" data-bs-parent="#filtersAccordion">
+                                <div class="accordion-body">
+                                    <a class="text-decoration-none text-success"
+                                       th:href="@{/admin/product-catalog(filter='discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
+                                        Xem sản phẩm giảm giá
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sản phẩm không giảm giá -->
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="headingNonDiscounted">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseNonDiscounted"
+                                        aria-expanded="false" aria-controls="collapseNonDiscounted">
+                                    Sản phẩm không giảm giá
+                                </button>
+                            </h2>
+                            <div id="collapseNonDiscounted" class="accordion-collapse collapse"
+                                 aria-labelledby="headingNonDiscounted" data-bs-parent="#filtersAccordion">
+                                <div class="accordion-body">
+                                    <a class="text-decoration-none text-danger"
+                                       th:href="@{/admin/product-catalog(filter='non-discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
+                                        Xem sản phẩm không giảm giá
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="headingNonDiscounted1">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseNonDiscounted1"
+                                        aria-expanded="false" aria-controls="collapseNonDiscounted1">
+                                    Kiểu quạt
+                                </button>
+                            </h2>
+                            <div id="collapseNonDiscounted1" class="accordion-collapse collapse"
+                                 aria-labelledby="headingNonDiscounted1" data-bs-parent="#filtersAccordion1">
+                                <div class="accordion-body">
+                                    <a class="text-decoration-none text-danger"
+                                       th:href="@{/admin/product-catalog(filter='all')}">Tất cả sản phẩm</a>
+                                </div>
+                                <div class="accordion-body" th:each="kieu : ${kieuQuats}">
+                                    <a class="text-decoration-none text-danger"
+                                       th:href="@{/admin/product-catalog(kieuQuatId=${kieu.id})}"
+                                       th:text="${kieu.ten}"
+                                       th:classappend="${kieu.id == kieuQuatId} ? 'active' : ''">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="col-md-9">
+            <!-- Kiểm tra nếu không có sản phẩm nào -->
+            <div th:if="${sanPhamGiamGia != null and #lists.isEmpty(sanPhamGiamGia) and sanPhamKhongGiamGia != null and #lists.isEmpty(sanPhamKhongGiamGia)}">
+                <img src="https://shop.nebulacare.in/Content/Images/nodata.jpg"
+                     style="max-width: 100%; max-height: 600px;">
+            </div>
 
-        <!-- Kiểm tra nếu không có sản phẩm nào -->
-        <div th:if="${sanPhamGiamGia != null and #lists.isEmpty(sanPhamGiamGia) and sanPhamKhongGiamGia != null and #lists.isEmpty(sanPhamKhongGiamGia)}">
-            <p>Không có sản phẩm nào</p>
-        </div>
-
-        <!-- Sản phẩm giảm giá -->
-        <div  id="discounted-section" th:if="${!#lists.isEmpty(sanPhamGiamGia)}" class="mb-5">
-            <h2 class="text-center mb-4">Sản phẩm có giảm giá</h2>
-            <div id="discounted-products" class="row g-4">
-                <th:block th:each="phieuGiamGia : ${sanPhamGiamGia}">
-                    <div class="col-lg-3 col-md-4 col-sm-6 product">
-                        <div class="card product-card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <img th:src="@{${phieuGiamGia.spct.hinhAnh.hinh_anh_1}}" alt="Product Image"
-                                     style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title product-title" th:text="${phieuGiamGia.spct.sanPham.ten}">Tên sản
-                                    phẩm</h5>
-                                <p class="card-text text-danger" th:if="${phieuGiamGia.giaTriGiam > 0}">
-                                    Giảm: <span class="discount-price"
-                                                th:text="${#numbers.formatDecimal(phieuGiamGia.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
-                                </p>
-                                <p class="card-text">
+            <!-- Sản phẩm giảm giá -->
+            <div id="discounted-section" th:if="${!#lists.isEmpty(sanPhamGiamGia)}" class="mb-5">
+                <h2 class="text-center mb-4">Sản phẩm đang giảm giá</h2>
+                <div id="discounted-products" class="row g-4">
+                    <th:block th:each="phieuGiamGia : ${sanPhamGiamGia}">
+                        <div class="col-lg-3 col-md-4 col-sm-6 product">
+                            <div class="card product-card h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <img th:src="@{${phieuGiamGia.spct.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                                         style="height: 200px; object-fit: cover;">
+                                    <h5 class="card-title product-title h-100"
+                                        th:text="${phieuGiamGia.spct.sanPham.ten + ' - ' + phieuGiamGia.spct.mauSac.ten + ' - ' + phieuGiamGia.spct.congSuat.ten}"></h5>
+                                    <h6 class="card-title product-title" th:if="${phieuGiamGia.spct.so_luong > 0}"
+                                        th:text="'Còn: ' + ${phieuGiamGia.spct.so_luong}">
+                                    </h6>
+                                    <h6 class="card-title product-title" th:if="${phieuGiamGia.spct.so_luong <= 0}">
+                                        Hết hàng
+                                    </h6>
+                                    </h6>
+                                    <p class="card-text text-danger" th:if="${phieuGiamGia.giaTriGiam > 0}">
+                                        Giảm: <span class="discount-price"
+                                                    th:text="${#numbers.formatDecimal(phieuGiamGia.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
+                                    </p>
+                                    <p class="card-text">
                                     <span class="old-price text-decoration-line-through"
                                           th:if="${phieuGiamGia.giaSauGiam < phieuGiamGia.spct.gia}"
                                           th:text="${#numbers.formatDecimal(phieuGiamGia.spct.gia, 1, 0)}">0VND</span>
-                                </p>
-                                <p class="card-text">
+                                    </p>
+                                    <p class="card-text">
                                     <span class="main-price product-price"
                                           th:text="${#numbers.formatDecimal(phieuGiamGia.giaSauGiam, 1, 0)}">0VND</span>
-                                </p>
-                                <div class="mt-auto">
-                                    <a th:href="@{/admin/detail/{id}(id=${phieuGiamGia.spct.id})}"
-                                       class="btn btn-primary w-100">Xem chi tiết</a>
-                                    <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
-                                        <input type="hidden" name="productId" th:value="${phieuGiamGia.spct.id}"/>
-                                        <input type="hidden" name="name" th:value="${phieuGiamGia.spct.sanPham.ten}"/>
-                                        <input type="hidden" name="price" th:value="${phieuGiamGia.spct.gia}"/>
-                                        <input type="hidden" name="discountedPrice"
-                                               th:value="${phieuGiamGia.giaSauGiam}"/>
-                                        <input type="hidden" name="quantity" value="1"/>
-                                        <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
-                                    </form>
+                                    </p>
+                                    <div class="mt-auto">
+                                        <a th:href="@{/admin/detail/{id}(id=${phieuGiamGia.spct.id})}"
+                                           class="btn btn-outline-dark w-100">Xem sản phẩm</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </th:block>
+                    </th:block>
+                </div>
             </div>
-        </div>
 
-        <!-- Sản phẩm không giảm giá -->
-        <div th:if="${!#lists.isEmpty(sanPhamKhongGiamGia)}">
-            <h2 class="text-center mb-4">Sản phẩm không giảm giá</h2>
-            <div id="non-discounted-products" class="row g-4">
-                <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
-                    <div class="col-lg-3 col-md-4 col-sm-6 product">
-                        <div class="card product-card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <img th:src="@{${sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
-                                     style="height: 200px; object-fit: cover;">
-                                <h5 class="card-title product-title" th:text="${sanPhamChiTiet.sanPham.ten}">Tên sản
-                                    phẩm</h5>
-                                <p class="card-text">
+            <!-- Sản phẩm không giảm giá -->
+            <div th:if="${!#lists.isEmpty(sanPhamKhongGiamGia)}">
+                <h2 class="text-center mb-4">Tất cả sản phẩm</h2>
+                <div id="non-discounted-products" class="row g-4">
+                    <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
+                        <div class="col-lg-3 col-md-4 col-sm-6 product">
+                            <div class="card product-card h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <img th:src="@{${sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                                         style="height: 200px; object-fit: cover;">
+                                    <h5 class="card-title product-title h-100"
+                                        th:text="${sanPhamChiTiet.sanPham.ten + ' - ' + sanPhamChiTiet.mauSac.ten + ' - ' + sanPhamChiTiet.congSuat.ten}"></h5>
+                                    <h6 class="card-title product-title" th:if="${sanPhamChiTiet.so_luong > 0}"
+                                        th:text="'Còn: ' + ${sanPhamChiTiet.so_luong}">
+                                    </h6>
+                                    <h6 class="card-title product-title" th:if="${sanPhamChiTiet.so_luong <= 0}">
+                                        Hết hàng
+                                    </h6>
+                                    <p class="card-text">
                                     <span class="product-price main-price"
                                           th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0VND</span>
-                                </p>
-                                <div class="mt-auto">
-                                    <a th:href="@{/admin/detail/{id}(id=${sanPhamChiTiet.id})}"
-                                       class="btn btn-primary w-100">Xem chi tiết</a>
-                                    <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
-                                        <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
-                                        <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
-                                        <input type="hidden" name="price" th:value="${sanPhamChiTiet.gia}"/>
-                                        <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/>
-                                        <input type="hidden" name="quantity" value="1"/>
-                                        <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
-                                    </form>
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <!-- Nút xem chi tiết -->
+                                        <a th:href="@{/admin/detail/{id}(id=${sanPhamChiTiet.id})}"
+                                           class="btn btn-outline-dark w-100">Xem sản phẩm</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </th:block>
+                    </th:block>
+                </div>
             </div>
-        </div>
 
-        <!-- Nút phân trang -->
-        <div id="pagination" class="d-flex justify-content-center mt-4">
-            <!-- Nút phân trang sẽ được tạo động tại đây -->
+            <!-- Nút phân trang -->
+            <div id="pagination" class="d-flex justify-content-center mt-4">
+                <!-- Nút phân trang sẽ được tạo động tại đây -->
+            </div>
         </div>
     </div>
 </section>
@@ -551,7 +626,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -785,7 +859,7 @@
             });
         }
     });
-    document.querySelector(".nav-link").addEventListener("click", function(e) {
+    document.querySelector(".nav-link").addEventListener("click", function (e) {
         if (!isLoggedIn) { // Biến kiểm tra đăng nhập
             e.preventDefault();
             Swal.fire({

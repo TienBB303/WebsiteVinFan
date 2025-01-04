@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,61 +43,26 @@ public class HoaDonController {
     @Autowired
     HoaDonRepo hoaDonRespo;
 
-
     @GetMapping("index")
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
                         @RequestParam(name = "size", defaultValue = "5") int size,
                         @RequestParam(name = "query", defaultValue = "") String query,
+                        @RequestParam(name = "loaiHoaDon", defaultValue = "") Boolean loaiHoaDon,
                         @RequestParam(name = "trangThai", required = false) Integer trangThai,
-                        @RequestParam(name = "method", defaultValue = "all") String method,
-                        @RequestParam(name = "startDate", required = false) String startDate,
-                        @RequestParam(name = "endDate", required = false) String endDate,
+                        @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tuNgay,
+                        @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate denNgay,
                         Model model) {
-        Page<HoaDon> list;
-        // Đảm bảo page không nhỏ hơn 0
         if (page < 0) {
             page = 0;
         }
 
-        LocalDate start = null;
-        LocalDate end = null;
-
-        try {
-            if (startDate != null && !startDate.isEmpty()) {
-                start = LocalDate.parse(startDate);
-            }
-            if (endDate != null && !endDate.isEmpty()) {
-                end = LocalDate.parse(endDate);
-            }
-        } catch (DateTimeParseException e) {
-            // Xử lý lỗi định dạng ngày nếu cần (ví dụ: ghi log)
-            e.printStackTrace();
-        }
-
-        // Logic lọc
-        if (query.isEmpty() && trangThai == null && method.equals("all") && start == null && end == null) {
-            list = hoaDonService.findHoaDonAndSortDay(page, size);
-        } else if (!query.isEmpty()) {
-            list = hoaDonService.searchHoaDon("%" + query + "%", PageRequest.of(page, size));
-        } else if (trangThai != null) {
-            list = hoaDonService.getAllHoaDonByTrangThai(trangThai, PageRequest.of(page, size));
-        } else if (start != null && end != null) {
-            list = hoaDonService.getHoaDonByDateRange(start, end, PageRequest.of(page, size));
-        } else if (!method.equals("all")) {
-            boolean isOnline = method.equals("1");
-            list = hoaDonService.getAllHoaDonByLoaiHoaDon(isOnline, PageRequest.of(page, size));
-        } else {
-            list = hoaDonService.findHoaDonAndSortDay(page, size);
-        }
-
-        // Gán dữ liệu vào Model
+        Page<HoaDon> list = hoaDonService.searchHoaDon(query, loaiHoaDon, tuNgay, denNgay, trangThai, PageRequest.of(page, size));
         model.addAttribute("list", list);
         model.addAttribute("query", query);
-        model.addAttribute("status", trangThai != null ? trangThai : 6);
-        model.addAttribute("method", method);
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-
+        model.addAttribute("loaiHoaDon", loaiHoaDon != null ? loaiHoaDon : "");  // Thay `false` bằng giá trị mặc định mà bạn mong muốn
+        model.addAttribute("trangThai", trangThai != null ? trangThai : "");
+        model.addAttribute("startDate", tuNgay != null ? tuNgay : "");
+        model.addAttribute("endDate", denNgay != null ? denNgay : "");
         TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
         model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
 
@@ -304,7 +271,7 @@ public class HoaDonController {
             hoaDonService.tangSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorTSL",e.getMessage());
+            redirectAttributes.addFlashAttribute("errorTSL", e.getMessage());
         }
         return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }
@@ -318,7 +285,7 @@ public class HoaDonController {
             hoaDonService.giamSoLuongSanPham(idHoaDon, idSanPhamChiTiet);
             hoaDonService.updateTongTienHoaDon(idHoaDon);
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorGSL",e.getMessage());
+            redirectAttributes.addFlashAttribute("errorGSL", e.getMessage());
         }
         return "redirect:/hoa-don/detail?id=" + idHoaDon;
     }

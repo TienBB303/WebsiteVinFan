@@ -5,246 +5,352 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thông tin tài khoản</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'}">
     <style>
+        /* CSS tùy chỉnh */
         body {
-            background-color: #f5f5f5; /* Màu xám nhạt */
+            background-color: #f5f5f5;
         }
 
-        .error-message {
-            font-size: 0.875em;
-            color: red;
-            margin-top: 5px;
+        .list-group-item {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .list-group-item:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .form-content {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .shadow {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-auto {
+            border: 1px solid #dee2e6;
+        }
+
+        .table-auto th,
+        .table-auto td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .table-auto thead {
+            background-color: #007bff;
+            color: white;
         }
     </style>
-    <link rel="stylesheet" th:href="@{'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'}">
-
 </head>
-<body class="bg-gray-100 font-sans antialiased">
-
-<div class="container mx-auto p-6">
-    <!-- Thanh điều hướng -->
-    <div class="flex justify-center space-x-6 mb-6">
-        <a href="/admin/product-catalog" class="btn btn-outline-primary">
-            <i></i>
-            <span>Quay lại</span>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/admin/index">
+            <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"
+                 alt="Logo">
         </a>
-        <button onclick="showForm('accountInfo')"
-                class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
-            Thông tin tài khoản
-        </button>
-        <button onclick="showForm('orders')"
-                class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
-            Đơn mua
-        </button>
     </div>
+</nav>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <!-- Thẻ chứa hình ảnh và tên -->
+            <div class="list-group-item d-flex align-items-center justify-content-center mb-5">
+                <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" alt="User Avatar" class="img-thumbnail"
+                     style="width: 50px; height: 50px; object-fit: cover;">
+                <span class="ms-3">Tên người dùng</span>
+            </div>
+            <div class="list-group shadow">
+                <a href="#" class="list-group-item list-group-item-action" data-form="form-profile">Hồ sơ</a>
+                <a href="#" class="list-group-item list-group-item-action" data-form="form-orders">Đơn mua</a>
+            </div>
+        </div>
 
-    <!-- Nội dung -->
-    <div id="accountInfo" class="bg-white shadow rounded p-6">
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-6">
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div id="form-profile" class="form-content d-none shadow p-4 bg-white rounded">
+                <div class="box-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            <!--                                            cho pham sua kh-->
-                            <form th:action="@{/admin/sua-khach-hang}" th:object="${khachHang}" method="post">
-                                <input type="hidden" th:field="*{id}"/>
-                                <div class="row">
-                                    <div class="col-md-12">
-
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <label for="ten" class="form-label fw-bold">Tên</label>
-                                                <input type="text" class="form-control" name="ten" id="ten"
-                                                       placeholder="Nhập tên của bạn" th:field="*{ten}">
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <label class="form-label fw-bold">Số Điện thoại</label>
-                                                <input type="text" class="form-control" name="soDienThoai"
-                                                       th:field="*{soDienThoai}"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <label class="form-label fw-bold">Mật khẩu</label>
-                                                <input type="text" class="form-control" name="matKhau" id="matKhau"
-                                                       th:field="*{matKhau}"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <!-- Ngày sinh -->
-                                            <div class="col-md-4">
-                                                <label for="ngaySinh" class="form-label fw-bold">Ngày sinh</label>
-                                                <input type="date" class="form-control" name="ngaySinh" id="ngaySinh"
-                                                       th:field="*{ngaySinh}">
-                                            </div>
-
-                                            <!-- Giới tính -->
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-bold">Giới tính</label>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="gioiTinh"
-                                                               id="gridRadios1" value="Nam" checked>
-                                                        <label class="form-check-label" for="gridRadios1">Nam</label>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!--                                            cho pham sua kh-->
+                                    <form th:action="@{/admin/sua-khach-hang}" th:object="${khachHang}" method="post">
+                                        <input type="hidden" th:field="*{id}"/>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="row mb-4">
+                                                    <div class="col-12">
+                                                        <label class="fw-bold">
+                                                            <span class="text-danger">*</span> Tên
+                                                        </label>
+                                                        <input type="text"
+                                                               class="form-control border-0 border-bottom rounded-0"
+                                                               name="ten" id="ten" placeholder="Nhập tên"
+                                                               th:field="*{ten}">
                                                     </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="gioiTinh"
-                                                               id="gridRadios2" value="Nữ">
-                                                        <label class="form-check-label" for="gridRadios2">Nữ</label>
+                                                </div>
+
+                                                <div class="row mb-4">
+                                                    <div class="col-12">
+                                                        <label class="fw-bold">
+                                                            <span class="text-danger">*</span> Số điện thoại
+                                                        </label>
+                                                        <input type="text"
+                                                               class="form-control border-0 border-bottom rounded-0"
+                                                               name="soDienThoai" placeholder="Nhập số điện thoại"
+                                                               th:field="*{soDienThoai}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-4">
+                                                    <div class="col-12">
+                                                        <label class="fw-bold">
+                                                            <span class="text-danger">*</span> Mật khẩu
+                                                        </label>
+                                                        <input type="text"
+                                                               class="form-control border-0 border-bottom rounded-0"
+                                                               name="matKhau" id="matKhau" placeholder="Nhập nhập khẩu"
+                                                               th:field="*{matKhau}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-4">
+                                                    <!-- Ngày sinh -->
+                                                    <div class="col-md-4">
+                                                        <label class="fw-bold">Ngày sinh</label>
+                                                        <input type="date"
+                                                               class="form-control border-0 border-bottom rounded-0"
+                                                               name="ngaySinh" id="ngaySinh"
+                                                               th:field="*{ngaySinh}">
+                                                    </div>
+                                                    <!-- Giới tính -->
+                                                    <div class="col-md-4">
+                                                        <label class="form-label fw-bold">Giới tính</label>
+                                                        <div class="d-flex align-items-center gap-3">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio"
+                                                                       name="gioiTinh"
+                                                                       id="gridRadios1" value="Nam" checked>
+                                                                <label class="form-check-label"
+                                                                       for="gridRadios1">Nam</label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio"
+                                                                       name="gioiTinh"
+                                                                       id="gridRadios2" value="Nữ">
+                                                                <label class="form-check-label"
+                                                                       for="gridRadios2">Nữ</label>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <button type="submit" class="btn btn-outline-warning">
+                                                    Sửa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-outline-warning">
-                                            Sửa
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button onclick="disPlayBlook()" class="btn btn-outline-success" style="width: 60px">+
-                            </button>
-                            <br>
-                            <div id="magic"
-                                 style=" display: none;border: #008FFB solid 2px; border-radius: 20px;padding: 5px 10px 5px 10px">
-                                <form th:action="@{/admin/sua-khach-hang/them-dia-chi}" method="post">
-                                    <!-- Truyền ID của khách hàng -->
-                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
-
-                                    <div class="row mb-3">
-                                        <!-- Tỉnh/Thành phố -->
-                                        <div class="col-md-6">
-                                            <label for="city2" class="form-label fw-bold">Tỉnh/Thành phố</label>
-                                            <select class="form-select" id="city2" name="tinhThanhPho">
-                                                <option value="" selected>Chọn tỉnh thành</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Quận/Huyện -->
-                                        <div class="col-md-6">
-                                            <label for="district2" class="form-label fw-bold">Quận/Huyện</label>
-                                            <select class="form-select" id="district2" name="quanHuyen">
-                                                <option value="" selected>Chọn quận huyện</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <!-- Phường/Xã -->
-                                        <div class="col-md-6">
-                                            <label for="ward2" class="form-label fw-bold">Phường/Xã</label>
-                                            <select class="form-select" id="ward2" name="xaPhuong">
-                                                <option value="" selected>Chọn phường xã</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Số nhà/ngõ đường -->
-                                        <div class="col-md-6">
-                                            <label for="soNhaNgoDuong" class="form-label fw-bold">Số nhà/ngõ
-                                                đường</label>
-                                            <input type="text" class="form-control" id="soNhaNgoDuong"
-                                                   name="soNhaNgoDuong" placeholder="Nhập số nhà/ngõ đường">
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" onclick="disPlayBlook()" class="btn btn-outline-success">
-                                        Thêm
-                                    </button>
-                                </form>
                             </div>
-                            <br>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button onclick="disPlayBlook()" class="btn btn-outline-success"
+                                            style="width: 60px">+
+                                    </button>
+                                    <br>
+                                    <div id="magic"
+                                         style=" display: none;border: #008FFB solid 2px; border-radius: 20px;padding: 5px 10px 5px 10px">
+                                        <form th:action="@{/admin/sua-khach-hang/them-dia-chi}" method="post">
+                                            <!-- Truyền ID của khách hàng -->
+                                            <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
 
-                            <div id="danhSachDiaChi" th:each="diaChi, stat : ${diaChiList}">
-                                <form th:action="@{/admin/sua-khach-hang/dia-chi-mac-dinh}"
-                                      method="post">
-                                    <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
-                                    <input type="hidden" name="diaChiId" th:value="${diaChi.id}"/>
-                                    <input type="hidden" th:id="'tinhThanhPho' + ${stat.index}"
-                                           th:value="${diaChi.tinhThanhPho}"/>
-                                    <input type="hidden" th:id="'quanHuyen' + ${stat.index}"
-                                           th:value="${diaChi.quanHuyen}"/>
-                                    <input type="hidden" th:id="'xaPhuong' + ${stat.index}"
-                                           th:value="${diaChi.xaPhuong}"/>
+                                            <div class="row mb-3">
+                                                <!-- Tỉnh/Thành phố -->
+                                                <div class="col-md-6">
+                                                    <label for="city2" class="form-label fw-bold">Tỉnh/Thành phố</label>
+                                                    <select class="form-select" id="city2" name="tinhThanhPho">
+                                                        <option value="" selected>Chọn tỉnh thành</option>
+                                                    </select>
+                                                </div>
 
-                                    <div class="mb-2">
-                                        <h6 class="mb-1" th:id="'city' + ${stat.index}">
-                                            <span class="fw-bold">Tỉnh/Thành phố:</span>
-                                        </h6>
-                                        <h6 class="mb-1" th:id="'district' + ${stat.index}">
-                                            <span class="fw-bold">Quận/Huyện:</span>
-                                        </h6>
-                                        <h6 class="mb-1" th:id="'ward' + ${stat.index}">
-                                            <span class="fw-bold">Xã/Phường:</span>
-                                        </h6>
-                                        <h6 class="mb-1" th:text="${diaChi.soNhaNgoDuong}">
-                                            <span class="fw-bold">Chi tiết:</span>
-                                        </h6>
-                                        <input type="radio" th:id="'radio' + ${diaChi.id} "
-                                               name="checkDiaChiMacDinh"
-                                               th:value="${diaChi.id}" th:checked="${diaChi.trangThai == true}"
-                                               onchange="this.form.submit()"/>
+                                                <!-- Quận/Huyện -->
+                                                <div class="col-md-6">
+                                                    <label for="district2" class="form-label fw-bold">Quận/Huyện</label>
+                                                    <select class="form-select" id="district2" name="quanHuyen">
+                                                        <option value="" selected>Chọn quận huyện</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <!-- Phường/Xã -->
+                                                <div class="col-md-6">
+                                                    <label for="ward2" class="form-label fw-bold">Phường/Xã</label>
+                                                    <select class="form-select" id="ward2" name="xaPhuong">
+                                                        <option value="" selected>Chọn phường xã</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Số nhà/ngõ đường -->
+                                                <div class="col-md-6">
+                                                    <label for="soNhaNgoDuong" class="form-label fw-bold">Số nhà/ngõ
+                                                        đường</label>
+                                                    <input type="text" class="form-control" id="soNhaNgoDuong"
+                                                           name="soNhaNgoDuong" placeholder="Nhập số nhà/ngõ đường">
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" onclick="disPlayBlook()"
+                                                    class="btn btn-outline-success">
+                                                Thêm
+                                            </button>
+                                        </form>
                                     </div>
-                                </form>
-                                <a class="btn btn-outline-danger"
-                                   th:href="@{/admin/sua-khach-hang/xoa/{id}(id=${diaChi.id}, khachHangId=${khachHang.id})}">
-                                    Xóa
-                                </a>
+                                    <br>
+
+                                    <div id="danhSachDiaChi" th:each="diaChi, stat : ${diaChiList}">
+                                        <form th:action="@{/admin/sua-khach-hang/dia-chi-mac-dinh}"
+                                              method="post">
+                                            <input type="hidden" name="khachHangId" th:value="${khachHang.id}"/>
+                                            <input type="hidden" name="diaChiId" th:value="${diaChi.id}"/>
+                                            <input type="hidden" th:id="'tinhThanhPho' + ${stat.index}"
+                                                   th:value="${diaChi.tinhThanhPho}"/>
+                                            <input type="hidden" th:id="'quanHuyen' + ${stat.index}"
+                                                   th:value="${diaChi.quanHuyen}"/>
+                                            <input type="hidden" th:id="'xaPhuong' + ${stat.index}"
+                                                   th:value="${diaChi.xaPhuong}"/>
+
+                                            <div class="mb-2">
+                                                <h6 class="mb-1" th:id="'city' + ${stat.index}">
+                                                    <span class="fw-bold">Tỉnh/Thành phố:</span>
+                                                </h6>
+                                                <h6 class="mb-1" th:id="'district' + ${stat.index}">
+                                                    <span class="fw-bold">Quận/Huyện:</span>
+                                                </h6>
+                                                <h6 class="mb-1" th:id="'ward' + ${stat.index}">
+                                                    <span class="fw-bold">Xã/Phường:</span>
+                                                </h6>
+                                                <h6 class="mb-1" th:text="${diaChi.soNhaNgoDuong}">
+                                                    <span class="fw-bold">Chi tiết:</span>
+                                                </h6>
+                                                <input type="radio" th:id="'radio' + ${diaChi.id} "
+                                                       name="checkDiaChiMacDinh"
+                                                       th:value="${diaChi.id}" th:checked="${diaChi.trangThai == true}"
+                                                       onchange="this.form.submit()"/>
+                                            </div>
+                                        </form>
+                                        <a class="btn btn-outline-danger"
+                                           th:href="@{/admin/sua-khach-hang/xoa/{id}(id=${diaChi.id}, khachHangId=${khachHang.id})}">
+                                            Xóa
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div id="form-orders" class="form-content d-none shadow p-4 bg-white rounded">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Đơn mua</h3>
+                <!-- Kiểm tra hóa đơn -->
+                <div th:if="${#lists.isEmpty(hoaDons)}" class="text-center text-gray-600 mt-4">
+                    <p>Không có hóa đơn nào cho khách hàng này.</p>
+                </div>
+
+                <!-- Input tìm kiếm -->
+                <!-- Tìm kiếm -->
+                <div class="mt-4">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm theo mã hóa đơn"
+                           class="border border-gray-300 px-4 py-2 rounded-md w-full">
+                </div>
+
+                <!-- Danh sách hóa đơn -->
+                <div th:unless="${#lists.isEmpty(hoaDons)}" class="table-container"
+                     style="max-height: 400px; overflow-y: auto;">
+                    <table class="table-auto w-full border-collapse border border-gray-200 mt-4">
+                        <thead>
+                        <tr class="bg-gray-100 text-gray-700">
+                            <th class="px-4 py-2 border text-center">Mã hóa đơn</th>
+                            <th class="px-4 py-2 border text-center">Ngày tạo</th>
+                            <th class="px-4 py-2 border text-center">Số tiền</th>
+                            <th class="px-4 py-2 border text-center">Chi tiết</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="hoaDon : ${hoaDons}" class="text-gray-800 hover:bg-gray-50">
+                            <td class="px-4 py-2 border text-center" th:text="${hoaDon.ma}"></td>
+                            <td class="px-4 py-2 border text-center" th:text="${hoaDon.ngayTao}"></td>
+                            <td class="px-4 py-2 border text-center giaVND" th:text="${hoaDon.tongTien}"></td>
+                            <td class="px-4 py-2 border text-center">
+                                <a th:href="@{/admin/hoa-don-kh/{id}(id=${hoaDon.id})}"
+                                   class="text-blue-500 hover:underline">Xem
+                                    chi tiết</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div id="orders" class="bg-white shadow rounded p-6 hidden">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Đơn mua</h3>
-        <!-- Kiểm tra hóa đơn -->
-        <div th:if="${#lists.isEmpty(hoaDons)}" class="text-center text-gray-600 mt-4">
-            <p>Không có hóa đơn nào cho khách hàng này.</p>
-        </div>
-
-        <!-- Danh sách hóa đơn -->
-        <div th:unless="${#lists.isEmpty(hoaDons)}">
-            <table class="table-auto w-full border-collapse border border-gray-200 mt-4">
-                <thead>
-                <tr class="bg-gray-100 text-gray-700">
-                    <th class="px-4 py-2 border">Mã hóa đơn</th>
-                    <th class="px-4 py-2 border">Ngày tạo</th>
-                    <th class="px-4 py-2 border">Số tiền</th>
-                    <th class="px-4 py-2 border">Chi tiết</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="hoaDon : ${hoaDons}" class="text-gray-800 hover:bg-gray-50">
-                    <td class="px-4 py-2 border text-center" th:text="${hoaDon.ma}"></td>
-                    <td class="px-4 py-2 border text-center" th:text="${hoaDon.ngayTao}"></td>
-                    <td class="px-4 py-2 border text-center giaVND" th:text="${hoaDon.tongTien}"></td>
-                    <td class="px-4 py-2 border text-center">
-                        <a th:href="@{/admin/hoa-don-kh/{id}(id=${hoaDon.id})}" class="text-blue-500 hover:underline">Xem
-                            chi tiết</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('.list-group-item').forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Hide all forms
+            document.querySelectorAll('.form-content').forEach(form => {
+                form.classList.add('d-none');
+            });
+
+            // Remove active class from all links
+            document.querySelectorAll('.list-group-item').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show the selected form
+            const formId = this.getAttribute('data-form');
+            document.getElementById(formId).classList.remove('d-none');
+
+            // Add active class to clicked link
+            this.classList.add('active');
+        });
+    });
+</script>
+
+
+<script>
+    document.getElementById("searchInput").addEventListener("input", function () {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            const maHoaDon = row.querySelector("td:nth-child(1)").textContent.toLowerCase();
+            if (maHoaDon.includes(searchValue)) {
+                row.style.display = ""; // Hiển thị
+            } else {
+                row.style.display = "none"; // Ẩn
+            }
+        });
+    });
+</script>
 
 <script>
     function showForm(formId) {
