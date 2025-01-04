@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head">
+    <style>
+        .error-message {
+            font-size: 0.875em;
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
 <div class="wrapper">
@@ -22,9 +29,8 @@
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/nhan-vien/index">Nhân viên</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/nhan-vien/view-add">Thêm nhân viên</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">thêm nhân viên</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -33,116 +39,116 @@
         </div>
         <div class="page-content">
             <section class="card">
-                <div class="card-header">
-                    <a class="btn btn-outline-primary" href="/admin/nhan-vien/index" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>
-                </div>
                 <div class="card-body">
-                    <form id="addNhanVienForm" th:action="@{/admin/nhan-vien/add}" method="post" enctype="multipart/form-data">
-
-                        <div class="row" style="align-items: center">
-                            <div class="col-4">
-                                <div class="card" style="width: 100%; margin-top: 10px;">
-                                    <div id="imagePreview" class="card-img-top"
-                                         style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
-                                        <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 150px; height: 150px; object-fit: contain;">
-                                        <span th:if="${nhanVien.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>
-                                    </div>
-                                    <div class="card-body">
-                                        <label for="fileInput" class="btn btn-outline-warning w-100">Chọn ảnh</label>
-                                        <input type="file" name="hinhAnh" id="fileInput" onchange="previewImage(event, 'imagePreview')" style="display: none;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <form th:action="@{/admin/nhan-vien/add}" method="post" th:object="${nhanVien}" enctype="multipart/form-data">
                         <div class="row">
-                            <div class="col-md-6">
-                                <!--tên-->
-                                <div class="mb-3">
-                                    <label class="form-label">Tên</label>
-                                    <input type="text" class="form-control" name="ten_nhan_vien" >
-                                </div>
-                                <!--CCCD-->
-                                <div class="mb-3">
-                                    <label class="form-label">Căn cước công dân</label>
-                                    <input type="number" class="form-control" name="can_cuoc_cong_dan" min="0">
-                                </div>
-                                <!--Ngày sinh-->
-                                <div class="mb-3">
-                                    <label class="form-label">Ngày sinh</label>
-                                    <input type="text" class="form-control flatpickr" name="ngay_sinh" placeholder="Chọn ngày sinh" required>
-                                </div>
-                                <!--Giới tính-->
-                                <div class="mb-3">
-                                    <label>Giới tính</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="gioiTinhNam" value="true" name="gioi_tinh" checked>
-                                        <label class="form-check-label" for="gioiTinhNam">Nam</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="gioiTinhNu" value="false" name="gioi_tinh">
-                                        <label class="form-check-label" for="gioiTinhNu">Nữ</label>
-                                    </div>
-                                </div>
-                                <!--Tỉnh-->
-                                <div class="mb-3">
-                                    <label class="form-label">Tỉnh/Thành phố</label>
-                                    <select class="form-control" id="city" name="tinh_thanh_tho">
-                                        <option value="" selected>Chọn tỉnh thành</option>
-                                    </select>
-                                </div>
-                                <!--Quận/Huyện-->
-                                <div class="mb-3">
-                                    <label class="form-label">Quận/Huyện</label>
-                                    <select class="form-control" id="district" name="quan_huyen">
-                                        <option value="" selected>Chọn quận huyện</option>
-                                    </select>
-                                </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary">Thêm</button>
                             </div>
-                            <div class="col-md-6">
-                                <!--email-->
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email">
-                                </div>
-                                <!--Mật khẩu-->
-                                <div class="mb-3">
-                                    <label class="form-label">Mật khẩu</label>
-                                    <input type="password" class="form-control" name="mat_khau">
-                                </div>
-                                <!--Chức vụ-->
-                                <div class="mb-3">
-                                    <label class="form-label">Chức vụ</label>
-                                    <select class="form-control" name="chuc_vu">
-                                        <option th:each="chucVu : ${chucVuList}"
-                                                th:value="${chucVu.id}"
-                                                th:text="${chucVu.viTri}"
-                                                th:selected="${chucVu.id == 2}">
-                                        </option>
-                                    </select>
-                                </div>
-                                <!--SDT-->
-                                <div class="mb-3">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control" name="so_dien_thoai">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phường/Xã</label>
-                                    <select class="form-control" id="ward" name="xa_phuong">
-                                        <option value="" selected>Chọn phường xã</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Số nhà/ngõ đường</label>
-                                    <input type="text" class="form-control" name="so_nha_ngo_duong">
-                                </div>
+                            <div class="col-md-4">
+                                <a th:href="@{/admin/nhan-vien/index}" class="btn btn-secondary">Quay lại trang danh sách</a>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-outline-success" style="width: 70px"><i class="bi bi-plus"></i></button>
+                            <div class="col-md-4">
+                                <input type="file" name="file" class="form-control" required />
                             </div>
                         </div>
                         <br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Tên</label>
+                                        <input type="text" class="form-control" name="ten" th:field="*{ten}">
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" th:field="*{email}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Căn cước công dân</label>
+                                        <input type="text" class="form-control" name="canCuocCongDan" th:field="*{canCuocCongDan}">
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mật khẩu</label>
+                                        <input type="password" class="form-control" name="matKhau" th:field="*{matKhau}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Số điện thoại</label>
+                                        <input type="text" class="form-control" name="soDienThoai" th:field="*{soDienThoai}">
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Ngày sinh</label>
+                                        <input type="date" class="form-control" name="ngaySinh" th:field="*{ngaySinh}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Giới Tính</label><br>
+                                            <div>
+                                                <label>
+                                                    <input type="radio" th:field="*{gioiTinh}" value="true" />
+                                                    Nam
+                                                </label>
+                                                <label>
+                                                    <input type="radio" th:field="*{gioiTinh}" value="false" />
+                                                    Nữ
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Chức vụ</label>
+                                        <select class="form-control" name="chucVu" th:field="*{chucVu}">
+                                            <option value="" selected>Chọn chức vụ</option>
+                                            <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}" th:text="${chucVu.viTri}"></option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Tỉnh/Thành phố</label>
+                                        <select class="form-control" id="city" name="tinhThanhPho">
+                                            <option value="" selected>Chọn tỉnh thành</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Quận/Huyện</label>
+                                        <select class="form-control" id="district" name="quanHuyen">
+                                            <option value="" selected>Chọn quận huyện</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Phường/Xã</label>
+                                        <select class="form-control" id="ward" name="xaPhuong">
+                                            <option value="" selected>Chọn phường xã</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Số nhà/ngõ đường</label>
+                                        <input type="text" class="form-control" name="soNhaNgoDuong" th:field="*{soNhaNgoDuong}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </section>
@@ -154,9 +160,7 @@
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>\
-
-<!-- dịa chỉ-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         var cities = document.getElementById("city");
         var districts = document.getElementById("district");
@@ -204,89 +208,76 @@
         }
 
     </script>
-<!--Thêm-->
     <script>
-        document.getElementById('addNhanVienForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
 
-            try {
-                const response = await fetch(this.action, {
-                    method: 'POST',
-                    body: formData
-                });
+            form.addEventListener('submit', async function (event) {
+                let isValid = true;
 
-                const result = await response.json();
-                if (response.ok) {
-                    Swal.fire({
-                        toast: true,
-                        icon: 'success',
-                        title: result.message,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true
-                    }).then(() => {
-                        window.location.href = '/admin/nhan-vien/index';
-                    });
-                } else {
-                    Swal.fire({
-                        toast: true,
-                        icon: 'error',
-                        title: result.message,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
+                // Lấy các trường cần validate
+                const email = form.email.value.trim();
+
+                // Hàm hiển thị lỗi
+                function showError(input, message) {
+                    const error = document.createElement('div');
+                    error.className = 'error-message text-danger';
+                    error.innerText = message;
+                    input.parentElement.appendChild(error);
+                    isValid = false;
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi hệ thống',
-                    text: 'Đã xảy ra lỗi trong quá trình xử lý.',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    </script>
-<!-- xem trc ảnh-->
-    <script>
-        function previewImage(event, previewContainerId) {
-            const fileInput = event.target;
-            const file = fileInput.files[0];
-            const previewContainer = document.getElementById(previewContainerId);
-            const previewImg = previewContainer.querySelector('img');
 
-            if (file) {
-                // Tạo URL cho ảnh đã chọn
-                const previewURL = URL.createObjectURL(file);
+                // Xóa các thông báo lỗi trước đó
+                const errorMessages = document.querySelectorAll('.error-message');
+                errorMessages.forEach(msg => msg.remove());
 
-                // Hiển thị ảnh xem trước
-                if (previewImg) {
-                    previewImg.src = previewURL;  // Cập nhật src của hình ảnh
+                // Validate email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email) {
+                    showError(form.email, 'Email không được để trống.');
+                } else if (!emailRegex.test(email)) {
+                    showError(form.email, 'Email không hợp lệ.');
                 } else {
-                    // Nếu không có ảnh, tạo mới thẻ img để thêm vào
-                    const newImg = document.createElement('img');
-                    newImg.src = previewURL;
-                    newImg.alt = "Preview Image";
-                    newImg.style.width = '100%';
-                    newImg.style.height = '100%';
-                    newImg.style.objectFit = 'cover';
-                    previewContainer.appendChild(newImg);  // Thêm vào container
+                    try {
+                        const response = await fetch('/api/check-email', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email }),
+                        });
+                        const result = await response.json();
+
+                        if (result.exists) {
+                            Swal.fire({
+                                title: 'Lỗi!',
+                                text: 'Email đã tồn tại. Vui lòng nhập email khác.',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                            });
+                            isValid = false;
+                        }
+                    } catch (error) {
+                        console.error('Lỗi khi kiểm tra email:', error);
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Không thể kiểm tra email. Vui lòng thử lại.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                        isValid = false;
+                    }
                 }
-            }
-        }
-    </script>
-<!--    form date mới-->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            flatpickr(".flatpickr", {
-                dateFormat: "Y-m-d", // Định dạng ngày sinh theo yyyy-mm-dd
-                maxDate: "today", // Ngày chọn không được quá ngày hôm nay
+
+                // Nếu form không hợp lệ, ngăn không cho gửi
+                if (!isValid) {
+                    event.preventDefault(); // Ngăn chặn gửi form
+                }
             });
         });
+
     </script>
+
 </div>
 </body>
 </html>
