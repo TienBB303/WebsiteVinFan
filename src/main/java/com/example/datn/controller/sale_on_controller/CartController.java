@@ -298,22 +298,22 @@ public class CartController {
         return "admin/website/orderInfor";
     }
 
-    @GetMapping("/check-out")
-    public String checkOut(HttpSession session, Model model) {
-        // Lấy danh sách sản phẩm từ session
-        List<CartItem> cartItems = getCartFromSession(session);
-
-        // Tính tổng tiền
-        double totalPrice = cartItems.stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
-                .sum();
-
-        // Đưa thông tin giỏ hàng và tổng tiền vào model để Thymeleaf có thể truy cập
-        model.addAttribute("cartItems", cartItems);
-        model.addAttribute("totalPrice", totalPrice);
-
-        return "admin/website/checkOut";
-    }
+//    @GetMapping("/check-out")
+//    public String checkOut(HttpSession session, Model model) {
+//        // Lấy danh sách sản phẩm từ session
+//        List<CartItem> cartItems = getCartFromSession(session);
+//
+//        // Tính tổng tiền
+//        double totalPrice = cartItems.stream()
+//                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+//                .sum();
+//
+//        // Đưa thông tin giỏ hàng và tổng tiền vào model để Thymeleaf có thể truy cập
+//        model.addAttribute("cartItems", cartItems);
+//        model.addAttribute("totalPrice", totalPrice);
+//
+//        return "admin/website/checkOut";
+//    }
 
     @Transactional
     @PostMapping("/process-payment")
@@ -355,6 +355,7 @@ public class CartController {
         hoaDon.setLoaiHoaDon(false);
         hoaDon.setPhiVanChuyen(BigDecimal.valueOf(30000));
         hoaDon.setKhachHang(khachHang);
+        hoaDon.setGhiChu(request.getNote());
 
         // Xử lý phương thức thanh toán
         if ("BANK_TRANSFER".equals(request.getPaymentMethod())) {
@@ -385,6 +386,7 @@ public class CartController {
             hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
             hoaDonChiTiet.setSoLuong(item.getQuantity());
             hoaDonChiTiet.setGia(sanPhamChiTiet.getGia());
+//            hoaDonChiTiet.setGiaGiam(item.getDiscountedPrice());
             hoaDonChiTiet.setThanhTien(finalPrice.multiply(BigDecimal.valueOf(item.getQuantity())));
             hoaDonChiTiet.setTrangThai(1);
 

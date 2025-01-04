@@ -1,99 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
+<html>
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh Toán Chuyển Khoản</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Poppins', sans-serif;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #4b5563;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .success-header {
-            font-size: 24px;
-            color: #2563eb; /* Màu xanh dương */
-            margin-bottom: 10px;
-        }
-
-        .card-header {
-            background-color: #6c757d;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .qr-code-container {
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f9f9f9;
-            height: 300px; /* Chiều cao khung QR */
-        }
-
-        .btn-primary {
-            background-color: #ffc107; /* Màu vàng */
-            border-color: #ffc107;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .btn-primary:hover {
-            background-color: #e0a800;
-            border-color: #e0a800;
-        }
-
-        .info-text {
-            color: #6c757d;
-            text-align: center;
-        }
-
-        p {
-            font-size: 16px;
-            line-height: 1.6;
-        }
-    </style>
 </head>
-<body>
-<div class="container text-center">
-    <h1 class="success-header">Thanh Toán Chuyển Khoản</h1>
-    <p class="info-text">Cảm ơn bạn đã đặt hàng! Vui lòng thực hiện chuyển khoản để hoàn tất đơn hàng.</p>
-    <p>Mã đơn hàng: <strong th:text="${hoaDon.ma}"></strong></p>
-    <p>Số tiền: <strong class="giaVND" th:text="${hoaDon.tongTien}"></strong></p>
-    <p>Số tài khoản: <strong>0060174962811</strong></p>
-    <p>Ngân hàng: <strong>MB BANK</strong></p>
-    <p>Tên chủ tài khoản: <strong>NGUYEN ANH KHOI</strong></p>
-    <p>Vui lòng để nội dung chuyển khoản: <strong th:text="${hoaDon.ma}"></strong></p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+<body class="bg-light">
+<div class="container text-center mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-success text-white">
+            <h1 class="h3">Thanh Toán Chuyển Khoản</h1>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi!</p>
+            <p>Mã đơn hàng: <strong th:text="${hoaDon.ma}"></strong></p>
 
-    <!-- Khung cho QR Code -->
-    <div class="qr-code-container">
-        <!-- Bạn có thể thêm ảnh QR vào đây -->
-        <p><i>Khung cho mã QR</i></p>
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    Thông tin đơn hàng
+                </div>
+                <div class="card-body text-start">
+                    <p>Số tiền: <strong class="giaVND" th:text="${hoaDon.tongTien}"></strong></p>
+                    <p>Số tài khoản: <strong>0060174962811</strong></p>
+                    <p>Ngân hàng: <strong>MB BANK</strong></p>
+                    <p>Tên chủ tài khoản: <strong>NGUYEN ANH KHOI</strong></p>
+                    <p>Ghi chú: <strong th:text="${hoaDon.ghiChu}"></strong></p>
+                    <p>Vui lòng để nội dung chuyển khoản: <strong th:text="${hoaDon.ma}"></strong></p>
+                    <p class="text-danger"><em>Lưu ý phải để nội dung đúng để nhân viên xác nhận đơn hàng!</em></p>
+                </div>
+            </div>
+
+            <!-- Khung cho QR Code -->
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    Mã QR Chuyển Khoản
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-center" style="height: 300px;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSX-p0lVbV7SdaTCUWexe-mtjiH7nJXfwchw&s"
+                         alt="QR Code" style="max-height: 100%; max-width: 100%;">
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="/vin-fan/danh-muc" class="btn btn-outline-warning fw-bold">Tiếp tục mua hàng</a>
+        </div>
     </div>
-
-    <a href="/admin/product-catalog" class="btn btn-primary mt-4">Tiếp tục mua hàng</a>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 <script>
