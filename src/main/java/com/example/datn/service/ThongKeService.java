@@ -10,6 +10,8 @@ import java.util.List;
 public interface ThongKeService {
     List<ThongKeResponse> getListDay();
 
+//    List<ThongKeResponse> getListYesterDay();
+
     List<ThongKeResponse> getListWeek();
 
     List<ThongKeResponse> getListMonth();
@@ -25,4 +27,8 @@ public interface ThongKeService {
     int getCurrentMonth();
 
     int getCurrentYear();
+
+//    TIenBB
+    int getYesterday();
+
 }

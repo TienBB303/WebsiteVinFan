@@ -96,6 +96,9 @@ public class CartController {
             // Sử dụng giá giảm nếu có
             double finalPrice = discountedPrice != null ? discountedPrice.doubleValue() : price.doubleValue();
 
+            String imageUrl = productDetails.getHinhAnh() != null
+                    ? productDetails.getHinhAnh().getHinh_anh_1() // Lấy trực tiếp đường dẫn ảnh từ DB
+                    : "/images/default.jpg";
             // Tạo đối tượng CartItem mới với thông tin đầy đủ
             CartItem newItem = new CartItem(
                     productId,
@@ -104,7 +107,8 @@ public class CartController {
                     quantity,
                     null, // Giá giảm
                     productDetails.getMauSac().getTen(),        // Màu sắc
-                    productDetails.getCongSuat().getTen()       // Công suất
+                    productDetails.getCongSuat().getTen(),
+                    imageUrl// Công suất
             );
             cart.add(newItem);
         }
@@ -334,6 +338,11 @@ public class CartController {
             redirectAttributes.addFlashAttribute("error", "UserNotLoggedIn");
             return "redirect:/login";
         }
+        if (cartItems == null || cartItems.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "CartIsEmpty");
+            return "redirect:/cart/orderinfor";
+        }
+
 
         // Tạo hóa đơn
         HoaDon hoaDon = new HoaDon();
@@ -346,6 +355,13 @@ public class CartController {
         hoaDon.setLoaiHoaDon(false);
         hoaDon.setPhiVanChuyen(BigDecimal.valueOf(30000));
         hoaDon.setKhachHang(khachHang);
+
+        // Xử lý phương thức thanh toán
+        if ("BANK_TRANSFER".equals(request.getPaymentMethod())) {
+            hoaDon.setHinhThucThanhToan("Chuyển khoản");
+        } else {
+            hoaDon.setHinhThucThanhToan("Thanh toán khi nhận hàng");
+        }
         hoaDonService.save(hoaDon);
 
         // Tổng tiền hóa đơn
@@ -388,9 +404,16 @@ public class CartController {
 
         session.removeAttribute("cart");
 
+        // Điều hướng dựa trên phương thức thanh toán
+        if ("BANK_TRANSFER".equals(request.getPaymentMethod())) {
+            model.addAttribute("hoaDon", hoaDon);
+            return "admin/website/transferPaymentSuccess"; // Trang dành cho chuyển khoản
+        }
+
         model.addAttribute("hoaDon", hoaDon);
-        return "admin/website/orderSuccess"; // Trả về trực tiếp trang thành công
+        return "admin/website/orderSuccess"; // Trang thành công mặc định
     }
+
     @PostMapping("/check-stock")
     public ResponseEntity<Map<String, Object>> checkStock(@RequestBody List<CartItemRequest> cartItems) {
         Map<String, Object> response = new HashMap<>();

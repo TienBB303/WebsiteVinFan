@@ -143,6 +143,8 @@ public class SanPhamController {
             maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
         Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(query.trim(), minPrice, maxPrice, trang_thai, PageRequest.of(page, size));
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         model.addAttribute("listSP", searchPage);
         model.addAttribute("query", query);
         model.addAttribute("minPrice", minPrice);
@@ -539,13 +541,13 @@ public class SanPhamController {
                 return ResponseEntity.badRequest().body("Không tìm thấy thông tin nhân viên cập nhật");
             }
             sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
-
+            sanPhamChiTiet.setTrang_thai(trangThai);
             // Kiểm tra trạng thái
-            if (soLuong == 0) {
-                sanPhamChiTiet.setTrang_thai(false);
-            } else {
-                sanPhamChiTiet.setTrang_thai(trangThai);
-            }
+//            if (soLuong == 0) {
+//                sanPhamChiTiet.setTrang_thai(false);
+//            } else {
+//                sanPhamChiTiet.setTrang_thai(trangThai);
+//            }
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
                 sanPham.setTrang_thai(true);
             } else {
