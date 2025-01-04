@@ -39,49 +39,50 @@
                 <div class="card-body">
                     <form id="addNhanVienForm" th:action="@{/admin/nhan-vien/add}" method="post" enctype="multipart/form-data">
 
-                        <div class="row" style="align-items: center">
-                            <div class="col-4">
-                                <div class="card" style="width: 100%; margin-top: 10px;">
-                                    <div id="imagePreview" class="card-img-top"
-                                         style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
-                                        <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 150px; height: 150px; object-fit: contain;">
-                                        <span th:if="${nhanVien.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>
-                                    </div>
-                                    <div class="card-body">
-                                        <label for="fileInput" class="btn btn-outline-warning w-100">Chọn ảnh</label>
-                                        <input type="file" name="hinhAnh" id="fileInput" onchange="previewImage(event, 'imagePreview')" style="display: none;">
-                                    </div>
+<!--                        <div class="row" style="align-items: center">-->
+<!--                            <div class="col-4">-->
+<!--                                <div class="card" style="width: 100%; margin-top: 10px;">-->
+<!--                                    <div id="imagePreview" class="card-img-top"-->
+<!--                                         style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">-->
+<!--                                        <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 150px; height: 150px; object-fit: contain;">-->
+<!--                                        <span th:if="${nhanVien.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>-->
+<!--                                    </div>-->
+<!--                                    <div class="card-body">-->
+<!--                                        <label for="fileInput" class="btn btn-outline-warning w-100">Chọn ảnh</label>-->
+<!--                                        <input type="file" name="hinhAnh" id="fileInput" onchange="previewImage(event, 'imagePreview')" style="display: none;">-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="card" style="width: 300px; height: 300px; margin-top: 20px;">
+                                <div id="imagePreview" class="card-img-top"
+                                     style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
+                                    <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 200px; height: 200px; object-fit: contain;">
+                                    <span th:if="${nhanVien.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>
+                                </div>
+                                <div class="card-body text-center">
+                                    <label for="fileInput" class="btn btn-outline-warning w-100">Chọn ảnh</label>
+                                    <input type="file" name="hinhAnh" id="fileInput" onchange="previewImage(event, 'imagePreview')" style="display: none;">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <!--tên-->
+                                <!--Tên-->
                                 <div class="mb-3">
                                     <label class="form-label">Tên</label>
-                                    <input type="text" class="form-control" name="ten_nhan_vien" >
+                                    <input type="text" class="form-control" name="ten_nhan_vien">
                                 </div>
                                 <!--CCCD-->
                                 <div class="mb-3">
                                     <label class="form-label">Căn cước công dân</label>
                                     <input type="number" class="form-control" name="can_cuoc_cong_dan" min="0">
                                 </div>
-                                <!--Ngày sinh-->
+                                <!--Sô DT -->
                                 <div class="mb-3">
-                                    <label class="form-label">Ngày sinh</label>
-                                    <input type="text" class="form-control flatpickr" name="ngay_sinh" placeholder="Chọn ngày sinh" required>
-                                </div>
-                                <!--Giới tính-->
-                                <div class="mb-3">
-                                    <label>Giới tính</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="gioiTinhNam" value="true" name="gioi_tinh" checked>
-                                        <label class="form-check-label" for="gioiTinhNam">Nam</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="gioiTinhNu" value="false" name="gioi_tinh">
-                                        <label class="form-check-label" for="gioiTinhNu">Nữ</label>
-                                    </div>
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" name="so_dien_thoai">
                                 </div>
                                 <!--Tỉnh-->
                                 <div class="mb-3">
@@ -99,7 +100,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <!--email-->
+                                <!--Email-->
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
                                     <input type="email" class="form-control" name="email">
@@ -120,29 +121,50 @@
                                         </option>
                                     </select>
                                 </div>
-                                <!--SDT-->
-                                <div class="mb-3">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control" name="so_dien_thoai">
+                                <!--SDT and Gender-->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <!--Giới tính-->
+                                        <div class="mb-3">
+                                            <label class="form-label">Giới tính</label>
+                                            <div>
+                                                <input class="form-check-input" type="radio" name="gioi_tinh" id="gridRadios1" value="true" checked>
+                                                <label class="form-check-label" for="gridRadios1">Nam</label>
+
+                                                <input class="form-check-input" type="radio" name="gioi_tinh" id="gridRadios2" value="false">
+                                                <label class="form-check-label" for="gridRadios2">Nữ</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <!--Ngày sinh-->
+                                        <div class="mb-3">
+                                            <label class="form-label">Ngày sinh</label>
+                                            <input type="text" class="form-control flatpickr" name="ngay_sinh" placeholder="Chọn ngày sinh" required>
+                                        </div>
+                                    </div>
                                 </div>
+                                <!--Phường/Xã-->
                                 <div class="mb-3">
                                     <label class="form-label">Phường/Xã</label>
                                     <select class="form-control" id="ward" name="xa_phuong">
                                         <option value="" selected>Chọn phường xã</option>
                                     </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Số nhà/ngõ đường</label>
-                                    <input type="text" class="form-control" name="so_nha_ngo_duong">
-                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-outline-success" style="width: 70px"><i class="bi bi-plus"></i></button>
+                            <!--Số nhà/ngõ đường-->
+                            <div class="col-md-12">
+                                <label class="form-label">Số nhà/ngõ đường</label>
+                                <input type="text" class="form-control" name="so_nha_ngo_duong">
                             </div>
                         </div>
-                        <br>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-outline-success" style="width: 70px; padding-left: 10px" ><i class="bi bi-check"></i></button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </section>
@@ -252,29 +274,22 @@
     </script>
 <!-- xem trc ảnh-->
     <script>
-        function previewImage(event, previewContainerId) {
+        function previewImage(event, previewElementId) {
             const fileInput = event.target;
-            const file = fileInput.files[0];
-            const previewContainer = document.getElementById(previewContainerId);
-            const previewImg = previewContainer.querySelector('img');
+            const previewContainer = document.getElementById(previewElementId);
+            previewContainer.innerHTML = ""; // Xóa nội dung trước đó
 
-            if (file) {
-                // Tạo URL cho ảnh đã chọn
-                const previewURL = URL.createObjectURL(file);
-
-                // Hiển thị ảnh xem trước
-                if (previewImg) {
-                    previewImg.src = previewURL;  // Cập nhật src của hình ảnh
-                } else {
-                    // Nếu không có ảnh, tạo mới thẻ img để thêm vào
-                    const newImg = document.createElement('img');
-                    newImg.src = previewURL;
-                    newImg.alt = "Preview Image";
-                    newImg.style.width = '100%';
-                    newImg.style.height = '100%';
-                    newImg.style.objectFit = 'cover';
-                    previewContainer.appendChild(newImg);  // Thêm vào container
-                }
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.style.width = "300px";
+                    img.style.height = "300px";
+                    img.style.objectFit = "contain";
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
             }
         }
     </script>
