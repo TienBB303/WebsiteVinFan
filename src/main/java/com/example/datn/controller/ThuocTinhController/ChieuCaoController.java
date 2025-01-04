@@ -31,20 +31,14 @@ public class ChieuCaoController {
 
     @GetMapping("/view")
     public String timKiem(@RequestParam(value = "ten_chieu_cao", defaultValue = "") String ten_chieu_cao,
-                          @RequestParam(value = "trang_thai", defaultValue = "") String trang_thaiStr,
+                          @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
                           @RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "5") int size,
                           Model model) {
-        Boolean trang_thai = null;
-        if ("1".equals(trang_thaiStr)) {
-            trang_thai = true;
-        } else if ("0".equals(trang_thaiStr)) {
-            trang_thai = false;
-        }
         Page<ChieuCao> searchPage = chieuCaoService.search(ten_chieu_cao, trang_thai, PageRequest.of(page, size));
         model.addAttribute("listCC", searchPage);
         model.addAttribute("ten_chieu_cao", ten_chieu_cao);
-        model.addAttribute("trang_thai", trang_thaiStr);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         return "admin/thuoc_tinh/chieu_cao";
     }
 
