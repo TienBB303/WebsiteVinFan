@@ -1,4 +1,4 @@
-//package com.example.datn.controller;
+//package com.example.datn.controller.SanPham;
 //
 //import com.example.datn.entity.*;
 //import com.example.datn.entity.thuoc_tinh.*;
@@ -23,6 +23,7 @@
 //
 //import java.math.BigDecimal;
 //import java.util.*;
+//import java.util.stream.Collectors;
 //
 //@Controller
 //@RequestMapping("/admin")
@@ -41,8 +42,6 @@
 //    CongSuatRepo congSuatRepo;
 //    @Autowired
 //    DeQuatRepo deQuatRepo;
-//    //    @Autowired
-////    DieuKhienTuXaRepo dieuKhienTuXaRepo;
 //    @Autowired
 //    DuongKinhCanhRepo duongKinhCanhRepo;
 //    @Autowired
@@ -104,11 +103,6 @@
 //        return cheDoGioRepo.findAll();
 //    }
 //
-////    @ModelAttribute("listDieuKhienTuXa")
-////    public List<DieuKhienTuXa> listDieuKhienTuXa() {
-////        return dieuKhienTuXaRepo.findAll();
-////    }
-//
 //    @ModelAttribute("listDuongKinhCanh")
 //    public List<DuongKinhCanh> listDuongKinhCanh() {
 //        return duongKinhCanhRepo.findAll();
@@ -149,6 +143,8 @@
 //            maxPrice = sanPhamService.getSanPhamGiaLonNhat();
 //        }
 //        Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(query.trim(), minPrice, maxPrice, trang_thai, PageRequest.of(page, size));
+//        NhanVien nv = nhanVienRepository.profileNhanVien();
+//        model.addAttribute("nhanVienInfo", nv);
 //        model.addAttribute("listSP", searchPage);
 //        model.addAttribute("query", query);
 //        model.addAttribute("minPrice", minPrice);
@@ -174,132 +170,8 @@
 //        return "admin/san_pham/san_pham_add";
 //    }
 //
-//    //    @PostMapping("/san-pham/add-bien-the")
-////    public ResponseEntity<?> addProduct(
-////            @RequestParam("sanPham.ma") String inputMa,
-////            @RequestParam("sanPham.ten") String ten,
-////            @RequestParam("sanPham.kieuQuat.id") Integer kieuQuatId,
-////            @RequestParam("mauSac.id") List<Integer> mauSacIds,
-////            @RequestParam("congSuat.id") List<Integer> congSuatIds,
-////            @RequestParam("cheDoGio.id") Integer cheDoGioId,
-////            @RequestParam("nutBam.id") Integer nutBamId,
-////            @RequestParam("chatLieuCanh.id") Integer chatLieuCanhId,
-////            @RequestParam("duongKinhCanh.id") Integer duongKinhCanhId,
-////            @RequestParam("chatLieuKhung.id") Integer chatLieuKhungId,
-////            @RequestParam("deQuat.id") Integer deQuatId,
-////            @RequestParam("chieuCao.id") Integer chieuCaoId,
-////            @RequestParam("hang.id") Integer hangId,
-////            @ModelAttribute NhanVien nhanVien,
-////            HttpSession session, Model model) {
-////
-////        if (inputMa != null && inputMa.length() > 7) {
-////            return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
-////        }
-////        String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
-////        SanPham sp = sanPhamRepo.findByMa(ma);
-////        if (sp != null) {
-////            // Tên và kiểu quạt phải trùng
-////            if (!sp.getTen().trim().equalsIgnoreCase(ten.trim())) {
-////                return ResponseEntity.badRequest().body(
-////                        "Mã " + ma + " đã tồn tại, nhưng với tên: " + sp.getTen() + ". Vui lòng sử dụng cùng tên."
-////                );
-////            }
-////            if (!sp.getKieuQuat().getId().equals(kieuQuatId)) {
-////                return ResponseEntity.badRequest().body(
-////                        "Mã " + ma + " đã tồn tại, nhưng với kiểu quạt: " + sp.getKieuQuat().getTen() + ". Vui lòng chọn đúng kiểu quạt."
-////                );
-////            }
-////        }
-////        else {
-////            List<SanPham> productsWithName = sanPhamRepo.findByTenIgnoreCase(ten.trim());
-////            SanPham spTimMa = sanPhamRepo.findByTen(ten.trim());
-////            if (!productsWithName.isEmpty()) {
-////                return ResponseEntity.badRequest().body(
-////                        "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + spTimMa.getMa()+" ."
-////                );
-////            }
-////        }
-////        List<SanPhamChiTiet> spcheck = spctRepo.timKiemTheoTen(ten.trim());
-////        if (spcheck != null && !spcheck.isEmpty()) {
-////            SanPhamChiTiet spDauTien = spcheck.get(0);
-////            if (!spDauTien.getCheDoGio().getId().equals(cheDoGioId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chế độ gió phải là : " + spDauTien.getCheDoGio().getTen());
-////            }
-////            if (!spDauTien.getNutBam().getId().equals(nutBamId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " nút bấm phải là : " + spDauTien.getNutBam().getTen());
-////            }
-////            if (!spDauTien.getChatLieuCanh().getId().equals(chatLieuCanhId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu cánh phải là : " + spDauTien.getChatLieuCanh().getTen());
-////            }
-////            if (!spDauTien.getDuongKinhCanh().getId().equals(duongKinhCanhId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đường kính cánh phải là : " + spDauTien.getDuongKinhCanh().getTen());
-////            }
-////            if (!spDauTien.getChatLieuKhung().getId().equals(chatLieuKhungId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu khung phải là : " + spDauTien.getChatLieuKhung().getTen());
-////            }
-////            if (!spDauTien.getDeQuat().getId().equals(deQuatId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đế quạt cánh phải là : " + spDauTien.getDeQuat().getTen());
-////            }
-////            if (!spDauTien.getChieuCao().getId().equals(chieuCaoId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chiều cao phải là : " + spDauTien.getChieuCao().getTen());
-////            }
-////            if (!spDauTien.getHang().getId().equals(hangId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " hãng phải là : " + spDauTien.getHang().getTen());
-////            }
-////        }
-////
-////        // Cập nhật thông tin sản phẩm
-////        SanPhamTam sanPhamTam = new SanPhamTam();
-////        sanPhamTam.setMa(ma);
-////        sanPhamTam.setTen(ten);
-////        sanPhamTam.setKieuQuat(kieuQuatRepo.findById(kieuQuatId).orElse(null));
-////        sanPhamTam.setDieu_khien_tu_xa(true);
-////
-////        sanPhamTam.setTrang_thai(true);
-////        sanPhamTam.setNgay_tao(new Date());
-////
-////        List<SanPhamChiTietTam> listSPCTTam = new ArrayList<>();
-////        int idTuTang = 1;
-////        for (Integer mauSacId : mauSacIds) {
-////            MauSac mauSac = mauSacRepo.findById(mauSacId).orElse(null);
-////            for (Integer congSuatId : congSuatIds) {
-////                CongSuat congSuat = congSuatRepo.findById(congSuatId).orElse(null);
-////                // Kiểm tra trùng thuộc tính cho phép trùng tên
-////                if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
-////                    return ResponseEntity.badRequest().body(
-////                            "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
-////                    );
-////                }
-////                SanPhamChiTietTam sanPhamChiTietTam = new SanPhamChiTietTam();
-////                sanPhamChiTietTam.setId((long) idTuTang++);
-////                sanPhamChiTietTam.setSanPhamTam(sanPhamTam);
-////                sanPhamChiTietTam.setMauSac(mauSac);
-////                sanPhamChiTietTam.setCongSuat(congSuat);
-////                sanPhamChiTietTam.setCheDoGio(cheDoGioRepo.findById(cheDoGioId).orElse(null));
-////                sanPhamChiTietTam.setNutBam(nutBamRepo.findById(nutBamId).orElse(null));
-////                sanPhamChiTietTam.setChatLieuCanh(chatLieuCanhRepo.findById(chatLieuCanhId).orElse(null));
-////                sanPhamChiTietTam.setDuongKinhCanh(duongKinhCanhRepo.findById(duongKinhCanhId).orElse(null));
-////                sanPhamChiTietTam.setChatLieuKhung(chatLieuKhungRepo.findById(chatLieuKhungId).orElse(null));
-////                sanPhamChiTietTam.setDeQuat(deQuatRepo.findById(deQuatId).orElse(null));
-////                sanPhamChiTietTam.setChieuCao(chieuCaoRepo.findById(chieuCaoId).orElse(null));
-////                sanPhamChiTietTam.setHang(hangRepo.findById(hangId).orElse(null));
-////                sanPhamChiTietTam.setGia(new BigDecimal(100000));
-////                sanPhamChiTietTam.setSo_luong(1);
-////                sanPhamChiTietTam.setTrang_thai(true);
-////                sanPhamChiTietTam.setNgay_tao(new Date());
-////                sanPhamChiTietTam.setNguoi_tao(nhanVien.getTen());
-////
-////                listSPCTTam.add(sanPhamChiTietTam);
-////            }
-////        }
-////
-////        session.setAttribute("listSPCTTam", listSPCTTam);
-////        System.out.println("list : " + listSPCTTam.size());
-////        model.addAttribute("listSPCTTam", listSPCTTam);
-////        return ResponseEntity.ok(listSPCTTam);
-////    }
 //    @PostMapping("/san-pham/add-bien-the")
-//    public String addProduct(
+//    public ResponseEntity<?> addProduct(
 //            @RequestParam("sanPham.ma") String inputMa,
 //            @RequestParam("sanPham.ten") String ten,
 //            @RequestParam("sanPham.kieuQuat.id") Integer kieuQuatId,
@@ -314,74 +186,61 @@
 //            @RequestParam("chieuCao.id") Integer chieuCaoId,
 //            @RequestParam("hang.id") Integer hangId,
 //            @ModelAttribute NhanVien nhanVien,
-//            RedirectAttributes redirectAttributes,
 //            HttpSession session, Model model) {
 //
 //        if (inputMa != null && inputMa.length() > 7) {
-//            redirectAttributes.addFlashAttribute("errorMessage", "Mã sản phẩm không được vượt quá 7 ký tự.");
-////            return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
+//            return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
 //        }
 //        String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
 //        SanPham sp = sanPhamRepo.findByMa(ma);
 //        if (sp != null) {
 //            // Tên và kiểu quạt phải trùng
 //            if (!sp.getTen().trim().equalsIgnoreCase(ten.trim())) {
-////                return ResponseEntity.badRequest().body(
-////                        "Mã " + ma + " đã tồn tại, nhưng với tên: " + sp.getTen() + ". Vui lòng sử dụng cùng tên."
-////                );
-//                redirectAttributes.addFlashAttribute("errorMessage","lỗi");
+//                return ResponseEntity.badRequest().body(
+//                        "Mã " + ma + " đã tồn tại, nhưng với tên: " + sp.getTen() + ". Vui lòng sử dụng cùng tên."
+//                );
 //            }
 //            if (!sp.getKieuQuat().getId().equals(kieuQuatId)) {
-////                return ResponseEntity.badRequest().body(
-////                        "Mã " + ma + " đã tồn tại, nhưng với kiểu quạt: " + sp.getKieuQuat().getTen() + ". Vui lòng chọn đúng kiểu quạt."
-////                );
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body(
+//                        "Mã " + ma + " đã tồn tại, nhưng với kiểu quạt: " + sp.getKieuQuat().getTen() + ". Vui lòng chọn đúng kiểu quạt."
+//                );
 //            }
 //        }
 //        else {
 //            List<SanPham> productsWithName = sanPhamRepo.findByTenIgnoreCase(ten.trim());
 //            SanPham spTimMa = sanPhamRepo.findByTen(ten.trim());
 //            if (!productsWithName.isEmpty()) {
-////                return ResponseEntity.badRequest().body(
-////                        "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + spTimMa.getMa()+" ."
-////                );
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body(
+//                        "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + spTimMa.getMa()+" ."
+//                );
 //            }
 //        }
 //        List<SanPhamChiTiet> spcheck = spctRepo.timKiemTheoTen(ten.trim());
 //        if (spcheck != null && !spcheck.isEmpty()) {
 //            SanPhamChiTiet spDauTien = spcheck.get(0);
 //            if (!spDauTien.getCheDoGio().getId().equals(cheDoGioId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chế độ gió phải là : " + spDauTien.getCheDoGio().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chế độ gió phải là : " + spDauTien.getCheDoGio().getTen());
 //            }
 //            if (!spDauTien.getNutBam().getId().equals(nutBamId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " nút bấm phải là : " + spDauTien.getNutBam().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " nút bấm phải là : " + spDauTien.getNutBam().getTen());
 //            }
 //            if (!spDauTien.getChatLieuCanh().getId().equals(chatLieuCanhId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu cánh phải là : " + spDauTien.getChatLieuCanh().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu cánh phải là : " + spDauTien.getChatLieuCanh().getTen());
 //            }
 //            if (!spDauTien.getDuongKinhCanh().getId().equals(duongKinhCanhId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đường kính cánh phải là : " + spDauTien.getDuongKinhCanh().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đường kính cánh phải là : " + spDauTien.getDuongKinhCanh().getTen());
 //            }
 //            if (!spDauTien.getChatLieuKhung().getId().equals(chatLieuKhungId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu khung phải là : " + spDauTien.getChatLieuKhung().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chất liệu khung phải là : " + spDauTien.getChatLieuKhung().getTen());
 //            }
 //            if (!spDauTien.getDeQuat().getId().equals(deQuatId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đế quạt cánh phải là : " + spDauTien.getDeQuat().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " đế quạt cánh phải là : " + spDauTien.getDeQuat().getTen());
 //            }
 //            if (!spDauTien.getChieuCao().getId().equals(chieuCaoId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chiều cao phải là : " + spDauTien.getChieuCao().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " chiều cao phải là : " + spDauTien.getChieuCao().getTen());
 //            }
 //            if (!spDauTien.getHang().getId().equals(hangId)) {
-////                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " hãng phải là : " + spDauTien.getHang().getTen());
-//                redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                return ResponseEntity.badRequest().body("Bạn đang thực hiện bổ sung sản phẩm mã : " + ma + " hãng phải là : " + spDauTien.getHang().getTen());
 //            }
 //        }
 //
@@ -403,10 +262,9 @@
 //                CongSuat congSuat = congSuatRepo.findById(congSuatId).orElse(null);
 //                // Kiểm tra trùng thuộc tính cho phép trùng tên
 //                if (sanPhamService.checkTrungLap(ten, congSuat, mauSac)) {
-////                    return ResponseEntity.badRequest().body(
-////                            "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
-////                    );
-//                    redirectAttributes.addFlashAttribute("errorMessage", "lỗi.");
+//                    return ResponseEntity.badRequest().body(
+//                            "Sản phẩm " + ten + " đã tồn tại với công suất: " + congSuat.getTen() + " và màu sắc: " + mauSac.getTen()
+//                    );
 //                }
 //                SanPhamChiTietTam sanPhamChiTietTam = new SanPhamChiTietTam();
 //                sanPhamChiTietTam.setId((long) idTuTang++);
@@ -431,54 +289,51 @@
 //            }
 //        }
 //
-////        session.setAttribute("listSPCTTam", listSPCTTam);
+//        session.setAttribute("listSPCTTam", listSPCTTam);
 //        System.out.println("list : " + listSPCTTam.size());
 //        model.addAttribute("listSPCTTam", listSPCTTam);
-////        return ResponseEntity.ok(listSPCTTam);
-//        return "admin/san_pham/san_pham_add";
+//        return ResponseEntity.ok(listSPCTTam);
 //    }
 //    // Nhận giá trị từ sản phẩm tạm
 //    @PostMapping("/san-pham/confirm")
 //    public ResponseEntity<String> confirmProducts(
-//            @RequestParam(value = "gia", required = false) List<String> giasStr,
-//            @RequestParam(value = "so_luong", required = false) List<Integer> soLuongs,
-//            HttpSession session, Model model) {
+//            @RequestParam(value = "gia") List<String> giasStr,
+//            @RequestParam(value = "so_luong") List<String> soLuongsStr,
+//            HttpSession session) {
 //
 //        List<SanPhamChiTietTam> sanPhamChiTietTamList = (List<SanPhamChiTietTam>) session.getAttribute("listSPCTTam");
-//
-//        // Kiểm tra sản phẩm tạm null hay không
+//        System.out.println(giasStr.size());
 //        if (sanPhamChiTietTamList == null || sanPhamChiTietTamList.isEmpty()) {
 //            return ResponseEntity.badRequest().body("Không có sản phẩm để xác nhận.");
 //        }
-////        if (giasStr == null || giasStr.size() != sanPhamChiTietTamList.size()) {
-////            return ResponseEntity.badRequest().body("Giá không được để trống.");
-////        }
-//        if (soLuongs == null || soLuongs.size() != sanPhamChiTietTamList.size()) {
+//        if (giasStr == null || giasStr.size() != sanPhamChiTietTamList.size()) {
+//            return ResponseEntity.badRequest().body("Giá không được để trống.");
+//        }
+//        if (soLuongsStr == null || soLuongsStr.size() != sanPhamChiTietTamList.size()) {
 //            return ResponseEntity.badRequest().body("Số lượng không được để trống.");
 //        }
-//        // Cập nhật giá và số lượng cho từng sản phẩm tạm
 //        for (int i = 0; i < sanPhamChiTietTamList.size(); i++) {
 //            SanPhamChiTietTam spTam = sanPhamChiTietTamList.get(i);
 //            BigDecimal gia = epKieuDecimal(giasStr.get(i));
-//            Integer soLuong = soLuongs.get(i);
-//
-//            if (gia == null || gia.compareTo(new BigDecimal(10000)) < 0 || gia.compareTo(new BigDecimal(20000000)) > 0) {
-//                return ResponseEntity.badRequest()
-//                        .body("Giá sản phẩm tại vị trí " + (i + 1) + " không hợp lệ (>= 10.000 và <= 20 triệu).");
+//            Integer soLuong = null;
+//            try {
+//                soLuong = Integer.parseInt(soLuongsStr.get(i));
+//            } catch (NumberFormatException e) {
+//                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Số lượng phải nằm trong khoảng 0 - 500.");
 //            }
-////            if (gia == null) {
-////                return ResponseEntity.badRequest().body("Giá không được để trống.");
-////            }
+//            if (gia == null) {
+//                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Giá không được để trống.");
+//            }
 //            if (soLuong == null) {
-//                return ResponseEntity.badRequest().body("Số lượng không được để trống.");
+//                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Số lượng không được để trống.");
 //            }
-////            if (gia.compareTo(new BigDecimal(10000)) < 0) {
-////                return ResponseEntity.badRequest().body("Giá sản phẩm phải lớn hơn 10.000.");
-////            } else if (gia.compareTo(new BigDecimal(20000000)) > 0) {
-////                return ResponseEntity.badRequest().body("Giá sản phẩm không vượt quá 20 triệu.");
-////            }
+//            if (gia.compareTo(new BigDecimal(10000)) < 0) {
+//                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Giá sản phẩm phải lớn hơn 10.000.");
+//            } else if (gia.compareTo(new BigDecimal(20000000)) > 0) {
+//                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Giá sản phẩm không vượt quá 20 triệu.");
+//            }
 //            if (soLuong < 0 || soLuong > 500) {
-//                return ResponseEntity.badRequest().body("Số lượng phải nằm trong khoảng 0 - 500.");
+//                return ResponseEntity.badRequest().body("Lỗi tại sản phẩm " + (i + 1) + ": Số lượng phải nằm trong khoảng 0 - 500.");
 //            }
 //            if (soLuong <= 0) {
 //                spTam.setTrang_thai(false); // Tắt trạng thái nếu hết hàng
@@ -686,13 +541,13 @@
 //                return ResponseEntity.badRequest().body("Không tìm thấy thông tin nhân viên cập nhật");
 //            }
 //            sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
-//
+//            sanPhamChiTiet.setTrang_thai(trangThai);
 //            // Kiểm tra trạng thái
-//            if (soLuong == 0) {
-//                sanPhamChiTiet.setTrang_thai(false);
-//            } else {
-//                sanPhamChiTiet.setTrang_thai(trangThai);
-//            }
+////            if (soLuong == 0) {
+////                sanPhamChiTiet.setTrang_thai(false);
+////            } else {
+////                sanPhamChiTiet.setTrang_thai(trangThai);
+////            }
 //            if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
 //                sanPham.setTrang_thai(true);
 //            } else {

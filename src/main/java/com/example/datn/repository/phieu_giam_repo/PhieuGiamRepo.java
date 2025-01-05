@@ -20,18 +20,23 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
 
     Page<PhieuGiam> findByTenLike(String ten, Pageable pageable);
 
-    @Query("SELECT pg FROM PhieuGiam pg JOIN pg.spct spct WHERE spct.id = :sanPhamChiTietId")
+    @Query("SELECT pg FROM PhieuGiam pg JOIN pg.spct spct WHERE spct.id = :sanPhamChiTietId AND pg.trangThai = true")
     Optional<PhieuGiam> findBySanPhamChiTietId(@Param("sanPhamChiTietId") Long sanPhamChiTietId);
 
-    @Query("SELECT p.spct.id FROM PhieuGiam p")
-    List<Long> findAllSanPhamChiTietIds();
-    @Query("SELECT pg FROM PhieuGiam pg WHERE pg.spct IS NOT NULL AND pg.spct.trang_thai = true")
+    @Query("SELECT pg FROM PhieuGiam pg JOIN pg.spct spct WHERE spct.id = :sanPhamChiTietId")
+    Optional<PhieuGiam> findBySanPhamChiTietIds(@Param("sanPhamChiTietId") Long sanPhamChiTietId);
+
+//    @Query("SELECT p.spct.id FROM PhieuGiam p")
+//    List<Long> findAllSanPhamChiTietIds();
+
+    @Query("SELECT pg FROM PhieuGiam pg " +
+            "WHERE pg.spct IS NOT NULL AND pg.spct.trang_thai = true AND pg.trangThai = true")
     List<PhieuGiam> findAllWithLinkedSpct();
 
     @Query("SELECT pgs FROM PhieuGiam pgs " +
             "JOIN pgs.spct spct " +
             "JOIN spct.sanPham sp " +
-            "WHERE spct.trang_thai = true AND LOWER(sp.ten) LIKE LOWER(CONCAT('%', :ten, '%'))")
+            "WHERE spct.trang_thai = true AND pgs.trangThai = true AND LOWER(sp.ten) LIKE LOWER(CONCAT('%', :ten, '%'))")
     List<PhieuGiam> timKiemSanPhamCoGiamGia(@Param("ten") String ten);
 
     @Query("SELECT pgs FROM PhieuGiam pgs " +

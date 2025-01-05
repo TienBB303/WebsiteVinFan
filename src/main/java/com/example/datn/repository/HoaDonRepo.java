@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -93,4 +94,8 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
                                        Pageable pageable);
     @Query("SELECT h FROM HoaDon h LEFT JOIN FETCH h.phieuGiamGia WHERE h.id = :id")
     Optional<HoaDon> findByIdWithPhieuGiamGia(@Param("id") Long id);
+
+//    TienBB
+    @Query("SELECT hd.trangThai, COUNT(hd) FROM HoaDon hd WHERE hd.trangThai IS NOT NULL GROUP BY hd.trangThai")
+    Map<Integer, Long> countByTrangThai();
 }

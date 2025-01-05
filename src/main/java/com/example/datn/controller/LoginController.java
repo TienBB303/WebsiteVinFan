@@ -69,10 +69,6 @@ public class LoginController {
 
     @PostMapping("/register")
     public String add(@ModelAttribute("khachHang") KhachHang khachHang,
-                      @RequestParam("tinhThanhPho") String tinhThanhPho,
-                      @RequestParam("quanHuyen") String quanHuyen,
-                      @RequestParam("xaPhuong") String xaPhuong,
-                      @RequestParam("soNhaNgoDuong") String soNhaNgoDuong,
                       Model model) {
 
         // Kiểm tra email đã tồn tại
@@ -91,10 +87,10 @@ public class LoginController {
 
         DiaChi diaChi = new DiaChi();
         diaChi.setKhachHang(khachHang);
-        diaChi.setTinhThanhPho(tinhThanhPho);
-        diaChi.setQuanHuyen(quanHuyen);
-        diaChi.setXaPhuong(xaPhuong);
-        diaChi.setSoNhaNgoDuong(soNhaNgoDuong);
+//        diaChi.setTinhThanhPho(tinhThanhPho);
+//        diaChi.setQuanHuyen(quanHuyen);
+//        diaChi.setXaPhuong(xaPhuong);
+//        diaChi.setSoNhaNgoDuong(soNhaNgoDuong);
         diaChi.setTrangThai(true);
         diaChiRepository.save(diaChi);
 

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/admin")
+@RequestMapping("/vin-fan")
 public class ProductCatalog {
 
     private final HoaDonService hoaDonService;
@@ -51,7 +51,7 @@ public class ProductCatalog {
     private DiaChiRepository diaChiRepository;
 
 
-    @GetMapping("/product-catalog")
+    @GetMapping("/danh-muc")
     public String productCatalog(
             Model model,
             @RequestParam(value = "query", required = false) String query,
@@ -90,6 +90,14 @@ public class ProductCatalog {
             sanPhamKhongGiamGia.clear();
         } else if ("non-discounted".equalsIgnoreCase(filter)) {
             sanPhamGiamGia.clear();
+        }
+        // Xử lý sắp xếp cho sản phẩm không giảm giá
+        if ("newest".equalsIgnoreCase(sortOrder)) {
+            sanPhamKhongGiamGia.sort(Comparator.comparing(SanPhamChiTiet::getNgay_tao).reversed());
+            sanPhamGiamGia.sort(Comparator.comparing(pg -> pg.getSpct().getNgay_tao(), Comparator.nullsLast(Comparator.reverseOrder())));
+        } else if ("oldest".equalsIgnoreCase(sortOrder)) {
+            sanPhamKhongGiamGia.sort(Comparator.comparing(SanPhamChiTiet::getNgay_tao));
+            sanPhamGiamGia.sort(Comparator.comparing(pg -> pg.getSpct().getNgay_tao(), Comparator.nullsLast(Comparator.naturalOrder())));
         }
 
         // Lọc thêm
@@ -200,7 +208,7 @@ public class ProductCatalog {
 
         if (khachHang == null) {
             model.addAttribute("errorMessage", "Chỉ khách hàng mới được phép truy cập thông tin đơn hàng!");
-            return "redirect:/admin/product-catalog"; // Trả về trang hiện tại để thông báo
+            return "redirect:/vin-fan/danh-muc"; // Trả về trang hiện tại để thông báo
         }
 
         List<HoaDon> hoaDons = hoaDonService.getHoaDonByIdKH(khachHang.getId());
@@ -262,7 +270,7 @@ public class ProductCatalog {
         khachHang1.setGioiTinh(khachHang.getGioiTinh());
         // Lưu khách hàng vào cơ sở dữ liệu
         khachHangRepo.save(khachHang1);
-        return "redirect:/admin/track-order";
+        return "redirect:/vin-fan/track-order";
     }
 
     @PostMapping("/sua-khach-hang/them-dia-chi")
@@ -286,7 +294,7 @@ public class ProductCatalog {
         diaChi.setTrangThai(true);
         diaChiRepository.save(diaChi);
 
-        return "redirect:/admin/track-order";  // Chuyển hướng về trang sửa khách hàng
+        return "redirect:/vin-fan/track-order";  // Chuyển hướng về trang sửa khách hàng
     }
     @PostMapping("/sua-khach-hang/dia-chi-mac-dinh")
     public String suaDiaChiMacDinh(@RequestParam("khachHangId") Integer khachHangId,
@@ -300,13 +308,13 @@ public class ProductCatalog {
             }
             diaChiRepository.save(diaChi); // Lưu vào database
         }
-        return "redirect:/admin/track-order";
+        return "redirect:/vin-fan/track-order";
     }
     @GetMapping("/sua-khach-hang/xoa/{id}")
     public String xoa(@RequestParam("khachHangId") Integer khachHangId,
                       @PathVariable("id") Integer id){
         diaChiRepository.deleteById(id);
-        return "redirect:/admin/track-order";
+        return "redirect:/vin-fan/track-order";
     }
 
 }

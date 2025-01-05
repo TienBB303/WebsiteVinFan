@@ -33,20 +33,14 @@ public class HangController {
 
     @GetMapping("/view")
     public String timKiem(@RequestParam(value = "ten_hang", defaultValue = "") String ten_hang,
-                          @RequestParam(value = "trang_thai", defaultValue = "") String trang_thaiStr,
+                          @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
                           @RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "5") int size,
                           Model model) {
-        Boolean trang_thai = null;
-        if ("1".equals(trang_thaiStr)) {
-            trang_thai = true;
-        } else if ("0".equals(trang_thaiStr)) {
-            trang_thai = false;
-        }
         Page<Hang> searchPage = ttService.search(ten_hang.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_hang", ten_hang);
-        model.addAttribute("trang_thai", trang_thaiStr);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         return "admin/thuoc_tinh/hang";
     }
 
