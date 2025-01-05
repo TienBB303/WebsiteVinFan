@@ -270,7 +270,7 @@
 
 <div class="container">
     <div class="checkout-form">
-        <h2>Thông tin giao hàng</h2>
+        <h2 class="text-dark">Thông tin giao hàng</h2>
         <form th:action="@{/cart/process-payment}" method="post" id="checkout-form">
 
             <input type="text" name="name"  th:value="${khachHang.ten}">
@@ -327,12 +327,12 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Xác nhận</button>
+            <button type="submit" class="btn btn-dark w-100">Xác nhận</button>
         </form>
     </div>
 
     <div class="order-summary">
-        <h3>Giỏ hàng của bạn</h3>
+        <h3 class="text-dark text-center">Giỏ hàng của bạn</h3>
         <div th:each="item : ${cartItems}" class="product-item">
             <img th:src="${item.imageUrl}" alt="Product Image">
             <span class="badge-quantity" th:text="${item.quantity}">1</span> <!-- Quantity Badge -->

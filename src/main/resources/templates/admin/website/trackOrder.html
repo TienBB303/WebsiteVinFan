@@ -116,10 +116,20 @@
                                                         </label>
                                                         <input type="text"
                                                                class="form-control border-0 border-bottom rounded-0"
-                                                               name="matKhau" id="matKhau" placeholder="Nhập nhập khẩu"
-                                                               th:field="*{matKhau}"/>
+                                                               name="matKhau" id="matKhau" placeholder="Nhập mật khẩu"
+                                                               th:field="*{matKhau}" oninput="maskPassword()"/>
                                                     </div>
                                                 </div>
+
+                                                <script>
+                                                    function maskPassword() {
+                                                        var input = document.getElementById('matKhau');
+                                                        var value = input.value;
+                                                        var maskedValue = value.replace(/./g, '*');
+                                                        input.value = maskedValue;
+                                                    }
+                                                </script>
+
 
                                                 <div class="row mb-4">
                                                     <!-- Ngày sinh -->
@@ -645,7 +655,7 @@
             }
         });
     });
-
 </script>
+
 </body>
 </html>
