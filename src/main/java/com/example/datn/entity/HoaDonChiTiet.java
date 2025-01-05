@@ -47,7 +47,7 @@ public class HoaDonChiTiet {
     @Column(name = "trang_thai")
     Integer trangThai;
 
-    @Transient // Không lưu vào database, chỉ sử dụng tạm
+    @Transient
     BigDecimal giaGiam;
 
 }

@@ -8,18 +8,18 @@
       crossorigin="anonymous">
 
 <style>
-    /* Tổng thể form */
+        /* Tổng thể form */
     .registration-container {
-        max-width: 800px;
+        max-width: 600px;
         margin: 0 auto;
-        padding: 20px;
-        background-color: #f9f9f9; /* Màu nền nhạt */
+        padding: 30px;
+        background-color: #ffffff;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .registration-title {
-        font-size: 24px;
+        font-size: 28px;
         font-weight: bold;
         text-align: center;
         margin-bottom: 20px;
@@ -29,76 +29,55 @@
     /* Các nhãn */
     .form-label {
         font-size: 14px;
-        font-weight: 500;
-        color: #555;
+        font-weight: bold;
+        color: #444;
     }
 
     /* Input và Select */
-    .form-control, .form-check-input {
+    .form-control {
         border-radius: 5px;
-        border: 1px solid #ccc;
-        transition: border-color 0.3s;
+        border: 1px solid #ced4da;
+        transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    .form-control:focus, .form-check-input:focus {
-        border-color: #007bff; /* Đổi màu viền khi focus */
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
     }
 
-    /*!* Nút Đăng Ký *!*/
-    /*!* Cập nhật nút Đăng ký để giống Đăng nhập *!*/
-    /*.btn-black {*/
-    /*    border-radius: 20px; !* Bo góc tròn *!*/
-    /*    background-color: black; !* Màu nền đen *!*/
-    /*    color: white; !* Màu chữ trắng *!*/
-    /*    font-weight: bold; !* Đậm chữ *!*/
-    /*    padding: 10px 20px; !* Khoảng cách trong nút *!*/
-    /*    transition: background-color 0.3s, transform 0.2s; !* Hiệu ứng chuyển đổi *!*/
-    /*    border: none; !* Xóa viền nút *!*/
-    /*    text-align: center; !* Canh giữa chữ *!*/
-    /*    cursor: pointer; !* Hiển thị trỏ chuột *!*/
-    /*}*/
-
-    /*.btn-black:hover {*/
-    /*    background-color: #333; !* Đổi sang màu xám đậm khi hover *!*/
-    /*}*/
-
-    /* Căn chỉnh Radio Button */
-    .form-check-label {
-        margin-right: 15px;
-    }
-
-    /* Khoảng cách giữa các cột */
-    .row > .col {
-        padding: 0 10px;
-    }
+    /* Nút Đăng Ký */
     .btn {
-        border-radius: 20px;
-        background-color: black;
-        color: white;
-    }
-    .btn:hover {
-        background-color: #333; /* Đổi sang màu xám đậm */
-        color: white; /* Giữ màu chữ trắng */
+        border-radius: 50px;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 16px;
+        padding: 10px 20px;
+        transition: background-color 0.3s, transform 0.2s;
     }
 
-    /*!* Validation thông báo lỗi *!*/
-    /*.text-danger {*/
-    /*    font-size: 12px;*/
-    /*    margin-top: 5px;*/
-    /*    display: block;*/
-    /*}*/
+    .btn:hover {
+        background-color: #0056b3;
+        transform: scale(1.02);
+    }
+
+    /* Validation thông báo lỗi */
+    .text-danger {
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
 
     /* Responsive */
     @media (max-width: 768px) {
         .registration-container {
-            padding: 15px;
+            padding: 20px;
         }
 
         .registration-title {
-            font-size: 20px;
+            font-size: 24px;
         }
     }
+
 
 </style>
 <body>
@@ -106,79 +85,23 @@
 <div class="registration-container mt-5">
     <div class="registration-title">Đăng Ký Tài Khoản</div>
     <form th:action="@{/register}" method="post" id="registrationForm">
-        <div class="row">
-            <!-- Phần 1 -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Tên</label>
-                    <input type="text" class="form-control" name="ten" id="ten">
-<!--                    <span th:text="${tenvali}" class="text-danger"></span>-->
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input class="form-control" name="email" id="email">
-<!--                    <span th:text="${emailvali}" class="text-danger"></span>-->
-                    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" name="matKhau" id="matKhau">
-<!--                    <span th:text="${matkhauvali}" class="text-danger"></span>-->
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" name="soDienThoai" id="soDienThoai">
-<!--                    <span th:text="${sdtvali}" class="text-danger"></span>-->
-                </div>
-            </div>
-            <!-- Phần 2 -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Ngày sinh</label>
-                    <input type="date" class="form-control" name="ngaySinh" id="ngaySinh">
-                </div>
-                <div class="mt-4">
-                    <label class="form-label">Giới tính</label>
-                    <div>
-                        <input class="form-check-input" type="radio" name="gioiTinh" value="Nam" checked>
-                        <label class="form-check-label">Nam</label>
-                        <input class="form-check-input" type="radio" name="gioiTinh" value="Nữ">
-                        <label class="form-check-label">Nữ</label>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="form-label">Địa chỉ</label>
-                    <div class="row">
-                        <div class="col">
-                            <select class="form-control mb-2" id="city" name="tinhThanhPho">
-                                <option value="" selected>Chọn tỉnh thành</option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <select class="form-control mb-2" id="district" name="quanHuyen">
-                                <option value="" selected>Chọn quận huyện</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <select class="form-control mb-2" id="ward" name="xaPhuong">
-                                <option value="" selected>Chọn phường xã</option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control" name="soNhaNgoDuong" id="soNhaNgoDuong" placeholder="Số nhà/ngõ đường">
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email">
+            <div class="text-danger" th:if="${error}" th:text="${error}"></div>
         </div>
-        <div class="text-center">
-            <button type="submit" class="btn w-100">Đăng Ký</button>
+        <div class="mb-3">
+            <label for="matKhau" class="form-label">Mật khẩu</label>
+            <input type="password" class="form-control" id="matKhau" name="matKhau" placeholder="Nhập mật khẩu">
         </div>
+        <div class="mb-3">
+            <label for="xacNhanMatKhau" class="form-label">Xác nhận mật khẩu</label>
+            <input type="password" class="form-control" id="xacNhanMatKhau" name="xacNhanMatKhau"
+                   placeholder="Nhập lại mật khẩu">
+        </div>
+        <button type="submit" class="btn w-100">Đăng Ký</button>
     </form>
 </div>
-
 
 </body>
 </html>
@@ -188,6 +111,7 @@
     const cities = document.getElementById("city");
     const districts = document.getElementById("district");
     const wards = document.getElementById("ward");
+
 
     axios.get("https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json")
         .then(response => {
@@ -221,23 +145,9 @@
 
     document.getElementById("registrationForm").addEventListener("submit", function (event) {
         event.preventDefault(); // Ngăn chặn gửi biểu mẫu mặc định
-
-        const ten = document.getElementById("ten").value.trim();
         const email = document.getElementById("email").value.trim();
         const matKhau = document.getElementById("matKhau").value.trim();
-        const soDienThoai = document.getElementById("soDienThoai").value.trim();
-        const ngaySinh = document.getElementById("ngaySinh").value.trim();
-        const gioiTinh = document.querySelector('input[name="gioiTinh"]:checked');
-        const tinhThanhPho = document.getElementById("city").value;
-        const quanHuyen = document.getElementById("district").value;
-        const xaPhuong = document.getElementById("ward").value;
-        const soNhaNgoDuong = document.getElementById("soNhaNgoDuong").value.trim();
-
-        // Kiểm tra trường "Tên"
-        if (!ten) {
-            showToast("Tên không được để trống!", "error");
-            return;
-        }
+        const xacNhanMatKhau = document.getElementById("xacNhanMatKhau").value.trim();
 
         // Kiểm tra trường "Email"
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -249,7 +159,6 @@
             showToast("Email không hợp lệ!", "error");
             return;
         }
-
         // Kiểm tra trường "Mật khẩu"
         const noSpecialCharRegex = /^[a-zA-Z0-9]+$/;
         if (!matKhau) {
@@ -260,64 +169,14 @@
             showToast("Mật khẩu không được chứa ký tự đặc biệt!", "error");
             return;
         }
-
-        // Kiểm tra trường "Số điện thoại"
-        if (!soDienThoai) {
-            showToast("Số điện thoại không được để trống!", "error");
+        if (!xacNhanMatKhau) {
+            showToast("Xác nhận mật khẩu không được để trống!", "error");
             return;
         }
-        if (!/^\d+$/.test(soDienThoai)) {
-            showToast("Số điện thoại chỉ được chứa số!", "error");
+        if (matKhau !== xacNhanMatKhau) {
+            showToast("Mật khẩu và xác nhận mật khẩu không khớp!", "error");
             return;
         }
-
-        // Kiểm tra trường "Ngày sinh"
-        if (!ngaySinh) {
-            showToast("Ngày sinh không được để trống!", "error");
-            return;
-        }
-        const birthDate = new Date(ngaySinh);
-        const today = new Date();
-        if (birthDate > today) {
-            showToast("Ngày sinh không được là ngày trong tương lai!", "error");
-            return;
-        }
-
-        // Kiểm tra trường "Giới tính"
-        if (!gioiTinh) {
-            showToast("Vui lòng chọn giới tính!", "error");
-            return;
-        }
-
-        // Kiểm tra trường "Tỉnh/Thành phố"
-        if (!tinhThanhPho) {
-            showToast("Vui lòng chọn tỉnh/thành phố!", "error");
-            return;
-        }
-
-        // Kiểm tra trường "Quận/Huyện"
-        if (!quanHuyen) {
-            showToast("Vui lòng chọn quận/huyện!", "error");
-            return;
-        }
-
-        // Kiểm tra trường "Phường/Xã"
-        if (!xaPhuong) {
-            showToast("Vui lòng chọn phường/xã!", "error");
-            return;
-        }
-
-        // Kiểm tra trường "Số nhà/Ngõ đường"
-        if (!soNhaNgoDuong) {
-            showToast("Vui lòng nhập số nhà/ngõ đường!", "error");
-            return;
-        }
-        // Kiểm tra trường "Giới tính"
-        if (!gioiTinh) {
-            showToast("Vui lòng chọn giới tính!", "error");
-            return;
-        }
-
         // Thông báo tải dữ liệu
         Swal.fire({
             toast: true,
@@ -350,4 +209,14 @@
             timerProgressBar: true
         });
     }
+    document.getElementById("xacNhanMatKhau").addEventListener("input", function () {
+        const matKhau = document.getElementById("matKhau").value.trim();
+        const xacNhanMatKhau = this.value.trim();
+        if (xacNhanMatKhau && matKhau !== xacNhanMatKhau) {
+            this.setCustomValidity("Mật khẩu không khớp.");
+        } else {
+            this.setCustomValidity("");
+        }
+    });
+
 </script>

@@ -31,20 +31,14 @@ public class DeQuatController {
 
     @GetMapping("/view")
     public String timKiem(@RequestParam(value = "ten_de_quat", defaultValue = "") String ten_de_quat,
-                          @RequestParam(value = "trang_thai", defaultValue = "") String trang_thaiStr,
+                          @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
                           @RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "5") int size,
                           Model model) {
-        Boolean trang_thai = null;
-        if ("1".equals(trang_thaiStr)) {
-            trang_thai = true;
-        } else if ("0".equals(trang_thaiStr)) {
-            trang_thai = false;
-        }
         Page<DeQuat> searchPage = ttService.search(ten_de_quat.trim(), trang_thai, PageRequest.of(page, size));
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_de_quat", ten_de_quat);
-        model.addAttribute("trang_thai", trang_thaiStr);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         return "admin/thuoc_tinh/de_quat";
     }
 

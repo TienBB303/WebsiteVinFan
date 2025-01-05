@@ -1,8 +1,5 @@
 package com.example.datn.controller;
 
-
-
-
 import com.example.datn.entity.ChucVu;
 import com.example.datn.entity.NhanVien;
 import com.example.datn.repository.ChucVuRepository;
@@ -124,17 +121,39 @@ public class NhanVienController {
                 response.put("message", "Nhân viên phải trên 18 tuổi.");
                 return ResponseEntity.badRequest().body(response);
             }
+            if (Period.between(birthDate, now).getYears() > 80) {
+                response.put("message", "Nhân viên phải không được lớn hơn 80 tuổi.");
+                return ResponseEntity.badRequest().body(response);
+            }
             nhanVien.setNgaySinh(ngay_sinh);
             nhanVien.setGioiTinh(gioi_tinh);
 
-            if (email == null || !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+            if (nhanVienRepository.existsByEmail(email.trim())) {
+                response.put("message", "Email đã tồn tại. Vui lòng sử dụng email khác.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            if (nhanVienRepository.existsBySoDienThoai(so_dien_thoai.trim())) {
+                response.put("message", "Số điện thoại đã tồn tại. Vui lòng sử dụng số khác.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (email == null || email.trim().isEmpty()) {
+                response.put("message", "Email không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
                 response.put("message", "Email không đúng định dạng.");
                 return ResponseEntity.badRequest().body(response);
             }
             nhanVien.setEmail(email);
 
-            if (so_dien_thoai == null || !so_dien_thoai.matches("^0[0-9]{9,10}$")) {
-                response.put("message", "Số điện thoại không hợp lệ.");
+            if (so_dien_thoai == null || so_dien_thoai.trim().isEmpty()) {
+                response.put("message", "Số điện thoại không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            if (!so_dien_thoai.matches("^0[0-9]{8,9}$")) {
+                response.put("message", "Số điện thoại phải bắt đầu bằng số 0 và có 9 hoặc 10 chữ số.");
                 return ResponseEntity.badRequest().body(response);
             }
             nhanVien.setSoDienThoai(so_dien_thoai.trim());
@@ -191,6 +210,7 @@ public class NhanVienController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+
     @RestController
     @RequestMapping("/api")
     public class NhanVienAPIController {
@@ -206,7 +226,6 @@ public class NhanVienController {
         }
     }
 
-
     @GetMapping("/view-update/{id}")
     public String formSuaNhanVien(@PathVariable("id") Integer id, Model model) {
         NhanVien nhanVien = nhanVienRepository.findById(id).orElse(null);
@@ -216,18 +235,100 @@ public class NhanVienController {
         model.addAttribute("nowday", LocalDate.now());
         return "admin/nhan-vien/sua";
     }
+
     @PostMapping("/update")
-    public String suaNhanVien(NhanVien nhanVien) {
-        nhanVien.setNgaySua(new Date());
+    public ResponseEntity<?> suaNhanVien(
+        @RequestParam("id") Integer id,
+        @RequestParam("ten") String ten_nhan_vien,
+        @RequestParam("ngaySinh") @DateTimeFormat(pattern = "yyyy-MM-dd") Date ngay_sinh,
+        @RequestParam("gioiTinh") Boolean gioi_tinh,
+        @RequestParam("soDienThoai") String so_dien_thoai,
+        @RequestParam("tinh_thanh_pho") String tinh_thanh_tho,
+        @RequestParam("quan_huyen") String quan_huyen,
+        @RequestParam("xa_phuong") String xa_phuong,
+        @RequestParam("soNhaNgoDuong") String so_nha_ngo_duong,
+        @RequestParam(value = "nhanVien.hinhAnh", required = false) MultipartFile file,
+        @RequestParam("chucVu") Integer chuc_vu_id) {
+        try {
+            NhanVien nhanVien = nhanVienRepository.findById(id).orElse(null);
+            if (nhanVien == null) {
+                return ResponseEntity.badRequest().body("Nhân viên không tồn tại");
+            }
+            if (file != null && !file.isEmpty()) {
+                // Kiểm tra MIME type của file
+                String contentType = file.getContentType();
+                if (contentType == null ||
+                        (!contentType.equals("image/png") &&
+                                !contentType.equals("image/jpeg") &&
+                                !contentType.equals("image/jpg"))) {
+                    return ResponseEntity.badRequest().body("File ảnh phải có định dạng PNG, JPG hoặc JPEG.");
+                }
+                Map<String, String> uploadAnh = cloudinaryService.upload(file);
+                String imageUrl = uploadAnh.get("url");
+                nhanVien.setHinhAnh(imageUrl);
+            }
+            if (ten_nhan_vien == null || ten_nhan_vien.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Tên nhân viên không được để trống.");
+            }
+            nhanVien.setTen(ten_nhan_vien);
+            if (ngay_sinh == null) {
+                return ResponseEntity.badRequest().body("Ngày sinh không được để trống.");
+            }
+            LocalDate now = LocalDate.now();
+            LocalDate birthDate = ngay_sinh.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (Period.between(birthDate, now).getYears() < 18) {
+                return ResponseEntity.badRequest().body("Nhân viên phải trên 18 tuổi.");
+            }
+            if (Period.between(birthDate, now).getYears() > 80) {
+                return ResponseEntity.badRequest().body("Nhân viên không được lớn hơn 80 tuổi.");
+            }
+            nhanVien.setNgaySinh(ngay_sinh);
+            nhanVien.setGioiTinh(gioi_tinh);
 
-        // Kiểm tra và thiết lập các giá trị mặc định nếu cần
-        if (nhanVien.getGioiTinh() == null) {
-            nhanVien.setGioiTinh(false); // Hoặc một giá trị mặc định khác
+            if (so_dien_thoai != null && !so_dien_thoai.trim().isEmpty() && !so_dien_thoai.trim().equals(nhanVien.getSoDienThoai())) {
+                if (!so_dien_thoai.matches("^0[0-9]{8,9}$")) {
+                    return ResponseEntity.badRequest().body("Số điện thoại phải bắt đầu bằng số 0 và có 9 hoặc 10 chữ số.");
+                }
+                // Kiểm tra sự tồn tại của số điện thoại mới trong cơ sở dữ liệu
+                if (nhanVienRepository.existsBySoDienThoai(so_dien_thoai.trim())) {
+                    return ResponseEntity.badRequest().body("Số điện thoại đã tồn tại. Vui lòng sử dụng số khác.");
+                }
+                nhanVien.setSoDienThoai(so_dien_thoai.trim());
+            }
+            if (tinh_thanh_tho == null || tinh_thanh_tho.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Tỉnh/Thành phố không được để trống.");
+
+            }
+            nhanVien.setTinhThanhPho(tinh_thanh_tho);
+            if (quan_huyen == null || quan_huyen.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Quận/Huyện không được để trống.");
+            }
+            nhanVien.setQuanHuyen(quan_huyen);
+            if (xa_phuong == null || xa_phuong.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Phường/Xã không được để trống.");
+
+            }
+            nhanVien.setXaPhuong(xa_phuong);
+
+            if (so_nha_ngo_duong == null || so_nha_ngo_duong.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Số nhà/ngõ/đường không được để trống.");
+            }
+            nhanVien.setSoNhaNgoDuong(so_nha_ngo_duong);
+            ChucVu chucVu = chucVuRepository.findById(chuc_vu_id).orElse(null);
+            if (chucVu == null) {
+                return ResponseEntity.badRequest().body("Vui lòng chọn chức vụ.");
+
+            }
+            nhanVien.setChucVu(chucVu);
+            nhanVien.setNgaySua(new Date());
+            nhanVienRepository.save(nhanVien);
+            return ResponseEntity.ok().body(Map.of("message", "Cập nhật thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Đã xảy ra lỗi trong quá trình cập nhật nhân viên.");
+
         }
-
-        nhanVienRepository.save(nhanVien);
-        return "redirect:/admin/nhan-vien/index";
     }
+
 
     @GetMapping("/thong-tin-tai-khoan")
     public String thongTinNhanVien(Model model){

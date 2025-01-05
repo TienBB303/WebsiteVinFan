@@ -84,8 +84,9 @@
                                         <input type="hidden" name="tinhThanhPho" th:value="${nhanVien.tinhThanhPho}">
                                         <input type="hidden" name="quanHuyen" th:value="${nhanVien.quanHuyen}">
                                         <input type="hidden" name="xaPhuong" th:value="${nhanVien.xaPhuong}">
-                                        <strong>Địa Chỉ:</strong> <span
-                                            th:text="${nhanVien.soNhaNgoDuong + ', ' + nhanVien.xaPhuong + ', ' + nhanVien.quanHuyen + ', ' + nhanVien.tinhThanhPho}"></span>
+                                        <input type="hidden" name="soNha" th:value="${nhanVien.soNhaNgoDuong}">
+                                        <span id="fullAddress"></span>
+
                                     </p>
 
 
@@ -115,69 +116,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script th:inline="javascript">
 
-        var idTinh = document.getElementById("tinhThanhPho").value;
-        var idHuyen = document.getElementById("quanHuyen").value;
-        var idXa = document.getElementById("xaPhuong").value;
 
-        console.log(idTinh)
-        console.log(idHuyen)
-        console.log(idXa)
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lấy giá trị từ các trường input
+            var idTinh = document.getElementsByName('tinhThanhPho')[0].value;
+            var idHuyen = document.getElementsByName('quanHuyen')[0].value;
+            var idXa = document.getElementsByName('xaPhuong')[0].value;
+            var soNha = document.getElementsByName('soNha')[0].value;
 
-        var citis = document.getElementById("city");
-        var districts = document.getElementById("district");
-        var wards = document.getElementById("ward");
 
-        var Parameter = {
-            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
-            method: "GET",
-            responseType: "application/json",
-        };
+            var fullAddress = document.getElementById('fullAddress');
 
-        axios(Parameter).then(function (result) {
-            renderCity(result.data);
-            // Preselect city, district, and ward after data is loaded
-            citis.value = idTinh;
-            citis.dispatchEvent(new Event('change'));
+            // Cấu hình Axios
+            var Parameter = {
+                url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+                method: "GET",
+                responseType: "application/json",
+            };
 
-            setTimeout(function () {
-                districts.value = idHuyen;
-                districts.dispatchEvent(new Event('change'));
-            }, 500);
+            // Gọi API
+            axios(Parameter)
+                .then(function (result) {
+                    renderFullAddress(result.data, idTinh, idHuyen, idXa, soNha, fullAddress);
+                })
+                .catch(function (error) {
+                    Swal.fire('Lỗi!', 'Không thể tải dữ liệu địa giới hành chính!', 'error');
+                });
 
-            setTimeout(function () {
-                wards.value = idXa;
-            }, 1000);
-        });
-
-        function renderCity(data) {
-            for (const x of data) {
-                citis.options[citis.options.length] = new Option(x.Name, x.Id);
+            // Hàm hiển thị
+            function renderFullAddress(data, idTinh, idHuyen, idXa, soNha, fullAddress) {
+                var selectedCity = data.find(city => city.Id == idTinh);
+                if (selectedCity) {
+                    var selectedDistrict = selectedCity.Districts.find(district => district.Id == idHuyen);
+                    if (selectedDistrict) {
+                        var selectedWard = selectedDistrict.Wards.find(ward => ward.Id == idXa);
+                        if (selectedWard) {
+                            fullAddress.textContent = `${selectedCity.Name}, ${selectedDistrict.Name}, ${selectedWard.Name}, ${soNha}`;
+                        } else {
+                            fullAddress.textContent = "Địa chỉ không đầy đủ";
+                        }
+                    } else {
+                        fullAddress.textContent = "Địa chỉ không đầy đủ";
+                    }
+                } else {
+                    fullAddress.textContent = "Địa chỉ không đầy đủ";
+                }
             }
-
-            citis.onchange = function () {
-                districts.length = 1;
-                wards.length = 1;
-
-                if (this.value != "") {
-                    const result = data.filter(n => n.Id === this.value);
-                    for (const k of result[0].Districts) {
-                        districts.options[districts.options.length] = new Option(k.Name, k.Id);
-                    }
-                }
-            };
-
-            districts.onchange = function () {
-                wards.length = 1;
-                const dataCity = data.filter((n) => n.Id === citis.value);
-
-                if (this.value != "") {
-                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
-                    for (const w of dataWards) {
-                        wards.options[wards.options.length] = new Option(w.Name, w.Id);
-                    }
-                }
-            };
-        }
+        });
     </script>
 </div>
 </body>
