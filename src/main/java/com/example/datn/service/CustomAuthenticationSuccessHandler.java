@@ -18,7 +18,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         System.out.println("Authorities: " + roles);
         if (roles.contains("ROLE_KHACHHANG")) {
-            response.sendRedirect("/admin/product-catalog");
+            response.sendRedirect("/vin-fan/danh-muc");
         } else if (roles.contains("Quản lý") || roles.contains("Nhân viên bán hàng")) {
             response.sendRedirect("/trang-ca-nhan/index");
         } else {

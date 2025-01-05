@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -68,7 +69,16 @@ public class HoaDonController {
 
         return "/admin/hoa_don/index";
     }
+//    TienBB
+    @GetMapping("/api/count-hoa-don-by-trang-thai")
+    @ResponseBody
+    public Map<Integer, Long> getHoaDonCountByTrangThai() {
+        // Gọi service để đếm số hóa đơn theo trạng thái
+        Map<Integer, Long> countByTrangThai = hoaDonService.countHoaDonByTrangThai();
+        return countByTrangThai;
+    }
 
+//    AnhNQ
     @GetMapping("/detail")
     public String detail(@RequestParam long id, Model model) {
         // Lấy thông tin hóa đơn

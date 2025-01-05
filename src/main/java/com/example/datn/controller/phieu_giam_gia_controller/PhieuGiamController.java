@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -31,7 +32,6 @@ public class PhieuGiamController {
 
     private final PhieuGiamRepo pggRepo;
     private final PhieuGiamService pggSV;
-//    private final PhieuGiamSanPhamRepo pggspRepo;
     private final SPCTRepo spctRepo;
 
     @GetMapping("/index")
@@ -103,14 +103,15 @@ public class PhieuGiamController {
 
     @GetMapping("/store")
     public String store(Model model) {
+        // Lấy danh sách sản phẩm chi tiết
         List<SanPhamChiTiet> sanPhamChiTietList = spctRepo.findAll();
 
-        // Lấy danh sách sản phẩm đã áp dụng phiếu giảm giá
+        // Lấy danh sách các sản phẩm đã áp dụng phiếu giảm giá đang hoạt động
         Map<Long, Boolean> appliedProductMap = pggRepo.findAll().stream()
-                .filter(pggsp -> pggsp.getSpct() != null) // Bỏ qua nếu sản phẩm chi tiết là null
+                .filter(pgg -> pgg.getSpct() != null && pgg.isTrangThai()) // Lọc phiếu giảm giá đang hoạt động
                 .collect(Collectors.toMap(
-                        pggsp -> pggsp.getSpct().getId(),
-                        pggsp -> true,
+                        pgg -> pgg.getSpct().getId(),
+                        pgg -> true,
                         (existing, replacement) -> existing
                 ));
 
@@ -119,6 +120,7 @@ public class PhieuGiamController {
 
         return "/admin/phieu_giam/create";
     }
+
     @GetMapping("/discount")
     public String showDiscountProducts(Model model) {
         List<PhieuGiam> discountProducts = pggRepo.findAll(); // Truy vấn tất cả thông tin
@@ -230,7 +232,7 @@ public class PhieuGiamController {
 
             // Kiểm tra trạng thái: nếu chuyển về "ngừng áp dụng", xóa liên kết sản phẩm
             if (!phieuGiam.isTrangThai()) { // Nếu trạng thái là "ngừng áp dụng"
-                existingPhieuGiam.setSpct(null); // Xóa liên kết sản phẩm
+//                existingPhieuGiam.setSpct(null); // Xóa liên kết sản phẩm
                 System.out.println("Liên kết với sản phẩm đã được xóa do trạng thái chuyển về ngừng áp dụng.");
             } else {
                 // Nếu trạng thái vẫn là "áp dụng", kiểm tra và cập nhật giá sau giảm

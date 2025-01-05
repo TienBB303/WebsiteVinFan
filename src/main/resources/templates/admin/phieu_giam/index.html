@@ -85,7 +85,8 @@
             <section class="row">
                 <div class="card">
                     <div class="card-header">
-                        <a class="btn btn-outline-success" href="/admin/phieu-giam/store" style="width: 70px"><i class="bi bi-plus"></i></a>
+                        <a class="btn btn-outline-success" href="/admin/phieu-giam/store" style="width: 70px"><i
+                                class="bi bi-plus"></i></a>
                     </div>
                     <div class="card-body">
                         <div class="dataTable-wrapper">
@@ -93,7 +94,8 @@
                                 <form action="/admin/phieu-giam/index" method="GET">
                                     <div class="row">
                                         <div class="col-8">
-                                            <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm theo tên">
+                                            <input type="text" class="form-control" name="keyword"
+                                                   placeholder="Tìm kiếm theo tên">
                                         </div>
                                         <div class="col-2">
                                             <select class="form-select" name="status">
@@ -104,12 +106,14 @@
                                         </div>
                                         <div class="col-2 d-flex">
                                             <div>
-                                                <button class="btn btn-outline-primary" type="submit" style="width: 70px; margin-right: 10px">
+                                                <button class="btn btn-outline-primary" type="submit"
+                                                        style="width: 70px; margin-right: 10px">
                                                     <i class="bi bi-search"></i>
                                                 </button>
                                             </div>
                                             <div>
-                                                <a class="btn btn-outline-warning" href="/admin/phieu-giam/index" style="width: 70px">
+                                                <a class="btn btn-outline-warning" href="/admin/phieu-giam/index"
+                                                   style="width: 70px">
                                                     <i class="bi bi-arrow-counterclockwise"></i>
                                                 </a>
                                             </div>
@@ -121,9 +125,9 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-<!--                                        <th data-sortable="" style="width: 5%;">-->
-<!--                                            <a href="#" class="dataTable-sorter">STT</a>-->
-<!--                                        </th>-->
+                                        <!--                                        <th data-sortable="" style="width: 5%;">-->
+                                        <!--                                            <a href="#" class="dataTable-sorter">STT</a>-->
+                                        <!--                                        </th>-->
                                         <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Mã phiếu</a>
                                         </th>
@@ -155,7 +159,7 @@
                                     </thead>
                                     <tbody>
                                     <tr th:each="pgg, stt : ${ListPGG}" style="cursor: pointer;">
-<!--                                        <td style="text-align: center" th:text="${(ListPGG.number * ListPGG.size) + stt.index + 1}"></td>-->
+                                        <!--                                        <td style="text-align: center" th:text="${(ListPGG.number * ListPGG.size) + stt.index + 1}"></td>-->
                                         <td th:text="${pgg.ma}">Mã phiếu giảm</td>
                                         <td th:text="${pgg.ten}">Tên phiếu giảm</td>
                                         <td th:text="${pgg.loaiPhieuGiam ? 'Giảm giá hóa đơn' : 'Giảm sản phẩm'}">Loại
@@ -167,7 +171,7 @@
                                         <td th:text="${pgg.spct.sanPham.ten != null ? pgg.spct.sanPham.ten : 'Không áp dụng sản phẩm'}">
                                             Tên sản phẩm
                                         </td>
-<!--                                        <td th:text="${pgg.trangThai ? 'Áp dụng' : 'Ngừng áp dụng'}"></td>-->
+                                        <!--                                        <td th:text="${pgg.trangThai ? 'Áp dụng' : 'Ngừng áp dụng'}"></td>-->
                                         <td style="text-align: center">
                                             <span th:if="${pgg.trangThai}" class="badge bg-light-success">
                                                 On
@@ -216,7 +220,8 @@
                                     </li>
 
                                     <!-- Nút Trang Sau -->
-                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                    <li class="page-item"
+                                        th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
                                         <a class="page-link"
                                            th:href="@{/admin/phieu-giam/index(page=${currentPage + 1}, keyword=${keyword}, status=${status})}"
                                            aria-label="Next">
@@ -225,7 +230,8 @@
                                     </li>
 
                                     <!-- Nút Trang Cuối -->
-                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                    <li class="page-item"
+                                        th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
                                         <a class="page-link"
                                            th:href="@{/admin/phieu-giam/index(page=${totalPages - 1}, keyword=${keyword}, status=${status})}"
                                            aria-label="Last">

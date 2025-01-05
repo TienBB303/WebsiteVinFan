@@ -203,16 +203,6 @@
                         <img th:src="${hinhAnh.hinh_anh_1}" class="d-block w-100 product-image" alt="Hình ảnh sản phẩm">
                     </div>
                 </div>
-                <!-- Nút chuyển trước -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <!-- Nút chuyển tiếp -->
-                <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
         </div>
 
@@ -255,7 +245,6 @@
                         <label for="variantSelect" class="form-label"><strong>Chọn màu sắc và công
                             suất:</strong></label>
                         <select id="variantSelect" name="variant" class="form-select" required>
-                            <!--                            <option value="" disabled>Chọn màu sắc và công suất</option>-->
                             <option th:each="bienThe : ${bienTheList}"
                                     th:selected="${bienThe.id == defaultBienThe.id}"
                                     th:value="${bienThe.id}"
@@ -333,7 +322,7 @@
             const productId = selectedOption.value;
 
             // Gửi yêu cầu lấy hình ảnh từ server
-            fetch(`/admin/spct/images/${productId}`)
+            fetch(`/vin-fan/spct/images/${productId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.images) {

@@ -253,7 +253,7 @@
         background-color: #bd2130;
     }
     .accordion-collapse {
-        max-height: 200px; /* Đặt chiều cao tối đa */
+        max-height: 400px; /* Đặt chiều cao tối đa */
         overflow-y: auto; /* Thêm cuộn dọc khi nội dung vượt quá chiều cao */
     }
 
@@ -263,7 +263,7 @@
 <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
     <div class="container-fluid">
         <!-- Logo -->
-        <a class="navbar-brand" href="/admin/index">
+        <a class="navbar-brand" href="/admin/product-catalog">
             <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"
                  alt="Logo">
         </a>
@@ -278,7 +278,7 @@
 
                 <!-- Button thông tin đơn hàng -->
                 <li class="nav-item mx-2">
-                    <a href="/admin/track-order" class="btn btn-outline-info d-flex align-items-center"
+                    <a href="/vin-fan/track-order" class="btn btn-outline-info d-flex align-items-center"
                        th:onclick="|return checkCustomerPermission('${currentPrincipalName}')|">
                         <i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng
                     </a>
@@ -286,7 +286,7 @@
 
                 <!-- Thanh tìm kiếm -->
                 <li class="nav-item">
-                    <form th:action="@{/admin/product-catalog}" method="get" class="d-flex align-items-center">
+                    <form th:action="@{/vin-fan/danh-muc}" method="get" class="d-flex align-items-center">
                         <!-- Dùng d-flex để căn chỉnh các phần tử trong form -->
                         <input type="text" name="query" th:value="${query}" placeholder="Tìm kiếm sản phẩm..."
                                class="form-control me-2"> <!-- me-2 để tạo khoảng cách giữa input và button -->
@@ -304,7 +304,7 @@
                     <!-- Khi khách hàng đã đăng nhập -->
                     <div th:if="${khachHang} != null">
                         <a class="nav-link d-flex align-items-center"
-                           th:href="@{/admin/sua-thong-tin/{id}(id=${khachHang.id})}">
+                           th:href="@{/vin-fan/sua-thong-tin/{id}(id=${khachHang.id})}">
                             <i class="fas fa-user"></i>
                         </a>
                     </div>
@@ -383,6 +383,24 @@
             <div class="container mt-4">
                 <div class="collapse show" id="filterSection">
                     <div class="accordion mt-2" id="filtersAccordion">
+                        <!-- Khoảng giá -->
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="headingPriceFilter">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapsePriceFilter" aria-expanded="false"
+                                        aria-controls="collapsePriceFilter">
+                                    Khoảng giá
+                                </button>
+                            </h2>
+                            <div id="collapsePriceFilter" class="accordion-collapse collapse" aria-labelledby="headingPriceFilter"
+                                 data-bs-parent="#filtersAccordion">
+                                <div class="accordion-body">
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#priceFilterModal">
+                                        Lọc theo khoảng giá
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Mới nhất -->
                         <div class="accordion-item mb-3">
                             <h2 class="accordion-header" id="headingNewest">
@@ -396,7 +414,7 @@
                                  data-bs-parent="#filtersAccordion">
                                 <div class="accordion-body">
                                     <a class="text-decoration-none text-primary"
-                                       th:href="@{/admin/product-catalog(sortOrder='newest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
+                                       th:href="@{/vin-fan/danh-muc(sortOrder='newest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
                                         Xem sản phẩm mới nhất
                                     </a>
                                 </div>
@@ -415,7 +433,7 @@
                                  data-bs-parent="#filtersAccordion">
                                 <div class="accordion-body">
                                     <a class="text-decoration-none text-primary"
-                                       th:href="@{/admin/product-catalog(sortOrder='oldest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
+                                       th:href="@{/vin-fan/danh-muc(sortOrder='oldest', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
                                         Xem sản phẩm cũ nhất
                                     </a>
                                 </div>
@@ -434,7 +452,7 @@
                                  aria-labelledby="headingDiscounted" data-bs-parent="#filtersAccordion">
                                 <div class="accordion-body">
                                     <a class="text-decoration-none text-success"
-                                       th:href="@{/admin/product-catalog(filter='discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
+                                       th:href="@{/vin-fan/danh-muc(filter='discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
                                         Xem sản phẩm giảm giá
                                     </a>
                                 </div>
@@ -453,7 +471,7 @@
                                  aria-labelledby="headingNonDiscounted" data-bs-parent="#filtersAccordion">
                                 <div class="accordion-body">
                                     <a class="text-decoration-none text-danger"
-                                       th:href="@{/admin/product-catalog(filter='non-discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
+                                       th:href="@{/vin-fan/danh-muc(filter='non-discounted', query=${query}, kieuQuatId=${kieuQuatId}, minPrice=${minPrice}, maxPrice=${maxPrice}, sortOrder=${sortOrder})}">
                                         Xem sản phẩm không giảm giá
                                     </a>
                                 </div>
@@ -471,11 +489,11 @@
                                  aria-labelledby="headingNonDiscounted1" data-bs-parent="#filtersAccordion1">
                                 <div class="accordion-body">
                                     <a class="text-decoration-none text-danger"
-                                       th:href="@{/admin/product-catalog(filter='all')}">Tất cả sản phẩm</a>
+                                       th:href="@{/vin-fan/danh-muc(filter='all')}">Tất cả sản phẩm</a>
                                 </div>
                                 <div class="accordion-body" th:each="kieu : ${kieuQuats}">
                                     <a class="text-decoration-none text-danger"
-                                       th:href="@{/admin/product-catalog(kieuQuatId=${kieu.id})}"
+                                       th:href="@{/vin-fan/danh-muc(kieuQuatId=${kieu.id})}"
                                        th:text="${kieu.ten}"
                                        th:classappend="${kieu.id == kieuQuatId} ? 'active' : ''">
                                     </a>
@@ -494,7 +512,7 @@
             </div>
 
             <!-- Sản phẩm giảm giá -->
-            <div id="discounted-section" th:if="${!#lists.isEmpty(sanPhamGiamGia)}" class="mb-5">
+            <div id="discounted-section" th:if="${!#lists.isEmpty(sanPhamGiamGia)}" class="mb-5 me-3" >
                 <h2 class="text-center mb-4">Sản phẩm đang giảm giá</h2>
                 <div id="discounted-products" class="row g-4">
                     <th:block th:each="phieuGiamGia : ${sanPhamGiamGia}">
@@ -511,7 +529,6 @@
                                     <h6 class="card-title product-title" th:if="${phieuGiamGia.spct.so_luong <= 0}">
                                         Hết hàng
                                     </h6>
-                                    </h6>
                                     <p class="card-text text-danger" th:if="${phieuGiamGia.giaTriGiam > 0}">
                                         Giảm: <span class="discount-price"
                                                     th:text="${#numbers.formatDecimal(phieuGiamGia.giaTriGiam, 1, 0)} + ' đ'">-0đ</span>
@@ -526,8 +543,17 @@
                                           th:text="${#numbers.formatDecimal(phieuGiamGia.giaSauGiam, 1, 0)}">0VND</span>
                                     </p>
                                     <div class="mt-auto">
-                                        <a th:href="@{/admin/detail/{id}(id=${phieuGiamGia.spct.id})}"
+                                        <a th:href="@{/vin-fan/detail/{id}(id=${phieuGiamGia.spct.id})}"
                                            class="btn btn-outline-dark w-100">Xem sản phẩm</a>
+                                        <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
+                                            <input type="hidden" name="productId" th:value="${phieuGiamGia.spct.id}"/>
+                                            <input type="hidden" name="name" th:value="${phieuGiamGia.spct.sanPham.ten}"/>
+                                            <input type="hidden" name="price" th:value="${phieuGiamGia.spct.gia}"/>
+                                            <input type="hidden" name="discountedPrice"
+                                                   th:value="${phieuGiamGia.giaSauGiam}"/>
+                                            <input type="hidden" name="quantity" value="1"/>
+                                            <button type="submit" class="btn btn-outline-dark w-100">Thêm vào giỏ hàng</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -537,7 +563,7 @@
             </div>
 
             <!-- Sản phẩm không giảm giá -->
-            <div th:if="${!#lists.isEmpty(sanPhamKhongGiamGia)}">
+            <div th:if="${!#lists.isEmpty(sanPhamKhongGiamGia)}" class="me-3">
                 <h2 class="text-center mb-4">Tất cả sản phẩm</h2>
                 <div id="non-discounted-products" class="row g-4">
                     <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
@@ -558,10 +584,18 @@
                                     <span class="product-price main-price"
                                           th:text="${#numbers.formatDecimal(sanPhamChiTiet.gia, 1, 0)}">0VND</span>
                                     </p>
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div class="mt-auto">
                                         <!-- Nút xem chi tiết -->
-                                        <a th:href="@{/admin/detail/{id}(id=${sanPhamChiTiet.id})}"
+                                        <a th:href="@{/vin-fan/detail/{id}(id=${sanPhamChiTiet.id})}"
                                            class="btn btn-outline-dark w-100">Xem sản phẩm</a>
+                                        <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
+                                            <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
+                                            <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
+                                            <input type="hidden" name="price" th:value="${sanPhamChiTiet.gia}"/>
+                                            <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/>
+                                            <input type="hidden" name="quantity" value="1"/>
+                                            <button type="submit" class="btn btn-outline-dark w-100">Thêm vào giỏ hàng</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
