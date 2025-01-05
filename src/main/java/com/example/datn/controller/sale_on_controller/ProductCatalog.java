@@ -227,7 +227,7 @@ public class ProductCatalog {
 
 
 
-    @GetMapping("/hoa-don-kh/{id}")
+    @GetMapping("/{id}")
     public String detailOrder(@PathVariable long id, Model model) {
         //Lấy thông tin lịch sử hóa đơn theo id hóa đơn
         List<LichSuHoaDon> lichSuHoaDonList = lichSuHoaDonRepo.findLichSuHoaDonByIdHoaDon(id);
