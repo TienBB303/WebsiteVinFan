@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NhanVienImpl implements NhanVienService {
     @Autowired
@@ -45,4 +47,15 @@ public class NhanVienImpl implements NhanVienService {
     public Boolean checkTrungEmailSdt(String email, String sdt) {
         return nhanVienRepository.findTonTaiEmailvaSdt(email, sdt);
     }
+
+    @Override
+    public Boolean checkQuanLyCuoiCungHoatDong() {
+        List<NhanVien> listQuanLy = nhanVienRepository.quanLyHoatDong();
+        System.out.println("List of active managers: " + listQuanLy.size());
+        if (listQuanLy.size() == 1){
+            return true;
+        }
+        return false;
+    }
+
 }
