@@ -65,4 +65,7 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
     @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp WHERE sp.ma = :maSanPham AND spct.trang_thai = true")
     List<SanPhamChiTiet> findAllBySanPhamMa(@Param("maSanPham") String maSanPham);
 
+    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.kieuQuat.id = :kieuQuatId AND spct.trang_thai = true")
+    List<SanPhamChiTiet> findBySanPhamKieuQuat(@Param("kieuQuatId") Integer kieuQuatId);
+
 }
