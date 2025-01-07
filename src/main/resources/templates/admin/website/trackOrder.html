@@ -44,6 +44,30 @@
             background-color: #007bff;
             color: white;
         }
+
+        /*Navbar custom*/
+        .custom-navbar {
+            padding: 8px 0; /* Tăng chiều cao của navbar */
+        }
+
+        .custom-navbar .navbar-brand,
+        .custom-navbar .nav-link {
+            font-size: 1.2rem; /* Tăng kích thước font */
+        }
+
+        /* Thêm viền cam dưới navbar */
+        .custom-navbar {
+            border-bottom: 3px solid orange; /* Viền cam */
+        }
+
+        .search-bar .form-control {
+            height: 40px; /* Tăng chiều cao của ô tìm kiếm */
+        }
+
+        .search-bar .btn {
+            background-color: orange; /* Màu nền cam cho nút tìm kiếm */
+            color: white; /* Màu chữ trắng */
+        }
     </style>
 </head>
 <body>
@@ -61,11 +85,11 @@
         <!-- Sidebar -->
         <div class="col-md-3">
             <!-- Thẻ chứa hình ảnh và tên -->
-            <div class="list-group-item d-flex align-items-center justify-content-center mb-5">
-                <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" alt="User Avatar" class="img-thumbnail"
-                     style="width: 50px; height: 50px; object-fit: cover;">
-                <span class="ms-3">Tên người dùng</span>
-            </div>
+            <!--            <div class="list-group-item d-flex align-items-center justify-content-center mb-5">-->
+            <!--                <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" alt="User Avatar" class="img-thumbnail"-->
+            <!--                     style="width: 50px; height: 50px; object-fit: cover;">-->
+            <!--                <span class="ms-3">Tên người dùng</span>-->
+            <!--            </div>-->
             <div class="list-group shadow">
                 <a href="#" class="list-group-item list-group-item-action" data-form="form-profile">Hồ sơ</a>
                 <a href="#" class="list-group-item list-group-item-action" data-form="form-address">Địa chỉ</a>
@@ -76,9 +100,9 @@
         <!-- Main Content -->
         <div class="col-md-9">
             <div id="form-profile" class="form-content d-none shadow p-4 bg-white rounded">
-                <div class="box-body w-50">
+                <div class="box-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <!--                                            cho pham sua kh-->
                             <form th:action="@{/vin-fan/sua-khach-hang}" th:object="${khachHang}" method="post">
                                 <input type="hidden" th:field="*{id}"/>
@@ -162,15 +186,18 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-outline-warning">
-                                            Sửa
-                                        </button>
-                                    </div>
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-outline-warning">
+                                        Sửa
+                                    </button>
                                 </div>
                             </form>
                         </div>
+                        <!-- Cột chứa ảnh -->
+                        <!--                        <div class="col-md-6 d-none d-md-block image-container text-center">-->
+                        <!--                            <img src="https://img.pikbest.com/wp/202413/propeller-small-airplane-with-propellers-coloring-pages-outline-sketch-drawing-vector_10473779.jpg!sw800"-->
+                        <!--                                 alt="Login Image" width="400" height="400"/>-->
+                        <!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -291,6 +318,7 @@
                             <th class="px-4 py-2 border text-center">Mã hóa đơn</th>
                             <th class="px-4 py-2 border text-center">Ngày tạo</th>
                             <th class="px-4 py-2 border text-center">Số tiền</th>
+                            <th class="px-4 py-2 border text-center">Trạng thái</th>
                             <th class="px-4 py-2 border text-center">Chi tiết</th>
                         </tr>
                         </thead>
@@ -299,6 +327,15 @@
                             <td class="px-4 py-2 border text-center" th:text="${hoaDon.ma}"></td>
                             <td class="px-4 py-2 border text-center" th:text="${hoaDon.ngayTao}"></td>
                             <td class="px-4 py-2 border text-center giaVND" th:text="${hoaDon.tongTien}"></td>
+                            <td class="px-4 py-2 border text-center"
+                                th:switch="${hoaDon.trangThai}">
+                                <span th:case="0" class="text-success-emphasis">Đang treo</span>
+                                <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
+                                <span th:case="2" class="text-success">Đã xác nhận</span>
+                                <span th:case="3" class="text-warning">Đang giao hàng</span>
+                                <span th:case="4" class="text-primary">Hoàn thành</span>
+                                <span th:case="5" class="text-danger">Hủy</span>
+                            </td>
                             <td class="px-4 py-2 border text-center">
                                 <a th:href="@{/vin-fan/{id}(id=${hoaDon.id})}"
                                    class="text-blue-500 hover:underline">Xem
@@ -313,7 +350,6 @@
     </div>
 </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.querySelectorAll('.list-group-item').forEach(item => {
