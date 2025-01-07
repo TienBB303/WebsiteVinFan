@@ -23,8 +23,6 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
     @Query("SELECT pg FROM PhieuGiam pg JOIN pg.spct spct WHERE spct.id = :sanPhamChiTietId AND pg.trangThai = true")
     Optional<PhieuGiam> findBySanPhamChiTietId(@Param("sanPhamChiTietId") Long sanPhamChiTietId);
 
-    @Query("SELECT pg FROM PhieuGiam pg JOIN pg.spct spct WHERE spct.id = :sanPhamChiTietId")
-    Optional<PhieuGiam> findBySanPhamChiTietIds(@Param("sanPhamChiTietId") Long sanPhamChiTietId);
 
 //    @Query("SELECT p.spct.id FROM PhieuGiam p")
 //    List<Long> findAllSanPhamChiTietIds();
@@ -47,6 +45,4 @@ public interface PhieuGiamRepo extends JpaRepository<PhieuGiam, Integer> {
 
     @Query("SELECT p FROM PhieuGiam p WHERE p.loaiPhieuGiam = :loaiPhieuGiam AND p.trangThai = true")
     List<PhieuGiam> findByLoaiPhieuGiam(boolean loaiPhieuGiam);
-
-
 }

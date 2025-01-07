@@ -460,6 +460,7 @@
                                             <thead class="table-light">
                                             <tr>
                                                 <th>STT</th>
+                                                <th> </th>
                                                 <th>Tên sản phẩm</th>
                                                 <th>Màu sắc</th>
                                                 <th>Công suất</th>
@@ -505,57 +506,44 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
-
-
-            <!--            &lt;!&ndash; Discount and Total Section &ndash;&gt;-->
-            <!--            <div class="card mb-4">-->
-            <!--                <div class="container-custom">-->
-            <!--                    <div class="row mb-2">-->
-            <!--                        <div class="col-md-6">-->
-            <!--                            <strong>Phiếu giảm giá</strong>-->
-            <!--                        </div>-->
-            <!--                        <div class="col-md-6 text-end">-->
-            <!--                            <p><span th:text="${listPGG.maPGG}"></span></p>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                    <div class="row mb-2">-->
-            <!--                        <div class="col-md-6">-->
-            <!--                            <p>Giá trị:</p>-->
-            <!--                        </div>-->
-            <!--                        <div class="col-md-6 text-end">-->
-            <!--                            <p><span th:text="${listPGG.tenPGG}"></span></p>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                    <div class="row mb-2">-->
-            <!--                        <div class="col-md-6">-->
-            <!--                            <p>Tổng tiền hàng:</p>-->
-            <!--                        </div>-->
-            <!--                        <div class="col-md-6 text-end giaVND" >-->
-            <!--                            <p><span th:text="${listPGG.tongTien}"></span></p>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                    <div class="row mb-2">-->
-            <!--                        <div class="col-md-6">-->
-            <!--                            <p>Phí vận chuyển:</p>-->
-            <!--                        </div>-->
-            <!--                        <div class="col-md-6 text-end giaVND">-->
-            <!--                            <p><span th:text="${listPGG.phiVanChuyen}"></span></p>-->
-
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                    <div class="row highlight">-->
-            <!--                        <div class="col-md-6">-->
-            <!--                            <p>Tổng tiền:</p>-->
-            <!--                        </div>-->
-            <!--                        <div class="col-md-6 text-end highlight giaVND">-->
-            <!--                            <p><span th:text="${listPGG.tongTienSauGiamGia}"></span></p>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
+            <!-- Thông tin phiếu giảm giá-->
+            <div class="card mb-4">
+                <div class="container-custom">
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <strong>Thông tin giảm giá của sản phẩm:</strong>
+                        </div>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên phiếu giảm giá</th>
+                            <th>Sản phẩm</th>
+                            <th>Mã phiếu giảm giá</th>
+                            <th>Giá sản phẩm</th>
+                            <th>Giá trị giảm</th>
+                            <th>Giá sau giảm</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="pgg, iterStat : ${listPGG}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${pgg.ten}"></td>
+                            <td th:text="${pgg.spct.sanPham.ten}"></td>
+                            <td th:text="${pgg.ma}"></td>
+                            <td class="giaVND" th:text="${pgg.spct.gia}"></td>
+                            <td class="giaVND" th:text="${pgg.giaTriGiam}"></td>
+                            <td class="giaVND" th:text="${pgg.giaSauGiam}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listPGG)}">
+                            <td colspan="4" class="text-center">Không có phiếu giảm giá nào được áp dụng.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </main>
         <!-- Footer-->

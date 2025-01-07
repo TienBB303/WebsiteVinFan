@@ -502,6 +502,12 @@
 
             // Gắn sự kiện onchange để xử lý logic giảm giá
             $('#discountCode').on('change', loadDiscountValue);
+
+            // Thiết lập giá trị mặc định của Tổng tiền sau giảm khi load trang
+            const tongTienText = document.querySelector(".total-price").textContent.trim();
+            const tongTien = parseInt(tongTienText.replace(/\D/g, '')) || 0;
+            document.getElementById("tongTienSauGiam").value = tongTien;
+            document.getElementById("totalAfterDiscount").value = tongTien.toLocaleString('vi-VN') + " VND";
         });
 
         function validateDiscount(tongTien, discountAmount) {
@@ -537,23 +543,24 @@
 
         function loadDiscountValue() {
             const selectedOption = $('#discountCode option:selected');
-            const discountValue = selectedOption.data('value') || 0;
+            const discountValue = selectedOption.data('value') || 0; // Giá trị giảm giá
             let discountAmount = parseInt(discountValue) || 0;
 
             const tongTienText = document.querySelector(".total-price").textContent.trim();
             const tongTien = parseInt(tongTienText.replace(/\D/g, '')) || 0;
 
+            // Xác thực giá trị giảm giá
             discountAmount = validateDiscount(tongTien, discountAmount);
 
+            // Tính toán tổng tiền sau giảm
+            const totalAfterDiscount = discountAmount !== null && discountAmount > 0
+                ? tongTien - discountAmount
+                : tongTien;
+
+            // Cập nhật giá trị giảm giá và tổng tiền sau giảm vào giao diện
             document.getElementById("discountValue").value = discountAmount.toLocaleString('vi-VN') + " VND";
-
-            const totalAfterDiscount = tongTien - discountAmount;
-
-            document.getElementById("totalAfterDiscount").value =
-                (totalAfterDiscount > 0 ? totalAfterDiscount.toLocaleString('vi-VN') : "0") + " VND";
-
-            document.getElementById("tongTienSauGiam").value =
-                totalAfterDiscount > 0 ? totalAfterDiscount : 0;
+            document.getElementById("totalAfterDiscount").value = totalAfterDiscount.toLocaleString('vi-VN') + " VND";
+            document.getElementById("tongTienSauGiam").value = totalAfterDiscount; // Giá trị thực tế
         }
     </script>
 

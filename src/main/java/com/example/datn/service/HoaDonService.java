@@ -3,6 +3,7 @@ package com.example.datn.service;
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.response.*;
 import com.example.datn.entity.*;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
@@ -10,11 +11,12 @@ import org.springframework.ui.Model;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface HoaDonService {
     Page<HoaDon> findAll(Pageable pageable);
+
+    List<PhieuGiam> getPhieuGiamByHoaDonId(Long hoaDonId);
 
     List<HoaDon> getAll();
 
@@ -81,6 +83,4 @@ public interface HoaDonService {
 
     Page<HoaDon> getHoaDonByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
-//    TienBB
-    Map<Integer, Long> countHoaDonByTrangThai();
 }

@@ -17,7 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,18 @@ public class HoaDonServiceImpl implements HoaDonService {
     //    private final PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
     private final PhieuGiamRepo phieuGiamRepo;
 
+    public List<PhieuGiam> getPhieuGiamByHoaDonId(Long hoaDonId) {
+        // Lấy danh sách sản phẩm chi tiết từ hóa đơn
+        List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepo.findByHoaDonId(hoaDonId);
+
+        // Lấy phiếu giảm giá từ mỗi sản phẩm chi tiết
+        return chiTietList.stream()
+                .map(HoaDonChiTiet::getSanPhamChiTiet)
+                .map(sanPhamChiTiet -> phieuGiamRepo.findBySanPhamChiTietId(sanPhamChiTiet.getId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
     @Override
     public Page<HoaDon> findAll(Pageable pageable) {
         return hoaDonRepo.findAll(pageable);
@@ -56,6 +71,18 @@ public class HoaDonServiceImpl implements HoaDonService {
         HoaDon hoaDon = hoaDonRepo.findById(idHoaDon)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn với ID: " + idHoaDon));
         hoaDon.setTongTien(tongTien);
+
+        // Set tổng tiền sau giảm bằng tổng tiền nếu không có giảm giá
+        if (hoaDon.getPhieuGiamGia() == null || hoaDon.getPhieuGiamGia().getGiaTriGiam() == null) {
+            hoaDon.setTongTienSauGiamGia(tongTien);
+        } else {
+            // Nếu có giảm giá, tính tổng tiền sau giảm
+            BigDecimal giaTriGiam = hoaDon.getPhieuGiamGia().getGiaTriGiam();
+            BigDecimal tongTienSauGiam = tongTien.subtract(giaTriGiam).max(BigDecimal.ZERO);
+            hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+        }
+
+        // Lưu hóa đơn vào database
         hoaDonRepo.save(hoaDon);
     }
 
@@ -451,14 +478,4 @@ public class HoaDonServiceImpl implements HoaDonService {
 //        }
 //    }
 
-//  TienBB
-    @Override
-    public Map<Integer, Long> countHoaDonByTrangThai() {
-        Map<Integer, Long> result = hoaDonRepo.countByTrangThai();
-
-        // Loại bỏ những phần tử có khóa null
-        result.entrySet().removeIf(entry -> entry.getKey() == null);
-
-        return result;
-    }
 }
