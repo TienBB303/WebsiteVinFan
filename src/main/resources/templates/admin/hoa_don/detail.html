@@ -167,7 +167,7 @@
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/hoan-thanh}"
-                          th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 3}" class="me-2">
+                          th:if="${hoaDon.trangThai == 3}" class="me-2">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
                         <button type="submit" class="btn btn-outline-primary">
                             <i class=""></i> Hoàn Thành
@@ -283,39 +283,50 @@
                                                     <input type="hidden" id="xaPhuong" th:value="${xa}"/>
                                                     <input type="hidden" name="id" th:value="${hoaDon.id}">
 
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" id="name1"
-                                                               th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}"
-                                                               placeholder="Tên người nhận">
+                                                    <!-- Row 1 -->
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3 text-start">
+                                                            <label class="fw-bold mt-2">Tên</label>
+                                                            <input type="text" class="form-control" id="name1"
+                                                                   th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}"
+                                                                   placeholder="Tên người nhận">
+                                                        </div>
+                                                        <div class="col-md-6 mb-3 text-start">
+                                                            <label class="fw-bold mt-2">
+                                                                Số điện thoại
+                                                            </label>
+                                                            <input type="text" class="form-control" id="phoneNumber"
+                                                                   th:value="${hoaDon.sdtNguoiNhan}"
+                                                                   th:name="soDienThoaiMoi" placeholder="Số điện thoại">
+                                                        </div>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Tỉnh/Thành phố</label>
 
-                                                        <select class="form-control" id="city" name="tinhThanhPho">
-                                                            <option value="" selected>Chọn tỉnh thành</option>
-                                                        </select>
+                                                    <!-- Row 2 -->
+                                                    <div class="row">
+                                                        <div class="col-md-4 mb-3 text-start">
+                                                            <label class="form-label fw-bold">Tỉnh/Thành phố</label>
+                                                            <select class="form-control" id="city" name="tinhThanhPho">
+                                                                <option value="" selected>Chọn tỉnh thành</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3 text-start">
+                                                            <label class="form-label fw-bold">Quận/Huyện</label>
+                                                            <select class="form-control" id="district" name="quanHuyen">
+                                                                <option value="" selected>Chọn quận huyện</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3 text-start " >
+                                                            <label class="form-label fw-bold">Phường/Xã</label>
+                                                            <select class="form-control" id="ward" name="xaPhuong">
+                                                                <option value="" selected>Chọn phường xã</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Quận/Huyện</label>
-                                                        <select class="form-control" id="district" name="quanHuyen">
-                                                            <option value="" selected>Chọn quận huyện</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Phường/Xã</label>
-                                                        <select class="form-control" id="ward" name="xaPhuong">
-                                                            <option value="" selected>Chọn phường xã</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Số nhà/ngõ đường</label>
+
+                                                    <div class="mb-3 text-start">
+                                                        <label class="form-label fw-bold">Số nhà/ngõ đường</label>
                                                         <input type="text" class="form-control" id="street"
                                                                th:value="${chitietdiachi}" th:name="soNhaNgoDuong">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" id="phoneNumber"
-                                                               th:value="${hoaDon.sdtNguoiNhan}"
-                                                               th:name="soDienThoaiMoi" placeholder="Số điện thoại">
                                                     </div>
 
                                                     <!-- Input ẩn để lưu địa chỉ hoàn chỉnh -->
@@ -324,17 +335,11 @@
                                                             class="btn btn-outline-warning">Sửa
                                                     </button>
                                                 </form>
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                        data-bs-dismiss="modal">
-                                                    Đóng
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -351,7 +356,7 @@
                     <thead>
                     <tr>
                         <th>STT</th>
-                        <th> </th>
+                        <th></th>
                         <th>Tên sản phẩm</th>
                         <th>Giá bán</th>
                         <th>Giá giảm</th>
@@ -364,7 +369,8 @@
                     <tr th:each="item, iter : ${listHDCT}" th:data-id="${item.id}">
                         <td th:text="${iter.count}"></td>
                         <td>
-                            <img class="item-image" th:src="@{${item.sanPhamChiTiet.hinhAnh.hinh_anh_1}}" alt="Product Image"
+                            <img class="item-image" th:src="@{${item.sanPhamChiTiet.hinhAnh.hinh_anh_1}}"
+                                 alt="Product Image"
                                  style="height: 100px; width: 100px; object-fit: cover;">
                         </td>
                         <td th:text="${item.sanPhamChiTiet.sanPham.ten}"></td>
