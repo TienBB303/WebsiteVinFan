@@ -1,4 +1,4 @@
-package com.example.datn.repository;
+package com.example.datn.repository.SanPhamRepo;
 
 import com.example.datn.entity.SanPham;
 import org.springframework.data.domain.Page;
