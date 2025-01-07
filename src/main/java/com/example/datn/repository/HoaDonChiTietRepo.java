@@ -57,9 +57,8 @@ public interface HoaDonChiTietRepo extends JpaRepository<HoaDonChiTiet,Long> {
     @Query("SELECT SUM(hdct.soLuong) FROM HoaDonChiTiet hdct WHERE hdct.sanPhamChiTiet.id = :sanPhamChiTietId")
     Integer getTotalSoLuongBySanPhamChiTiet(@Param("sanPhamChiTietId") Long sanPhamChiTietId);
 
-    List<HoaDonChiTiet> findByHoaDonId(Long hoaDonId);
-//    @Modifying
-//    @Query("UPDATE HoaDonChiTiet hdc SET hdc.soLuong = :soLuong WHERE hdc.id = :id")
-//    void updateSoLuong(@Param("soLuong") Integer soLuong, @Param("id") Long id);
+
+
+
 
 }
