@@ -1,10 +1,6 @@
 package com.example.datn.controller;
 
-
-
-
 import com.example.datn.entity.ChucVu;
-import com.example.datn.entity.KhachHang;
 import com.example.datn.entity.NhanVien;
 import com.example.datn.repository.ChucVuRepository;
 import com.example.datn.repository.NhanVienRepository;
@@ -15,21 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDate;
-
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/nhan-vien/")
@@ -71,7 +63,7 @@ public class NhanVienController {
         return "admin/nhan-vien/index";
     }
 
-    @GetMapping("/from-them")
+    @GetMapping("/view-add")
     public String formThemNhanVien(Model model) {
         NhanVien nhanVien = new NhanVien();
         List<ChucVu> chucVuList = chucVuRepository.findAll();
@@ -81,31 +73,145 @@ public class NhanVienController {
     }
 
     @PostMapping("/add")
-    public String addNhanVien(@ModelAttribute NhanVien nhanVien, @RequestParam("file") MultipartFile file,Model model) {
+    public ResponseEntity<Map<String, String>> addNhanVien(
+            @RequestParam("ten_nhan_vien") String ten_nhan_vien,
+            @RequestParam("can_cuoc_cong_dan") String can_cuoc_cong_dan,
+            @RequestParam("ngay_sinh") @DateTimeFormat(pattern = "yyyy-MM-dd") Date ngay_sinh,
+            @RequestParam("gioi_tinh") Boolean gioi_tinh,
+            @RequestParam("tinh_thanh_tho") String tinh_thanh_tho,
+            @RequestParam("quan_huyen") String quan_huyen,
+            @RequestParam("email") String email,
+            @RequestParam("mat_khau") String mat_khau,
+            @RequestParam("chuc_vu") Integer chuc_vu_id,
+            @RequestParam("so_dien_thoai") String so_dien_thoai,
+            @RequestParam("xa_phuong") String xa_phuong,
+            @RequestParam("so_nha_ngo_duong") String so_nha_ngo_duong,
+            @RequestParam("hinhAnh") MultipartFile file) {
+        Map<String, String> response = new HashMap<>();
+        NhanVien nhanVien = new NhanVien();
         try {
             if (file.isEmpty()) {
-                throw new IllegalArgumentException("Chưa có tệp hình ảnh được chọn.");
+                response.put("message", "Nhân viên phải có một ảnh.");
+                return ResponseEntity.badRequest().body(response);
             }
-            Map uploadResult = cloudinaryService.upload(file);
-            String imageUrl = (String) uploadResult.get("url");
+            // Upload ảnh
+            Map uploadAnh = cloudinaryService.upload(file);
+            String imageUrl = (String) uploadAnh.get("url");
             nhanVien.setHinhAnh(imageUrl);
 
-            LocalDate currentDate = LocalDate.now();
-            Date sqlDate = Date.valueOf(currentDate);
-            nhanVien.setNgayTao(sqlDate);
-            nhanVien.setTrangThai(true);
+            // Validate dữ liệu
+            if (ten_nhan_vien == null || ten_nhan_vien.trim().isEmpty()) {
+                response.put("message", "Tên nhân viên không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setTen(ten_nhan_vien);
 
+            if (can_cuoc_cong_dan == null || !can_cuoc_cong_dan.matches("\\d{12}")) {
+                response.put("message", "Căn cước công dân phải là chuỗi gồm 12 chữ số.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setCanCuocCongDan(can_cuoc_cong_dan);
+
+            if (ngay_sinh == null) {
+                response.put("message", "Ngày sinh không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            LocalDate now = LocalDate.now();
+            LocalDate birthDate = ngay_sinh.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (Period.between(birthDate, now).getYears() < 18) {
+                response.put("message", "Nhân viên phải trên 18 tuổi.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (Period.between(birthDate, now).getYears() > 80) {
+                response.put("message", "Nhân viên phải không được lớn hơn 80 tuổi.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setNgaySinh(ngay_sinh);
+            nhanVien.setGioiTinh(gioi_tinh);
+
+            if (nhanVienRepository.existsByEmail(email.trim())) {
+                response.put("message", "Email đã tồn tại. Vui lòng sử dụng email khác.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            if (nhanVienRepository.existsBySoDienThoai(so_dien_thoai.trim())) {
+                response.put("message", "Số điện thoại đã tồn tại. Vui lòng sử dụng số khác.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (email == null || email.trim().isEmpty()) {
+                response.put("message", "Email không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+                response.put("message", "Email không đúng định dạng.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setEmail(email);
+
+            if (so_dien_thoai == null || so_dien_thoai.trim().isEmpty()) {
+                response.put("message", "Số điện thoại không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            if (!so_dien_thoai.matches("^0[0-9]{8,9}$")) {
+                response.put("message", "Số điện thoại phải bắt đầu bằng số 0 và có 9 hoặc 10 chữ số.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setSoDienThoai(so_dien_thoai.trim());
+
+            if (tinh_thanh_tho == null || tinh_thanh_tho.trim().isEmpty()) {
+                response.put("message", "Tỉnh/Thành phố không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setTinhThanhPho(tinh_thanh_tho);
+
+            if (quan_huyen == null || quan_huyen.trim().isEmpty()) {
+                response.put("message", "Quận/Huyện không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setQuanHuyen(quan_huyen);
+
+            if (xa_phuong == null || xa_phuong.trim().isEmpty()) {
+                response.put("message", "Phường/Xã không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setXaPhuong(xa_phuong);
+
+            if (so_nha_ngo_duong == null || so_nha_ngo_duong.trim().isEmpty()) {
+                response.put("message", "Số nhà/ngõ/đường không được để trống.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setSoNhaNgoDuong(so_nha_ngo_duong);
+            if (mat_khau == null || mat_khau.trim().isEmpty() || mat_khau.length() < 6) {
+                response.put("message", "Mật khẩu không được để trống và phải lớn hơn 6 ký tự.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setMatKhau(mat_khau);
+            ChucVu chucVu = chucVuRepository.findById(chuc_vu_id).orElse(null);
+            if (chucVu == null) {
+                response.put("message", "Vui lòng chọn 1 chức vụ.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setMa(nhanVienService.taoMaTuDong());
+            nhanVien.setChucVu(chucVu);
+            nhanVien.setNgayTao(new Date());
+            nhanVien.setTrangThai(true);
+            NhanVien nv = nhanVienRepository.profileNhanVien();
+            if (nv == null) {
+                response.put("message", "Không tìm thấy thông tin nhân viên cập nhật.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            nhanVien.setNguoiTao(nv.getTen());
             nhanVienRepository.save(nhanVien);
 
-            return "redirect:/admin/nhan-vien/index";
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "redirect:/admin/nhan-vien/add?error=upload_failed";
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return "redirect:/admin/nhan-vien/add?error=" + e.getMessage();
+            response.put("message", "Nhân viên mới đã được thêm thành công.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("message", "Đã xảy ra lỗi trong quá trình thêm nhân viên.");
+            return ResponseEntity.badRequest().body(response);
         }
     }
+
     @RestController
     @RequestMapping("/api")
     public class NhanVienAPIController {
@@ -121,8 +227,7 @@ public class NhanVienController {
         }
     }
 
-
-    @GetMapping("/from-sua/{id}")
+    @GetMapping("/view-update/{id}")
     public String formSuaNhanVien(@PathVariable("id") Integer id, Model model) {
         NhanVien nhanVien = nhanVienRepository.findById(id).orElse(null);
         List<ChucVu> chucVuList = chucVuRepository.findAll();
@@ -131,20 +236,215 @@ public class NhanVienController {
         model.addAttribute("nowday", LocalDate.now());
         return "admin/nhan-vien/sua";
     }
+
     @PostMapping("/update")
-    public String suaNhanVien(NhanVien nhanVien) {
-        LocalDate currentDate = LocalDate.now(); // Lấy ngày hiện tại
-        Date sqlDate = Date.valueOf(currentDate); // Chuyển đổi LocalDate sang Date
-        nhanVien.setNgaySua(sqlDate);
+    public ResponseEntity<?> suaNhanVien(
+        @RequestParam("id") Integer id,
+        @RequestParam("ten") String ten_nhan_vien,
+        @RequestParam("ngaySinh") @DateTimeFormat(pattern = "yyyy-MM-dd") Date ngay_sinh,
+        @RequestParam("gioiTinh") Boolean gioi_tinh,
+        @RequestParam("soDienThoai") String so_dien_thoai,
+        @RequestParam("trangThai") Boolean trang_thai,
+        @RequestParam("tinh_thanh_pho") String tinh_thanh_tho,
+        @RequestParam("quan_huyen") String quan_huyen,
+        @RequestParam("xa_phuong") String xa_phuong,
+        @RequestParam("soNhaNgoDuong") String so_nha_ngo_duong,
+        @RequestParam(value = "nhanVien.hinhAnh", required = false) MultipartFile file,
+        @RequestParam("chucVu") Integer chuc_vu_id) {
+        try {
+            NhanVien nhanVien = nhanVienRepository.findById(id).orElse(null);
+            if (nhanVien == null) {
+                return ResponseEntity.badRequest().body("Nhân viên không tồn tại");
+            }
+            NhanVien nvHienTai = nhanVienRepository.profileNhanVien();
+            ChucVu chucVu = chucVuRepository.findById(chuc_vu_id).orElse(null);
+            if (chucVu == null) {
+                return ResponseEntity.badRequest().body("Vui lòng chọn chức vụ.");
+            }
+//          check mình đang là quản lý hiện tại thì thực hiện cho quản lý
+            if (nvHienTai != null && nhanVien.getId().equals(nvHienTai.getId())) {
+                if (!chucVu.getViTri().equals("Quản lý")) {
+                        if (file != null && !file.isEmpty()) {
+                            // Kiểm tra MIME type của file
+                            String contentType = file.getContentType();
+                            if (contentType == null ||
+                                    (!contentType.equals("image/png") &&
+                                            !contentType.equals("image/jpeg") &&
+                                            !contentType.equals("image/jpg"))) {
+                                return ResponseEntity.badRequest().body("File ảnh phải có định dạng PNG, JPG hoặc JPEG.");
+                            }
+                            Map<String, String> uploadAnh = cloudinaryService.upload(file);
+                            String imageUrl = uploadAnh.get("url");
+                            nhanVien.setHinhAnh(imageUrl);
+                        }
+                        if (ten_nhan_vien == null || ten_nhan_vien.trim().isEmpty()) {
+                            return ResponseEntity.badRequest().body("Tên nhân viên không được để trống.");
+                        }
+                        nhanVien.setTen(ten_nhan_vien);
+                        if (ngay_sinh == null) {
+                            return ResponseEntity.badRequest().body("Ngày sinh không được để trống.");
+                        }
+                        LocalDate now = LocalDate.now();
+                        LocalDate birthDate = ngay_sinh.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                        if (Period.between(birthDate, now).getYears() < 18) {
+                            return ResponseEntity.badRequest().body("Nhân viên phải trên 18 tuổi.");
+                        }
+                        if (Period.between(birthDate, now).getYears() > 80) {
+                            return ResponseEntity.badRequest().body("Nhân viên không được lớn hơn 80 tuổi.");
+                        }
+                        nhanVien.setNgaySinh(ngay_sinh);
+                        nhanVien.setGioiTinh(gioi_tinh);
 
-        // Kiểm tra và thiết lập các giá trị mặc định nếu cần
-        if (nhanVien.getGioiTinh() == null) {
-            nhanVien.setGioiTinh(false); // Hoặc một giá trị mặc định khác
+                        if (so_dien_thoai != null && !so_dien_thoai.trim().isEmpty() && !so_dien_thoai.trim().equals(nhanVien.getSoDienThoai())) {
+                            if (!so_dien_thoai.matches("^0[0-9]{8,9}$")) {
+                                return ResponseEntity.badRequest().body("Số điện thoại phải bắt đầu bằng số 0 và có 9 hoặc 10 chữ số.");
+                            }
+                            if (nhanVienRepository.existsBySoDienThoai(so_dien_thoai.trim())) {
+                                return ResponseEntity.badRequest().body("Số điện thoại đã tồn tại. Vui lòng sử dụng số khác.");
+                            }
+                            nhanVien.setSoDienThoai(so_dien_thoai.trim());
+                        }
+
+
+                        if (nvHienTai != null && nhanVien.getId().equals(nvHienTai.getId())) {
+                            if (!trang_thai) {
+                                return ResponseEntity.badRequest().body("Quản lý không thể vô hiệu hóa trạng thái của chính mình.");
+                            }
+                        }
+
+                        nhanVien.setTrangThai(trang_thai);
+
+                        if (tinh_thanh_tho == null || tinh_thanh_tho.trim().isEmpty()) {
+                            return ResponseEntity.badRequest().body("Tỉnh/Thành phố không được để trống.");
+
+                        }
+                        nhanVien.setTinhThanhPho(tinh_thanh_tho);
+                        if (quan_huyen == null || quan_huyen.trim().isEmpty()) {
+                            return ResponseEntity.badRequest().body("Quận/Huyện không được để trống.");
+                        }
+                        nhanVien.setQuanHuyen(quan_huyen);
+                        if (xa_phuong == null || xa_phuong.trim().isEmpty()) {
+                            return ResponseEntity.badRequest().body("Phường/Xã không được để trống.");
+
+                        }
+                        nhanVien.setXaPhuong(xa_phuong);
+
+                        if (so_nha_ngo_duong == null || so_nha_ngo_duong.trim().isEmpty()) {
+                            return ResponseEntity.badRequest().body("Số nhà/ngõ/đường không được để trống.");
+                        }
+                        nhanVien.setSoNhaNgoDuong(so_nha_ngo_duong);
+
+
+                        List<NhanVien> nhanVienQuanLy = nhanVienRepository.findAllByChucVuTen("Quản lý");
+                        if (nhanVien.getChucVu().getViTri().equals("Quản lý") && !chucVu.getViTri().equals("Quản lý")) {
+                            if (nhanVienQuanLy.size() == 1) {
+                                return ResponseEntity.badRequest().body("Không thể xóa quản lý cuối cùng. Vui lòng thêm một quản lý khác trước khi thực hiện thay đổi.");
+                            }
+                        }
+                        if(nhanVienService.checkQuanLyCuoiCungHoatDong()){
+                            return ResponseEntity.badRequest().body("Bạn là quản lý cuối cùng hoạt động không thể đổi chức vụ");
+                        }
+                        nhanVien.setChucVu(chucVu);
+                        nhanVien.setNgaySua(new Date());
+                        nhanVien.setNguoiSua(nvHienTai.getTen());
+                        nhanVienRepository.save(nhanVien);
+                        return ResponseEntity.ok().body(Map.of("message", "Cập nhật và đổi quyền thành công. đang chuyển đến trang đăng nhập!"));
+                    }
+            }
+//            sửa nhân viên khác
+            if (file != null && !file.isEmpty()) {
+                String contentType = file.getContentType();
+                if (contentType == null ||
+                        (!contentType.equals("image/png") &&
+                                !contentType.equals("image/jpeg") &&
+                                !contentType.equals("image/jpg"))) {
+                    return ResponseEntity.badRequest().body("File ảnh phải có định dạng PNG, JPG hoặc JPEG.");
+                }
+                Map<String, String> uploadAnh = cloudinaryService.upload(file);
+                String imageUrl = uploadAnh.get("url");
+                nhanVien.setHinhAnh(imageUrl);
+            }
+            if (ten_nhan_vien == null || ten_nhan_vien.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Tên nhân viên không được để trống.");
+            }
+            nhanVien.setTen(ten_nhan_vien);
+            if (ngay_sinh == null) {
+                return ResponseEntity.badRequest().body("Ngày sinh không được để trống.");
+            }
+            LocalDate now = LocalDate.now();
+            LocalDate birthDate = ngay_sinh.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (Period.between(birthDate, now).getYears() < 18) {
+                return ResponseEntity.badRequest().body("Nhân viên phải trên 18 tuổi.");
+            }
+            if (Period.between(birthDate, now).getYears() > 80) {
+                return ResponseEntity.badRequest().body("Nhân viên không được lớn hơn 80 tuổi.");
+            }
+            nhanVien.setNgaySinh(ngay_sinh);
+            nhanVien.setGioiTinh(gioi_tinh);
+
+            if (so_dien_thoai != null && !so_dien_thoai.trim().isEmpty() && !so_dien_thoai.trim().equals(nhanVien.getSoDienThoai())) {
+                if (!so_dien_thoai.matches("^0[0-9]{8,9}$")) {
+                    return ResponseEntity.badRequest().body("Số điện thoại phải bắt đầu bằng số 0 và có 9 hoặc 10 chữ số.");
+                }
+                if (nhanVienRepository.existsBySoDienThoai(so_dien_thoai.trim())) {
+                    return ResponseEntity.badRequest().body("Số điện thoại đã tồn tại. Vui lòng sử dụng số khác.");
+                }
+                nhanVien.setSoDienThoai(so_dien_thoai.trim());
+            }
+
+
+            if (nvHienTai != null && nhanVien.getId().equals(nvHienTai.getId())) {
+                if (!trang_thai) {
+                    return ResponseEntity.badRequest().body("Quản lý không thể vô hiệu hóa trạng thái của chính mình.");
+                }
+            }
+
+            nhanVien.setTrangThai(trang_thai);
+
+            if (tinh_thanh_tho == null || tinh_thanh_tho.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Tỉnh/Thành phố không được để trống.");
+
+            }
+            nhanVien.setTinhThanhPho(tinh_thanh_tho);
+            if (quan_huyen == null || quan_huyen.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Quận/Huyện không được để trống.");
+            }
+            nhanVien.setQuanHuyen(quan_huyen);
+            if (xa_phuong == null || xa_phuong.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Phường/Xã không được để trống.");
+
+            }
+            nhanVien.setXaPhuong(xa_phuong);
+
+            if (so_nha_ngo_duong == null || so_nha_ngo_duong.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Số nhà/ngõ/đường không được để trống.");
+            }
+            nhanVien.setSoNhaNgoDuong(so_nha_ngo_duong);
+
+
+            List<NhanVien> nhanVienQuanLy = nhanVienRepository.findAllByChucVuTen("Quản lý");
+            if (nhanVien.getChucVu().getViTri().equals("Quản lý") && !chucVu.getViTri().equals("Quản lý")) {
+                if (nhanVienQuanLy.size() == 1) {
+                    return ResponseEntity.badRequest().body("Vui lòng thêm một quản lý khác trước khi thực hiện thay đổi.");
+                }
+            }
+            nhanVien.setChucVu(chucVu);
+            nhanVien.setNgaySua(new Date());
+            nhanVien.setNguoiSua(nvHienTai.getTen());
+            nhanVienRepository.save(nhanVien);
+            return ResponseEntity.ok().body(Map.of("message", "Cập nhật thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Đã xảy ra lỗi trong quá trình cập nhật nhân viên.");
+
         }
-
-        nhanVienRepository.save(nhanVien);
-        return "redirect:/admin/nhan-vien/index";
     }
 
+
+    @GetMapping("/thong-tin-tai-khoan")
+    public String thongTinNhanVien(Model model){
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo",nv);
+        return "admin/fragments/header";
+    }
 
 }

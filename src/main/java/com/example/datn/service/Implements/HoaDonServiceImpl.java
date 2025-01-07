@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -453,4 +451,14 @@ public class HoaDonServiceImpl implements HoaDonService {
 //        }
 //    }
 
+//  TienBB
+    @Override
+    public Map<Integer, Long> countHoaDonByTrangThai() {
+        Map<Integer, Long> result = hoaDonRepo.countByTrangThai();
+
+        // Loại bỏ những phần tử có khóa null
+        result.entrySet().removeIf(entry -> entry.getKey() == null);
+
+        return result;
+    }
 }

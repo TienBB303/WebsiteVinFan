@@ -6,101 +6,109 @@
       rel="stylesheet"
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous">
-
 <style>
-        /* Tổng thể form */
-    .registration-container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 30px;
-        background-color: #ffffff;
-        border-radius: 10px;
+    body {
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f5f5f5;
+    }
+
+    .login-container {
+        display: flex;
+        max-width: 900px;
+        width: 100%;
+        border-radius: 15px;
+        overflow: hidden;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .registration-title {
-        font-size: 28px;
+    .login-form {
+        flex: 1;
+        padding: 40px;
+        background: #ffffff;
+    }
+
+    .login-form h2 {
         font-weight: bold;
-        text-align: center;
         margin-bottom: 20px;
-        color: #333;
     }
 
-    /* Các nhãn */
-    .form-label {
-        font-size: 14px;
+    .login-form .form-control {
+        border-radius: 20px;
+    }
+
+    .login-form .btn {
+        border-radius: 20px;
+        background-color: black;
+        color: white;
+    }
+
+    .login-form .btn:hover {
+        background-color: #333;
+    }
+
+    .welcome-section {
+        flex: 1;
+        background-color: black;
+        color: white;
+        padding: 40px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-top-right-radius: 120px; /* Bo góc trên bên trái */
+        border-bottom-right-radius: 120px; /* Bo góc dưới bên trái */
+    }
+
+
+    .welcome-section h2 {
         font-weight: bold;
-        color: #444;
+        margin-bottom: 10px;
     }
-
-    /* Input và Select */
-    .form-control {
-        border-radius: 5px;
-        border: 1px solid #ced4da;
-        transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
-    }
-
-    /* Nút Đăng Ký */
-    .btn {
-        border-radius: 50px;
-        background-color: #007bff;
-        color: #fff;
-        font-size: 16px;
-        padding: 10px 20px;
-        transition: background-color 0.3s, transform 0.2s;
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-        transform: scale(1.02);
-    }
-
-    /* Validation thông báo lỗi */
-    .text-danger {
-        font-size: 12px;
-        margin-top: 5px;
-        display: block;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .registration-container {
-            padding: 20px;
-        }
-
-        .registration-title {
-            font-size: 24px;
-        }
-    }
-
 
 </style>
 <body>
+<div class="login-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h2>WELCOME BACK!</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delentiti, rem?</p>
+        <div class="d-flex justify-content-center">
+            <a th:href="@{/login}" class="btn btn-outline-light w-auto px-5">Đăng nhập</a>
+        </div>
+    </div>
+    <!-- Login Form Section -->
+    <div class="login-form">
+        <h2 class="text-center">Đăng kí</h2>
+        <form th:action="@{/register}" method="post" id="registrationForm">
+            <div class="mb-3 fw-bold">
+                <label for="email" class="form-label">
+                    <span class="text-danger">*</span> Email
+                </label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email">
+                <div class="text-danger" th:if="${error}" th:text="${error}"></div>
+            </div>
+            <div class="mb-3 fw-bold">
+                <label for="matKhau" class="form-label">
+                    <span class="text-danger">*</span> Mật khẩu
+                </label>
+                <input type="password" class="form-control" id="matKhau" name="matKhau" placeholder="Nhập mật khẩu">
+            </div>
+            <div class="mb-3 fw-bold">
+                <label for="xacNhanMatKhau" class="form-label">
+                    <span class="text-danger">*</span> Xác nhận mật khẩu
+                </label>
+                <input type="password" class="form-control" id="xacNhanMatKhau" name="xacNhanMatKhau"
+                       placeholder="Nhập lại mật khẩu">
+            </div>
+            <button type="submit" class="btn w-100">Đăng Ký</button>
+        </form>
+    </div>
 
-<div class="registration-container mt-5">
-    <div class="registration-title">Đăng Ký Tài Khoản</div>
-    <form th:action="@{/register}" method="post" id="registrationForm">
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email">
-            <div class="text-danger" th:if="${error}" th:text="${error}"></div>
-        </div>
-        <div class="mb-3">
-            <label for="matKhau" class="form-label">Mật khẩu</label>
-            <input type="password" class="form-control" id="matKhau" name="matKhau" placeholder="Nhập mật khẩu">
-        </div>
-        <div class="mb-3">
-            <label for="xacNhanMatKhau" class="form-label">Xác nhận mật khẩu</label>
-            <input type="password" class="form-control" id="xacNhanMatKhau" name="xacNhanMatKhau"
-                   placeholder="Nhập lại mật khẩu">
-        </div>
-        <button type="submit" class="btn w-100">Đăng Ký</button>
-    </form>
 </div>
 
 </body>
@@ -209,6 +217,7 @@
             timerProgressBar: true
         });
     }
+
     document.getElementById("xacNhanMatKhau").addEventListener("input", function () {
         const matKhau = document.getElementById("matKhau").value.trim();
         const xacNhanMatKhau = this.value.trim();

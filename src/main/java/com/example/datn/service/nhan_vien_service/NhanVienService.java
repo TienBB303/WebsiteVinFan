@@ -9,4 +9,8 @@ public interface NhanVienService {
     String taoMaTuDong();
 
     Page<NhanVien> search(String keyword, Boolean trang_thai, Pageable pageable);
+
+    Boolean checkTrungEmailSdt(String email, String sdt);
+
+    Boolean checkQuanLyCuoiCungHoatDong();
 }
