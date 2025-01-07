@@ -14,7 +14,7 @@ public class ThongKeResponse {
     Integer month;
     Integer week;
     Integer day;
-    BigDecimal tongTien;
+    BigDecimal tongTienSauGiamGia;
     Long tongSanPham;
     public ThongKeResponse(String type, Integer date, BigDecimal tongTien, Long tongSanPham) {
         if("YEAR".equals(type)){
@@ -26,7 +26,7 @@ public class ThongKeResponse {
         }else if ("DAY".equals(type)){
             this.day = date;
         }
-        this.tongTien = tongTien;
+        this.tongTienSauGiamGia = tongTien;
         this.tongSanPham = tongSanPham;
     }
 

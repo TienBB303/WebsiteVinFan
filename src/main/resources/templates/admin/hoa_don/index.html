@@ -194,7 +194,7 @@
                                             th:text="${item.loaiHoaDon ? 'Tại quầy' : 'Online'}">
                                         </td>
                                         <td th:text="${item.ngayTao}"></td>
-                                        <td class="giaVND" th:text="${item.tongTien}"></td>
+                                        <td class="giaVND" th:text="${item.tongTienSauGiamGia}"></td>
                                         <td th:switch="${item.trangThai}">
                                             <span th:case="0" class="text-success-emphasis">Đang treo</span>
                                             <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
