@@ -206,7 +206,8 @@
                         </thead>
                         <tbody>
                         <tr th:each="item: ${listLSTT}">
-                            <td class="giaVND" th:text="${item.tongTien}"></td>
+                            <td class="giaVND"
+                                th:text="${item.tongTienSauGiamGia != null ? item.tongTienSauGiamGia : 'N/A'}"></td>
                             <td th:switch="${item.trangThai}">
                                 <span th:case="0" class="text-secondary-emphasis">Đang treo</span>
                                 <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
@@ -315,7 +316,7 @@
                                                                 <option value="" selected>Chọn quận huyện</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-4 mb-3 text-start " >
+                                                        <div class="col-md-4 mb-3 text-start ">
                                                             <label class="form-label fw-bold">Phường/Xã</label>
                                                             <select class="form-control" id="ward" name="xaPhuong">
                                                                 <option value="" selected>Chọn phường xã</option>
@@ -408,7 +409,7 @@
                                 <input type="hidden" name="idHD" th:value="${item.hoaDon.id}"/>
                                 <input type="hidden" name="idSP" th:value="${item.sanPhamChiTiet.id}"/>
                                 <button type="submit" class="btn btn-outline-danger"
-                                        th:disabled="${hoaDon.trangThai != 1}">
+                                        th:disabled="${hoaDon.trangThai != 1 && hoaDon.trangThai != 0}">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -460,45 +461,48 @@
                                                    placeholder="Lọc theo giá bán...">
                                         </div>
 
+                                        <form method="post" th:action="@{/hoa-don/addSPCT}"
+                                              th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
 
-                                        <!-- Bảng danh sách sản phẩm -->
-                                        <table class="table table-striped dataTable-table mt-3">
-                                            <thead class="table-light">
-                                            <tr>
-                                                <th>STT</th>
-                                                <th> </th>
-                                                <th>Tên sản phẩm</th>
-                                                <th>Màu sắc</th>
-                                                <th>Công suất</th>
-                                                <th>Giá bán</th>
-                                                <th>Số lượng</th>
-                                                <th>Thao tác</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="productTable">
-                                            <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
-                                                <td th:text="${iter.count}"></td>
-                                                <td th:text="${item.sanPham.ten}"></td>
-                                                <td th:text="${item.mauSac.ten}"></td>
-                                                <td th:text="${item.congSuat.ten}"></td>
-                                                <td class="giaVND" th:text="${item.gia}"></td>
-                                                <td th:text="${item.so_luong}"></td>
-                                                <td>
-                                                    <form method="post" th:action="@{/hoa-don/addSPCT}"
-                                                          th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
+                                            <!-- Bảng danh sách sản phẩm -->
+                                            <table class="table table-striped dataTable-table mt-3">
+                                                <thead class="table-light">
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th></th>
+                                                    <th>Tên sản phẩm</th>
+                                                    <th>Màu sắc</th>
+                                                    <th>Công suất</th>
+                                                    <th>Giá bán</th>
+                                                    <th>Số lượng</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="productTable">
+                                                <tr th:each="item, iter : ${listSPCTInHDCT}"
+                                                    th:if="${item.so_luong > 0}">
+                                                    <td th:text="${iter.count}"></td>
+                                                    <td th:text="${item.sanPham.ten}"></td>
+                                                    <td th:text="${item.mauSac.ten}"></td>
+                                                    <td th:text="${item.congSuat.ten}"></td>
+                                                    <td class="giaVND" th:text="${item.gia}"></td>
+                                                    <!--                                                <td th:text="${item.so_luong}"></td>-->
+                                                    <td>
                                                         <input type="hidden" name="idHD" th:value="${hoaDon.id}">
                                                         <input type="hidden" name="idSP" th:value="${item.id}">
                                                         <input class="giaVND" type="hidden" name="gia"
                                                                th:value="${item.gia}">
-                                                        <input type="hidden" name="soLuong" th:value="${item.so_luong}">
+                                                        <input type="text" name="soLuong" value="1">
+                                                    </td>
+                                                    <td>
                                                         <button type="submit" class="btn btn-outline-success btn-sm">
                                                             Thêm
                                                         </button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </form>
                                     </div>
 
                                     <!-- Footer của modal -->

@@ -17,7 +17,7 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
             "'YEAR'," +
             "EXTRACT(YEAR FROM hd.ngayTao), " +
-            "sum(hdct.thanhTien), " +
+            "sum(hdct.hoaDon.tongTienSauGiamGia), " +
             "sum(hdct.soLuong))" +
             "from HoaDonChiTiet hdct " +
             "join hdct.hoaDon hd " +
@@ -29,7 +29,7 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
             "'MONTH'," +
             "EXTRACT(MONTH FROM hd.ngayTao), " +
-            "sum(hdct.thanhTien), " +
+            "sum(hdct.hoaDon.tongTienSauGiamGia), " +
             "sum(hdct.soLuong))" +
             "from HoaDonChiTiet hdct " +
             "join hdct.hoaDon hd " +
@@ -41,7 +41,7 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
             "'WEEK'," +
             "EXTRACT(week FROM hd.ngayTao), " +
-            "sum(hdct.thanhTien), " +
+            "sum(hdct.hoaDon.tongTienSauGiamGia), " +
             "sum(hdct.soLuong))" +
             "from HoaDonChiTiet hdct" +
             " join hdct.hoaDon hd " +
@@ -53,7 +53,7 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query("SELECT new com.example.datn.dto.response.ThongKeResponse(" +
             "'DAY'," +
             "EXTRACT(day FROM hd.ngayTao), " +
-            "sum(hdct.thanhTien), " +
+            "sum(hdct.hoaDon.tongTienSauGiamGia), " +
             "sum(hdct.soLuong)) " +
             "from HoaDonChiTiet hdct " +
             "join hdct.hoaDon hd " +

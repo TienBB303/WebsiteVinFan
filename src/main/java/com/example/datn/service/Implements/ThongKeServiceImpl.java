@@ -102,7 +102,7 @@ public class ThongKeServiceImpl implements ThongKeService {
                 .orElse(null);
 
         if (today != null && yesterday != null) {
-            BigDecimal difference = today.getTongTien().subtract(yesterday.getTongTien());
+            BigDecimal difference = today.getTongTienSauGiamGia().subtract(yesterday.getTongTienSauGiamGia());
             return new ThongKeResponse("DIFFERENCE", currentDay, difference, 0L); // hoặc dùng đối tượng thích hợp
         }
         return null; // Nếu không có dữ liệu

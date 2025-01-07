@@ -63,7 +63,7 @@
                                     <div class="dashboard-qa" th:each="item : ${thongKeListDay}" th:if="${item.day == currentDay}">
                                         <div>Kết quả bán hàng hôm nay</div>
                                         <div>Sản phẩm bán ra: <span th:text="${item.tongSanPham}"></span></div>
-                                        <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
+                                        <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTienSauGiamGia}"></span></div>
                                     </div>
                                 </div>
                             </div>
@@ -73,28 +73,28 @@
                             <div class="dashboard-qa" th:each="item : ${thongKeListDay}" th:if="${item.day == currentDay}">
                                 <div>Ngày hôm nay</div>
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
+                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTienSauGiamGia}"></span></div>
                             </div>
 
                             <div class="dashboard-qa" th:each="item : ${thongKeListWeek}" th:if="${item.week == currentWeek}">
                                 <div>Tuần này</div>
                                 <!--                                <p><span th:text="${item.week}"></span></p>-->
                                 <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
+                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTienSauGiamGia}"></span></div>
                             </div>
 
                             <div class="dashboard-qa" th:each="item : ${thongKeListMonth}" th:if="${item.month == currentMonth}">
                                 <div>Tháng : </div>
                                 <p><span th:text="${item.month}"></span></p>
                                 <div >Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div >Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
+                                <div >Tổng tiền: <span class="giaVND" th:text="${item.tongTienSauGiamGia}"></span></div>
                             </div>
 
                             <div class="dashboard-qa" th:each="item : ${thongKeListYear}" th:if="${item.year == currentYear}">
                                 <div>Năm : </div>
                                 <p><span th:text="${item.year}"></span></p>
                                 <div>Sản phẩm: <span th:text="${item.tongSanPham}"></span></div>
-                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTien}"></span></div>
+                                <div>Tổng tiền: <span class="giaVND" th:text="${item.tongTienSauGiamGia}"></span></div>
                             </div>
                         </div>
                     </div>
