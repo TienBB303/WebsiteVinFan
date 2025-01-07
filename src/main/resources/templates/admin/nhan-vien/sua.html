@@ -108,8 +108,7 @@
                                             <div class="mb-3">
                                                 <div class="form-group">
                                                     <label class="form-label" for="chucVu">Chức vụ</label>
-                                                    <select id="chucVu" class="form-control" name="chuc_vu" th:field="*{chucVu}">
-                                                        <option value="" selected>Chọn chức vụ</option>
+                                                    <select id="chucVu" class="form-control" name="chucVu" th:field="*{chucVu}">
                                                         <option th:each="chucVu : ${chucVuList}" th:value="${chucVu.id}"
                                                                 th:text="${chucVu.viTri}"></option>
                                                     </select>
@@ -119,8 +118,8 @@
                                                 <div class="form-group">
                                                     <label class="form-label" for="trangThai">Trạng thái</label>
                                                     <select id="trangThai" class="form-control" th:field="*{trangThai}">
-                                                        <option value="0" th:selected="*{trangThai == 0}">Ngừng Hoạt Động</option>
                                                         <option value="1" th:selected="*{trangThai == 1}">Đang Hoạt Động</option>
+                                                        <option value="0" th:selected="*{trangThai == 0}">Ngừng Hoạt Động</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -252,7 +251,7 @@
 <!--    update-->
     <script>
         const form = document.getElementById('updateNhanvien'); // Id của form nhân viên
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', function (event) {
             event.preventDefault(); // Ngừng hành động submit mặc định của form
 
             // Sử dụng Fetch để gửi yêu cầu
@@ -277,17 +276,32 @@
                 })
                 .then(data => {
                     console.log("Parsed data:", data);
-                    Swal.fire({
-                        toast: true,
-                        icon: 'success',
-                        title: data.message || data || 'Cập nhật nhân viên thành công!',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true
-                    }).then(() => {
-                        window.location.href = '/admin/nhan-vien/index'; // Điều hướng về danh sách nhân viên
-                    });
+                    const message = data.message || data;
+                    if (message.includes("đổi quyền")) { // Kiểm tra thông báo từ server
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: 'Bạn đã thay đổi chức vụ! Đang chuyển tới trang đăng nhập...',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            window.location.href = '/login'; // Điều hướng tới trang login
+                        });
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: message || 'Cập nhật nhân viên thành công!',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            window.location.href = '/admin/nhan-vien/index';
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error("Error caught:", error);
@@ -303,6 +317,60 @@
                 });
         });
     </script>
+
+    <!--    <script>-->
+<!--        const form = document.getElementById('updateNhanvien'); // Id của form nhân viên-->
+<!--        form.addEventListener('submit', function(event) {-->
+<!--            event.preventDefault(); // Ngừng hành động submit mặc định của form-->
+
+<!--            // Sử dụng Fetch để gửi yêu cầu-->
+<!--            fetch("/admin/nhan-vien/update", { // URL endpoint cập nhật nhân viên-->
+<!--                method: 'POST',-->
+<!--                body: new FormData(form),-->
+<!--            })-->
+<!--                .then(response => {-->
+<!--                    console.log("Raw response:", response);-->
+<!--                    return response; // Giữ lại response để xử lý tiếp-->
+<!--                })-->
+<!--                .then(response => {-->
+<!--                    if (!response.ok) {-->
+<!--                        return response.text().then(text => {-->
+<!--                            console.error("Error response body:", text);-->
+<!--                            throw new Error(text);-->
+<!--                        });-->
+<!--                    }-->
+<!--                    return response.headers.get("Content-Type")?.includes("application/json")-->
+<!--                        ? response.json()-->
+<!--                        : response.text();-->
+<!--                })-->
+<!--                .then(data => {-->
+<!--                    console.log("Parsed data:", data);-->
+<!--                    Swal.fire({-->
+<!--                        toast: true,-->
+<!--                        icon: 'success',-->
+<!--                        title: data.message || data || 'Cập nhật nhân viên thành công!',-->
+<!--                        position: 'top-end',-->
+<!--                        showConfirmButton: false,-->
+<!--                        timer: 1000,-->
+<!--                        timerProgressBar: true-->
+<!--                    }).then(() => {-->
+<!--                        window.location.href = '/admin/nhan-vien/index'; // Điều hướng về danh sách nhân viên-->
+<!--                    });-->
+<!--                })-->
+<!--                .catch(error => {-->
+<!--                    console.error("Error caught:", error);-->
+<!--                    Swal.fire({-->
+<!--                        toast: true,-->
+<!--                        icon: 'error',-->
+<!--                        title: error.message || 'Đã xảy ra lỗi trong quá trình cập nhật nhân viên!',-->
+<!--                        position: 'top-end',-->
+<!--                        showConfirmButton: false,-->
+<!--                        timer: 3000,-->
+<!--                        timerProgressBar: true-->
+<!--                    });-->
+<!--                });-->
+<!--        });-->
+<!--    </script>-->
     <!-- xem trc ảnh-->
     <script>
         function previewImage(event, previewElementId) {
