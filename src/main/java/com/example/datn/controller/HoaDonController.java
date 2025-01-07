@@ -8,6 +8,7 @@ import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.*;
+import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.repository.HoaDonChiTietRepo;
 import com.example.datn.repository.HoaDonRepo;
 import com.example.datn.repository.LichSuHoaDonRepo;
@@ -28,7 +29,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -69,16 +69,7 @@ public class HoaDonController {
 
         return "/admin/hoa_don/index";
     }
-//    TienBB
-    @GetMapping("/api/count-hoa-don-by-trang-thai")
-    @ResponseBody
-    public Map<Integer, Long> getHoaDonCountByTrangThai() {
-        // Gọi service để đếm số hóa đơn theo trạng thái
-        Map<Integer, Long> countByTrangThai = hoaDonService.countHoaDonByTrangThai();
-        return countByTrangThai;
-    }
 
-//    AnhNQ
     @GetMapping("/detail")
     public String detail(@RequestParam long id, Model model) {
         // Lấy thông tin hóa đơn
@@ -121,6 +112,9 @@ public class HoaDonController {
         // Lấy thông tin lịch sử hóa đơn theo ID hóa đơn
         List<LichSuHoaDon> lichSuHoaDonList = lichSuHoaDonRepo.findLichSuHoaDonByIdHoaDon(id);
         model.addAttribute("listHistory", lichSuHoaDonList);
+        // Lấy thông tin phiếu giảm giá liên quan đến các sản phẩm
+        List<PhieuGiam> listPGG = hoaDonService.getPhieuGiamByHoaDonId(id);
+        model.addAttribute("listPGG", listPGG);
 
         // Trả về trang chi tiết hóa đơn
         return "/admin/hoa_don/detail";

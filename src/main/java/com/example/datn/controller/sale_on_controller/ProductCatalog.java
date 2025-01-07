@@ -33,7 +33,7 @@ public class ProductCatalog {
 
     private final HoaDonService hoaDonService;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
-//    @Autowired
+    //    @Autowired
 //    private PhieuGiamSanPhamRepo phieuGiamSanPhamRepo;
     @Autowired
     private PhieuGiamRepo phieuGiamRepo;
@@ -163,44 +163,70 @@ public class ProductCatalog {
 
     @GetMapping("/detail/{id}")
     public String getProductDetail(@PathVariable Long id, Model model) {
+        // Tìm kiếm sản phẩm theo ID
         Optional<SanPhamChiTiet> sanPhamChiTietOpt = spctRepo.findById(id);
 
-        if (sanPhamChiTietOpt.isPresent()) {
-            SanPhamChiTiet currentProduct = sanPhamChiTietOpt.get();
-            List<SanPhamChiTiet> bienTheList = spctRepo.findAllBySanPhamMa(currentProduct.getSanPham().getMa());
-
-            // Tạo Map để lưu giá sau giảm cho từng biến thể
-            Map<Long, BigDecimal> giaSauGiamMap = new HashMap<>();
-
-            bienTheList.forEach(bienThe -> {
-                // Tìm giá sau giảm cho từng biến thể
-                Optional<PhieuGiam> phieuGiam = phieuGiamRepo.findBySanPhamChiTietId(bienThe.getId());
-                phieuGiam.ifPresent(giam -> giaSauGiamMap.put(bienThe.getId(), giam.getGiaSauGiam()));
-            });
-
-            // Lấy biến thể đầu tiên làm mặc định
-            SanPhamChiTiet defaultBienThe = bienTheList.isEmpty() ? null : bienTheList.get(0);
-            BigDecimal defaultGiaSauGiam = defaultBienThe != null
-                    ? giaSauGiamMap.getOrDefault(defaultBienThe.getId(), defaultBienThe.getGia())
-                    : BigDecimal.ZERO;
-
-            // Lấy danh sách hình ảnh liên quan đến SanPhamChiTiet
-            List<HinhAnh> danhSachHinhAnh = hinhAnhRepo.findAllBySanPhamChiTietId(currentProduct.getId());
-
-            // Truyền dữ liệu sang Thymeleaf
-            model.addAttribute("sanPham", currentProduct.getSanPham());
-            model.addAttribute("sanPhamChiTiet", currentProduct); // Truyền SanPhamChiTiet
-            model.addAttribute("bienTheList", bienTheList);
-            model.addAttribute("giaSauGiamMap", giaSauGiamMap);
-            model.addAttribute("defaultBienThe", defaultBienThe); // Biến thể mặc định
-            model.addAttribute("defaultGiaSauGiam", defaultGiaSauGiam); // Giá của biến thể mặc định
-            model.addAttribute("danhSachHinhAnh", danhSachHinhAnh); // Thêm danh sách hình ảnh
-
-            return "admin/website/detailSP";
+        if (sanPhamChiTietOpt.isEmpty()) {
+            return "redirect:/cart/view"; // Redirect nếu sản phẩm không tồn tại
         }
 
-        return "redirect:/cart/view";
+        SanPhamChiTiet currentProduct = sanPhamChiTietOpt.get();
+
+        // Lấy danh sách các biến thể của sản phẩm
+        List<SanPhamChiTiet> bienTheList = spctRepo.findAllBySanPhamMa(currentProduct.getSanPham().getMa());
+
+        // Lấy danh sách sản phẩm liên quan cùng kiểu quạt, loại bỏ sản phẩm hiện tại
+        List<SanPhamChiTiet> sanPhamLienQuan = spctRepo.findBySanPhamKieuQuat(currentProduct.getSanPham().getKieuQuat().getId())
+                .stream()
+                .filter(sp -> sp != null
+                        && sp.getSanPham() != null
+                        && sp.getSanPham().getMa() != null
+                        && !sp.getSanPham().getMa().equals(currentProduct.getSanPham().getMa())) // Loại bỏ sản phẩm cùng mã và kiểm tra null
+                .collect(Collectors.groupingBy(sp -> sp.getSanPham().getMa())) // Nhóm theo mã sản phẩm
+                .values().stream()
+                .map(list -> list.get(0)) // Chọn đại diện đầu tiên của mỗi nhóm
+                .filter(Objects::nonNull) // Loại bỏ phần tử null
+                .collect(Collectors.toList());
+
+        // Shuffle danh sách để ngẫu nhiên hóa
+        Collections.shuffle(sanPhamLienQuan);
+
+        // Giới hạn danh sách chỉ còn 4 sản phẩm
+        if (sanPhamLienQuan.size() > 4) {
+            sanPhamLienQuan = sanPhamLienQuan.subList(0, 4);
+        }
+
+        // Tạo một danh sách tổng hợp bao gồm cả bienTheList và sanPhamLienQuan
+        List<SanPhamChiTiet> allProducts = new ArrayList<>();
+        allProducts.addAll(bienTheList);
+        allProducts.addAll(sanPhamLienQuan);
+
+        // Tạo Map để lưu giá sau giảm cho tất cả các sản phẩm
+        Map<Long, BigDecimal> giaSauGiamMap = allProducts.stream()
+                .filter(sp -> sp != null && sp.getId() != null)
+                .collect(Collectors.toMap(
+                        SanPhamChiTiet::getId,
+                        sp -> phieuGiamRepo.findBySanPhamChiTietId(sp.getId())
+                                .map(PhieuGiam::getGiaSauGiam)
+                                .orElse(sp.getGia()) // Nếu không có giảm giá, dùng giá gốc
+                ));
+
+        // Lấy biến thể đầu tiên làm mặc định
+        SanPhamChiTiet defaultBienThe = bienTheList.isEmpty() ? null : bienTheList.get(0);
+        BigDecimal defaultGiaSauGiam = (defaultBienThe != null) ? giaSauGiamMap.getOrDefault(defaultBienThe.getId(), defaultBienThe.getGia()) : BigDecimal.ZERO;
+
+        // Truyền dữ liệu sang Thymeleaf
+        model.addAttribute("sanPham", currentProduct.getSanPham());
+        model.addAttribute("sanPhamChiTiet", currentProduct);
+        model.addAttribute("bienTheList", bienTheList);
+        model.addAttribute("giaSauGiamMap", giaSauGiamMap);
+        model.addAttribute("defaultBienThe", defaultBienThe);
+        model.addAttribute("defaultGiaSauGiam", defaultGiaSauGiam);
+        model.addAttribute("sanPhamLienQuan", sanPhamLienQuan); // Truyền danh sách liên quan trực tiếp (tối đa 4 sản phẩm)
+
+        return "admin/website/detailSP";
     }
+
 
     @GetMapping("/track-order")
     public String trackOrder(Model model) {
@@ -225,9 +251,7 @@ public class ProductCatalog {
     }
 
 
-
-
-    @GetMapping("/{id}")
+    @GetMapping("/hoa-don-kh/{id}")
     public String detailOrder(@PathVariable long id, Model model) {
         //Lấy thông tin lịch sử hóa đơn theo id hóa đơn
         List<LichSuHoaDon> lichSuHoaDonList = lichSuHoaDonRepo.findLichSuHoaDonByIdHoaDon(id);

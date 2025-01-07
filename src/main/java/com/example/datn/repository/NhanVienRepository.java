@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -56,4 +57,11 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
 
     @Query("SELECT MAX(nv.ma) FROM NhanVien nv WHERE nv.ma LIKE 'NV%'")
     String findMaxCode();
+
+    @Query("SELECT nv FROM NhanVien nv WHERE nv.chucVu.viTri = :tenChucVu")
+    List<NhanVien> findAllByChucVuTen(String tenChucVu);
+
+    @Query("SELECT nv FROM NhanVien nv WHERE nv.chucVu.id = 1 AND nv.trangThai = true")
+    List<NhanVien> quanLyHoatDong();
+
 }
