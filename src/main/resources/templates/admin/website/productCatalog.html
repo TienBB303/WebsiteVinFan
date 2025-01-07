@@ -252,8 +252,9 @@
     .modal-footer .btn-primary:hover {
         background-color: #bd2130;
     }
+
     .accordion-collapse {
-        max-height: 200px; /* Đặt chiều cao tối đa */
+        max-height: 400px; /* Đặt chiều cao tối đa */
         overflow-y: auto; /* Thêm cuộn dọc khi nội dung vượt quá chiều cao */
     }
 
@@ -263,7 +264,7 @@
 <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
     <div class="container-fluid">
         <!-- Logo -->
-        <a class="navbar-brand" href="/admin/index">
+        <a class="navbar-brand" href="/vin-fan/danh-muc">
             <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"
                  alt="Logo">
         </a>
@@ -383,19 +384,42 @@
             <div class="container mt-4">
                 <div class="collapse show" id="filterSection">
                     <div class="accordion mt-2" id="filtersAccordion">
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="headingPriceFilter1">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapsePriceFilter1"
+                                        aria-expanded="false"
+                                        aria-controls="collapsePriceFilter1">
+                                    Sản phẩm
+                                </button>
+                            </h2>
+                            <div id="collapsePriceFilter1" class="accordion-collapse collapse"
+                                 aria-labelledby="headingPriceFilter1"
+                                 data-bs-parent="#filtersAccordion1">
+                                <div class="accordion-body">
+                                    <div class="accordion-body">
+                                        <a class="text-decoration-none text-danger"
+                                           th:href="@{/vin-fan/danh-muc(filter='all')}">Tất cả sản phẩm</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Khoảng giá -->
                         <div class="accordion-item mb-3">
                             <h2 class="accordion-header" id="headingPriceFilter">
                                 <button class="accordion-button collapsed fw-bold" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#collapsePriceFilter" aria-expanded="false"
+                                        data-bs-toggle="collapse" data-bs-target="#collapsePriceFilter"
+                                        aria-expanded="false"
                                         aria-controls="collapsePriceFilter">
                                     Khoảng giá
                                 </button>
                             </h2>
-                            <div id="collapsePriceFilter" class="accordion-collapse collapse" aria-labelledby="headingPriceFilter"
+                            <div id="collapsePriceFilter" class="accordion-collapse collapse"
+                                 aria-labelledby="headingPriceFilter"
                                  data-bs-parent="#filtersAccordion">
                                 <div class="accordion-body">
-                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#priceFilterModal">
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal"
+                                            data-bs-target="#priceFilterModal">
                                         Lọc theo khoảng giá
                                     </button>
                                 </div>
@@ -487,10 +511,6 @@
                             </h2>
                             <div id="collapseNonDiscounted1" class="accordion-collapse collapse"
                                  aria-labelledby="headingNonDiscounted1" data-bs-parent="#filtersAccordion1">
-                                <div class="accordion-body">
-                                    <a class="text-decoration-none text-danger"
-                                       th:href="@{/vin-fan/danh-muc(filter='all')}">Tất cả sản phẩm</a>
-                                </div>
                                 <div class="accordion-body" th:each="kieu : ${kieuQuats}">
                                     <a class="text-decoration-none text-danger"
                                        th:href="@{/vin-fan/danh-muc(kieuQuatId=${kieu.id})}"
@@ -512,7 +532,7 @@
             </div>
 
             <!-- Sản phẩm giảm giá -->
-            <div id="discounted-section" th:if="${!#lists.isEmpty(sanPhamGiamGia)}" class="mb-5">
+            <div id="discounted-section" th:if="${!#lists.isEmpty(sanPhamGiamGia)}" class="mb-5 me-3">
                 <h2 class="text-center mb-4">Sản phẩm đang giảm giá</h2>
                 <div id="discounted-products" class="row g-4">
                     <th:block th:each="phieuGiamGia : ${sanPhamGiamGia}">
@@ -547,12 +567,14 @@
                                            class="btn btn-outline-dark w-100">Xem sản phẩm</a>
                                         <form th:action="@{/cart/add}" method="post" class="mt-2 add-to-cart-form">
                                             <input type="hidden" name="productId" th:value="${phieuGiamGia.spct.id}"/>
-                                            <input type="hidden" name="name" th:value="${phieuGiamGia.spct.sanPham.ten}"/>
+                                            <input type="hidden" name="name"
+                                                   th:value="${phieuGiamGia.spct.sanPham.ten}"/>
                                             <input type="hidden" name="price" th:value="${phieuGiamGia.spct.gia}"/>
                                             <input type="hidden" name="discountedPrice"
                                                    th:value="${phieuGiamGia.giaSauGiam}"/>
                                             <input type="hidden" name="quantity" value="1"/>
-                                            <button type="submit" class="btn btn-outline-dark w-100">Thêm vào giỏ hàng</button>
+<!--                                            <button type="submit" class="btn btn-outline-dark w-100">Thêm vào giỏ hàng-->
+<!--                                            </button>-->
                                         </form>
                                     </div>
                                 </div>
@@ -563,7 +585,7 @@
             </div>
 
             <!-- Sản phẩm không giảm giá -->
-            <div th:if="${!#lists.isEmpty(sanPhamKhongGiamGia)}">
+            <div th:if="${!#lists.isEmpty(sanPhamKhongGiamGia)}" class="me-3">
                 <h2 class="text-center mb-4">Tất cả sản phẩm</h2>
                 <div id="non-discounted-products" class="row g-4">
                     <th:block th:each="sanPhamChiTiet : ${sanPhamKhongGiamGia}">
@@ -592,9 +614,11 @@
                                             <input type="hidden" name="productId" th:value="${sanPhamChiTiet.id}"/>
                                             <input type="hidden" name="name" th:value="${sanPhamChiTiet.sanPham.ten}"/>
                                             <input type="hidden" name="price" th:value="${sanPhamChiTiet.gia}"/>
-                                            <input type="hidden" name="discountedPrice" th:value="${sanPhamChiTiet.gia}"/>
+                                            <input type="hidden" name="discountedPrice"
+                                                   th:value="${sanPhamChiTiet.gia}"/>
                                             <input type="hidden" name="quantity" value="1"/>
-                                            <button type="submit" class="btn btn-outline-dark w-100">Thêm vào giỏ hàng</button>
+<!--                                            <button type="submit" class="btn btn-outline-dark w-100">Thêm vào giỏ hàng-->
+<!--                                            </button>-->
                                         </form>
                                     </div>
                                 </div>

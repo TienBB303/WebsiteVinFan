@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LichSuThanhToanResponse {
-    BigDecimal tongTien;
+    BigDecimal tongTienSauGiamGia;
     LocalDate ngayTao;
     boolean loaiHoaDon;
     String hinhThucThanhToan;

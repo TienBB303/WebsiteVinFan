@@ -167,7 +167,7 @@
 </head>
 <body>
 <div class="border rounded p-3 mb-4">
-    <a href="/admin/track-order" class="btn btn-outline-primary">
+    <a href="/vin-fan/track-order" class="btn btn-outline-primary">
         <i class="bi bi-arrow-return-left"></i>
     </a>
 </div>
@@ -230,12 +230,7 @@
             <td th:text="${item.sanPhamChiTiet.congSuat.ten}"></td>
             <td th:text="${item.sanPhamChiTiet.mauSac.ten}"></td>
             <td class="giaVND" th:text="${item.gia}"></td>
-            <td>
-                <input type="number" class="form-control quantity-input"
-                       th:value="${item.soLuong}"
-                       min="1"
-                       disabled/>
-            </td>
+            <td th:text="${item.soLuong}"></td>
             <td class="giaVND" th:text="${item.thanhTien}"></td>
         </tr>
         </tbody>
