@@ -46,6 +46,8 @@ public class ThongKeController {
         System.out.println("listHoaDonBanChay :" + listHoaDonBanChay.size());
         model.addAttribute("listSPBanChay", listSPBanChay);
         model.addAttribute("listHoaDonBanChay", listHoaDonBanChay);
+        model.addAttribute("tuNgay", tuNgay != null ? tuNgay : "");
+        model.addAttribute("denNgay", denNgay != null ? denNgay : "");
 
         return "admin/thong_ke/index";
     }
