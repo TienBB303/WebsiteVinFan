@@ -129,6 +129,8 @@ public class HoaDonController {
         System.out.println("sl là" + request.getSoLuong());
         try {
             hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
+            System.out.println("ID là : " + request.getIdSP());
+
             hoaDonService.updateTongTienHoaDon(request.getIdHD());
             System.out.println("Thêm sản phẩm thành công!");
         } catch (IllegalArgumentException e) {
@@ -260,6 +262,7 @@ public class HoaDonController {
             @RequestParam("idSP") Long idSP) {
         try {
             hoaDonService.deleteSPInHD(idSP);
+            hoaDonService.updateTongTienHoaDon(idHD);
         } catch (Exception e) {
             e.printStackTrace();
         }
