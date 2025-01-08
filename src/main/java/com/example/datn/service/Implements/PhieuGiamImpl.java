@@ -1,9 +1,7 @@
 package com.example.datn.service.Implements;
 
 import com.example.datn.entity.SanPham;
-import com.example.datn.entity.SanPhamChiTiet;
-import com.example.datn.repository.SPCTRepo;
-import com.example.datn.repository.SanPhamRepo;
+import com.example.datn.repository.SanPhamRepo.SanPhamRepo;
 import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.service.phieu_giam_service.PhieuGiamService;
 import org.springframework.beans.factory.annotation.Autowired;

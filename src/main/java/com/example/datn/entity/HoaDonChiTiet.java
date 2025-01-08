@@ -24,9 +24,7 @@ public class HoaDonChiTiet {
     HoaDon hoaDon;
 
     @ManyToOne
-    @JoinColumn(
-            name = "id_san_pham_chi_tiet"
-    )
+    @JoinColumn(name = "id_san_pham_chi_tiet")
     SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "so_luong")
@@ -49,5 +47,4 @@ public class HoaDonChiTiet {
 
     @Transient
     BigDecimal giaGiam;
-
 }

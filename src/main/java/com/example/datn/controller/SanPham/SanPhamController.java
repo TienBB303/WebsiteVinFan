@@ -4,7 +4,7 @@ import com.example.datn.entity.*;
 import com.example.datn.entity.thuoc_tinh.*;
 import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.SPCTRepo;
-import com.example.datn.repository.SanPhamRepo;
+import com.example.datn.repository.SanPhamRepo.SanPhamRepo;
 import com.example.datn.repository.ThuocTinhRepo.*;
 import com.example.datn.service.CloudinaryService;
 import com.example.datn.service.SanPhamService;
@@ -12,18 +12,15 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")

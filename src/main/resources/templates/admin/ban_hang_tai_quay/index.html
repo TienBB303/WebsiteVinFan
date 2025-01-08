@@ -98,48 +98,59 @@
 
 
                                 <!-- Bảng danh sách sản phẩm -->
-                                <table class="table table-striped dataTable-table mt-3">
-                                    <thead class="table-light">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th></th>
-                                        <th>Tên sản phẩm</th>
-                                        <th>Màu sắc</th>
-                                        <th>Công suất</th>
-                                        <th>Giá bán</th>
-                                        <th>Số lượng</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="productTable">
-                                    <tr th:each="item, iter : ${listSPCTInHDCT}" th:if="${item.so_luong > 0}">
-                                        <td th:text="${iter.count}"></td>
-                                        <td>
-                                            <img class="item-image" th:src="@{${item.hinhAnh.hinh_anh_1}}"
-                                                 alt="Product Image"
-                                                 style="height: 100px; width: 100px; object-fit: cover;">
-                                        </td>
-                                        <td th:text="${item.sanPham.ten}"></td>
-                                        <td th:text="${item.mauSac.ten}"></td>
-                                        <td th:text="${item.congSuat.ten}"></td>
-                                        <td class="giaVND" th:text="${item.gia}"></td>
-                                        <td th:text="${item.so_luong}"></td>
-                                        <td>
+                                <div class="table-responsive mt-3 text-center">
+                                    <table class="table table-striped align-middle">
+                                        <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">STT</th>
+                                            <th scope="col">Tên sản phẩm</th>
+                                            <th scope="col">Màu sắc</th>
+                                            <th scope="col">Công suất</th>
+                                            <th scope="col">Giá bán</th>
+                                            <th scope="col">Số lượng tồn</th>
+                                            <th scope="col">Nhập số lượng</th>
+                                            <th scope="col">Thao tác</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="productTable">
+                                        <tr th:each="item, iter : ${listSPCTInHDCT}"
+                                            th:if="${item.so_luong > 0}">
+                                            <td th:text="${iter.count}"></td>
+                                            <td th:text="${item.sanPham.ten}"></td>
+                                            <td th:text="${item.mauSac.ten}"></td>
+                                            <td th:text="${item.congSuat.ten}"></td>
+                                            <td class="giaVND" th:text="${item.gia}"></td>
+                                            <td th:text="${item.so_luong}"></td>
                                             <form method="post" th:action="@{/ban-hang-tai-quay/addSPCT}"
-                                                  th:object="${addSPToHoaDonChiTietRequest}"
-                                                  class="d-inline">
-                                                <input type="hidden" name="idHD" th:value="${idHD}">
-                                                <input type="hidden" name="idSP" th:value="${item.id}">
-                                                <input type="hidden" name="gia" class="giaVND" th:value="${item.gia}">
-                                                <input type="hidden" name="soLuong" th:value="${item.so_luong}">
-                                                <button type="submit" class="btn btn-outline-success btn-sm">
-                                                    Thêm
-                                                </button>
+                                                  th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
+                                                <td>
+                                                    <!-- CSRF token -->
+                                                    <input type="hidden" th:name="${_csrf.parameterName}"
+                                                           th:value="${_csrf.token}"/>
+
+                                                    <!-- Hidden inputs -->
+                                                    <input type="hidden" name="idHD" th:value="${idHD}">
+                                                    <input type="hidden" name="idSP" th:value="${item.id}">
+                                                    <input class="giaVND" type="hidden" name="gia"
+                                                           th:value="${item.gia}">
+
+                                                    <!-- Số lượng -->
+                                                    <input type="number" name="soLuong"
+                                                           class="form-control form-control-sm" value="1" min="1"
+                                                           style="width: 60px"
+                                                           placeholder="Nhập số lượng" required>
+                                                </td>
+                                                <td>
+                                                    <!-- Nút Thêm -->
+                                                    <button type="submit" class="btn btn-outline-success btn-sm">
+                                                        Thêm
+                                                    </button>
+                                                </td>
                                             </form>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <!-- Footer của modal -->
                             <div class="modal-footer">
@@ -462,10 +473,10 @@
                         </div>
 
                         <!-- Nút xác nhận -->
-                        <button type="submit" class="btn btn-dark w-100 confirm-btn mb-5"
+                        <button type="button" class="btn btn-dark w-100 confirm-btn mb-5"
+                                onclick="showSuccess()"
                                 th:disabled="${idHD == null || listHDCT == null || #lists.isEmpty(listHDCT)}">
-                            Xác nhận đặt
-                            hàng
+                            Xác nhận đặt hàng
                         </button>
 
                     </div>
@@ -562,6 +573,18 @@
             document.getElementById("totalAfterDiscount").value = totalAfterDiscount.toLocaleString('vi-VN') + " VND";
             document.getElementById("tongTienSauGiam").value = totalAfterDiscount; // Giá trị thực tế
         }
+        function showSuccess() {
+            Swal.fire({
+                title: 'Thành công!',
+                text: 'Đơn hàng của bạn đã được đặt thành công!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Gửi form đặt hàng
+                document.getElementById('thanhToanForm').submit();
+            });
+        }
+
     </script>
 
     <script>
