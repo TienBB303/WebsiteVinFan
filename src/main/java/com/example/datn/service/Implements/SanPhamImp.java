@@ -6,7 +6,7 @@ import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.entity.thuoc_tinh.CongSuat;
 import com.example.datn.entity.thuoc_tinh.MauSac;
 import com.example.datn.repository.SPCTRepo;
-import com.example.datn.repository.SanPhamRepo;
+import com.example.datn.repository.SanPhamRepo.SanPhamRepo;
 import com.example.datn.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

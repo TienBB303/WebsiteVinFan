@@ -36,7 +36,7 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     public List<PhieuGiam> getPhieuGiamByHoaDonId(Long hoaDonId) {
         // Lấy danh sách sản phẩm chi tiết từ hóa đơn
-        List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepo.findByHoaDonId(hoaDonId);
+        List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepo.findByHoaDon_Id(hoaDonId);
 
         // Lấy phiếu giảm giá từ mỗi sản phẩm chi tiết
         return chiTietList.stream()

@@ -1,21 +1,20 @@
 package com.example.datn.service.Implements;
 
+import com.example.datn.dto.Thongke.HoaDonDoanhThuDTO;
+import com.example.datn.dto.Thongke.SanPhamBanChayDTO;
 import com.example.datn.dto.response.ThongKeResponse;
-import com.example.datn.dto.response.ThongKeSanPhamResponse;
-import com.example.datn.repository.ThongKeRepo;
-import com.example.datn.service.ThongKeService;
+import com.example.datn.entity.HoaDon;
+import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.ThongKeRepo.ThongKeRepo;
+import com.example.datn.service.thong_ke_service.ThongKeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.WeekFields;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,89 +22,38 @@ public class ThongKeServiceImpl implements ThongKeService {
     private final ThongKeRepo thongKeRepo;
 
     @Override
-    public List<ThongKeResponse> getListDay() {
-        return thongKeRepo.getListDay();
+    public List<HoaDon> timHoaDonHoanThanhHomNay() {
+        return thongKeRepo.timHoaDonHoanThanhHomNay();
+    }
+
+    public BigDecimal tongTienThuDuocHomNay() {
+        BigDecimal tongTien = thongKeRepo.tinhTongTienThuDuocHomNay();
+        return tongTien != null ? tongTien : BigDecimal.ZERO;
     }
 
 //    @Override
-//    public List<ThongKeResponse> getListYesterDay() {
-//        return thongKeRepo.getListYesterday();
+//    public List<SanPhamBanChayDTO> listBanChay(LocalDate tuNgay, LocalDate denNgay) {
+//        return thongKeRepo.timSanPhamBanChay(tuNgay, denNgay);
 //    }
-
     @Override
-    public List<ThongKeResponse> getListWeek() {
-        return thongKeRepo.getListWeek();
-    }
-
-    @Override
-    public List<ThongKeResponse> getListMonth() {
-        return thongKeRepo.getListMonth();
-    }
-
-    @Override
-    public List<ThongKeResponse> getListYear() {
-        return thongKeRepo.getListYear();
-    }
-
-    //    @Override
-//    public List<ThongKeSanPhamResponse> getSanPhamBanChay() {
-//        return thongKeRepo.findSanPhamBanChay();
-//    }
-    public List<ThongKeSanPhamResponse> getSanPhamBanChay() {
-        List<ThongKeSanPhamResponse> allProducts = thongKeRepo.findSanPhamBanChay();
-        System.out.println("Dữ liệu từ repo: " + allProducts);
-        return allProducts.stream()
-                .sorted(Comparator.comparingLong(ThongKeSanPhamResponse::getSoLuongBan).reversed())
-                .limit(10)
+    public List<SanPhamBanChayDTO> listBanChay(LocalDate tuNgay, LocalDate denNgay) {
+        List<Object[]> results = thongKeRepo.timSanPhamBanChay(tuNgay, denNgay);
+//        return results.stream()
+//                .map(result -> new SanPhamBanChayDTO((String) result[0], (Long) result[1]))
+//                .collect(Collectors.toList());
+        return results.stream()
+                .map(result -> new SanPhamBanChayDTO((String) result[0], (Long) result[1]))
+                .limit(10)  // Giới hạn kết quả chỉ 10 sản phẩm
                 .collect(Collectors.toList());
     }
 
     @Override
-    public int getCurrentDay() {
-        LocalDate currentDate = LocalDate.now();
-        return currentDate.getDayOfMonth();
+    public List<HoaDonDoanhThuDTO> listHoaDonTheoDoanhThu(LocalDate tuNgay, LocalDate denNgay) {
+        List<Object[]> results = thongKeRepo.timHoaDonTheoDoanhThu(tuNgay, denNgay);
+
+        return results.stream()
+                .map(result -> new HoaDonDoanhThuDTO((Long) result[0], (BigDecimal) result[1]))
+                .limit(10)  // Giới hạn kết quả chỉ 10 hóa đơn doanh thu cao nhất
+                .collect(Collectors.toList());
     }
-
-    @Override
-    public int getYesterday() {
-        LocalDate yesterday = LocalDate.now().minusDays(1);
-        return yesterday.getDayOfMonth();
-    }
-
-    @Override
-    public int getCurrentWeek() {
-        LocalDate currentDate = LocalDate.now();
-        return currentDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-    }
-
-    @Override
-    public int getCurrentMonth() {
-        LocalDate currentDate = LocalDate.now();
-        return currentDate.getMonthValue();
-    }
-
-    @Override
-    public int getCurrentYear() {
-        LocalDate currentDate = LocalDate.now();
-        return currentDate.getYear();
-    }
-
-    //    TIenBB
-    public ThongKeResponse getDifferenceBetweenDays(List<ThongKeResponse> todayList, List<ThongKeResponse> yesterdayList, int currentDay) {
-        ThongKeResponse today = todayList.stream()
-                .filter(item -> item.getDay() == currentDay)
-                .findFirst()
-                .orElse(null);
-
-        ThongKeResponse yesterday = yesterdayList.stream()
-                .findFirst()
-                .orElse(null);
-
-        if (today != null && yesterday != null) {
-            BigDecimal difference = today.getTongTienSauGiamGia().subtract(yesterday.getTongTienSauGiamGia());
-            return new ThongKeResponse("DIFFERENCE", currentDay, difference, 0L); // hoặc dùng đối tượng thích hợp
-        }
-        return null; // Nếu không có dữ liệu
-    }
-
 }
