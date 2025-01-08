@@ -98,4 +98,9 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
 //    TienBB
     @Query("SELECT hd.trangThai, COUNT(hd) FROM HoaDon hd WHERE hd.trangThai IS NOT NULL GROUP BY hd.trangThai")
     Map<Integer, Long> countByTrangThai();
+
+    @Query("SELECT hd FROM HoaDon hd WHERE hd.id = :idHD")
+    HoaDon timKiemHoaDonByID(Long idHD);
+
+    boolean existsById(Long id);
 }

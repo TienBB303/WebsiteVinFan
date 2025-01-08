@@ -83,4 +83,5 @@ public interface HoaDonService {
 
     Page<HoaDon> getHoaDonByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
+//    void xoaHoaDon(HoaDon hoaDon);
 }
