@@ -52,20 +52,13 @@
                                 <form method="get" action="/hoa-don/index">
                                     <div class="row">
                                         <div class="col-4">
-                                            <input type="text" id="searchInput" class="form-control" name="query"
-                                                   placeholder="Tìm kiếm hóa đơn...." th:value="${query}">
+                                            <input type="text" id="searchInput" class="form-control" name="query" placeholder="Tìm kiếm hóa đơn...." th:value="${query}">
                                         </div>
                                         <div class="col-2">
-                                            <input type="text" class="form-control flatpickr" id="startDate"
-                                                   name="startDate"
-                                                   placeholder="Từ ngày" th:value="${startDate}"
-                                                   th:attr="value=${startDate}">
+                                            <input type="text" class="form-control flatpickr" id="startDate" name="startDate" placeholder="Từ ngày" th:value="${startDate}" th:attr="value=${startDate}">
                                         </div>
                                         <div class="col-2">
-                                            <input type="text" class="form-control flatpickr" id="endDate"
-                                                   name="endDate"
-                                                   placeholder="Đến ngày" th:value="${endDate}"
-                                                   th:attr="value=${endDate}">
+                                            <input type="text" class="form-control flatpickr" id="endDate" name="endDate" placeholder="Đến ngày" th:value="${endDate}" th:attr="value=${endDate}">
                                         </div>
 
                                         <div class="col-2">
@@ -194,7 +187,7 @@
                                             th:text="${item.loaiHoaDon ? 'Tại quầy' : 'Online'}">
                                         </td>
                                         <td th:text="${item.ngayTao}"></td>
-                                        <td class="giaVND" th:text="${item.tongTien}"></td>
+                                        <td class="giaVND" th:text="${item.tongTienSauGiamGia}"></td>
                                         <td th:switch="${item.trangThai}">
                                             <span th:case="0" class="text-success-emphasis">Đang treo</span>
                                             <span th:case="1" class="text-secondary-emphasis">Đang chờ xác nhận</span>
@@ -298,9 +291,11 @@
     <script>
         flatpickr("#startDate", {
             dateFormat: "Y-m-d", // Ensure the correct format
+            maxDate: "today",
         });
         flatpickr("#endDate", {
             dateFormat: "Y-m-d", // Ensure the correct format
+            maxDate: "today",
         });
     </script>
 </div>

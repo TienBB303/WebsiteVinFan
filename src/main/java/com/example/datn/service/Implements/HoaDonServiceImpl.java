@@ -36,7 +36,7 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     public List<PhieuGiam> getPhieuGiamByHoaDonId(Long hoaDonId) {
         // Lấy danh sách sản phẩm chi tiết từ hóa đơn
-        List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepo.findByHoaDonId(hoaDonId);
+        List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepo.findByHoaDon_Id(hoaDonId);
 
         // Lấy phiếu giảm giá từ mỗi sản phẩm chi tiết
         return chiTietList.stream()
@@ -223,9 +223,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDonChiTiet.setHoaDon(hoaDon);
         hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
         hoaDonChiTiet.setGia(request.getGia());
-        hoaDonChiTiet.setSoLuong(1); // Số lượng mặc định là 1
+        hoaDonChiTiet.setSoLuong(request.getSoLuong()); // Số lượng mặc định là 1
         // Tính thành tiền cho sản phẩm
-        BigDecimal thanhTien = request.getGia().multiply(BigDecimal.valueOf(1));
+        BigDecimal thanhTien = request.getGia().multiply(BigDecimal.valueOf(request.getSoLuong()));
         hoaDonChiTiet.setThanhTien(thanhTien);
 
         // Lưu chi tiết hóa đơn vào cơ sở dữ liệu

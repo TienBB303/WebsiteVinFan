@@ -4,7 +4,7 @@
 //import com.example.datn.entity.thuoc_tinh.*;
 //import com.example.datn.repository.NhanVienRepository;
 //import com.example.datn.repository.SPCTRepo;
-//import com.example.datn.repository.SanPhamRepo;
+//import com.example.datn.repository.SanPhamRepo.SanPhamRepo;
 //import com.example.datn.repository.ThuocTinhRepo.*;
 //import com.example.datn.service.CloudinaryService;
 //import com.example.datn.service.SanPhamService;
