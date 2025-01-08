@@ -345,8 +345,15 @@
         </div>
         <div class="summary-details">
             <p>Tạm tính: <span class="formatted-price" th:attr="data-price=${totalPrice}"></span></p>
-            <p>Phí vận chuyển: <span class="formatted-price" th:attr="data-price=${30000}"></span></p>
-            <p class="total">Tổng cộng: <span class="formatted-price" th:attr="data-price=${totalPrice + 30000}"></span></p>
+            <p>Phí vận chuyển:
+                <span th:if="${totalPrice > 999999}">Free Ship</span>
+                <span th:if="${totalPrice <= 999999}" class="formatted-price" th:attr="data-price=${40000}"></span>
+            </p>
+            <p class="total">Tổng cộng:
+                <span class="formatted-price"
+                      th:attr="data-price=${totalPrice > 999999 ? totalPrice : totalPrice + 40000}">
+        </span>
+            </p>
         </div>
     </div>
 </div>
@@ -515,16 +522,16 @@
     const successMessage = /*[[${success}]]*/ null;
     const errorType = /*[[${error != null ? error : 'null'}]]*/ 'null';
 
-    if (errorType === 'CartIsEmpty') {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Giỏ hàng trống',
-            text: 'Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng.',
-            confirmButtonText: 'Quay lại giỏ hàng'
-        }).then(() => {
-            window.location.href = '/cart/view';
-        });
-    }
+    // if (errorType === 'CartIsEmpty') {
+    //     Swal.fire({
+    //         icon: 'warning',
+    //         title: 'Giỏ hàng trống',
+    //         text: 'Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng.',
+    //         confirmButtonText: 'Quay lại giỏ hàng'
+    //     }).then(() => {
+    //         window.location.href = '/cart/view';
+    //     });
+    // }
 
     if (errorType === 'OutOfStock') {
         Swal.fire({

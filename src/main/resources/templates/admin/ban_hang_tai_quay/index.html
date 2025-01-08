@@ -121,28 +121,32 @@
                                             <td th:text="${item.congSuat.ten}"></td>
                                             <td class="giaVND" th:text="${item.gia}"></td>
                                             <td th:text="${item.so_luong}"></td>
-                                            <form method="post" th:action="@{/ban-hang-tai-quay/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
-                                                <td class="text-center align-middle">
+                                            <form method="post" th:action="@{/ban-hang-tai-quay/addSPCT}"
+                                                  th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
+                                                <td>
                                                     <!-- CSRF token -->
-                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                                    <input type="hidden" th:name="${_csrf.parameterName}"
+                                                           th:value="${_csrf.token}"/>
 
                                                     <!-- Hidden inputs -->
                                                     <input type="hidden" name="idHD" th:value="${idHD}">
                                                     <input type="hidden" name="idSP" th:value="${item.id}">
-                                                    <input class="giaVND" type="hidden" name="gia" th:value="${item.gia}">
+                                                    <input class="giaVND" type="hidden" name="gia"
+                                                           th:value="${item.gia}">
 
                                                     <!-- Số lượng -->
-                                                    <input type="number" name="soLuong" class="form-control form-control-sm mx-auto" value="1" min="1"
-                                                           style="width: 60px" placeholder="Nhập số lượng" required>
+                                                    <input type="number" name="soLuong"
+                                                           class="form-control form-control-sm" value="1" min="1"
+                                                           style="width: 60px"
+                                                           placeholder="Nhập số lượng" required>
                                                 </td>
-                                                <td class="text-center align-middle">
+                                                <td>
                                                     <!-- Nút Thêm -->
                                                     <button type="submit" class="btn btn-outline-success btn-sm">
                                                         Thêm
                                                     </button>
                                                 </td>
                                             </form>
-
                                         </tr>
                                         </tbody>
                                     </table>
@@ -469,10 +473,10 @@
                         </div>
 
                         <!-- Nút xác nhận -->
-                        <button type="submit" class="btn btn-dark w-100 confirm-btn mb-5"
+                        <button type="button" class="btn btn-dark w-100 confirm-btn mb-5"
+                                onclick="showSuccess()"
                                 th:disabled="${idHD == null || listHDCT == null || #lists.isEmpty(listHDCT)}">
-                            Xác nhận đặt
-                            hàng
+                            Xác nhận đặt hàng
                         </button>
 
                     </div>
@@ -569,6 +573,18 @@
             document.getElementById("totalAfterDiscount").value = totalAfterDiscount.toLocaleString('vi-VN') + " VND";
             document.getElementById("tongTienSauGiam").value = totalAfterDiscount; // Giá trị thực tế
         }
+        function showSuccess() {
+            Swal.fire({
+                title: 'Thành công!',
+                text: 'Đơn hàng của bạn đã được đặt thành công!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Gửi form đặt hàng
+                document.getElementById('thanhToanForm').submit();
+            });
+        }
+
     </script>
 
     <script>
