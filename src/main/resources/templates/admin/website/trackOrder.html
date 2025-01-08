@@ -337,7 +337,7 @@
                                 <span th:case="5" class="text-danger">Hủy</span>
                             </td>
                             <td class="px-4 py-2 border text-center">
-                                <a th:href="@{/vin-fan/{id}(id=${hoaDon.id})}"
+                                <a th:href="@{/vin-fan/hoa-don-kh/{id}(id=${hoaDon.id})}"
                                    class="text-blue-500 hover:underline">Xem
                                     chi tiết</a>
                             </td>
@@ -636,7 +636,7 @@
         });
     });
     document.addEventListener('DOMContentLoaded', function () {
-        const form = document.querySelector('form[action="/admin/khach-hang/them-dia-chi"]');
+        const form = document.querySelector('form[action="/vin-fan/khach-hang/them-dia-chi"]');
 
         form.addEventListener('submit', function (event) {
             let isValid = true;
