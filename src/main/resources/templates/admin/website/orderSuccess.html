@@ -59,7 +59,7 @@
                     <p>
                         <span th:text="${hoaDon.tenNguoiNhan}"></span><br>
                         <span th:text="${hoaDon.sdtNguoiNhan}"></span><br>
-                        <span th:text="${hoaDon.diaChi}"></span>
+                    `   <p>Địa chỉ: <span id="fullAddress"></span></p></p>
                     </p>
                 </div>
                 <div class="mb-3">
@@ -117,5 +117,61 @@
         });
     });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lấy giá trị từ Thymeleaf
+        var diachi = /*[[${diachi}]]*/;
+
+        // Tách chuỗi địa chỉ
+        var parts = diachi.split(",");
+        var idTinh = parts[0];
+        var idHuyen = parts[1];
+        var idXa = parts[2];
+        var soNha = parts[3];
+
+        var fullAddress = document.getElementById('fullAddress');
+
+        // Cấu hình Axios
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        // Gọi API để lấy dữ liệu
+        axios(Parameter)
+            .then(function (response) {
+                var data = response.data;
+
+                // Tìm tỉnh
+                var selectedCity = data.find(city => city.Id === idTinh);
+                if (selectedCity) {
+                    // Tìm huyện
+                    var selectedDistrict = selectedCity.Districts.find(district => district.Id === idHuyen);
+                    if (selectedDistrict) {
+                        // Tìm xã
+                        var selectedWard = selectedDistrict.Wards.find(ward => ward.Id === idXa);
+                        if (selectedWard) {
+                            // Hiển thị địa chỉ
+                            // fullAddress.textContent = `${soNha}, ${selectedWard.Name}, ${selectedDistrict.Name}, ${selectedCity.Name}`;
+                            fullAddress.textContent = `${selectedCity.Name}, ${selectedDistrict.Name},${selectedWard.Name}, ${soNha}`;
+                        } else {
+                            fullAddress.textContent = "Không tìm thấy xã.";
+                        }
+                    } else {
+                        fullAddress.textContent = "Không tìm thấy huyện.";
+                    }
+                } else {
+                    fullAddress.textContent = "Không tìm thấy tỉnh.";
+                }
+            })
+            .catch(function (error) {
+                Swal.fire('Lỗi!', 'Không thể tải dữ liệu địa giới hành chính!', 'error');
+                console.error(error);
+            });
+    });
+</script>
+
 </body>
 </html>
