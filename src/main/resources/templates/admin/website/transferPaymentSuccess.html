@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html>
-<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/fragments/head :: head">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh Toán Chuyển Khoản</title>
@@ -37,8 +37,8 @@
                     Mã QR Chuyển Khoản
                 </div>
                 <div class="card-body d-flex justify-content-center align-items-center" style="height: 300px;">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSX-p0lVbV7SdaTCUWexe-mtjiH7nJXfwchw&s"
-                         alt="QR Code" style="max-height: 100%; max-width: 100%;">
+                    <img th:src="@{/admin/assets/static/images/bank/mbb.jpg}" alt="QR Code"
+                         style="max-height: 100%; max-width: 100%;">
                 </div>
             </div>
         </div>
