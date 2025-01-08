@@ -343,7 +343,6 @@ public class CartController {
             return "redirect:/cart/orderinfor";
         }
 
-
         // Tạo hóa đơn
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMa(hoaDonService.generateOrderCode());
@@ -353,7 +352,6 @@ public class CartController {
         hoaDon.setNgayTao(LocalDate.now());
         hoaDon.setTrangThai(1); // Chờ xác nhận
         hoaDon.setLoaiHoaDon(false);
-        hoaDon.setPhiVanChuyen(BigDecimal.valueOf(30000));
         hoaDon.setKhachHang(khachHang);
         hoaDon.setGhiChu(request.getNote());
 
@@ -394,14 +392,21 @@ public class CartController {
             hoaDonService.saveHoaDonChiTiet(hoaDonChiTiet);
         }
 
+        // Áp dụng logic phí vận chuyển
+        BigDecimal shippingFee = total.compareTo(BigDecimal.valueOf(999999)) > 0
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(40000);
+        hoaDon.setPhiVanChuyen(shippingFee);
+
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setHoaDon(hoaDon);
         lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
         lichSuHoaDon.setNgayTao(LocalDate.now());
         lichSuHoaDonRepo.save(lichSuHoaDon);
 
-        total = total.add(hoaDon.getPhiVanChuyen());
+        total = total.add(shippingFee);
         hoaDon.setTongTien(total);
+        hoaDon.setTongTienSauGiamGia(total);
         hoaDonService.save(hoaDon);
 
         session.removeAttribute("cart");

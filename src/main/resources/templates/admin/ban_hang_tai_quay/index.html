@@ -473,10 +473,10 @@
                         </div>
 
                         <!-- Nút xác nhận -->
-                        <button type="submit" class="btn btn-dark w-100 confirm-btn mb-5"
+                        <button type="button" class="btn btn-dark w-100 confirm-btn mb-5"
+                                onclick="showSuccess()"
                                 th:disabled="${idHD == null || listHDCT == null || #lists.isEmpty(listHDCT)}">
-                            Xác nhận đặt
-                            hàng
+                            Xác nhận đặt hàng
                         </button>
 
                     </div>
@@ -573,6 +573,18 @@
             document.getElementById("totalAfterDiscount").value = totalAfterDiscount.toLocaleString('vi-VN') + " VND";
             document.getElementById("tongTienSauGiam").value = totalAfterDiscount; // Giá trị thực tế
         }
+        function showSuccess() {
+            Swal.fire({
+                title: 'Thành công!',
+                text: 'Đơn hàng của bạn đã được đặt thành công!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Gửi form đặt hàng
+                document.getElementById('thanhToanForm').submit();
+            });
+        }
+
     </script>
 
     <script>
