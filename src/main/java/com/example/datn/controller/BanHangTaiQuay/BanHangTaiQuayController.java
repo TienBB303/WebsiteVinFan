@@ -177,6 +177,7 @@ public class BanHangTaiQuayController {
         // Lưu hóa đơn vào cơ sở dữ liệu
         hoaDonService.save(hoaDon);
 
+
         // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setHoaDon(hoaDon);
@@ -329,20 +330,28 @@ public class BanHangTaiQuayController {
 
     @GetMapping("/xoa-hoa-don/{id}")
     public String xoaHoaDonTaiQuay(@PathVariable("id") Long idHoaDon) {
-        HoaDon hd = hoaDonRepo.timKiemHoaDonByID(idHoaDon);
-        if (hd == null) {
-            System.out.println("Không tồn tại hóa đơn");
-            return "redirect:/ban-hang-tai-quay/index";
-        }
+        HoaDon hoaDon = hoaDonService.findById(idHoaDon)
+                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idHoaDon));
         try {
-            hd.setTrangThai(5);
-            hoaDonRepo.save(hd);
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
+            lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+            // Lưu lịch sử hóa đơn
+            lichSuHoaDonRepo.save(lichSuHoaDon);
+
+            hoaDon.setNhanVien(nhanVien);
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
+            hoaDonRepo.save(hoaDon);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa: " + e.getMessage());
         }
         return "redirect:/ban-hang-tai-quay/index";
     }
-
 
 
 }
