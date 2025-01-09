@@ -440,11 +440,19 @@ public class NhanVienController {
     }
 
 
-    @GetMapping("/thong-tin-tai-khoan")
-    public String thongTinNhanVien(Model model){
-        NhanVien nv = nhanVienRepository.profileNhanVien();
-        model.addAttribute("nhanVienInfo",nv);
-        return "admin/fragments/header";
-    }
+//    @GetMapping("/thong-tin-tai-khoan-api")
+//    public NhanVien thongTinNhanVien() {
+//        try {
+//            NhanVien nv = nhanVienRepository.profileNhanVien(); // Kiểm tra query này
+//            if (nv == null) {
+//                throw new Exception("Không tìm thấy thông tin nhân viên.");
+//            }
+//            return nv;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Lỗi khi truy xuất thông tin nhân viên: " + e.getMessage());
+//        }
+//    }
+
 
 }
