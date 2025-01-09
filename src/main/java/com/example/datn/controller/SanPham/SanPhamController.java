@@ -8,7 +8,13 @@ import com.example.datn.repository.SanPhamRepo.SanPhamRepo;
 import com.example.datn.repository.ThuocTinhRepo.*;
 import com.example.datn.service.CloudinaryService;
 import com.example.datn.service.SanPhamService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -592,4 +599,56 @@ public class SanPhamController {
             return ResponseEntity.badRequest().body("Cập nhật sản phẩm không thành công!");
         }
     }
+
+    @GetMapping("/san-pham/excel")
+    @ResponseBody
+    public void exportSanPhamToExcel(@RequestParam(value = "query", defaultValue = "") String query,
+                                     @RequestParam(value = "minPrice", defaultValue = "0") String minPriceStr,
+                                     @RequestParam(value = "maxPrice", defaultValue = "0") String maxPriceStr,
+                                     @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
+                                     HttpServletResponse response) throws IOException {
+
+        // Lấy danh sách sản phẩm chi tiết theo điều kiện
+        BigDecimal minPrice = epKieuDecimal(minPriceStr.trim());
+        BigDecimal maxPrice = epKieuDecimal(maxPriceStr.trim());
+        if (maxPrice.compareTo(BigDecimal.ZERO) == 0) {
+            maxPrice = sanPhamService.getSanPhamGiaLonNhat();
+        }
+        List<SanPhamChiTiet> xuatExcel = sanPhamService.xuatExcel(query.trim(), minPrice, maxPrice, trang_thai);
+
+        // Tạo workbook Excel
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Danh Sách Sản Phẩm");
+
+        // Tạo dòng tiêu đề
+        Row headerRow = sheet.createRow(0);
+        String[] columns = {"STT", "Mã Sản Phẩm", "Tên Sản Phẩm", "Kiểu Quạt", "Công Suất", "Số Lượng", "Giá Bán", "Trạng Thái"};
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+
+        // Tạo các dòng dữ liệu
+        int rowNum = 0;
+        for (SanPhamChiTiet sp : xuatExcel) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(rowNum);
+            row.createCell(1).setCellValue(sp.getSanPham().getMa());
+            row.createCell(2).setCellValue(sp.getSanPham().getTen() + " (" + sp.getMauSac().getTen() + ")");
+            row.createCell(3).setCellValue(sp.getSanPham().getKieuQuat().getTen());
+            row.createCell(4).setCellValue(sp.getCongSuat().getTen());
+            row.createCell(5).setCellValue(sp.getSo_luong());
+            BigDecimal gia = sp.getGia();
+            double giaDouble = gia.doubleValue();
+            row.createCell(6).setCellValue(giaDouble);
+//            row.createCell(6).setCellValue(sp.getGia());
+            row.createCell(7).setCellValue(sp.getTrang_thai() ? "Hoạt động" : "Không hoạt động");
+        }
+
+        // Tạo response để xuất file Excel
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=san_pham_detailed.xlsx");
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
+}
