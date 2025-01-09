@@ -1,6 +1,8 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.CheDoGio;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.CheDoGioRepo;
 import com.example.datn.service.thuoc_tinh_service.CheDoGioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class CheDoGioController {
     @Autowired
     CheDoGioService cheDoGioService;
 
+    @Autowired
+    NhanVienRepository nhanVienRepository;
+
     @ModelAttribute("listCheDoGio")
     public List<CheDoGio> listCheDoGio() {
         return cheDoGioRepo.findAll();
@@ -39,6 +44,8 @@ public class CheDoGioController {
         model.addAttribute("listCDG", searchPage);
         model.addAttribute("ten_che_do_gio", ten_che_do_gio);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/che_do_gio";
     }
 

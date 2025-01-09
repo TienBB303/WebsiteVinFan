@@ -1,6 +1,8 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.Hang;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.HangRepo;
 import com.example.datn.repository.ThuocTinhRepo.HangRepo;
 import com.example.datn.service.thuoc_tinh_service.HangService;
@@ -25,7 +27,8 @@ public class HangController {
 
     @Autowired
     HangService ttService;
-
+    @Autowired
+    NhanVienRepository nhanVienRepository;
     @ModelAttribute("listHang")
     public List<Hang> listHang() {
         return ttRepo.findAll();
@@ -41,6 +44,8 @@ public class HangController {
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_hang", ten_hang);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/hang";
     }
 

@@ -60,6 +60,8 @@ public class NhanVienController {
         model.addAttribute("listsNhanVien", nhanVienPage);
         model.addAttribute("keyword", keyword);
         model.addAttribute("trang_thai", trang_thai);
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/nhan-vien/index";
     }
 
@@ -69,6 +71,8 @@ public class NhanVienController {
         List<ChucVu> chucVuList = chucVuRepository.findAll();
         model.addAttribute("nhanVien", nhanVien);
         model.addAttribute("chucVuList", chucVuList);
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/nhan-vien/add";
     }
 
@@ -234,6 +238,8 @@ public class NhanVienController {
         model.addAttribute("nhanVien", nhanVien);
         model.addAttribute("chucVuList", chucVuList);
         model.addAttribute("nowday", LocalDate.now());
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/nhan-vien/sua";
     }
 

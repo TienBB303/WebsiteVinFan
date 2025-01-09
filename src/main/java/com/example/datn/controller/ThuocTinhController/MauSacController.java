@@ -1,7 +1,9 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.CongSuat;
 import com.example.datn.entity.thuoc_tinh.MauSac;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.MauSacRepo;
 import com.example.datn.repository.ThuocTinhRepo.MauSacRepo;
 import com.example.datn.service.thuoc_tinh_service.MauSacService;
@@ -26,7 +28,8 @@ public class MauSacController {
 
     @Autowired
     MauSacService mauSacService;
-
+    @Autowired
+    NhanVienRepository nhanVienRepository;
     @ModelAttribute("listMauSac")
     public List<MauSac> listMauSac() {
         return mauSacRepo.findAll();
@@ -42,6 +45,8 @@ public class MauSacController {
         model.addAttribute("listMS", searchPage);
         model.addAttribute("ten_mau_sac", ten_mau_sac);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/mau_sac";
     }
 

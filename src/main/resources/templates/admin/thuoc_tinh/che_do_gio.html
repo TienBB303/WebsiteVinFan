@@ -18,10 +18,31 @@
                         <h3>Chế độ gió</h3>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
-                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                            <div class="card-footer">
+                        <div class="card" style="position: absolute; top: 10px; right: 10px; width: 100px;">
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none; color: inherit; text-decoration: none;">
+                                    <img th:src="@{${nhanVienInfo.hinhAnh}}" alt="Avatar" class="rounded-circle" width="60" height="60">
+                                </button>
+                                <ul class="dropdown-menu" style="background-color: #f8f9fa; border-color: #ccc;">
+                                    <li>
+                                        <div class="dropdown-item" style="color: #333;">
+                                            <strong>Thông tin nhân viên</strong><br>
+                                            Tên: <span th:text="${nhanVienInfo.ten}"></span><br>
+                                            Email: <span th:text="${nhanVienInfo.email}"></span><br>
+                                            Chức vụ: <span th:text="${nhanVienInfo.chucVu.viTri}"></span>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li style="text-align: center">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </div>
-                        </nav>
+                        </div>
                     </div>
                 </div>
             </div>

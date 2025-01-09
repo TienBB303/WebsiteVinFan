@@ -1,8 +1,10 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.ChatLieuCanh;
 import com.example.datn.entity.thuoc_tinh.ChatLieuKhung;
 import com.example.datn.entity.thuoc_tinh.ChatLieuKhung;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.ChatLieuKhungRepo;
 import com.example.datn.service.thuoc_tinh_service.ChatLieuKhungService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class ChatLieuKhungController {
     @Autowired
     ChatLieuKhungService chatLieuKhungService; // sửa ở đây(2)
 
+    @Autowired
+    NhanVienRepository nhanVienRepository;
+
     @ModelAttribute("listChatLieuKhung") // sửa ở đây(3)
     public List<ChatLieuKhung> listChatLieuKhung() {
         return chatLieuKhungRepo.findAll();
@@ -41,6 +46,8 @@ public class ChatLieuKhungController {
         model.addAttribute("listCLK", searchPage); // sửa ở đây(6)
         model.addAttribute("ten_chat_lieu_khung", ten_chat_lieu_khung);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/chat_lieu_khung"; // sửa ở đây(7)
     }
 
