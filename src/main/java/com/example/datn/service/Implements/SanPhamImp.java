@@ -110,6 +110,14 @@ public class SanPhamImp implements SanPhamService {
     }
 
     @Override
+    public List<SanPhamChiTiet> xuatExcel(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai) {
+        if (trang_thai == null) {
+            return spctRepo.xuatExcelWithouttrangThai(query, minPrice, maxPrice);
+        }
+        return spctRepo.xuatExcel(query, minPrice, maxPrice,trang_thai);
+    }
+
+    @Override
     public BigDecimal getSanPhamGiaLonNhat() {
         return spctRepo.findMaxPrice();
     }
