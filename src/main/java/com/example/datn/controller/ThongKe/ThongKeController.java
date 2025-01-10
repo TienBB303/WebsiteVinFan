@@ -5,7 +5,9 @@ import com.example.datn.dto.Thongke.SanPhamBanChayDTO;
 import com.example.datn.dto.response.ThongKeResponse;
 import com.example.datn.dto.response.ThongKeSanPhamResponse;
 import com.example.datn.entity.HoaDon;
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.service.thong_ke_service.ThongKeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,7 +28,7 @@ import java.util.List;
 
 public class ThongKeController {
     private final ThongKeService thongKeService;
-
+    private final NhanVienRepository nhanVienRepository;
     @GetMapping("/index")
     public String getThongKe(
             @RequestParam(name = "tuNgay", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tuNgay,
@@ -49,6 +51,8 @@ public class ThongKeController {
         model.addAttribute("tuNgay", tuNgay != null ? tuNgay : "");
         model.addAttribute("denNgay", denNgay != null ? denNgay : "");
 
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thong_ke/index";
     }
 

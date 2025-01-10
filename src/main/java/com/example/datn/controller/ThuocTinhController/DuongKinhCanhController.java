@@ -1,7 +1,9 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.DuongKinhCanh;
 import com.example.datn.entity.thuoc_tinh.DuongKinhCanh;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.DuongKinhCanhRepo;
 import com.example.datn.repository.ThuocTinhRepo.DuongKinhCanhRepo;
 import com.example.datn.service.thuoc_tinh_service.DuongKinhCanhService;
@@ -26,7 +28,8 @@ public class DuongKinhCanhController {
 
     @Autowired
     DuongKinhCanhService ttService;
-
+    @Autowired
+    NhanVienRepository nhanVienRepository;
     @ModelAttribute("listDuongKinhCanh")
     public List<DuongKinhCanh> listDuongKinhCanh() {
         return ttRepo.findAll();
@@ -42,6 +45,8 @@ public class DuongKinhCanhController {
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_duong_kinh_canh", ten_duong_kinh_canh);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/duong_kinh_canh";
     }
 

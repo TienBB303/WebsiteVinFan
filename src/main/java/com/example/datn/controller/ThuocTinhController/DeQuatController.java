@@ -1,6 +1,8 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.DeQuat;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.DeQuatRepo;
 import com.example.datn.service.thuoc_tinh_service.DeQuatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class DeQuatController {
     @Autowired
     DeQuatService ttService;
 
+    @Autowired
+    NhanVienRepository nhanVienRepository;
     @ModelAttribute("listDeQuat")
     public List<DeQuat> listDeQuat() {
         return ttRepo.findAll();
@@ -39,6 +43,8 @@ public class DeQuatController {
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_de_quat", ten_de_quat);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/de_quat";
     }
 

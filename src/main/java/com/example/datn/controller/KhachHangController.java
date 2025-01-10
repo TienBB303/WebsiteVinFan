@@ -4,8 +4,10 @@ package com.example.datn.controller;
 import com.example.datn.entity.DiaChi;
 import com.example.datn.entity.KhachHang;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.repository.DiaChiRepository;
 import com.example.datn.repository.KhachHangRepo;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.service.EmailService;
 import com.example.datn.service.khach_hang_service.KhachHangService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,8 @@ public class KhachHangController {
     @Autowired
     private DiaChiRepository diaChiRepository;
 
-
+    @Autowired
+    NhanVienRepository nhanVienRepository;
 
     @GetMapping("/index")
     public String loadTable(
@@ -64,12 +67,16 @@ public class KhachHangController {
         model.addAttribute("listsKhachhang", khachHangPage);
         model.addAttribute("keyword", keyword);
         model.addAttribute("trang_thai", trang_thai);
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "/admin/khach-hang/index";
     }
 
 
     @GetMapping("from-them")
-    public String fromThem() {
+    public String fromThem(Model model) {
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "/admin/khach-hang/add";
     }
 
@@ -116,6 +123,8 @@ public class KhachHangController {
         ));
         model.addAttribute("khachHang", khachHangRepo.findById(id).orElse(null));
         model.addAttribute("diaChiList", diaChiList);
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "/admin/khach-hang/sua";  // trả về trang Thymeleaf
     }
 

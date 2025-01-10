@@ -60,7 +60,8 @@ public class HoaDonController {
         model.addAttribute("endDate", denNgay != null ? denNgay : "");
         TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
         model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
-
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "/admin/hoa_don/index";
     }
 
