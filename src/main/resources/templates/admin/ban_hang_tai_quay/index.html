@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
-    <style>
-        body {
-            background-color: #f5f5f5;/* Màu xám nhạt */
-        }
-    </style>
 </head>
+<style>
+    body {
+        background-color: #f5f5f5;/* Màu xám nhạt */
+    }
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background-color: #f5f5f5;
+        color: #1a1a1a;
+        padding: 10px 15px;
+        border: 1px solid #f5f5f5;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: none; /* Ẩn mặc định */
+    }
+
+    .notification.show {
+        display: flex; /* Hiện thông báo */
+        animation: fadeOut 3s forwards; /* Kích hoạt animation */
+    }
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 
 <body>
+<div th:if="${errorMessage}" class="notification error d-flex align-items-center" id="errorMessage">
+    <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
+         style="width: 30px; height: 30px; color: red; font-size: 18px;">
+        ×
+    </div>
+    <p class="mb-0" th:text="${errorMessage}"></p>
+</div>
 <div th:if="${errorMessageTSL}" class="notification error d-flex align-items-center" id="errorMessage">
     <div class="icon me-2 d-flex justify-content-center align-items-center border border-danger rounded-circle"
          style="width: 30px; height: 30px; color: red; font-size: 18px;">
@@ -234,7 +259,7 @@
                                                 <button type="submit" class="btn btn-outline-danger btn-sm">-</button>
                                             </form>
                                             <!-- Ô nhập số lượng -->
-                                            <input type="number" class="form-control quantity-input mx-1" th:value="${item.soLuong}" min="1" style="width: 60px;" disabled/>
+                                            <input type="number" class="form-control quantity-input mx-1" th:value="${item.soLuong}" min="1" style="width: 80px;" disabled/>
                                             <!-- Nút tăng số lượng -->
                                             <form th:action="@{/ban-hang-tai-quay/tang-so-luong}" method="post" class="ms-1">
                                                 <input type="hidden" name="idHoaDon" th:value="${item.hoaDon.id}"/>
@@ -806,50 +831,7 @@
         }
     </script>
 
-    <script>
-        window.addEventListener("DOMContentLoaded", function () {
-            const notification = document.getElementById("errorAdd");
-            if (notification) {
-                // Hiển thị thông báo
-                notification.classList.add("show");
 
-                // Tự động xóa thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.remove(); // Loại bỏ phần tử khỏi DOM
-                }, 3000);
-            }
-        });
-    </script>
-
-    <script>
-        window.addEventListener("DOMContentLoaded", function () {
-            const notification = document.getElementById("errorMessage");
-            if (notification) {
-                // Hiển thị thông báo
-                notification.classList.add("show");
-
-                // Tự động xóa thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.remove(); // Loại bỏ phần tử khỏi DOM
-                }, 3000);
-            }
-        });
-    </script>
-
-    <script>
-        window.addEventListener("DOMContentLoaded", function () {
-            const notification = document.getElementById("errorTHD");
-            if (notification) {
-                // Hiển thị thông báo
-                notification.classList.add("show");
-
-                // Tự động xóa thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.remove(); // Loại bỏ phần tử khỏi DOM
-                }, 3000);
-            }
-        });
-    </script>
     <script>
         document.getElementById('searchButtonKH').addEventListener('click', function () {
             const searchValue = document.getElementById('searchKH').value.toLowerCase();
@@ -904,6 +886,53 @@
             });
         });
     </script>
+
+<!--thông báo-->
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            const notification = document.getElementById("errorAdd");
+            if (notification) {
+                // Hiển thị thông báo
+                notification.classList.add("show");
+
+                // Tự động xóa thông báo sau 3 giây
+                setTimeout(() => {
+                    notification.remove(); // Loại bỏ phần tử khỏi DOM
+                }, 3000);
+            }
+        });
+    </script>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            const notification = document.getElementById("errorMessage");
+            if (notification) {
+                // Hiển thị thông báo
+                notification.classList.add("show");
+
+                // Tự động xóa thông báo sau 3 giây
+                setTimeout(() => {
+                    notification.remove(); // Loại bỏ phần tử khỏi DOM
+                }, 3000);
+            }
+        });
+    </script>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            const notification = document.getElementById("errorTHD");
+            if (notification) {
+                // Hiển thị thông báo
+                notification.classList.add("show");
+
+                // Tự động xóa thông báo sau 3 giây
+                setTimeout(() => {
+                    notification.remove(); // Loại bỏ phần tử khỏi DOM
+                }, 3000);
+            }
+        });
+    </script>
+
 </div>
 </body>
 </html>

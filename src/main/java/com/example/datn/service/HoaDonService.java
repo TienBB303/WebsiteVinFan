@@ -74,7 +74,6 @@ public interface HoaDonService {
 
     void truSoLuongSanPham(Long idHD);
 
-
     List<HoaDon> getHoaDonByIdKH(Integer idKH);
 
     String generateOrderCode();
