@@ -68,4 +68,18 @@ public interface SPCTRepo extends JpaRepository<SanPhamChiTiet, Long> {
     @Query("SELECT spct FROM SanPhamChiTiet spct WHERE spct.sanPham.kieuQuat.id = :kieuQuatId AND spct.trang_thai = true")
     List<SanPhamChiTiet> findBySanPhamKieuQuat(@Param("kieuQuatId") Integer kieuQuatId);
 
+    @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp " +
+            "WHERE (LOWER(sp.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(sp.ma) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(sp.mo_ta) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+            "AND (:trang_thai IS NULL OR spct.trang_thai = :trang_thai) " +
+            "AND spct.gia BETWEEN :minPrice AND :maxPrice")
+    List<SanPhamChiTiet> xuatExcel(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai);
+
+    @Query("SELECT spct FROM SanPhamChiTiet spct JOIN spct.sanPham sp " +
+            "WHERE (LOWER(sp.ten) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(sp.ma) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(sp.mo_ta) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+            "AND spct.gia BETWEEN :minPrice AND :maxPrice")
+    List<SanPhamChiTiet> xuatExcelWithouttrangThai(String query, BigDecimal minPrice, BigDecimal maxPrice);
 }

@@ -1,7 +1,9 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.ChatLieuKhung;
 import com.example.datn.entity.thuoc_tinh.CongSuat;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.CongSuatRepo;
 import com.example.datn.service.thuoc_tinh_service.CongSuatService;
 import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
@@ -26,6 +28,8 @@ public class CongSuatController {
     @Autowired
     CongSuatService congSuatService;
 
+    @Autowired
+    NhanVienRepository nhanVienRepository;
     @ModelAttribute("listCongSuat")
     public List<CongSuat> listCongSuat() {
         return congSuatRepo.findAll();
@@ -41,6 +45,8 @@ public class CongSuatController {
         model.addAttribute("listCS", searchPage);
         model.addAttribute("ten_cong_suat", ten_cong_suat);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/cong_suat";
     }
 

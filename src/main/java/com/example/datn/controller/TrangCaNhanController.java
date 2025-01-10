@@ -45,6 +45,9 @@ public class TrangCaNhanController {
 
         model.addAttribute("nhanVien", nhanVien);
         return "/admin/thong-tin-ca-nhan/thong-tin-nhan-vien";
+//        NhanVien nv = nhanVienRepository.profileNhanVien();
+//        model.addAttribute("nhanVienInfo", nv);
+//        return "redirect:/thong-ke/index";
     }
     @GetMapping("/from-sua-nhan-vien/{id}")
     public String formSuaNhanVien(@PathVariable("id") Integer id, Model model) {

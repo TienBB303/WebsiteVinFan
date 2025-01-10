@@ -1,6 +1,8 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.NutBam;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.NutBamRepo;
 import com.example.datn.repository.ThuocTinhRepo.NutBamRepo;
 import com.example.datn.repository.ThuocTinhRepo.NutBamRepo;
@@ -27,7 +29,8 @@ public class NutBamController {
 
     @Autowired
     NutBamService ttService;
-
+    @Autowired
+    NhanVienRepository nhanVienRepository;
     @ModelAttribute("listNutBam")
     public List<NutBam> listNutBam() {
         return ttRepo.findAll();
@@ -43,6 +46,8 @@ public class NutBamController {
         model.addAttribute("listTT", searchPage);
         model.addAttribute("ten_nut_bam", ten_nut_bam);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/nut_bam";
     }
 
