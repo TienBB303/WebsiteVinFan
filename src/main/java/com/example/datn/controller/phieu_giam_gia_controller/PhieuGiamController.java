@@ -182,7 +182,8 @@ public class PhieuGiamController {
             model.addAttribute("sanPhamChiTietList", sanPhamChiTietList);
             model.addAttribute("appliedProductMap", appliedProductMap);
             model.addAttribute("errorMessage", e.getMessage());
-
+            NhanVien nv = nhanVienRepository.profileNhanVien();
+            model.addAttribute("nhanVienInfo", nv);
             return "admin/phieu_giam/create";
         }
     }

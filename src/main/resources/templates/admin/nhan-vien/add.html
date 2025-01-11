@@ -72,29 +72,29 @@
                             <div class="col-md-6">
                                 <!--Tên-->
                                 <div class="mb-3">
-                                    <label class="form-label">Tên</label>
+                                    <label class="form-label">Tên<span style="color: red">*</span></label>
                                     <input type="text" class="form-control" name="ten_nhan_vien">
                                 </div>
                                 <!--CCCD-->
                                 <div class="mb-3">
-                                    <label class="form-label">Căn cước công dân</label>
-                                    <input type="number" class="form-control" name="can_cuoc_cong_dan" min="0">
+                                    <label class="form-label">Căn cước công dân<span style="color: red">*</span></label>
+                                    <input type="number" class="form-control" name="can_cuoc_cong_dan" min="0" oninput="validateInputLength(this, 12)">
                                 </div>
                                 <!--Sô DT -->
                                 <div class="mb-3">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control" name="so_dien_thoai">
+                                    <label class="form-label">Số điện thoại<span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="so_dien_thoai" oninput="validateInputLength(this, 10)">
                                 </div>
                                 <!--Tỉnh-->
                                 <div class="mb-3">
-                                    <label class="form-label">Tỉnh/Thành phố</label>
+                                    <label class="form-label">Tỉnh/Thành phố<span style="color: red">*</span></label>
                                     <select class="form-control" id="city" name="tinh_thanh_tho">
                                         <option value="" selected>Chọn tỉnh thành</option>
                                     </select>
                                 </div>
                                 <!--Quận/Huyện-->
                                 <div class="mb-3">
-                                    <label class="form-label">Quận/Huyện</label>
+                                    <label class="form-label">Quận/Huyện<span style="color: red">*</span></label>
                                     <select class="form-control" id="district" name="quan_huyen">
                                         <option value="" selected>Chọn quận huyện</option>
                                     </select>
@@ -103,12 +103,12 @@
                             <div class="col-md-6">
                                 <!--Email-->
                                 <div class="mb-3">
-                                    <label class="form-label">Email</label>
+                                    <label class="form-label">Email<span style="color: red">*</span></label>
                                     <input type="email" class="form-control" name="email">
                                 </div>
                                 <!--Mật khẩu-->
                                 <div class="mb-3">
-                                    <label class="form-label">Mật khẩu</label>
+                                    <label class="form-label">Mật khẩu<span style="color: red">*</span></label>
                                     <input type="password" class="form-control" name="mat_khau">
                                 </div>
                                 <!--Chức vụ-->
@@ -140,14 +140,14 @@
                                     <div class="col-md-6">
                                         <!--Ngày sinh-->
                                         <div class="mb-3">
-                                            <label class="form-label">Ngày sinh</label>
+                                            <label class="form-label">Ngày sinh<span style="color: red">*</span></label>
                                             <input type="text" class="form-control flatpickr" name="ngay_sinh" placeholder="Chọn ngày sinh" required>
                                         </div>
                                     </div>
                                 </div>
                                 <!--Phường/Xã-->
                                 <div class="mb-3">
-                                    <label class="form-label">Phường/Xã</label>
+                                    <label class="form-label">Phường/Xã<span style="color: red">*</span></label>
                                     <select class="form-control" id="ward" name="xa_phuong">
                                         <option value="" selected>Chọn phường xã</option>
                                     </select>
@@ -157,7 +157,7 @@
                         <div class="row">
                             <!--Số nhà/ngõ đường-->
                             <div class="col-md-12">
-                                <label class="form-label">Số nhà/ngõ đường</label>
+                                <label class="form-label">Số nhà/ngõ đường<span style="color: red">*</span></label>
                                 <input type="text" class="form-control" name="so_nha_ngo_duong">
                             </div>
                         </div>
@@ -231,6 +231,20 @@
     <script>
         document.getElementById('addNhanVienForm').addEventListener('submit', async function (e) {
             e.preventDefault();
+            const ngay_sinh = document.querySelector('input[name="ngay_sinh"]').value;
+
+            if (!ngay_sinh) {
+                Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: "Ngày sinh không được để trống!",
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return; // Dừng thực hiện nếu ngày sinh bị trống
+            }
             const formData = new FormData(this);
 
             try {
@@ -291,6 +305,14 @@
                     previewContainer.appendChild(img);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+    </script>
+    <!--    max ký tự-->
+    <script>
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
             }
         }
     </script>
