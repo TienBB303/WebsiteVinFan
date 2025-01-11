@@ -22,7 +22,6 @@ public class BanHangTaiQuayServiceImpl implements BanHangTaiQuayService {
     private final TrangThaiHoaDonService trangThaiHoaDonService;
     private final HoaDonRepo hoaDonRepo;
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
-    private final SPCTRepo spctRepo;
     private final KhachHangRepo khachHangRepo;
     private final NhanVienRepository nhanVienRepository;
     Long myHoaDon = null;

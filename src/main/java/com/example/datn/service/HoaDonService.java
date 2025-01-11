@@ -74,7 +74,6 @@ public interface HoaDonService {
 
     void truSoLuongSanPham(Long idHD);
 
-
     List<HoaDon> getHoaDonByIdKH(Integer idKH);
 
     String generateOrderCode();
@@ -83,4 +82,5 @@ public interface HoaDonService {
 
     Page<HoaDon> getHoaDonByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
+//    void xoaHoaDon(HoaDon hoaDon);
 }

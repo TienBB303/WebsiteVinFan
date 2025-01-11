@@ -58,7 +58,7 @@
             <!-- Order Tracking Section -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h2><strong>Theo dõi đơn hàng</strong></h2>
+                    <h2>Theo dõi đơn hàng</h2>
                 </div>
                 <div class="row-ls overflow-x-auto">
                     <div th:each="history : ${listHistory}" class="col-12 col-sm-6 col-md-3 mb-3">
@@ -188,7 +188,7 @@
             <!-- Payment History Section -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2><strong><span>Lịch sử thanh toán</span></strong></h2>
+                    <h2>Lịch sử thanh toán</h2>
                 </div>
                 <div class="card-body">
                     <table class="table table-striped dataTable-table"
@@ -232,7 +232,7 @@
             <!-- Order Information Section -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2><strong>Thông tin đơn hàng:</strong> <span th:text="${hoaDon.ma}"></span></h2>
+                    <h2>Thông tin đơn hàng: <span th:text="${hoaDon.ma}"></span></h2>
                 </div>
                 <div class="container text-center">
                     <div class="row">
@@ -350,7 +350,7 @@
 
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2><strong>Thông tin sản phẩm</strong></h2>
+                    <h2>Thông tin sản phẩm</h2>
                 </div>
 
                 <table class="table table-striped dataTable-table mt-3">
@@ -485,7 +485,7 @@
                                                     <td th:text="${item.congSuat.ten}"></td>
                                                     <td class="giaVND" th:text="${item.gia}"></td>
                                                     <td th:text="${item.so_luong}"></td>
-                                                    <form method="post" th:action="@{/ban-hang-tai-quay/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
+                                                    <form method="post" th:action="@{/hoa-don/addSPCT}" th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
                                                         <td class="text-center align-middle">
                                                             <!-- CSRF token -->
                                                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -526,22 +526,17 @@
             </div>
             <!-- Thông tin phiếu giảm giá-->
             <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>Thông tin sản phẩm giảm giá</h2>
+                </div>
                 <div class="container-custom">
-                    <div class="row mb-2">
-                        <div class="col-md-12">
-                            <strong>Thông tin giảm giá của sản phẩm:</strong>
-                        </div>
-                    </div>
                     <table class="table table-striped">
                         <thead>
                         <tr>
                             <th>STT</th>
                             <th>Tên phiếu giảm giá</th>
                             <th>Sản phẩm</th>
-                            <th>Mã phiếu giảm giá</th>
-                            <th>Giá sản phẩm</th>
                             <th>Giá trị giảm</th>
-                            <th>Giá sau giảm</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -549,10 +544,7 @@
                             <td th:text="${iterStat.index + 1}"></td>
                             <td th:text="${pgg.ten}"></td>
                             <td th:text="${pgg.spct.sanPham.ten}"></td>
-                            <td th:text="${pgg.ma}"></td>
-                            <td class="giaVND" th:text="${pgg.spct.gia}"></td>
                             <td class="giaVND" th:text="${pgg.giaTriGiam}"></td>
-                            <td class="giaVND" th:text="${pgg.giaSauGiam}"></td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(listPGG)}">
                             <td colspan="4" class="text-center">Không có phiếu giảm giá nào được áp dụng.</td>

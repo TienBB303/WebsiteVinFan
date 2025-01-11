@@ -418,6 +418,8 @@ public class CartController {
         }
 
         model.addAttribute("hoaDon", hoaDon);
+        model.addAttribute("diachi", hoaDon.getDiaChi());
+
         return "admin/website/orderSuccess"; // Trang thành công mặc định
     }
 

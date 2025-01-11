@@ -20,13 +20,31 @@
                         <h3>Thêm Nhân Viên</h3>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
-                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/nhan-vien/index">Nhân viên</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/nhan-vien/view-add">Thêm nhân viên</a></li>
-                            </ol>
-                        </nav>
+                        <div class="card" style="position: absolute; top: 10px; right: 10px; width: 100px;">
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none; color: inherit; text-decoration: none;">
+                                    <img th:src="@{${nhanVienInfo.hinhAnh}}" alt="Avatar" class="rounded-circle" width="60" height="60">
+                                </button>
+                                <ul class="dropdown-menu" style="background-color: #f8f9fa; border-color: #ccc;">
+                                    <li>
+                                        <div class="dropdown-item" style="color: #333;">
+                                            <strong>Thông tin nhân viên</strong><br>
+                                            Tên: <span th:text="${nhanVienInfo.ten}"></span><br>
+                                            Email: <span th:text="${nhanVienInfo.email}"></span><br>
+                                            Chức vụ: <span th:text="${nhanVienInfo.chucVu.viTri}"></span>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li style="text-align: center">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -38,27 +56,10 @@
                 </div>
                 <div class="card-body">
                     <form id="addNhanVienForm" th:action="@{/admin/nhan-vien/add}" method="post" enctype="multipart/form-data">
-
-<!--                        <div class="row" style="align-items: center">-->
-<!--                            <div class="col-4">-->
-<!--                                <div class="card" style="width: 100%; margin-top: 10px;">-->
-<!--                                    <div id="imagePreview" class="card-img-top"-->
-<!--                                         style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">-->
-<!--                                        <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 150px; height: 150px; object-fit: contain;">-->
-<!--                                        <span th:if="${nhanVien.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>-->
-<!--                                    </div>-->
-<!--                                    <div class="card-body">-->
-<!--                                        <label for="fileInput" class="btn btn-outline-warning w-100">Chọn ảnh</label>-->
-<!--                                        <input type="file" name="hinhAnh" id="fileInput" onchange="previewImage(event, 'imagePreview')" style="display: none;">-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
                         <div class="d-flex justify-content-center align-items-center">
-                            <div class="card" style="width: 300px; height: 300px; margin-top: 20px;">
-                                <div id="imagePreview" class="card-img-top"
-                                     style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
-                                    <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 200px; height: 200px; object-fit: contain;">
+                            <div class="card border-0 shadow" style="background-color: #ffebcc;margin-top: 20px;">
+                                <div id="imagePreview" class="card-img-top" style="width: 300px;height: 300px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
+                                    <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 300px; height: 300px; object-fit: contain;">
                                     <span th:if="${nhanVien.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>
                                 </div>
                                 <div class="card-body text-center">
@@ -160,7 +161,7 @@
                                 <input type="text" class="form-control" name="so_nha_ngo_duong">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" style="padding-top: 15px">
                             <div class="col-md-12 text-center">
                                 <button type="submit" class="btn btn-outline-success" style="width: 70px; padding-left: 10px" ><i class="bi bi-check"></i></button>
                             </div>

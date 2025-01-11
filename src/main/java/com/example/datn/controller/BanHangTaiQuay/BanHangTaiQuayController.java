@@ -10,6 +10,7 @@ import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -173,6 +177,7 @@ public class BanHangTaiQuayController {
         // Lưu hóa đơn vào cơ sở dữ liệu
         hoaDonService.save(hoaDon);
 
+
         // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setHoaDon(hoaDon);
@@ -300,4 +305,53 @@ public class BanHangTaiQuayController {
         diaChiRepository.deleteById(id);
         return "redirect:/admin/khach-hang/from-sua/" + khachHangId;
     }
+
+//    TienBB
+//    @GetMapping("/xoa-hoa-don/{id}")
+//    public String xoaHoaDonTaiQuay(@PathVariable("id") Long idHoaDon) {
+//        HoaDon hd = hoaDonRepo.timKiemHoaDonByID(idHoaDon);
+//        if (hd == null) {
+//            System.out.println("Không tồn tại hóa đơn");
+//            return "redirect:/ban-hang-tai-quay/index";
+//        }
+//        try {
+//            hd.setKhachHang(null);
+//            hd.setNhanVien(null);
+//            hd.setPhieuGiamGia(null);
+//            hoaDonRepo.save(hd);
+//
+//            hoaDonRepo.delete(hd); // Xóa hóa đơn
+//        } catch (Exception e) {
+//            System.out.println("Lỗi khi xóa: " + e.getMessage());
+//        }
+//        return "redirect:/ban-hang-tai-quay/index";
+//    }
+
+
+    @GetMapping("/xoa-hoa-don/{id}")
+    public String xoaHoaDonTaiQuay(@PathVariable("id") Long idHoaDon) {
+        HoaDon hoaDon = hoaDonService.findById(idHoaDon)
+                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idHoaDon));
+        try {
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
+            lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+            // Lưu lịch sử hóa đơn
+            lichSuHoaDonRepo.save(lichSuHoaDon);
+
+            hoaDon.setNhanVien(nhanVien);
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
+            hoaDonRepo.save(hoaDon);
+        } catch (Exception e) {
+            System.out.println("Lỗi khi xóa: " + e.getMessage());
+        }
+        return "redirect:/ban-hang-tai-quay/index";
+    }
+
+
 }
