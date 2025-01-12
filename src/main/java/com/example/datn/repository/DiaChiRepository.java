@@ -14,6 +14,7 @@ public interface DiaChiRepository extends JpaRepository<DiaChi, Integer> {
     @Query("SELECT d FROM DiaChi d WHERE d.khachHang.id = :khachHangId")
     List<DiaChi> findByKhachHangId(@Param("khachHangId") Integer khachHangId);
 
-    @Query("SELECT d FROM DiaChi d WHERE d.khachHang.id = :khachHangId and  d.khachHang.trangThai = true")
+    @Query("SELECT d FROM DiaChi d WHERE d.khachHang.id = :khachHangId AND d.trangThai = true")
     DiaChi DiaChimacDinhvsfindByKhachHangId(@Param("khachHangId") Integer khachHangId);
+
 }
