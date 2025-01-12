@@ -180,8 +180,9 @@ public class BanHangTaiQuayController {
 
         // Lưu tổng tiền sau giảm
         try {
-            String formatGiaTien = tongTienSauGiamStr.replaceAll("[^\\d.]", "");
+            String formatGiaTien = tongTienSauGiamStr.replaceAll("[^\\d]", "");
             BigDecimal tongTienSauGiam = new BigDecimal(formatGiaTien);
+            hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
             hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
         } catch (NumberFormatException e) {
             throw new RuntimeException("Tổng tiền sau giảm không hợp lệ: " + tongTienSauGiamStr, e);
