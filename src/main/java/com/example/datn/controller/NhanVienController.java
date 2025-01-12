@@ -5,6 +5,7 @@ import com.example.datn.entity.NhanVien;
 import com.example.datn.repository.ChucVuRepository;
 import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.service.CloudinaryService;
+import com.example.datn.service.EmailService;
 import com.example.datn.service.nhan_vien_service.NhanVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,27 +40,24 @@ public class NhanVienController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    EmailService emailService;
+
     @GetMapping("/index")
     public String loadTable(
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            @RequestParam(name = "trang_thai", defaultValue = "") String trangThai,
+            @RequestParam(name = "trang_thai", defaultValue = "") Boolean trang_thai,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             Model model){
         if (page < 0) {
             page = 0;
         }
-        Boolean trang_thai = null;
-        if ("1".equals(trangThai.trim())) {
-            trang_thai = true;
-        } else if ("0".equals(trangThai.trim())) {
-            trang_thai = false;
-        }
         PageRequest pageable = PageRequest.of(page, size);
         Page<NhanVien> nhanVienPage = nhanVienService.search(keyword.trim(), trang_thai, pageable);
         model.addAttribute("listsNhanVien", nhanVienPage);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("trang_thai", trang_thai);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         NhanVien nv = nhanVienRepository.profileNhanVien();
         model.addAttribute("nhanVienInfo", nv);
         return "admin/nhan-vien/index";
@@ -287,7 +285,7 @@ public class NhanVienController {
                             return ResponseEntity.badRequest().body("Tên nhân viên không được để trống.");
                         }
                         nhanVien.setTen(ten_nhan_vien);
-                        if (ngay_sinh == null) {
+                        if (ngay_sinh == null ) {
                             return ResponseEntity.badRequest().body("Ngày sinh không được để trống.");
                         }
                         LocalDate now = LocalDate.now();
@@ -301,6 +299,9 @@ public class NhanVienController {
                         nhanVien.setNgaySinh(ngay_sinh);
                         nhanVien.setGioiTinh(gioi_tinh);
 
+                        if ((so_dien_thoai == null || so_dien_thoai.trim().isEmpty())){
+                            return ResponseEntity.badRequest().body("Số điện thoại không được để trống.");
+                        }
                         if (so_dien_thoai != null && !so_dien_thoai.trim().isEmpty() && !so_dien_thoai.trim().equals(nhanVien.getSoDienThoai())) {
                             if (!so_dien_thoai.matches("^0[0-9]{8,9}$")) {
                                 return ResponseEntity.badRequest().body("Số điện thoại phải bắt đầu bằng số 0 và có 9 hoặc 10 chữ số.");
@@ -354,6 +355,9 @@ public class NhanVienController {
                         nhanVien.setNgaySua(new Date());
                         nhanVien.setNguoiSua(nvHienTai.getTen());
                         nhanVienRepository.save(nhanVien);
+                        emailService.sendEmailChuyenDoiQuyen(nhanVien.getEmail(),
+                                "Bạn vừa được đổi chức vụ thành : " + chucVu.getViTri(),
+                                "Mọi thắc mắc xin liên hệ cho chúng tôi : famumintouan@gmail.com -   Số điện thoại 0365142537");
                         return ResponseEntity.ok().body(Map.of("message", "Cập nhật và đổi quyền thành công. đang chuyển đến trang đăng nhập!"));
                     }
             }
@@ -388,6 +392,9 @@ public class NhanVienController {
             nhanVien.setNgaySinh(ngay_sinh);
             nhanVien.setGioiTinh(gioi_tinh);
 
+            if ((so_dien_thoai == null || so_dien_thoai.trim().isEmpty())){
+                return ResponseEntity.badRequest().body("Số điện thoại không được để trống.");
+            }
             if (so_dien_thoai != null && !so_dien_thoai.trim().isEmpty() && !so_dien_thoai.trim().equals(nhanVien.getSoDienThoai())) {
                 if (!so_dien_thoai.matches("^0[0-9]{8,9}$")) {
                     return ResponseEntity.badRequest().body("Số điện thoại phải bắt đầu bằng số 0 và có 9 hoặc 10 chữ số.");
@@ -438,6 +445,9 @@ public class NhanVienController {
             nhanVien.setNgaySua(new Date());
             nhanVien.setNguoiSua(nvHienTai.getTen());
             nhanVienRepository.save(nhanVien);
+            emailService.sendEmailChuyenDoiQuyen(nhanVien.getEmail(),
+                    "Bạn vừa được đổi chức vụ thành : " + chucVu.getViTri(),
+                    "Mọi thắc mắc xin liên hệ cho chúng tôi : famumintouan@gmail.com -   Số điện thoại 0365142537");
             return ResponseEntity.ok().body(Map.of("message", "Cập nhật thành công!"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Đã xảy ra lỗi trong quá trình cập nhật nhân viên.");

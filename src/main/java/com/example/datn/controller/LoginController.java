@@ -99,8 +99,7 @@ public class LoginController {
                 khachHang.getEmail(),
                 "Tạo tài khoản thành công",
                 khachHang.getEmail(),
-                khachHang.getMatKhau(),
-                "http://yourwebsite.com"
+                khachHang.getMatKhau()
         );
 
         model.addAttribute("success", "Tạo tài khoản thành công, vui lòng kiểm tra email.");

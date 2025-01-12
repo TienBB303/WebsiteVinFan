@@ -72,101 +72,97 @@
 
         <div class="page-content">
             <section class="row">
-                <section class="col-12">
-                    <div class="card p-4">
-                        <form th:action="@{/admin/phieu-giam/add}" method="post" enctype="multipart/form-data"
-                              onsubmit="return validateForm()" name="addForm">
-                            <!-- Mã phiếu giảm giá -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ma" placeholder="Mã tự động"
-                                           readonly>
-                                </div>
-                            </div>
-
-                            <!-- Tên phiếu giảm giá -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="ten"
-                                           placeholder="Nhập tên phiếu giảm giá">
-                                    <span id="tenError" class="text-danger"></span>
-                                </div>
-                            </div>
-
-                            <!-- Ngày bắt đầu -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
-                                <div class="col-sm-8">
-                                    <input type="date" class="form-control" name="ngayBD" id="ngayBD" readonly>
-                                    <span id="ngayBDError" class="text-danger"></span>
-                                </div>
-                            </div>
-
-                            <!-- Ngày kết thúc -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
-                                <div class="col-sm-8">
-                                    <input type="date" class="form-control" name="ngayKT">
-                                    <span id="ngayKTError" class="text-danger"></span>
-                                </div>
-                            </div>
-
-                            <!-- Số lượng -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Giá trị giảm</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="giaTriGiam"
-                                           placeholder="Nhập số tiền giảm">
-                                    <span id="giaTriGiamError" class="text-danger"></span>
-                                </div>
-                            </div>
-
-                            <!-- Loại phiếu giảm giá -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" name="loaiPhieuGiam" id="discountTypeSelect">
-                                        <option value="false">Giảm giá sản phẩm</option>
-                                        <option value="true">Giảm giá hóa đơn</option>
-                                    </select>
-                                </div>
-                            </div>
-<!--                            &lt;!&ndash; Trạng thái &ndash;&gt;-->
-<!--                            <div class="form-group row">-->
-<!--                                <label class="col-sm-4 col-form-label">Trạng thái</label>-->
-<!--                                <div class="col-sm-8">-->
-<!--                                    <select class="form-control" name="trangThai" required>-->
-<!--                                        <option value="true">Áp dụng</option>-->
-<!--                                        <option value="false">Ngừng áp dụng</option>-->
-<!--                                    </select>-->
-<!--                                </div>-->
-<!--                            </div>-->
-                            <!-- Chọn sản phẩm -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Chọn sản phẩm chi tiết</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" name="sanPhamChiTietId" id="productCodeSelect">
-                                        <option value="" th:selected="${sanPhamChiTietId == null}">Chọn sản phẩm chi tiết</option>
-                                        <option th:each="spct : ${sanPhamChiTietList}"
-                                                th:value="${spct.id}"
-                                                th:selected="${spct.id == sanPhamChiTietId}"
-                                                th:text="${spct.sanPham.ten + ' - ' + spct.mauSac.ten + ' - Công suất: ' + spct.congSuat + 'W - Giá: ' +
-            (spct.gia != null ? spct.gia : 'Chưa có giá') +
-            (appliedProductMap != null && appliedProductMap.containsKey(spct.id) ? ' - ĐÃ ÁP DỤNG' : '')}">
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Button thêm mới -->
-                            <div style="display: flex; justify-content: center;">
-                                <button type="submit" class="btn btn-primary" style="width: 500px;">Thêm mới</button>
-                            </div>
-                        </form>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="btn btn-outline-primary" href="/admin/phieu-giam/index" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>
                     </div>
-                </section>
+                    <div class="card-body">
+                        <div class="card p-4">
+                            <form th:action="@{/admin/phieu-giam/add}" method="post" enctype="multipart/form-data"
+                                  onsubmit="return validateForm()" name="addForm">
+                                <!-- Mã phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="ma" placeholder="Mã tự động"
+                                               readonly>
+                                    </div>
+                                </div>
+
+                                <!-- Tên phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="ten"
+                                               placeholder="Nhập tên phiếu giảm giá">
+                                        <span id="tenError" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Ngày bắt đầu -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control flatpickr" name="ngayBD" placeholder="Chọn ngày bắt đầu" required>
+                                    </div>
+                                </div>
+
+                                <!-- Ngày kết thúc -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control flatpickr" name="ngayKT" placeholder="Chọn ngày kết thúc" required>
+                                    </div>
+                                </div>
+
+                                <!-- Số lượng -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Giá trị giảm</label>
+                                    <div class="col-sm-8">
+                                        <input id="giaTriGiam" type="number" class="form-control" name="giaTriGiam" placeholder="Nhập số tiền giảm" oninput="validateInputLength(this, 7)">
+                                    </div>
+                                </div>
+
+                                <!-- Loại phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="loaiPhieuGiam" id="discountTypeSelect">
+                                            <option value="false">Giảm giá sản phẩm</option>
+                                            <option value="true">Giảm giá hóa đơn</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Chọn sản phẩm -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Chọn sản phẩm chi tiết</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="sanPhamChiTietId" id="productCodeSelect">
+                                            <option value="" th:selected="${sanPhamChiTietId == null}">Chọn sản phẩm chi tiết</option>
+                                            <option th:each="spct : ${sanPhamChiTietList}"
+                                                    th:value="${spct.id}"
+                                                    th:selected="${spct.id == sanPhamChiTietId}"
+                                                    th:text="${spct.sanPham.ten + ' - ' + spct.mauSac.ten + ' - Công suất: ' + spct.congSuat + 'W - Giá: ' +
+                                                (spct.gia != null ? spct.gia : 'Chưa có giá') +
+                                                (appliedProductMap != null && appliedProductMap.containsKey(spct.id) ? ' - ĐÃ ÁP DỤNG' : '')}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Button thêm mới -->
+                                <!--                            <div style="display: flex; justify-content: center;">-->
+                                <!--                                <button type="submit" class="btn btn-primary" style="width: 500px;">Thêm mới</button>-->
+                                <!--                            </div>-->
+                                <div class="row" style="padding-top: 15px">
+                                    <div class="col-md-12 text-center">
+                                        <button type="submit" class="btn btn-outline-success" style="width: 70px; padding-left: 10px" ><i class="bi bi-check"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
 
@@ -240,7 +236,11 @@
             }
 
             if (!giaTriGiam || giaTriGiam <= 10000) {
-                showToast("Giá trị giảm phải lớn hơn 10000 VND.");
+                showToast("Giá trị giảm phải lớn hơn 100.00 VND.");
+                return false;
+            }
+            if (!giaTriGiam || giaTriGiam >1000000) {
+                showToast("Giá trị giảm không được lớn hơn 1.000.000 VND.");
                 return false;
             }
 
@@ -371,6 +371,25 @@
                 }
             });
         });
+    </script>
+
+<!--    TienBB-->
+    <!--    form date mới-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr(".flatpickr", {
+                dateFormat: "Y-m-d", // Định dạng ngày sinh theo yyyy-mm-dd
+                // maxDate: "today", // Ngày chọn không được quá ngày hôm nay
+            });
+        });
+    </script>
+    <!--format giá tối đa theo tiền triệu-->
+    <script>
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
     </script>
 </div>
 </body>
