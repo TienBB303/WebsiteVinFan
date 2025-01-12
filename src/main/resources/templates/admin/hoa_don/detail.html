@@ -524,8 +524,8 @@
                     </div>
                 </div>
             </div>
-            <!-- Thông tin phiếu giảm giá-->
-            <div class="card mb-4">
+            <!-- Thông tin sản phẩm giảm giá -->
+            <div class="card mb-4" th:if="${listPGG != null and !#lists.isEmpty(listPGG)}">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h2>Thông tin sản phẩm giảm giá</h2>
                 </div>
@@ -546,14 +546,35 @@
                             <td th:text="${pgg.spct.sanPham.ten}"></td>
                             <td class="giaVND" th:text="${pgg.giaTriGiam}"></td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(listPGG)}">
-                            <td colspan="4" class="text-center">Không có phiếu giảm giá nào được áp dụng.</td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Hiển thị thông tin phiếu giảm giá của hóa đơn -->
+            <div class="card mb-4" th:if="${pggHoaDon != null}">
+                <div class="card-header">
+                    <h2>Thông tin giảm giá hóa đơn</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Mã phiếu giảm giá</th>
+                            <th>Tên phiếu giảm giá</th>
+                            <th>Giá trị giảm</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${pggHoaDon.ma}"></td>
+                            <td th:text="${pggHoaDon.ten}"></td>
+                            <td class="giaVND" th:text="${pggHoaDon.giaTriGiam}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
         <!-- Footer-->
         <div>
