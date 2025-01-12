@@ -123,15 +123,30 @@ public class BanHangTaiQuayController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
+            // Lấy thông tin sản phẩm từ cơ sở dữ liệu
+            SanPhamChiTiet sanPhamChiTiet = spctRepo.findById(request.getIdSP())
+                    .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại với ID: " + request.getIdSP()));
+
+            // Kiểm tra số lượng tồn kho
+            if (sanPhamChiTiet.getSo_luong() < request.getSoLuong()) {
+                redirectAttributes.addFlashAttribute("errorAdd", "Số lượng tồn kho không đủ cho sản phẩm: " + sanPhamChiTiet.getSanPham().getTen());
+                return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
+            }
+
+            // Thêm sản phẩm vào hóa đơn nếu số lượng hợp lệ
+            hoaDonService.addSpToHoaDonChiTietRequestList(request);
             hoaDonService.timSanPhamChiTietTheoHoaDon(request.getIdHD());
             hoaDonService.updateTongTienHoaDon(request.getIdHD());
-        } catch (IllegalArgumentException e) {
+
+            // Thêm thông báo thành công
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm thành công!");
+        } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorAdd", e.getMessage());
             System.out.println(e.getMessage());
         }
         return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
     }
+
 
     @PostMapping("/thanh-toan")
     public String thanhToan(
@@ -357,6 +372,5 @@ public class BanHangTaiQuayController {
         }
         return "redirect:/ban-hang-tai-quay/index";
     }
-
 
 }

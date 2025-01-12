@@ -503,6 +503,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addButtons = document.querySelectorAll('form button[type="submit"]');
+
+            addButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    const form = this.closest("form");
+                    const quantityInput = form.querySelector('input[name="soLuong"]');
+                    const stockCell = form.closest("tr").querySelector("td:nth-child(6)");
+
+                    if (quantityInput && stockCell) {
+                        const enteredQuantity = parseInt(quantityInput.value) || 0;
+                        const stockQuantity = parseInt(stockCell.textContent) || 0;
+
+                        if (enteredQuantity > stockQuantity) {
+                            event.preventDefault(); // Ngăn gửi form
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Số lượng vượt quá tồn kho!',
+                                text: `Số lượng tồn kho: ${stockQuantity}. Bạn đã nhập: ${enteredQuantity}.`,
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
     <!--giam giá-->
     <script th:inline="javascript">
         console.log("Danh sách phiếu giảm giá:", [[${phieuGiamList}]]);
@@ -603,7 +631,6 @@
             document.getElementById('tienThuaTraKhach').value = `${changeToGive.toLocaleString('vi-VN')} VND`;
         }
 
-    </script>
 
     <script>
         function showSuccess() {
@@ -614,7 +641,7 @@
                 confirmButtonText: 'OK'
             }).then(() => {
                 // Gửi form đặt hàng
-                document.getElementById('thanhToanForm').submit();
+                $('#thanhToanForm').submit();
             });
         }
     </script>
