@@ -497,9 +497,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addButtons = document.querySelectorAll('form button[type="submit"]');
+
+            addButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    const form = this.closest("form");
+                    const quantityInput = form.querySelector('input[name="soLuong"]');
+                    const stockCell = form.closest("tr").querySelector("td:nth-child(6)");
+
+                    if (quantityInput && stockCell) {
+                        const enteredQuantity = parseInt(quantityInput.value) || 0;
+                        const stockQuantity = parseInt(stockCell.textContent) || 0;
+
+                        if (enteredQuantity > stockQuantity) {
+                            event.preventDefault(); // Ngăn gửi form
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Số lượng vượt quá tồn kho!',
+                                text: `Số lượng tồn kho: ${stockQuantity}. Bạn đã nhập: ${enteredQuantity}.`,
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
     <!--giam giá-->
     <script>
         $(document).ready(function () {
+            // Khởi tạo select2 cho dropdown phiếu giảm giá
             $('#discountCode').select2({
                 placeholder: "-- Chọn mã giảm giá --",
                 allowClear: true,
@@ -518,15 +547,18 @@
             $('#discountCode').on('change', loadDiscountValue);
 
             // Thiết lập giá trị mặc định của Tổng tiền sau giảm khi load trang
-            const tongTienText = document.querySelector(".total-price").textContent.trim();
+            const tongTienText = $(".total-price").text().trim();
             const tongTien = parseInt(tongTienText.replace(/\D/g, '')) || 0;
-            document.getElementById("tongTienSauGiam").value = tongTien;
-            document.getElementById("totalAfterDiscount").value = tongTien.toLocaleString('vi-VN') + " VND";
+
+            // Gán giá trị mặc định vào các ô liên quan
+            $("#tongTienSauGiam").val(tongTien);
+            $("#totalAfterDiscount").val(tongTien.toLocaleString('vi-VN') + " VND");
         });
 
         function validateDiscount(tongTien, discountAmount) {
             let maxDiscount = 0;
 
+            // Điều kiện xác định mức giảm tối đa dựa vào tổng tiền
             if (tongTien >= 100000 && tongTien < 200000) {
                 maxDiscount = 50000;
             } else if (tongTien >= 200000 && tongTien < 500000) {
@@ -539,6 +571,7 @@
                 maxDiscount = 1000000;
             }
 
+            // Kiểm tra nếu giảm giá vượt quá mức cho phép
             if (discountAmount > maxDiscount) {
                 Swal.fire({
                     icon: 'warning',
@@ -546,6 +579,7 @@
                     text: `Giảm giá tối đa cho tổng tiền ${tongTien.toLocaleString('vi-VN')} là ${maxDiscount.toLocaleString('vi-VN')} VND.`,
                     confirmButtonText: 'OK'
                 });
+
                 // Xóa lựa chọn mã giảm giá
                 $('#discountCode').val(null).trigger('change');
 
@@ -556,26 +590,29 @@
         }
 
         function loadDiscountValue() {
+            // Lấy giá trị giảm giá từ phiếu giảm giá đã chọn
             const selectedOption = $('#discountCode option:selected');
             const discountValue = selectedOption.data('value') || 0; // Giá trị giảm giá
             let discountAmount = parseInt(discountValue) || 0;
 
-            const tongTienText = document.querySelector(".total-price").textContent.trim();
+            // Lấy tổng tiền từ giao diện
+            const tongTienText = $(".total-price").text().trim();
             const tongTien = parseInt(tongTienText.replace(/\D/g, '')) || 0;
 
             // Xác thực giá trị giảm giá
             discountAmount = validateDiscount(tongTien, discountAmount);
 
-            // Tính toán tổng tiền sau giảm
+            // Tính toán tổng tiền sau khi giảm giá
             const totalAfterDiscount = discountAmount !== null && discountAmount > 0
                 ? tongTien - discountAmount
                 : tongTien;
 
             // Cập nhật giá trị giảm giá và tổng tiền sau giảm vào giao diện
-            document.getElementById("discountValue").value = discountAmount.toLocaleString('vi-VN') + " VND";
-            document.getElementById("totalAfterDiscount").value = totalAfterDiscount.toLocaleString('vi-VN') + " VND";
-            document.getElementById("tongTienSauGiam").value = totalAfterDiscount; // Giá trị thực tế
+            $("#discountValue").val(discountAmount.toLocaleString('vi-VN') + " VND");
+            $("#totalAfterDiscount").val(totalAfterDiscount.toLocaleString('vi-VN') + " VND");
+            $("#tongTienSauGiam").val(totalAfterDiscount); // Giá trị thực tế
         }
+
         function showSuccess() {
             Swal.fire({
                 title: 'Thành công!',
@@ -584,7 +621,7 @@
                 confirmButtonText: 'OK'
             }).then(() => {
                 // Gửi form đặt hàng
-                document.getElementById('thanhToanForm').submit();
+                $('#thanhToanForm').submit();
             });
         }
 
