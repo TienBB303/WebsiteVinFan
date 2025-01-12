@@ -77,30 +77,30 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <form th:action="@{/admin/khach-hang/update}" th:object="${khachHang}" method="post">
+                            <form id="updateKhachHangForm" th:action="@{/admin/khach-hang/update}" th:object="${khachHang}" method="post">
                                 <input type="hidden" th:field="*{id}"/>
                                 <div class="form-section">
+<!--                                    <div class="mb-3">-->
+<!--                                        <label for="ma" class="form-label">Mã khách hàng</label>-->
+                                        <input type="hidden" class="form-control" name="ma" id="ma" th:field="*{ma}"/>
+<!--                                    </div>-->
+
                                     <div class="mb-3">
-                                        <label for="ma" class="form-label">Mã</label>
-                                        <input type="text" class="form-control" name="ma" id="ma" th:field="*{ma}"/>
+                                        <label for="ten" class="form-label">Tên<span style="color: red">*</span></label>
+                                        <input type="text" class="form-control" name="ten" id="ten" th:field="*{ten}" oninput="validateInputLength(this, 55)"/>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="ten" class="form-label">Tên</label>
-                                        <input type="text" class="form-control" name="ten" id="ten" th:field="*{ten}"/>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="soDienThoai" class="form-label">Số Điện Thoại</label>
-                                        <input id="soDienThoai" type="text" class="form-control" name="soDienThoai" th:field="*{soDienThoai}"/>
+                                        <label for="soDienThoai" class="form-label">Số Điện Thoại<span style="color: red">*</span></label>
+                                        <input id="soDienThoai" type="text" class="form-control" name="soDienThoai" th:field="*{soDienThoai}" oninput="validateInputLength(this, 10)"/>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="text" class="form-control" name="email" id="email" th:field="*{email}"/>
+                                        <input type="text" class="form-control" name="email" id="email" th:field="*{email}" readonly />
                                     </div>
 
-                                    <input type="hidden" class="form-control" name="matKhau" id="matKhau" th:field="*{matKhau}"/>
+<!--                                    <input type="hidden" class="form-control" name="matKhau" id="matKhau" th:field="*{matKhau}"/>-->
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -117,10 +117,7 @@
 
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-<!--                                            <label class="form-label">Ngày sinh</label>-->
-<!--                                            <input type="date" class="form-control" name="ngaySinh" id="ngaySinh" th:field="*{ngaySinh}"/>-->
-
-                                            <label class="form-label">Ngày sinh</label>
+                                            <label class="form-label">Ngày sinh<span style="color: red">*</span></label>
                                             <input type="text" class="form-control flatpickr" name="ngaySinh" id="ngaySinh" placeholder="Chọn ngày sinh" th:field="*{ngaySinh}" required>
 
                                         </div>
@@ -366,103 +363,49 @@
         }
         // window.onload = diachiMacDinh
     </script>
+
+    <!--update-->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form');
+        $('#updateKhachHangForm').submit(function (event) {
+            event.preventDefault();
 
-            form.addEventListener('submit', function (event) {
-                let isValid = true;
+            const ngaySinhInput = $('input[name="ngaySinh"]').val();
+            if (!ngaySinhInput) {
+                Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: "Ngày sinh không được để trống!",
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
 
-                // Lấy các trường cần validate
-                const ten = form.ten.value.trim();
-                const email = form.email.value.trim();
-                const soDienThoai = form.soDienThoai.value.trim();
-                const ngaySinh = form.ngaySinh.value.trim();
-                // const tinhThanhPho = form.tinhThanhPho.value.trim();
-                // const quanHuyen = form.quanHuyen.value.trim();
-                // const xaPhuong = form.xaPhuong.value.trim();
-                // const soNhaNgoDuong = form.soNhaNgoDuong.value.trim();
-
-                // Xóa các thông báo lỗi trước đó
-                const errorMessages = document.querySelectorAll('.error-message');
-                errorMessages.forEach(msg => msg.remove());
-
-                // Hàm hiển thị lỗi
-                function showError(input, message) {
-                    const error = document.createElement('div');
-                    error.className = 'error-message text-danger';
-                    error.innerText = message;
-                    input.parentElement.appendChild(error);
-                    isValid = false;
-                }
-
-                // Validate tên
-                if (!ten) {
-                    showError(form.ten, 'Tên không được để trống.');
-                }
-
-                // Validate email
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!email) {
-                    showError(form.email, 'Email không được để trống.');
-                } else if (!emailRegex.test(email)) {
-                    showError(form.email, 'Email không hợp lệ.');
-                }
-
-                // Validate mật khẩu
-                // if (!matKhau) {
-                //     showError(form.matKhau, 'Mật khẩu không được để trống.');
-                // } else if (matKhau.length < 6) {
-                //     showError(form.matKhau, 'Mật khẩu phải có ít nhất 6 ký tự.');
-                // }
-
-                // Validate số điện thoại
-                const phoneRegex = /^[0-9]{10,11}$/;
-                if (!soDienThoai) {
-                    showError(form.soDienThoai, 'Số điện thoại không được để trống.');
-                } else if (!phoneRegex.test(soDienThoai)) {
-                    showError(form.soDienThoai, 'Số điện thoại không hợp lệ.');
-                }
-
-                // Validate ngày sinh
-                if (!ngaySinh) {
-                    showError(form.ngaySinh, 'Ngày sinh không được để trống.');
-                } else {
-                    const birthDate = new Date(ngaySinh);
-                    const today = new Date();
-                    const age = today.getFullYear() - birthDate.getFullYear();
-                    const month = today.getMonth() - birthDate.getMonth();
-
-                    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
-                        age--; // Nếu sinh nhật chưa tới trong năm nay, giảm tuổi đi 1
-                    }
-
-                    if (age < 18) {
-                        showError(form.ngaySinh, 'Bạn phải lớn hơn 18 tuổi.');
-                    }
-                }
-
-                // Validate địa chỉ
-                // if (!tinhThanhPho) {
-                //     showError(form.tinhThanhPho, 'Vui lòng chọn Tỉnh/Thành phố.');
-                // }
-                // if (!quanHuyen) {
-                //     showError(form.quanHuyen, 'Vui lòng chọn Quận/Huyện.');
-                // }
-                // if (!xaPhuong) {
-                //     showError(form.xaPhuong, 'Vui lòng chọn Phường/Xã.');
-                // }
-                // if (!soNhaNgoDuong) {
-                //     showError(form.soNhaNgoDuong, 'Vui lòng chọn số nhà ngõ đường.');
-                // }
-
-                // Nếu form không hợp lệ, ngăn không cho gửi
-                if (!isValid) {
-                    event.preventDefault();
+            // Gửi request AJAX để cập nhật khách hàng
+            $.ajax({
+                url: '/admin/khach-hang/update',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'success',
+                        title: response || "Sửa khách hàng thành công!",
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.href = '/admin/khach-hang/index';
+                    });
+                },
+                error: function (xhr) {
                     Swal.fire({
                         toast: true,
                         icon: 'error',
-                        title: "Vui lòng kiểm tra lại thông tin khách hàng nhập vào.",
+                        title: xhr.responseText || "Đã xảy ra lỗi trong quá trình sửa.",
                         position: 'top-end',
                         showConfirmButton: false,
                         timer: 3000,
@@ -471,62 +414,17 @@
                 }
             });
         });
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form[action="/admin/sua-khach-hang/them-dia-chi"]');
-
-            form.addEventListener('submit', function (event) {
-                let isValid = true;
-
-                // Lấy các trường cần validate
-                const tinhThanhPho = form.tinhThanhPho.value.trim();
-                const quanHuyen = form.quanHuyen.value.trim();
-                const xaPhuong = form.xaPhuong.value.trim();
-                const soNhaNgoDuong = form.soNhaNgoDuong.value.trim();
-
-                // Xóa các thông báo lỗi trước đó
-                const errorMessages = document.querySelectorAll('.error-message');
-                errorMessages.forEach(msg => msg.remove());
-
-                // Hàm hiển thị lỗi
-                function showError(input, message) {
-                    const error = document.createElement('div');
-                    error.className = 'error-message text-danger';
-                    error.innerText = message;
-                    input.parentElement.appendChild(error);
-                    isValid = false;
-                }
-
-                // Validate địa chỉ
-                if (!tinhThanhPho) {
-                    showError(form.tinhThanhPho, 'Vui lòng chọn Tỉnh/Thành phố.');
-                }
-                if (!quanHuyen) {
-                    showError(form.quanHuyen, 'Vui lòng chọn Quận/Huyện.');
-                }
-                if (!xaPhuong) {
-                    showError(form.xaPhuong, 'Vui lòng chọn Phường/Xã.');
-                }
-                if (!soNhaNgoDuong) {
-                    showError(form.soNhaNgoDuong, 'Vui lòng nhập số nhà/ngõ đường.');
-                }
-
-                if (!isValid) {
-                    event.preventDefault();
-                    Swal.fire({
-                        toast: true,
-                        icon: 'error',
-                        title: "Vui lòng kiểm tra lại thông tin địa chỉ nhập vào.",
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
-                }
-            });
-        });
-
     </script>
-    <!--    form date mới-->
+
+    <!--max ký tự-->
+    <script>
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
+    </script>
+    <!--form date mới-->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             flatpickr(".flatpickr", {

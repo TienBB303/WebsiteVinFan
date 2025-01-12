@@ -54,101 +54,105 @@
 
         <div class="page-content">
             <section class="row">
-                <section class="col-12">
-                    <div class="card p-4">
-                        <div id="alert" class="alert alert-danger" style="display:none;"></div>
-                        <!-- Form cập nhật phiếu giảm giá -->
-                        <form th:action="@{/admin/phieu-giam/update}" th:object="${pgg}" method="post"
-                              onsubmit="return validateForm()" name="updateForm">
-                            <input type="hidden" th:field="*{id}"/>
-
-                            <!-- Mã phiếu giảm giá -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" th:field="*{ma}" readonly>
-                                </div>
-                            </div>
-
-                            <!-- Tên phiếu giảm giá -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="ten" class="form-control" th:field="*{ten}"
-                                           th:readonly="${!isEditable}">
-                                </div>
-                            </div>
-
-                            <!-- Ngày bắt đầu -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
-                                <div class="col-sm-8">
-                                    <input type="date" class="form-control" th:field="*{ngayBD}"
-                                           th:disabled="${!isEditable}" readonly id="ngayBD">
-                                </div>
-                            </div>
-
-                            <!-- Ngày kết thúc -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
-                                <div class="col-sm-8">
-                                    <input type="date" name="ngayKT" class="form-control" th:field="*{ngayKT}"
-                                           th:readonly="${!isEditable}">
-                                </div>
-                            </div>
-
-                            <!-- Giá trị giảm -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Giá trị giảm</label>
-                                <div class="col-sm-8">
-                                    <input type="number" name="giaTriGiam" class="form-control" th:field="*{giaTriGiam}"
-                                           th:readonly="${!isEditable}">
-                                </div>
-                            </div>
-
-                            <!-- Loại phiếu giảm giá -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control"
-                                           th:value="${pgg.loaiPhieuGiam ? 'Giảm giá hóa đơn' : 'Giảm giá sản phẩm'}"
-                                           readonly>
-                                </div>
-                            </div>
-
-
-                            <!-- Trạng thái -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Trạng thái</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" th:field="*{trangThai}" th:disabled="${!isEditable}">
-                                        <option value="true">Áp dụng</option>
-                                        <option value="false">Ngừng áp dụng</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Sản phẩm áp dụng -->
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Sản phẩm áp dụng</label>
-                                <div class="col-sm-8">
-                                    <!-- Hiển thị thông tin sản phẩm -->
-                                    <input type="text" class="form-control"
-                                           th:value="${sanPhamThongTin}" readonly>
-                                    <!-- Trường ẩn lưu giá sản phẩm -->
-                                    <input type="hidden" id="productPrice" th:value="${giaSanPham}">
-                                </div>
-                            </div>
-
-                            <!-- Nút cập nhật -->
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary" th:disabled="${!isEditable}">
-                                    Cập nhật
-                                </button>
-                            </div>
-                        </form>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="btn btn-outline-primary" href="/admin/phieu-giam/index" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>
                     </div>
-                </section>
+                    <div class="card-body">
+                        <div class="card p-4">
+                            <div id="alert" class="alert alert-danger" style="display:none;"></div>
+                            <!-- Form cập nhật phiếu giảm giá -->
+                            <form th:action="@{/admin/phieu-giam/update}" th:object="${pgg}" method="post"
+                                  onsubmit="return validateForm()" name="updateForm">
+                                <input type="hidden" th:field="*{id}"/>
+
+                                <!-- Mã phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Mã phiếu giảm giá</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" th:field="*{ma}" readonly>
+                                    </div>
+                                </div>
+
+                                <!-- Tên phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Tên phiếu giảm giá</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="ten" class="form-control" th:field="*{ten}"
+                                               th:readonly="${!isEditable}">
+                                    </div>
+                                </div>
+
+                                <!-- Ngày bắt đầu -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
+                                    <div class="col-sm-8">
+<!--                                        <input type="date" class="form-control" th:field="*{ngayBD}" th:disabled="${!isEditable}" readonly id="ngayBD">-->
+                                        <input type="text" class="form-control flatpickr" th:field="*{ngayBD}" th:disabled="${!isEditable}"  id="ngayBD" readonly>
+                                    </div>
+                                </div>
+
+                                <!-- Ngày kết thúc -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Ngày kết thúc</label>
+                                    <div class="col-sm-8">
+<!--                                        <input type="date" name="ngayKT" class="form-control" th:field="*{ngayKT}" th:readonly="${!isEditable}">-->
+                                        <input type="text" class="form-control flatpickr" name="ngayKT" th:field="*{ngayKT}" th:readonly="${!isEditable}" placeholder="Chọn ngày kết thúc" required>
+                                    </div>
+                                </div>
+
+                                <!-- Giá trị giảm -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Giá trị giảm</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" name="giaTriGiam" class="form-control" th:field="*{giaTriGiam}" th:readonly="${!isEditable}" oninput="validateInputLength(this, 7)">
+                                    </div>
+                                </div>
+
+                                <!-- Loại phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Loại phiếu giảm giá</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"
+                                               th:value="${pgg.loaiPhieuGiam ? 'Giảm giá hóa đơn' : 'Giảm giá sản phẩm'}"
+                                               readonly>
+                                    </div>
+                                </div>
+
+
+                                <!-- Trạng thái -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Trạng thái</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" th:field="*{trangThai}" th:disabled="${!isEditable}">
+                                            <option value="true">Áp dụng</option>
+                                            <option value="false">Ngừng áp dụng</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Sản phẩm áp dụng -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Sản phẩm áp dụng</label>
+                                    <div class="col-sm-8">
+                                        <!-- Hiển thị thông tin sản phẩm -->
+                                        <input type="text" class="form-control"
+                                               th:value="${sanPhamThongTin}" readonly>
+                                        <!-- Trường ẩn lưu giá sản phẩm -->
+                                        <input type="hidden" id="productPrice" th:value="${giaSanPham}">
+                                    </div>
+                                </div>
+
+                                <!-- Nút cập nhật -->
+                                <div class="row" style="padding-top: 15px">
+                                    <div class="col-md-12 text-center">
+                                        <button type="submit" class="btn btn-outline-success" style="width: 70px; padding-left: 10px"  th:disabled="${!isEditable}"><i class="bi bi-check"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
 
@@ -182,6 +186,8 @@
         const ten = form["ten"].value.trim();
         const ngayKT = form["ngayKT"].value.trim();
         const giaTriGiam = parseInt(form["giaTriGiam"].value, 10);
+        const selectedStartDate = new Date(ngayBD);
+        const selectedEndDate = new Date(ngayKT);
 
         // Lấy giá sản phẩm từ trường ẩn
         const productPrice = parseInt(document.getElementById("productPrice").value, 10) || 0;
@@ -195,10 +201,18 @@
         if (!ngayKT) {
             showToast("Không để trống ngày kết thúc.");
             return false;
+        }else if (selectedEndDate <= selectedStartDate) {
+            showToast("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
+            return false;
         }
 
         if (!giaTriGiam || giaTriGiam <= 10000) {
             showToast("Giá trị giảm phải lớn hơn 10,000 VND.");
+            return false;
+        }
+
+        if (!giaTriGiam || giaTriGiam >1000000) {
+            showToast("Giá trị giảm không được lớn hơn 1.000.000 VND.");
             return false;
         }
 
@@ -255,16 +269,34 @@
     }
 
 </script>
-<script th:inline="javascript">
-    var isEditable = /*[[${isEditable}]]*/ true;
-    if (!isEditable) {
-        Swal.fire({
-            title: 'Phiếu giảm giá ngừng áp dụng',
-            text: 'Bạn chỉ có thể xem thông tin. Không thể chỉnh sửa phiếu giảm giá này.',
-            icon: 'warning',
-            confirmButtonText: 'Đồng ý'
+    <script th:inline="javascript">
+        var isEditable = /*[[${isEditable}]]*/ true;
+        if (!isEditable) {
+            Swal.fire({
+                title: 'Phiếu giảm giá ngừng áp dụng',
+                text: 'Bạn chỉ có thể xem thông tin. Không thể chỉnh sửa phiếu giảm giá này.',
+                icon: 'warning',
+                confirmButtonText: 'Đồng ý'
+            });
+        }
+    </script>
+    <!--    TienBB-->
+    <!--    form date mới-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr(".flatpickr", {
+                dateFormat: "Y-m-d", // Định dạng ngày sinh theo yyyy-mm-dd
+                // maxDate: "today", // Ngày chọn không được quá ngày hôm nay
+            });
         });
-    }
-</script>
+    </script>
+    <!--format giá tối đa theo tiền triệu-->
+    <script>
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
+    </script>
 </body>
 </html>

@@ -82,29 +82,23 @@
                                             <div class="mb-3">
                                                 <div class="form-group">
                                                     <label class="form-label" for="ma">Mã nhân viên</label>
-                                                    <input type="text" id="ma" class="form-control" th:field="*{ma}" placeholder="Nhập mã nhân viên">
+                                                    <input type="text" id="ma" class="form-control" th:field="*{ma}" placeholder="Nhập mã nhân viên" readonly>
                                                 </div>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="ten">Tên nhân viên</label>
+                                                    <label class="form-label" for="ten">Tên nhân viên<span style="color: red">*</span></label>
                                                     <input type="text" id="ten" class="form-control" name="ten_nhan_vien" th:field="*{ten}" placeholder="Nhập tên nhân viên">
                                                 </div>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="soDienThoai">Số điện thoại</label>
-                                                    <input type="text" id="soDienThoai" class="form-control" name="so_dien_thoai" th:field="*{soDienThoai}" placeholder="Nhập số điện thoại">
+                                                    <label class="form-label" for="soDienThoai">Số điện thoại<span style="color: red">*</span></label>
+                                                    <input type="text" id="soDienThoai" class="form-control" name="so_dien_thoai" th:field="*{soDienThoai}" placeholder="Nhập số điện thoại" oninput="validateInputLength(this, 10)">
                                                 </div>
                                             </div>
-<!--                                            <div class="mb-3">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label class="form-label" for="ngaysinh">Ngày sinh</label>-->
-<!--                                                    <input id="ngaysinh" type="date" class="form-control" th:field="*{ngaySinh}">-->
-<!--                                                </div>-->
-<!--                                            </div>-->
                                             <div class="mb-3">
-                                                <label class="form-label">Ngày sinh</label>
+                                                <label class="form-label">Ngày sinh<span style="color: red">*</span></label>
                                                 <input type="text" class="form-control flatpickr" th:field="*{ngaySinh}" placeholder="Chọn ngày sinh" required>
                                             </div>
                                             <div class="mb-3">
@@ -142,7 +136,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="city">Tỉnh/Thành phố</label>
+                                                    <label class="form-label" for="city">Tỉnh/Thành phố<span style="color: red">*</span></label>
                                                     <select class="form-control" id="city" aria-label=".form-select-sm" name="tinh_thanh_pho">
                                                         <option value="" selected>Chọn tỉnh thành</option>
                                                     </select>
@@ -150,7 +144,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="district">Quận/Huyện</label>
+                                                    <label class="form-label" for="district">Quận/Huyện<span style="color: red">*</span></label>
                                                     <select class="form-control" id="district" aria-label=".form-select-sm" name="quan_huyen">
                                                         <option value="" selected>Chọn quận huyện</option>
                                                     </select>
@@ -158,7 +152,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="ward">Phường/Xã</label>
+                                                    <label class="form-label" for="ward">Phường/Xã<span style="color: red">*</span></label>
                                                     <select class="form-control" id="ward" aria-label=".form-select-sm" name="xa_phuong">
                                                         <option value="" selected>Chọn phường xã</option>
                                                     </select>
@@ -171,7 +165,7 @@
                                     </div>
                                     <div class="row col-12">
                                         <div class="form-group">
-                                            <label class="form-label" for="snnd">Số nhà/ngõ đường</label>
+                                            <label class="form-label" for="snnd">Số nhà/ngõ đường<span style="color: red">*</span></label>
                                             <input class="form-control" id="snnd" type="text" name="so_nha_ngo_duong" th:field="*{soNhaNgoDuong}">
                                         </div>
                                     </div>
@@ -269,7 +263,20 @@
         const form = document.getElementById('updateNhanvien'); // Id của form nhân viên
         form.addEventListener('submit', function (event) {
             event.preventDefault(); // Ngừng hành động submit mặc định của form
+            const ngaySinh = document.querySelector('input[name="ngaySinh"]').value;
 
+            if (!ngaySinh) {
+                Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: "Ngày sinh không được để trống!",
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
             // Sử dụng Fetch để gửi yêu cầu
             fetch("/admin/nhan-vien/update", { // URL endpoint cập nhật nhân viên
                 method: 'POST',
@@ -351,6 +358,14 @@
                     previewContainer.appendChild(img);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+    </script>
+    <!--    max ký tự-->
+    <script>
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
             }
         }
     </script>
