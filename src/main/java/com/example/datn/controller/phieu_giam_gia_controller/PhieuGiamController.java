@@ -1,8 +1,10 @@
 package com.example.datn.controller.phieu_giam_gia_controller;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.phieu_giam.PhieuGiam;
 import com.example.datn.entity.SanPham;
 import com.example.datn.entity.SanPhamChiTiet;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.repository.SPCTRepo;
 import com.example.datn.service.phieu_giam_service.PhieuGiamService;
@@ -33,15 +35,14 @@ public class PhieuGiamController {
     private final PhieuGiamRepo pggRepo;
     private final PhieuGiamService pggSV;
     private final SPCTRepo spctRepo;
-
+    private final NhanVienRepository nhanVienRepository;
     @GetMapping("/index")
     public String phieuGiam(
             Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            @RequestParam(name = "status", required = false) Boolean status
-    ) {
+            @RequestParam(name = "status", required = false) Boolean status) {
         // Đảm bảo page >= 0
         if (page < 0) {
             page = 0;
@@ -97,7 +98,8 @@ public class PhieuGiamController {
         model.addAttribute("totalPages", phieuGiamGiaPage.getTotalPages());
         model.addAttribute("keyword", keyword);
         model.addAttribute("status", status);
-
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/phieu_giam/index";
     }
 
@@ -117,7 +119,8 @@ public class PhieuGiamController {
 
         model.addAttribute("sanPhamChiTietList", sanPhamChiTietList);
         model.addAttribute("appliedProductMap", appliedProductMap);
-
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "/admin/phieu_giam/create";
     }
 
@@ -179,7 +182,8 @@ public class PhieuGiamController {
             model.addAttribute("sanPhamChiTietList", sanPhamChiTietList);
             model.addAttribute("appliedProductMap", appliedProductMap);
             model.addAttribute("errorMessage", e.getMessage());
-
+            NhanVien nv = nhanVienRepository.profileNhanVien();
+            model.addAttribute("nhanVienInfo", nv);
             return "admin/phieu_giam/create";
         }
     }
@@ -211,7 +215,8 @@ public class PhieuGiamController {
         model.addAttribute("sanPhamThongTin", sanPhamThongTin); // Thông tin sản phẩm
         model.addAttribute("giaSanPham", giaSanPham);           // Giá sản phẩm
         model.addAttribute("isEditable", phieuGiam.isTrangThai());
-
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/phieu_giam/update";
     }
 

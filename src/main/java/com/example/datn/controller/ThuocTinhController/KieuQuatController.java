@@ -1,8 +1,10 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.SanPhamChiTiet;
 import com.example.datn.entity.thuoc_tinh.CongSuat;
 import com.example.datn.entity.thuoc_tinh.KieuQuat;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.KieuQuatRepo;
 import com.example.datn.service.thuoc_tinh_service.KieuQuatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,8 @@ public class KieuQuatController {
 
     @Autowired
     KieuQuatService kieuQuatService;
-
+    @Autowired
+    NhanVienRepository nhanVienRepository;
     @ModelAttribute("listKieuQuat")
     public List<KieuQuat> listKieuQuat() {
         return kieuQuatRepo.findAll();
@@ -44,6 +47,8 @@ public class KieuQuatController {
         model.addAttribute("listKQ", searchPage);
         model.addAttribute("ten_kieu", ten_kieu);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/kieu_quat";
     }
 

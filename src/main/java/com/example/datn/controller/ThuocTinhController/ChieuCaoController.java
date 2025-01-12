@@ -1,6 +1,8 @@
 package com.example.datn.controller.ThuocTinhController;
 
+import com.example.datn.entity.NhanVien;
 import com.example.datn.entity.thuoc_tinh.ChieuCao;
+import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.repository.ThuocTinhRepo.ChieuCaoRepo;
 import com.example.datn.service.thuoc_tinh_service.ChieuCaoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class ChieuCaoController {
         return chieuCaoRepo.findAll();
     }
 
+    @Autowired
+    NhanVienRepository nhanVienRepository;
+
     @GetMapping("/view")
     public String timKiem(@RequestParam(value = "ten_chieu_cao", defaultValue = "") String ten_chieu_cao,
                           @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
@@ -39,6 +44,8 @@ public class ChieuCaoController {
         model.addAttribute("listCC", searchPage);
         model.addAttribute("ten_chieu_cao", ten_chieu_cao);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "admin/thuoc_tinh/chieu_cao";
     }
 

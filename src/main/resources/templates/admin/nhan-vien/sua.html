@@ -22,13 +22,31 @@
                         <h3>Sửa nhân viên</h3>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
-                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="/admin/san-pham">sửa
-                                    nhân viên</a></li>
-                            </ol>
-                        </nav>
+                        <div class="card" style="position: absolute; top: 10px; right: 10px; width: 100px;">
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none; color: inherit; text-decoration: none;">
+                                    <img th:src="@{${nhanVienInfo.hinhAnh}}" alt="Avatar" class="rounded-circle" width="60" height="60">
+                                </button>
+                                <ul class="dropdown-menu" style="background-color: #f8f9fa; border-color: #ccc;">
+                                    <li>
+                                        <div class="dropdown-item" style="color: #333;">
+                                            <strong>Thông tin nhân viên</strong><br>
+                                            Tên: <span th:text="${nhanVienInfo.ten}"></span><br>
+                                            Email: <span th:text="${nhanVienInfo.email}"></span><br>
+                                            Chức vụ: <span th:text="${nhanVienInfo.chucVu.viTri}"></span>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li style="text-align: center">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -46,10 +64,9 @@
                                 <form id="updateNhanvien" th:action="@{/admin/nhan-vien/update}" th:object="${nhanVien}" method="post">
                                     <input type="hidden" th:field="*{id}"/>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <div class="card" style="width: 300px; height: 300px; margin-top: 20px;">
-                                            <div id="imagePreview" class="card-img-top"
-                                                 style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
-                                                <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 200px; height: 200px; object-fit: contain;">
+                                        <div class="card border-0 shadow" style="background-color: #ffebcc;margin-top: 20px;">
+                                            <div id="imagePreview" class="card-img-top" style="width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
+                                                <img th:if="${nhanVien.hinhAnh != null}" th:src="${nhanVien.hinhAnh}" alt="Ảnh nhân viên" style="width: 300px; height: 300px; object-fit: contain;">
                                                 <span th:if="${nhanVien.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>
                                             </div>
                                             <div class="card-body text-center">
@@ -65,29 +82,23 @@
                                             <div class="mb-3">
                                                 <div class="form-group">
                                                     <label class="form-label" for="ma">Mã nhân viên</label>
-                                                    <input type="text" id="ma" class="form-control" th:field="*{ma}" placeholder="Nhập mã nhân viên">
+                                                    <input type="text" id="ma" class="form-control" th:field="*{ma}" placeholder="Nhập mã nhân viên" readonly>
                                                 </div>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="ten">Tên nhân viên</label>
+                                                    <label class="form-label" for="ten">Tên nhân viên<span style="color: red">*</span></label>
                                                     <input type="text" id="ten" class="form-control" name="ten_nhan_vien" th:field="*{ten}" placeholder="Nhập tên nhân viên">
                                                 </div>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="soDienThoai">Số điện thoại</label>
-                                                    <input type="text" id="soDienThoai" class="form-control" name="so_dien_thoai" th:field="*{soDienThoai}" placeholder="Nhập số điện thoại">
+                                                    <label class="form-label" for="soDienThoai">Số điện thoại<span style="color: red">*</span></label>
+                                                    <input type="text" id="soDienThoai" class="form-control" name="so_dien_thoai" th:field="*{soDienThoai}" placeholder="Nhập số điện thoại" oninput="validateInputLength(this, 10)">
                                                 </div>
                                             </div>
-<!--                                            <div class="mb-3">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label class="form-label" for="ngaysinh">Ngày sinh</label>-->
-<!--                                                    <input id="ngaysinh" type="date" class="form-control" th:field="*{ngaySinh}">-->
-<!--                                                </div>-->
-<!--                                            </div>-->
                                             <div class="mb-3">
-                                                <label class="form-label">Ngày sinh</label>
+                                                <label class="form-label">Ngày sinh<span style="color: red">*</span></label>
                                                 <input type="text" class="form-control flatpickr" th:field="*{ngaySinh}" placeholder="Chọn ngày sinh" required>
                                             </div>
                                             <div class="mb-3">
@@ -125,7 +136,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="city">Tỉnh/Thành phố</label>
+                                                    <label class="form-label" for="city">Tỉnh/Thành phố<span style="color: red">*</span></label>
                                                     <select class="form-control" id="city" aria-label=".form-select-sm" name="tinh_thanh_pho">
                                                         <option value="" selected>Chọn tỉnh thành</option>
                                                     </select>
@@ -133,7 +144,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="district">Quận/Huyện</label>
+                                                    <label class="form-label" for="district">Quận/Huyện<span style="color: red">*</span></label>
                                                     <select class="form-control" id="district" aria-label=".form-select-sm" name="quan_huyen">
                                                         <option value="" selected>Chọn quận huyện</option>
                                                     </select>
@@ -141,7 +152,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="ward">Phường/Xã</label>
+                                                    <label class="form-label" for="ward">Phường/Xã<span style="color: red">*</span></label>
                                                     <select class="form-control" id="ward" aria-label=".form-select-sm" name="xa_phuong">
                                                         <option value="" selected>Chọn phường xã</option>
                                                     </select>
@@ -154,7 +165,7 @@
                                     </div>
                                     <div class="row col-12">
                                         <div class="form-group">
-                                            <label class="form-label" for="snnd">Số nhà/ngõ đường</label>
+                                            <label class="form-label" for="snnd">Số nhà/ngõ đường<span style="color: red">*</span></label>
                                             <input class="form-control" id="snnd" type="text" name="so_nha_ngo_duong" th:field="*{soNhaNgoDuong}">
                                         </div>
                                     </div>
@@ -162,7 +173,6 @@
                                     <div class="row">
                                         <div class="col-md-12 text-center">
                                             <button type="submit" class="btn btn-outline-success" style="width: 70px; padding-left: 10px" ><i class="bi bi-check"></i></button>
-<!--                                            <a th:href="@{/admin/nhan-vien/index}" class="btn btn-outline-primary" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>-->
                                         </div>
                                     </div>
                                 </form>
@@ -253,7 +263,20 @@
         const form = document.getElementById('updateNhanvien'); // Id của form nhân viên
         form.addEventListener('submit', function (event) {
             event.preventDefault(); // Ngừng hành động submit mặc định của form
+            const ngaySinh = document.querySelector('input[name="ngaySinh"]').value;
 
+            if (!ngaySinh) {
+                Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: "Ngày sinh không được để trống!",
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
             // Sử dụng Fetch để gửi yêu cầu
             fetch("/admin/nhan-vien/update", { // URL endpoint cập nhật nhân viên
                 method: 'POST',
@@ -317,60 +340,6 @@
                 });
         });
     </script>
-
-    <!--    <script>-->
-<!--        const form = document.getElementById('updateNhanvien'); // Id của form nhân viên-->
-<!--        form.addEventListener('submit', function(event) {-->
-<!--            event.preventDefault(); // Ngừng hành động submit mặc định của form-->
-
-<!--            // Sử dụng Fetch để gửi yêu cầu-->
-<!--            fetch("/admin/nhan-vien/update", { // URL endpoint cập nhật nhân viên-->
-<!--                method: 'POST',-->
-<!--                body: new FormData(form),-->
-<!--            })-->
-<!--                .then(response => {-->
-<!--                    console.log("Raw response:", response);-->
-<!--                    return response; // Giữ lại response để xử lý tiếp-->
-<!--                })-->
-<!--                .then(response => {-->
-<!--                    if (!response.ok) {-->
-<!--                        return response.text().then(text => {-->
-<!--                            console.error("Error response body:", text);-->
-<!--                            throw new Error(text);-->
-<!--                        });-->
-<!--                    }-->
-<!--                    return response.headers.get("Content-Type")?.includes("application/json")-->
-<!--                        ? response.json()-->
-<!--                        : response.text();-->
-<!--                })-->
-<!--                .then(data => {-->
-<!--                    console.log("Parsed data:", data);-->
-<!--                    Swal.fire({-->
-<!--                        toast: true,-->
-<!--                        icon: 'success',-->
-<!--                        title: data.message || data || 'Cập nhật nhân viên thành công!',-->
-<!--                        position: 'top-end',-->
-<!--                        showConfirmButton: false,-->
-<!--                        timer: 1000,-->
-<!--                        timerProgressBar: true-->
-<!--                    }).then(() => {-->
-<!--                        window.location.href = '/admin/nhan-vien/index'; // Điều hướng về danh sách nhân viên-->
-<!--                    });-->
-<!--                })-->
-<!--                .catch(error => {-->
-<!--                    console.error("Error caught:", error);-->
-<!--                    Swal.fire({-->
-<!--                        toast: true,-->
-<!--                        icon: 'error',-->
-<!--                        title: error.message || 'Đã xảy ra lỗi trong quá trình cập nhật nhân viên!',-->
-<!--                        position: 'top-end',-->
-<!--                        showConfirmButton: false,-->
-<!--                        timer: 3000,-->
-<!--                        timerProgressBar: true-->
-<!--                    });-->
-<!--                });-->
-<!--        });-->
-<!--    </script>-->
     <!-- xem trc ảnh-->
     <script>
         function previewImage(event, previewElementId) {
@@ -389,6 +358,14 @@
                     previewContainer.appendChild(img);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+    </script>
+    <!--    max ký tự-->
+    <script>
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
             }
         }
     </script>

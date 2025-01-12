@@ -3,8 +3,6 @@ package com.example.datn.controller;
 import com.example.datn.dto.request.AddSPToHoaDonChiTietRequest;
 import com.example.datn.dto.request.TrangThaiHoaDonRequest;
 import com.example.datn.dto.response.LichSuThanhToanResponse;
-import com.example.datn.dto.response.ListSanPhamInHoaDonChiTietResponse;
-
 import com.example.datn.dto.response.ListSpNewInHoaDonResponse;
 import com.example.datn.dto.response.PggInHoaDonResponse;
 import com.example.datn.entity.*;
@@ -26,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,9 +36,7 @@ public class HoaDonController {
     private final LichSuHoaDonRepo lichSuHoaDonRepo;
     private final HoaDonChiTietRepo hoaDonChiTietRepo;
     private final NhanVienRepository nhanVienRepository;
-
-    @Autowired
-    HoaDonRepo hoaDonRespo;
+    private final HoaDonRepo hoaDonRespo;
 
     @GetMapping("index")
     public String index(@RequestParam(name = "page", defaultValue = "0") int page,
@@ -66,7 +60,8 @@ public class HoaDonController {
         model.addAttribute("endDate", denNgay != null ? denNgay : "");
         TrangThaiHoaDonRequest trangThaiHoaDon = trangThaiHoaDonService.getTrangThaiHoaDonRequest();
         model.addAttribute("trangThaiHoaDon", trangThaiHoaDon);
-
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
         return "/admin/hoa_don/index";
     }
 

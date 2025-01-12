@@ -30,6 +30,8 @@ public interface SanPhamService {
 
     Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai, Pageable pageable);
 
+    List<SanPhamChiTiet> xuatExcel(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai);
+
     BigDecimal getSanPhamGiaLonNhat();
 
     BigDecimal getSanPhamGiaNhoNhat();
