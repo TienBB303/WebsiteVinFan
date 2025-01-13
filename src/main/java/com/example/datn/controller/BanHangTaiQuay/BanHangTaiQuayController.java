@@ -205,7 +205,6 @@ public class BanHangTaiQuayController {
         lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
         lichSuHoaDon.setNgayTao(LocalDate.now());
         lichSuHoaDon.setNguoiTao(nhanVien.getTen());
-
         // Lưu lịch sử hóa đơn
         lichSuHoaDonRepo.save(lichSuHoaDon);
 
@@ -229,11 +228,17 @@ public class BanHangTaiQuayController {
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại với ID: " + idKh));
 
         DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(Math.toIntExact(idKh));
-        String diaChiHoaDon = diaChi.getTinhThanhPho() +
-                "," + diaChi.getQuanHuyen() + ","
-                + diaChi.getXaPhuong() + ","
-                + diaChi.getSoNhaNgoDuong();
-        System.out.println("dia chi nhan la:" + diaChiHoaDon);
+        String diaChiHoaDon = "";
+        if (diaChi != null) {
+            diaChiHoaDon = diaChi.getTinhThanhPho() +
+                    "," + diaChi.getQuanHuyen() + ","
+                    + diaChi.getXaPhuong() + ","
+                    + diaChi.getSoNhaNgoDuong();
+        } else {
+            System.out.println("Không tìm thấy địa chỉ mặc định. Sử dụng địa chỉ trống.");
+            diaChiHoaDon = "Địa chỉ không xác định"; // Giá trị mặc định (hoặc để trống "")
+        }
+        System.out.println("Địa chỉ nhận là: " + diaChiHoaDon);
 
         hoaDon.setDiaChi(diaChiHoaDon);
 
