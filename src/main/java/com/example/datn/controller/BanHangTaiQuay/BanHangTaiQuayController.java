@@ -136,7 +136,7 @@ public class BanHangTaiQuayController {
     @PostMapping("/thanh-toan")
     public String thanhToan(
             @RequestParam("idHD") Long idhd,
-            @RequestParam("tongTienSauGiam") BigDecimal tongTienSauGiam,
+            @RequestParam("tongTienSauGiam") String tongTienSauGiamStr,
             @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam, // Thêm ID phiếu giảm giá
             @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
             @RequestParam("tinhThanhPho") String tinhThanhPho,
@@ -145,8 +145,7 @@ public class BanHangTaiQuayController {
             @RequestParam("xaPhuong") String xaPhuong,
             @RequestParam("chiTietDiaChi") String chitiet,
             @RequestParam("ghichu") String ghiChu,
-            @RequestParam("tenKhangHang") String tenKhangHang
-    ) {
+            @RequestParam("tenKhangHang") String tenKhangHang) {
 
         HoaDon hoaDon = hoaDonService.findById(idhd)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
@@ -165,7 +164,13 @@ public class BanHangTaiQuayController {
         hoaDon.setNguoiTao(nhanVien.getTen());
 
         // Lưu tổng tiền sau giảm
-        hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+        try {
+            String formatGiaTien = tongTienSauGiamStr.replaceAll("[^\\d.]", "");
+            BigDecimal tongTienSauGiam = new BigDecimal(formatGiaTien);
+            hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Tổng tiền sau giảm không hợp lệ: " + tongTienSauGiamStr, e);
+        }
 
         // Lưu ID phiếu giảm giá nếu có
         if (idPhieuGiam != null) {
