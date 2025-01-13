@@ -123,20 +123,35 @@ public class BanHangTaiQuayController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
+            // Lấy thông tin sản phẩm từ cơ sở dữ liệu
+            SanPhamChiTiet sanPhamChiTiet = spctRepo.findById(request.getIdSP())
+                    .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại với ID: " + request.getIdSP()));
+
+            // Kiểm tra số lượng tồn kho
+            if (sanPhamChiTiet.getSo_luong() < request.getSoLuong()) {
+                redirectAttributes.addFlashAttribute("errorAdd", "Số lượng tồn kho không đủ cho sản phẩm: " + sanPhamChiTiet.getSanPham().getTen());
+                return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
+            }
+
+            // Thêm sản phẩm vào hóa đơn nếu số lượng hợp lệ
+            hoaDonService.addSpToHoaDonChiTietRequestList(request);
             hoaDonService.timSanPhamChiTietTheoHoaDon(request.getIdHD());
             hoaDonService.updateTongTienHoaDon(request.getIdHD());
-        } catch (IllegalArgumentException e) {
+
+            // Thêm thông báo thành công
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm thành công!");
+        } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorAdd", e.getMessage());
             System.out.println(e.getMessage());
         }
         return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
     }
 
+
     @PostMapping("/thanh-toan")
     public String thanhToan(
             @RequestParam("idHD") Long idhd,
-            @RequestParam("tongTienSauGiam") BigDecimal tongTienSauGiam,
+            @RequestParam("tongTienSauGiam") String tongTienSauGiamStr,
             @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam, // Thêm ID phiếu giảm giá
             @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
             @RequestParam("tinhThanhPho") String tinhThanhPho,
@@ -145,8 +160,7 @@ public class BanHangTaiQuayController {
             @RequestParam("xaPhuong") String xaPhuong,
             @RequestParam("chiTietDiaChi") String chitiet,
             @RequestParam("ghichu") String ghiChu,
-            @RequestParam("tenKhangHang") String tenKhangHang
-    ) {
+            @RequestParam("tenKhangHang") String tenKhangHang) {
 
         HoaDon hoaDon = hoaDonService.findById(idhd)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
@@ -165,7 +179,14 @@ public class BanHangTaiQuayController {
         hoaDon.setNguoiTao(nhanVien.getTen());
 
         // Lưu tổng tiền sau giảm
-        hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+        try {
+            String formatGiaTien = tongTienSauGiamStr.replaceAll("[^\\d]", "");
+            BigDecimal tongTienSauGiam = new BigDecimal(formatGiaTien);
+            hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+            hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Tổng tiền sau giảm không hợp lệ: " + tongTienSauGiamStr, e);
+        }
 
         // Lưu ID phiếu giảm giá nếu có
         if (idPhieuGiam != null) {
@@ -208,17 +229,11 @@ public class BanHangTaiQuayController {
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại với ID: " + idKh));
 
         DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(Math.toIntExact(idKh));
-        String diaChiHoaDon = "";
-        if (diaChi != null) {
-            diaChiHoaDon = diaChi.getTinhThanhPho() +
-                    "," + diaChi.getQuanHuyen() + ","
-                    + diaChi.getXaPhuong() + ","
-                    + diaChi.getSoNhaNgoDuong();
-        } else {
-            System.out.println("Không tìm thấy địa chỉ mặc định. Sử dụng địa chỉ trống.");
-            diaChiHoaDon = "Địa chỉ không xác định"; // Giá trị mặc định (hoặc để trống "")
-        }
-        System.out.println("Địa chỉ nhận là: " + diaChiHoaDon);
+        String diaChiHoaDon = diaChi.getTinhThanhPho() +
+                "," + diaChi.getQuanHuyen() + ","
+                + diaChi.getXaPhuong() + ","
+                + diaChi.getSoNhaNgoDuong();
+        System.out.println("dia chi nhan la:" + diaChiHoaDon);
 
         hoaDon.setDiaChi(diaChiHoaDon);
 
@@ -358,6 +373,5 @@ public class BanHangTaiQuayController {
         }
         return "redirect:/ban-hang-tai-quay/index";
     }
-
 
 }

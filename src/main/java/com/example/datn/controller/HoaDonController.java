@@ -110,6 +110,9 @@ public class HoaDonController {
         // Lấy thông tin phiếu giảm giá liên quan đến các sản phẩm
         List<PhieuGiam> listPGG = hoaDonService.getPhieuGiamByHoaDonId(id);
         model.addAttribute("listPGG", listPGG);
+        // Lấy thông tin phiếu giảm giá của hóa đơn
+        PhieuGiam phieuGiamGia = hoaDon.getPhieuGiamGia();
+        model.addAttribute("pggHoaDon", phieuGiamGia);
 
         // Trả về trang chi tiết hóa đơn
         return "/admin/hoa_don/detail";
