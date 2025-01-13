@@ -57,7 +57,8 @@ public interface HoaDonRepo extends JpaRepository<HoaDon, Long> {
             "OR LOWER(COALESCE(hd.ma, '')) LIKE LOWER(CONCAT('%', :query, '%')))" +
             "AND (:tuNgay IS NULL OR hd.ngayTao >= :tuNgay) " + // So sánh trực tiếp với LocalDate
             "AND (:denNgay IS NULL OR hd.ngayTao <= :denNgay) " + // So sánh trực tiếp với LocalDate
-            "AND (:loaiHoaDon IS NULL OR hd.loaiHoaDon = :loaiHoaDon)")
+            "AND (:loaiHoaDon IS NULL OR hd.loaiHoaDon = :loaiHoaDon)" +
+            "order by hd.ngayTao desc, hd.trangThai asc ")
     Page<HoaDon> searchHoaDonKhongtrangThai(String query, Boolean loaiHoaDon, LocalDate tuNgay, LocalDate denNgay, Pageable pageable);
 
     @Query("SELECT new com.example.datn.dto.response.PggInHoaDonResponse(" +
