@@ -140,8 +140,6 @@ public class ProductCatalog {
         model.addAttribute("khachHang", khachHang);
 
 
-
-
         model.addAttribute("sanPhamKhongGiamGia", sanPhamKhongGiamGia);
         model.addAttribute("sanPhamGiamGia", sanPhamGiamGia);
         model.addAttribute("query", query);
@@ -256,6 +254,11 @@ public class ProductCatalog {
     @GetMapping("/hoa-don-kh/{id}")
     public String detailOrder(@PathVariable long id, Model model) {
         //Lấy thông tin lịch sử hóa đơn theo id hóa đơn
+        // Lấy thông tin hóa đơn
+        Optional<HoaDon> hoaDonOptional = hoaDonService.findById(id);
+        HoaDon hoaDon = hoaDonOptional.orElse(new HoaDon());
+        model.addAttribute("hoaDon", hoaDon);
+
         List<LichSuHoaDon> lichSuHoaDonList = lichSuHoaDonRepo.findLichSuHoaDonByIdHoaDon(id);
         model.addAttribute("listHistory", lichSuHoaDonList);
 
@@ -267,6 +270,13 @@ public class ProductCatalog {
 
         return "admin/website/detailDH";
     }
+    @PostMapping("/huy")
+    public String huy(@ModelAttribute("id") long id) {
+        hoaDonService.huyHoaDon(id);
+        // Chuyển hướng người dùng đến trang chi tiết của HoaDon
+        return "redirect:/vin-fan/hoa-don-kh/" + id; // Chuyển hướng với tham số id
+    }
+
     @GetMapping("/spct/images/{id}")
     @ResponseBody
     public Map<String, Object> getImagesBySpctId(@PathVariable Long id) {
@@ -283,8 +293,9 @@ public class ProductCatalog {
         response.put("images", imageUrls);
         return response;
     }
+
     @PostMapping("/sua-khach-hang")
-    public String sua(@ModelAttribute("khachHang") KhachHang khachHang){
+    public String sua(@ModelAttribute("khachHang") KhachHang khachHang) {
         KhachHang khachHang1 = khachHangRepo.profileKhachHang();
         LocalDate currentDate = LocalDate.now();
         Date sqlDate = Date.valueOf(currentDate);
@@ -307,7 +318,7 @@ public class ProductCatalog {
                              @RequestParam("soNhaNgoDuong") String soNhaNgoDuong) {
         KhachHang khachHang = khachHangRepo.findById(khachHangId).orElseThrow(() -> new IllegalArgumentException("Khách hàng không tồn tại"));
         List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHangId);
-        for (DiaChi diaChi: diaChiList) {
+        for (DiaChi diaChi : diaChiList) {
             diaChi.setTrangThai(false); // Các địa chỉ khác không phải là mặc định
             diaChiRepository.save(diaChi); // Lưu vào database
         }
@@ -322,11 +333,12 @@ public class ProductCatalog {
 
         return "redirect:/vin-fan/track-order";  // Chuyển hướng về trang sửa khách hàng
     }
+
     @PostMapping("/sua-khach-hang/dia-chi-mac-dinh")
     public String suaDiaChiMacDinh(@RequestParam("khachHangId") Integer khachHangId,
-                                   @ModelAttribute("diaChiId") Integer diaChiId){
+                                   @ModelAttribute("diaChiId") Integer diaChiId) {
         List<DiaChi> diaChiList = diaChiRepository.findByKhachHangId(khachHangId);
-        for (DiaChi diaChi: diaChiList) {
+        for (DiaChi diaChi : diaChiList) {
             if (diaChi.getId().equals(diaChiId)) {
                 diaChi.setTrangThai(true); // Địa chỉ được chọn làm mặc định
             } else {
@@ -336,9 +348,10 @@ public class ProductCatalog {
         }
         return "redirect:/vin-fan/track-order";
     }
+
     @GetMapping("/sua-khach-hang/xoa/{id}")
     public String xoa(@RequestParam("khachHangId") Integer khachHangId,
-                      @PathVariable("id") Integer id){
+                      @PathVariable("id") Integer id) {
         diaChiRepository.deleteById(id);
         return "redirect:/vin-fan/track-order";
     }

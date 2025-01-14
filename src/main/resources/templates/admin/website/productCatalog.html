@@ -104,22 +104,6 @@
         transform: translateY(-2px);
     }
 
-    .btn-success {
-        background-color: #28a745;
-        color: white;
-        width: 100%;
-        border: none;
-        padding: 12px;
-        border-radius: 8px;
-        transition: background-color 0.3s, transform 0.2s;
-        margin-top: 10px;
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-        transform: translateY(-2px);
-    }
-
     /* Footer */
     footer {
         background-color: #343a40;
@@ -256,6 +240,19 @@
     .accordion-collapse {
         max-height: 400px; /* Đặt chiều cao tối đa */
         overflow-y: auto; /* Thêm cuộn dọc khi nội dung vượt quá chiều cao */
+    }
+    .accordion-body a {
+        font-size: 16px; /* Kích thước chữ */
+        color: #007bff; /* Màu chữ xanh */
+        text-decoration: none; /* Bỏ gạch chân */
+        padding: 10px 0; /* Cách trên dưới */
+        display: block; /* Căn giống với các mục */
+        cursor: pointer; /* Thêm con trỏ chuột */
+    }
+
+    .accordion-body a:hover {
+        color: #0056b3; /* Đổi màu khi hover */
+        text-decoration: underline; /* Thêm gạch chân khi hover */
     }
 
 </style>
@@ -418,10 +415,10 @@
                                  aria-labelledby="headingPriceFilter"
                                  data-bs-parent="#filtersAccordion">
                                 <div class="accordion-body">
-                                    <button class="btn btn-outline-danger" data-bs-toggle="modal"
-                                            data-bs-target="#priceFilterModal">
+                                    <a href="#" class="text-primary fw-bold d-block text-decoration-none py-2"
+                                       data-bs-toggle="modal" data-bs-target="#priceFilterModal">
                                         Lọc theo khoảng giá
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

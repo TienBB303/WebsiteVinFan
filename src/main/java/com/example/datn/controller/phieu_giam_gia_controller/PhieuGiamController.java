@@ -138,7 +138,9 @@ public class PhieuGiamController {
         try {
             // Thiết lập thông tin cơ bản cho phiếu giảm giá
             phieuGiam.setNgayTao(Date.valueOf(LocalDate.now()));
-            phieuGiam.setNguoiTao("admin");
+            phieuGiam.setNgayBD(Date.valueOf(LocalDate.now()));
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            phieuGiam.setNguoiTao(nhanVien.getTen());
             phieuGiam.setTrangThai(true);
             phieuGiam.setMa(pggSV.taoMaTuDong());
 
@@ -230,10 +232,11 @@ public class PhieuGiamController {
             // Cập nhật thông tin cơ bản
             existingPhieuGiam.setNgaySua(Date.valueOf(LocalDate.now()));
             existingPhieuGiam.setTen(phieuGiam.getTen());
-            existingPhieuGiam.setNgayBD(phieuGiam.getNgayBD());
             existingPhieuGiam.setNgayKT(phieuGiam.getNgayKT());
             existingPhieuGiam.setGiaTriGiam(phieuGiam.getGiaTriGiam());
             existingPhieuGiam.setTrangThai(phieuGiam.isTrangThai());
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            existingPhieuGiam.setNguoiSua(nhanVien.getTen());
 
             // Kiểm tra trạng thái: nếu chuyển về "ngừng áp dụng", xóa liên kết sản phẩm
             if (!phieuGiam.isTrangThai()) { // Nếu trạng thái là "ngừng áp dụng"
