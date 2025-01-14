@@ -135,7 +135,7 @@
 
 
                         <!-- Bảng danh sách sản phẩm -->
-                        <div class="table-responsive mt-3 text-center">
+                        <div class="table-responsive mt-3 text-center" style="max-height: 500px; overflow-y: auto;">
                             <table class="table table-striped align-middle">
                                 <thead class="table-light">
                                 <tr>
@@ -546,6 +546,7 @@
 
                             // Nếu tồn kho không đủ, dừng tiến trình
                             if (!isValid) {
+
                                 return; // Dừng lại, không gửi form
                             }
 
@@ -608,6 +609,7 @@
             }
         });
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const addButtons = document.querySelectorAll('form button[type="submit"]');

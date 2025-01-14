@@ -273,11 +273,11 @@
         <h2 class="text-dark">Thông tin giao hàng</h2>
         <form th:action="@{/cart/process-payment}" method="post" id="checkout-form">
 
-            <input type="text" name="name"  th:value="${khachHang.ten}">
-            <input type="tel" name="phone"pattern="[0-9]{10}" th:value="${khachHang.soDienThoai}">
-            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho}"/>
-            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen}"/>
-            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong}"/>
+            <input type="text" name="name" th:value="${khachHang.ten ?: ''}">
+            <input type="tel" name="phone" pattern="[0-9]{10}" th:value="${khachHang.soDienThoai ?: ''}">
+            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho ?: ''}">
+            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen ?: ''}">
+            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong ?: ''}">
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Tỉnh/Thành phố</label>

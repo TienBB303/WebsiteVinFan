@@ -223,7 +223,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDonChiTiet.setHoaDon(hoaDon);
         hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
         hoaDonChiTiet.setGia(request.getGia());
-        hoaDonChiTiet.setSoLuong(request.getSoLuong()); // Số lượng mặc định là 1
+        hoaDonChiTiet.setSoLuong(request.getSoLuong());
         // Tính thành tiền cho sản phẩm
         BigDecimal thanhTien = request.getGia().multiply(BigDecimal.valueOf(request.getSoLuong()));
         hoaDonChiTiet.setThanhTien(thanhTien);
