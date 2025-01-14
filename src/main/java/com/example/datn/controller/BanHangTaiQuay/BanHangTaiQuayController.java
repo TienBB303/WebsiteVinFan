@@ -155,6 +155,7 @@ public class BanHangTaiQuayController {
             @RequestParam("quanHuyen") String quanHuyen,
             @RequestParam("xaPhuong") String xaPhuong,
             @RequestParam("chiTietDiaChi") String chitiet,
+            @RequestParam("tienShip") String tienShipStr,
             @RequestParam("ghichu") String ghiChu,
             @RequestParam("tenKhangHang") String tenKhangHang) {
 
@@ -184,6 +185,10 @@ public class BanHangTaiQuayController {
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
             hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
             hoaDon.setNguoiTao(nhanVien.getTen());
+            BigDecimal tienShip = chuyenChuoiSangBigDecimal(tienShipStr);
+            hoaDon.setPhiVanChuyen(tienShip);
+            hoaDon.setGhiChu(ghiChu);
+            System.out.println("tien ship là : " + tienShipStr);
 
             // Lưu tổng tiền sau giảm
             String formatGiaTien = tongTienSauGiamStr.replaceAll("[^\\d]", "");
@@ -384,5 +389,15 @@ public class BanHangTaiQuayController {
         }
         return "redirect:/ban-hang-tai-quay/index";
     }
-
+    private BigDecimal chuyenChuoiSangBigDecimal(String tienStr) {
+        if (tienStr == null || tienStr.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        // Loại bỏ ký tự không phải số
+        String chiSoTien = tienStr.replaceAll("[^\\d]", "");
+        if (chiSoTien.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return new BigDecimal(chiSoTien);
+    }
 }

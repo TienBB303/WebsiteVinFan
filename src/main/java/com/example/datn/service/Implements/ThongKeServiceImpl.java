@@ -29,11 +29,23 @@ public class ThongKeServiceImpl implements ThongKeService {
         return thongKeRepo.timHoaDonHoanThanhHomNay();
     }
 
+    @Override
     public BigDecimal tongTienThuDuocHomNay() {
         BigDecimal tongTien = thongKeRepo.tinhTongTienThuDuocHomNay();
         return tongTien != null ? tongTien : BigDecimal.ZERO;
     }
 
+    @Override
+    public BigDecimal tongTienThuDuocHomQua() {
+        // Tính ngày hôm qua
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        // Gọi repository
+        return thongKeRepo.tinhTongTienThuDuocHomQua(yesterday);
+    }
+    @Override
+    public BigDecimal tinhTongTienThuDuocTrongKhoangThoiGian(LocalDate tuNgay, LocalDate denNgay) {
+        return thongKeRepo.timTongTienThuDuocTrongKhoangThoiGian(tuNgay, denNgay);
+    }
     @Override
     public List<SanPhamBanChayDTO> listBanChay(LocalDate tuNgay, LocalDate denNgay) {
         List<Object[]> results = thongKeRepo.timSanPhamBanChay(tuNgay, denNgay);
@@ -53,41 +65,27 @@ public class ThongKeServiceImpl implements ThongKeService {
                 .collect(Collectors.toList());
     }
 
-    public List<DoanhThuThongKeDTO> getDoanhThuTheoThoiGian(String thoiGian, LocalDate tuNgay, LocalDate denNgay) {
-        List<Object[]> data;
+    @Override
+    public List<DoanhThuThongKeDTO> getDoanhThuTheoThoiGian(LocalDate tuNgay, LocalDate denNgay) {
+        // Tính toán hoặc truy vấn dữ liệu doanh thu theo ngày từ database
+        LocalDate startDate = (tuNgay != null) ? tuNgay : LocalDate.now().minusMonths(1); // mặc định 1 tháng
+        LocalDate endDate = (denNgay != null) ? denNgay : LocalDate.now();  // mặc định ngày hôm nay
 
-        if ("week".equals(thoiGian)) {
-            data = thongKeRepo.getDoanhThuTheoTuan(tuNgay, denNgay);
-        } else if ("month".equals(thoiGian)) {
-            data = thongKeRepo.getDoanhThuTheoThang(tuNgay, denNgay);
-        } else if ("year".equals(thoiGian)) {
-            data = thongKeRepo.getDoanhThuTheoNam(tuNgay, denNgay);
-        } else {
-            data = thongKeRepo.getDoanhThuTheoThoiGian(tuNgay, denNgay);
+        // Truy vấn dữ liệu từ database
+        List<Object[]> results = thongKeRepo.timDoanhThuTheoNgay(startDate, endDate);
+
+        // Chuyển đổi dữ liệu kết quả thành List<DoanhThuThongKeDTO>
+        List<DoanhThuThongKeDTO> doanhThuList = new ArrayList<>();
+        for (Object[] result : results) {
+            // Lấy giá trị ngày từ kết quả và chuyển nó từ java.sql.Date sang LocalDate
+            java.sql.Date sqlDate = (java.sql.Date) result[0];
+            LocalDate ngay = sqlDate.toLocalDate(); // chuyển đổi từ java.sql.Date sang LocalDate
+
+            BigDecimal tongThu = (BigDecimal) result[1]; // Lấy tổng thu từ kết quả
+            doanhThuList.add(new DoanhThuThongKeDTO(ngay, tongThu));
         }
 
-        // Chuyển đổi Object[] thành DoanhThuThongKeDTO
-        List<DoanhThuThongKeDTO> result = new ArrayList<>();
-
-        for (Object[] row : data) {
-            if (row.length == 2) {
-                LocalDate ngay = (LocalDate) row[0];
-                BigDecimal tongDoanhThu = (BigDecimal) row[1];
-                result.add(new DoanhThuThongKeDTO(ngay, tongDoanhThu));
-            } else if (row.length == 1) {
-                Long hoaDonId = (Long) row[0];
-                BigDecimal tongDoanhThu = new BigDecimal((Double) row[1]);
-                result.add(new DoanhThuThongKeDTO(hoaDonId, tongDoanhThu));
-            }
-        }
-
-        return result;
+        return doanhThuList;
     }
-//    @Override
-//    public List<DoanhThuThongKeDTO> thongKeDoanhThu(String loaiThongKe, LocalDate tuNgay, LocalDate denNgay) {
-//        List<Object[]> results = thongKeRepo.thongKeDoanhThuTheoThoiGian(loaiThongKe, tuNgay, denNgay);
-//        return results.stream()
-//                .map(result -> new DoanhThuThongKeDTO((String) result[0], (BigDecimal) result[1]))
-//                .collect(Collectors.toList());
-//    }
+
 }
