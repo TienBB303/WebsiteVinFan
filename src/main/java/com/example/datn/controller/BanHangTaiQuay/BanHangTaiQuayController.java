@@ -41,9 +41,7 @@ public class BanHangTaiQuayController {
     private final HoaDonRepo hoaDonRepo;
 
     @GetMapping("/index")
-    public String index(
-            Model model
-    ) {
+    public String index(Model model) {
         //hiển thị danh sách hóa đơn chờ
         List<HoaDon> listHoaDon = banHangTaiQuayService.findHoaDon();
         model.addAttribute("listHoaDon", listHoaDon);
@@ -57,10 +55,7 @@ public class BanHangTaiQuayController {
     }
 
     @GetMapping("/hdct")
-    public String viewHDCT(
-            Model model,
-            @RequestParam("idHD") Long idHD
-    ) {
+    public String viewHDCT(Model model, @RequestParam("idHD") Long idHD) {
         // Lấy danh sách mã giảm giá có loại phiếu là 1
         List<PhieuGiam> phieuGiamList = phieuGiamRepo.findByLoaiPhieuGiam(true); // true = loại phiếu là 1
         model.addAttribute("phieuGiamList", phieuGiamList);
@@ -122,8 +117,7 @@ public class BanHangTaiQuayController {
     @PostMapping("/addSPCT")
     public String addSPToHoaDonChiTiet(
             @ModelAttribute AddSPToHoaDonChiTietRequest request,
-            RedirectAttributes redirectAttributes
-    ) {
+            RedirectAttributes redirectAttributes) {
         try {
             // Lấy thông tin sản phẩm từ cơ sở dữ liệu
             SanPhamChiTiet sanPhamChiTiet = spctRepo.findById(request.getIdSP())
@@ -168,6 +162,15 @@ public class BanHangTaiQuayController {
             // Kiểm tra hóa đơn
             HoaDon hoaDon = hoaDonService.findById(idhd)
                     .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
+
+            for (HoaDonChiTiet hdct : hoaDon.getHoaDonChiTietList()) {
+                SanPhamChiTiet sp = hdct.getSanPhamChiTiet();
+                if (hdct.getSoLuong() > sp.getSo_luong()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("message", "Không đủ số lượng sản phẩm: " + sp.getSanPham().getTen()));
+                }
+            }
+
             NhanVien nhanVien = nhanVienRepository.profileNhanVien();
             hoaDon.setNhanVien(nhanVien);
 
