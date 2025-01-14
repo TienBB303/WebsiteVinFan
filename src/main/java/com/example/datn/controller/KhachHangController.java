@@ -13,6 +13,7 @@ import com.example.datn.service.khach_hang_service.KhachHangService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,6 +30,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -63,6 +65,11 @@ public class KhachHangController {
 
         PageRequest pageable = PageRequest.of(page, size);
         Page<KhachHang> khachHangPage = khachHangService.search(keyword.trim(), trang_thai, pageable);
+//        List<KhachHang> locListKhachHang = khachHangPage.getContent().stream()
+//                .filter(kh -> kh.getId() != 1)
+//                .collect(Collectors.toList());
+//
+//        Page<KhachHang> pageKhachhang = new PageImpl<>(locListKhachHang, pageable, locListKhachHang.size());
         model.addAttribute("listsKhachhang", khachHangPage);
         model.addAttribute("keyword", keyword);
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
@@ -127,8 +134,8 @@ public class KhachHangController {
 
             LocalDate now = LocalDate.now();
             LocalDate birthDate = ngaySinh.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            if (Period.between(birthDate, now).getYears() < 18) {
-                return ResponseEntity.badRequest().body("Khách hàng phải đủ 18 tuổi để mua sắm trực tuyến hợp pháp.");
+            if (Period.between(birthDate, now).getYears() < 10) {
+                return ResponseEntity.badRequest().body("Khách hàng cần đủ 10 tuổi để đăng kí mua hàng.");
             }
             kh.setNgaySinh(ngaySinh);
             NhanVien nv = nhanVienRepository.profileNhanVien();

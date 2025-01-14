@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,11 +39,29 @@ public class SecurityConfig {
 
                                 .anyRequest().authenticated()
                 )
+//                .formLogin((form) -> form
+//                        .loginPage("/login")
+//                        .successHandler(customAuthenticationSuccessHandler)
+//                        .permitAll()
+//                )
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .successHandler(customAuthenticationSuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            if (exception instanceof DisabledException) {
+                                response.sendRedirect("/login?error=disabled");
+                            } else {
+                                response.sendRedirect("/login?error=true");
+                            }
+                        })
                         .permitAll()
                 )
+//                .logout((logout) -> logout
+//                        .logoutUrl("/logout")
+//                        .addLogoutHandler(new CustomLogoutHandler())
+//                        .logoutSuccessUrl("/login?logout")
+//                        .permitAll()
+//                )
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
                         .addLogoutHandler(new CustomLogoutHandler())

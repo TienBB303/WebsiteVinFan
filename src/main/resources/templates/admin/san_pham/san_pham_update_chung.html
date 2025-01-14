@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+</head>
+<body>
+<!-- Site wrapper -->
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div>
+        <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
+    </div>
+
+    <!-- Main-->
+    <div id="main">
+        <header th:replace="/admin/fragments/header :: header"></header>
+        <!--        </header>-->
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3><span th:text="${spUpdateAll.ten}"></span></h3>
+                        <p class="text-subtitle text-muted"></p>
+                    </div>
+                    <div class="col-12 col-md-6 order-md-2 order-first">
+                        <div class="card" style="position: absolute; top: 10px; right: 10px; width: 100px;">
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none; color: inherit; text-decoration: none;">
+                                    <img th:src="@{${nhanVienInfo.hinhAnh}}" alt="Avatar" class="rounded-circle" width="60" height="60">
+                                </button>
+                                <ul class="dropdown-menu" style="background-color: #f8f9fa; border-color: #ccc;">
+                                    <li>
+                                        <div class="dropdown-item" style="color: #333;">
+                                            <strong>Thông tin nhân viên</strong><br>
+                                            Tên: <span th:text="${nhanVienInfo.ten}"></span><br>
+                                            Email: <span th:text="${nhanVienInfo.email}"></span><br>
+                                            Chức vụ: <span th:text="${nhanVienInfo.chucVu.viTri}"></span>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li style="text-align: center">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-content">
+            <section class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <a class="btn btn-outline-primary" href="/admin/list-san-pham" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <div class="card p-4">
+                            <form id="updateSanPhamForm" th:action="@{/admin/san-pham/update}" th:object="${spUpdateAll}" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" class="form-control" id="sanPhamid" th:field="*{id}">
+                                <div class="text-center" style="color: #F4A460; font-weight: bold; padding-bottom: 15px">
+                                    Thuộc tính chung của 1 sản phẩm
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <!-- Phần mã sản phẩm -->
+                                        <div class="mb-3">
+                                            <label for="maSanPham">Mã sản phẩm <b style="color: red">*</b></label>
+                                            <input type="text" class="form-control" id="maSanPham" th:field="*{ma}" placeholder="Nhập mã sản phẩm">
+                                        </div>
+                                        <!-- Phần trạng thái -->
+                                        <div class="mb-3">
+                                            <label>Trạng thái</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="trangThaiActive" value="true" th:field="*{trang_thai}" required>
+                                                <label class="form-check-label" for="trangThaiActive">Hoạt động</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="trangThaiInactive" value="false" th:field="*{trang_thai}" required>
+                                                <label class="form-check-label" for="trangThaiInactive">Không hoạt động</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <!-- Phần tên sản phẩm -->
+                                        <div class="mb-3">
+                                            <label for="sanPhamName">Tên sản phẩm <b style="color: red">*</b></label>
+                                            <input type="text" class="form-control" id="sanPhamName" th:field="*{ten}" required placeholder="Nhập tên sản phẩm">
+                                        </div>
+                                        <!-- Phần điều khiển từ xa -->
+                                        <div class="mb-3">
+                                            <label>Điều khiển từ xa</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="dieuKhienActive" value="true" th:field="*{dieu_khien_tu_xa}" required>
+                                                <label class="form-check-label" for="dieuKhienActive">Có điều khiển</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="dieuKhienInactive" value="false" th:field="*{dieu_khien_tu_xa}" required>
+                                                <label class="form-check-label" for="dieuKhienInactive">Không có điều khiển</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <!-- Phần mô tả -->
+                                    <div class="col-12">
+                                        <label for="sanPhamDescription">Mô tả</label>
+                                        <textarea class="form-control" id="sanPhamDescription" th:field="*{mo_ta}" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Nút Submit -->
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" class="btn btn-outline-success" style="width: 100px; padding-left: 10px">
+                                        <i class="bi bi-check"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- Footer-->
+    <div>
+        <footer th:replace="/admin/fragments/footer :: footer"></footer>
+    </div>
+</div>
+<div>
+    <script th:replace="/admin/fragments/script :: script"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!--    Cập nhật-->
+    <script>
+        $('#updateSanPhamForm').submit(function (event) {
+            event.preventDefault(); // Ngăn chặn việc submit mặc định
+
+            var trangThai = $('input[name="trang_thai"]:checked').val(); // Kiểm tra giá trị của trạng thái sản phẩm
+
+            // Nếu trạng thái sản phẩm là "tắt" (false), yêu cầu xác nhận
+            if (trangThai == "false") {
+                Swal.fire({
+                    title: 'Tắt trạng thái hoạt động của sản phẩm?',
+                    text: 'Các biến thể sản phẩm cũng sẽ bị tắt theo!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có',
+                    cancelButtonText: 'Không',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Nếu xác nhận, gửi request AJAX
+                        updateSanPham();
+                    } else {
+                        // Nếu không xác nhận, hủy bỏ hành động
+                        return;
+                    }
+                });
+            } else {
+                // Nếu trạng thái sản phẩm không tắt, gửi yêu cầu cập nhật ngay lập tức
+                updateSanPham();
+            }
+        });
+
+        // Hàm gửi request cập nhật sản phẩm
+        function updateSanPham() {
+            $.ajax({
+                url: '/admin/san-pham/update-chung', // Đường dẫn API để cập nhật sản phẩm
+                type: 'POST',
+                data: $('#updateSanPhamForm').serialize(), // Lấy dữ liệu từ form để gửi
+                success: function (response) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'success',
+                        title: response || "Cập nhật sản phẩm thành công!",
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.href = '/admin/list-san-pham'; // Quay lại danh sách sản phẩm
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        title: xhr.responseText || "Đã xảy ra lỗi trong quá trình cập nhật.",
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }
+            });
+        }
+    </script>
+
+
+</div>
+</body>
+</html>

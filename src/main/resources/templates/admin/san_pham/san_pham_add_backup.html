@@ -211,6 +211,18 @@
                                 </div>
                                 <hr>
                                 <div class="text-center" style="color: #F4A460; font-weight: bold; padding-bottom: 15px">Thuộc tính tùy biến</div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="card border-0 shadow" style="background-color: #ffebcc;margin-top: 20px;">
+                                        <div id="imagePreview" class="card-img-top" style="width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
+                                            <img alt="Ảnh sản phẩm" style="width: 200px; height: 200px; object-fit: contain;">
+                                            <span style="color: #6c757d; text-align: center;"></span>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <label for="fileInput" class="btn btn-outline-warning w-100">Chọn ảnh</label>
+                                            <input type="file" name="hinhAnh.hinh_anh_1" id="fileInput" onchange="previewImage(event, 'imagePreview')" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <!-- Phần màu sắc -->
                                     <div class="col-6">
@@ -279,6 +291,7 @@
                                         </td>
                                         <td>
                                             <input type="number" th:value="${spTam.so_luong}" name="so_luong" class="form-control" max="999" oninput="validateInputLength(this, 3)"/>
+                                        </td>
                                         </td>
                                         <!--                                    <td>-->
                                         <!--                                        <button type="button" class="btn btn-danger delete-button" data-id="${spTam.id}">-->
@@ -415,11 +428,17 @@
                     });
                     return;
                 }
-
+                var formData = new FormData(this);
                 $.ajax({
+                    // url: '/admin/san-pham/add-bien-the',
+                    // type: 'POST',
+                    // data: $(this).serialize(), // Lấy tất cả dữ liệu trong form
+                    // success: function (response) {
                     url: '/admin/san-pham/add-bien-the',
                     type: 'POST',
-                    data: $(this).serialize(), // Lấy tất cả dữ liệu trong form
+                    data: formData,
+                    processData: false,  // Không xử lý dữ liệu, để file được gửi
+                    contentType: false,  // Không gán Content-Type, để browser tự động xử lý file
                     success: function (response) {
                         Swal.fire({
                             toast: true,
@@ -519,23 +538,32 @@
 
         });
     </script>
-    <!--xem trc ảnh-->
-    <script>
-        function previewImage(event, elementId) {
-            var file = event.target.files[0];
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById(elementId).style.backgroundImage = 'url(' + e.target.result + ')';
-                document.getElementById(elementId).innerHTML = '';
-            };
-            reader.readAsDataURL(file);
-        }
-    </script>
     <!--định dạng ký tự-->
     <script>
         function validateInputLength(input, maxLength) {
             if (input.value.length > maxLength) {
                 input.value = input.value.slice(0, maxLength);
+            }
+        }
+    </script>
+    <!-- xem ảnh-->
+    <script>
+        function previewImage(event, previewElementId) {
+            const fileInput = event.target;
+            const previewContainer = document.getElementById(previewElementId);
+            previewContainer.innerHTML = ""; // Xóa nội dung trước đó
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.style.width = "200px";
+                    img.style.height = "200px";
+                    img.style.objectFit = "contain";
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
             }
         }
     </script>
