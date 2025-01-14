@@ -113,7 +113,9 @@ public class HoaDonController {
         // Lấy thông tin phiếu giảm giá của hóa đơn
         PhieuGiam phieuGiamGia = hoaDon.getPhieuGiamGia();
         model.addAttribute("pggHoaDon", phieuGiamGia);
-
+        // Truyền tổng tiền và tổng tiền sau giảm giá vào model
+        model.addAttribute("tongTien", hoaDon.getTongTien());
+        model.addAttribute("tongTienSauGiamGia", hoaDon.getTongTienSauGiamGia());
         // Trả về trang chi tiết hóa đơn
         return "/admin/hoa_don/detail";
     }
