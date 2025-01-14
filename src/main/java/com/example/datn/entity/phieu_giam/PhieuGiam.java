@@ -37,9 +37,6 @@ public class PhieuGiam {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date ngayKT;
 
-    @Column(name = "so_luong")
-    private Integer soLuong;
-
     @Column(name = "loai_phieu_giam_gia")
     private boolean loaiPhieuGiam;
 
