@@ -8,6 +8,8 @@ import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.NhanVienRepository;
 import com.example.datn.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
@@ -45,9 +47,9 @@ public class LoginController {
                         @RequestParam(value = "username", required = false) String username,
                         Model model) {
         if (error != null) {
-
-            model.addAttribute("error", "Tên tài khoản hoặc mật khẩu không đúng.");
+            model.addAttribute("error", "Tài khoản đã bị khóa, liên hệ với cửa hàng để được hỗ trợ.");
         }
+
         model.addAttribute("username", username);  // Giữ lại username khi nhập sai
         return "/admin/login";
     }

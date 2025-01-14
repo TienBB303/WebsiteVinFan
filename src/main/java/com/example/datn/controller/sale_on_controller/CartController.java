@@ -262,9 +262,13 @@ public class CartController {
             // Nếu là khách hàng, thêm thông tin khách hàng vào model
             model.addAttribute("khachHang", khachHang);
 
+            // Lấy địa chỉ mặc định của khách hàng
             DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(khachHang.getId());
-            model.addAttribute("diachiMacDinh", diaChi);
+
+            // Nếu địa chỉ là null, thêm vào model một giá trị rỗng hoặc đối tượng trống
+            model.addAttribute("diachiMacDinh", diaChi != null ? diaChi : new DiaChi());
         }
+
 
         List<CartItem> cartItems = getCartFromSession(session);
 
@@ -409,6 +413,7 @@ public class CartController {
 
         total = total.add(shippingFee);
         hoaDon.setTongTien(total);
+        hoaDon.setNguoiTao("Tên khách hàng: " + khachHang.getTen());
         hoaDon.setTongTienSauGiamGia(total);
         hoaDonService.save(hoaDon);
 

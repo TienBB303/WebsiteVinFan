@@ -126,7 +126,10 @@
                             <canvas id="revenueChart" width="400" height="200"></canvas>
                         </div>
                     </div>
-
+                    <div class="col-12">
+                        <div class="text-center" style="color: #6f42c1; font-weight: bold; padding-bottom: 15px">Biểu đồ Doanh Thu Theo Thời Gian</div>
+                        <canvas id="timeBasedChart" width="400" height="200"></canvas>
+                    </div>
 
                 </div>
             </section>
@@ -141,6 +144,7 @@
     <script th:replace="/admin/fragments/script :: script"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -185,7 +189,7 @@
 
                     const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
                     new Chart(ctxRevenue, {
-                        type: 'bar',
+                        type: 'line',
                         data: {
                             labels: hoaDonIds,
                             datasets: [{

@@ -273,11 +273,11 @@
         <h2 class="text-dark">Thông tin giao hàng</h2>
         <form th:action="@{/cart/process-payment}" method="post" id="checkout-form">
 
-            <input type="text" name="name"  th:value="${khachHang.ten}">
-            <input type="tel" name="phone"pattern="[0-9]{10}" th:value="${khachHang.soDienThoai}">
-            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho}"/>
-            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen}"/>
-            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong}"/>
+            <input type="text" name="name" th:value="${khachHang.ten ?: ''}">
+            <input type="tel" name="phone" pattern="[0-9]{10}" th:value="${khachHang.soDienThoai ?: ''}">
+            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho ?: ''}">
+            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen ?: ''}">
+            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong ?: ''}">
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Tỉnh/Thành phố</label>
@@ -386,6 +386,10 @@
         const name = document.querySelector('input[name="name"]').value.trim();
         const phone = document.querySelector('input[name="phone"]').value.trim();
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        const city = document.querySelector('#city').value;
+        const district = document.querySelector('#district').value;
+        const ward = document.querySelector('#ward').value;
+        const address = document.querySelector('input[name="soNhaNgoDuong"]').value.trim();
 
         // Hàm hiển thị thông báo lỗi với SweetAlert
         function showToast(message, type = 'error') {
@@ -414,6 +418,26 @@
             showToast('Vui lòng chọn phương thức thanh toán!');
             return;
         }
+        if (!city) {
+            showToast('Vui lòng chọn Tỉnh/Thành phố!');
+            return;
+        }
+
+        if (!district) {
+            showToast('Vui lòng chọn Quận/Huyện!');
+            return;
+        }
+
+        if (!ward) {
+            showToast('Vui lòng chọn Phường/Xã!');
+            return;
+        }
+
+        if (!address) {
+            showToast('Vui lòng nhập Số nhà/ngõ đường!');
+            return;
+        }
+
 
         // Tất cả các trường hợp hợp lệ -> thông báo thành công
         Swal.fire({
