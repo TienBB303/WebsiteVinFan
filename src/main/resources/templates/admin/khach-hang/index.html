@@ -143,8 +143,8 @@
                                         </td>
                                         <td>
                                             <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id ?: 0})}"
-                                                class="btn btn-outline-warning" style="width: 60px">
-<!--                                                th:classappend="${khachHang.id == 1 ? 'disabled' : ''}"-->
+                                                class="btn btn-outline-warning" style="width: 60px"
+                                                th:classappend="${khachHang.id == 1 ? 'disabled' : ''}">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                         </td>
