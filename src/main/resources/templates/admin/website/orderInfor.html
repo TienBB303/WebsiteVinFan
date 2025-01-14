@@ -273,11 +273,17 @@
         <h2 class="text-dark">Thông tin giao hàng</h2>
         <form th:action="@{/cart/process-payment}" method="post" id="checkout-form">
 
-            <input type="text" name="name" th:value="${khachHang.ten ?: ''}">
-            <input type="tel" name="phone" pattern="[0-9]{10}" th:value="${khachHang.soDienThoai ?: ''}">
-            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho ?: ''}">
-            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen ?: ''}">
-            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong ?: ''}">
+            <input placeholder="Vui lòng nhập tên" type="text" name="name" th:value="${khachHang.ten ?: ''}">
+            <input placeholder="Vui lòng nhập số điện thoại" type="tel" name="phone" pattern="[0-9]{10}" th:value="${khachHang.soDienThoai ?: ''}">
+            <select class="form-control" id="city" name="tinhThanhPho">
+                <option value="">Chọn tỉnh thành</option>
+            </select>
+            <select class="form-control" id="district" name="quanHuyen">
+                <option value="">Chọn quận huyện</option>
+            </select>
+            <select class="form-control" id="ward" name="xaPhuong">
+                <option value="">Chọn phường xã</option>
+            </select>
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Tỉnh/Thành phố</label>
@@ -305,7 +311,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Số nhà/ngõ đường</label>
-                    <input type="text" name="soNhaNgoDuong" class="form-control" th:value="${diachiMacDinh.soNhaNgoDuong}" >
+                    <input type="text" name="soNhaNgoDuong" id="address" class="form-control" th:value="${diachiMacDinh.soNhaNgoDuong}" >
                 </div>
             </div>
 
@@ -374,9 +380,6 @@
         // Cập nhật giá trị của radio input
         document.querySelector(`input[value="${method}"]`).checked = true;
     }
-
-
-
 </script>
 <script th:inline="javascript">
     document.querySelector('#checkout-form').addEventListener('submit', function (event) {
@@ -414,21 +417,23 @@
             showToast('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)!');
             return;
         }
+
         if (!paymentMethod) {
             showToast('Vui lòng chọn phương thức thanh toán!');
             return;
         }
-        if (!city) {
+
+        if (!city || city === "Chọn tỉnh thành") {
             showToast('Vui lòng chọn Tỉnh/Thành phố!');
             return;
         }
 
-        if (!district) {
+        if (!district || district === "Chọn quận huyện") {
             showToast('Vui lòng chọn Quận/Huyện!');
             return;
         }
 
-        if (!ward) {
+        if (!ward || ward === "Chọn phường xã") {
             showToast('Vui lòng chọn Phường/Xã!');
             return;
         }
@@ -437,7 +442,6 @@
             showToast('Vui lòng nhập Số nhà/ngõ đường!');
             return;
         }
-
 
         // Tất cả các trường hợp hợp lệ -> thông báo thành công
         Swal.fire({
@@ -514,8 +518,6 @@
             }
         };
     }
-
-
 </script>
 <script>
     // Định dạng giá tiền VND
