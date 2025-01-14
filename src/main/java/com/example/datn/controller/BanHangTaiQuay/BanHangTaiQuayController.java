@@ -9,7 +9,10 @@ import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +20,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -143,12 +149,12 @@ public class BanHangTaiQuayController {
         return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
     }
 
-
     @PostMapping("/thanh-toan")
-    public String thanhToan(
+    @Transactional
+    public ResponseEntity<?> thanhToan(
             @RequestParam("idHD") Long idhd,
             @RequestParam("tongTienSauGiam") String tongTienSauGiamStr,
-            @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam, // Thêm ID phiếu giảm giá
+            @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam,
             @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
             @RequestParam("tinhThanhPho") String tinhThanhPho,
             @RequestParam("soDienThoaiKhachHang") String soDienThoaiKhachHang,
@@ -158,57 +164,58 @@ public class BanHangTaiQuayController {
             @RequestParam("ghichu") String ghiChu,
             @RequestParam("tenKhangHang") String tenKhangHang) {
 
-        HoaDon hoaDon = hoaDonService.findById(idhd)
-                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
-        NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-        hoaDon.setNhanVien(nhanVien);
-
-        // Cập nhật thông tin thanh toán
-        String diaChiNguoiNhan = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + chitiet;
-
-        hoaDon.setTenNguoiNhan(tenKhangHang);
-        hoaDon.setDiaChi(diaChiNguoiNhan);
-        hoaDon.setSdtNguoiNhan(soDienThoaiKhachHang);
-        hoaDon.setGhiChu(ghiChu);
-        hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-        hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
-        hoaDon.setNguoiTao(nhanVien.getTen());
-
-        // Lưu tổng tiền sau giảm
         try {
+            // Kiểm tra hóa đơn
+            HoaDon hoaDon = hoaDonService.findById(idhd)
+                    .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
+
+            // Cập nhật thông tin thanh toán
+            String diaChiNguoiNhan = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + chitiet;
+
+            hoaDon.setTenNguoiNhan(tenKhangHang);
+            hoaDon.setDiaChi(diaChiNguoiNhan);
+            hoaDon.setSdtNguoiNhan(soDienThoaiKhachHang);
+            hoaDon.setGhiChu(ghiChu);
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+            hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
+            hoaDon.setNguoiTao(nhanVien.getTen());
+
+            // Lưu tổng tiền sau giảm
             String formatGiaTien = tongTienSauGiamStr.replaceAll("[^\\d]", "");
             BigDecimal tongTienSauGiam = new BigDecimal(formatGiaTien);
             hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
-            hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("Tổng tiền sau giảm không hợp lệ: " + tongTienSauGiamStr, e);
+
+            // Lưu ID phiếu giảm giá nếu có
+            if (idPhieuGiam != null) {
+                PhieuGiam phieuGiam = phieuGiamRepo.findById(idPhieuGiam)
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu giảm giá với ID: " + idPhieuGiam));
+                hoaDon.setPhieuGiamGia(phieuGiam);
+            }
+
+            // Kiểm tra và trừ số lượng sản phẩm trong hóa đơn
+            hoaDonService.truSoLuongSanPham(idhd);
+
+            // Lưu hóa đơn vào cơ sở dữ liệu
+            hoaDonService.save(hoaDon);
+
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+            lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+            lichSuHoaDonRepo.save(lichSuHoaDon);
+
+            return ResponseEntity.ok(Map.of("message", "Thanh toán thành công!"));
+
+        } catch (RuntimeException e) {
+            // Rollback sẽ xảy ra tự động nhờ @Transactional
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
-
-        // Lưu ID phiếu giảm giá nếu có
-        if (idPhieuGiam != null) {
-            PhieuGiam phieuGiam = phieuGiamRepo.findById(idPhieuGiam)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu giảm giá với ID: " + idPhieuGiam));
-            hoaDon.setPhieuGiamGia(phieuGiam); // Liên kết phiếu giảm giá với hóa đơn
-        }
-
-        // Lưu hóa đơn vào cơ sở dữ liệu
-        hoaDonService.save(hoaDon);
-
-
-        // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setHoaDon(hoaDon);
-        lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-        lichSuHoaDon.setNgayTao(LocalDate.now());
-        lichSuHoaDon.setNguoiTao(nhanVien.getTen());
-        // Lưu lịch sử hóa đơn
-        lichSuHoaDonRepo.save(lichSuHoaDon);
-
-        // Trừ số lượng sản phẩm trong hóa đơn
-        hoaDonService.truSoLuongSanPham(idhd);
-
-        return "redirect:/ban-hang-tai-quay/index";
     }
+
 
     @PostMapping("/addKH")
     public String addKHToHoaDonChiTiet(
