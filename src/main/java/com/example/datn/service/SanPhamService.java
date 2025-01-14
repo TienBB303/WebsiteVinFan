@@ -20,6 +20,8 @@ public interface SanPhamService {
 
     SanPhamChiTiet findById(Long id);
 
+    List<SanPhamChiTiet> findByIdSanPham(Long id);
+
     Boolean update(SanPhamChiTiet sanPhamChiTiet);
 
     Boolean update(SanPham sanPham);
@@ -28,7 +30,7 @@ public interface SanPhamService {
 
     String taoMaTuDong();
 
-    Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai, Pageable pageable);
+    Page<SanPhamChiTiet> searchProducts(Long idSanPhamString, String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai, Pageable pageable);
 
     List<SanPhamChiTiet> xuatExcel(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai);
 
@@ -49,5 +51,9 @@ public interface SanPhamService {
     SanPhamChiTiet getProductDetails(Long productId);
 
     Page<SanPham> findByMaOrTen(String ten, Pageable pageable);
+
+//    List danh sach san pham
+
+    Page<SanPham> timSanPham(String query, Boolean trang_thai, Pageable pageable);
 
 }

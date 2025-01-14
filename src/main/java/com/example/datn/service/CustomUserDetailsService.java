@@ -6,6 +6,7 @@ import com.example.datn.repository.KhachHangRepo;
 import com.example.datn.repository.NhanVienRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,22 +32,55 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private KhachHangRepo khachHangRepository;
 
-    @Override
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        // Kiểm tra xem email có thuộc về nhân viên không
+//        Optional<NhanVien> nhanVienOpt = nhanVienRepository.findByEmail(email);
+//        if (nhanVienOpt.isPresent()) {
+//            NhanVien nhanVien = nhanVienOpt.get();
+//            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(nhanVien.getChucVu().getViTri().trim()));
+//
+//            return new User(nhanVien.getEmail(), nhanVien.getMatKhau(), authorities);
+//        }
+//
+//        // Kiểm tra xem email có thuộc về khách hàng không
+//        Optional<KhachHang> khachHangOpt = khachHangRepository.findByEmail(email);
+//        if (khachHangOpt.isPresent()) {
+//            KhachHang khachHang = khachHangOpt.get();
+//            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_KHACHHANG"));
+//            return new User(khachHang.getEmail(), khachHang.getMatKhau(), authorities);
+//        }
+//
+//        throw new UsernameNotFoundException("Không tìm thấy người dùng với email: " + email);
+//    }
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         // Kiểm tra xem email có thuộc về nhân viên không
         Optional<NhanVien> nhanVienOpt = nhanVienRepository.findByEmail(email);
         if (nhanVienOpt.isPresent()) {
             NhanVien nhanVien = nhanVienOpt.get();
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(nhanVien.getChucVu().getViTri().trim()));
 
+            // Kiểm tra trạng thái
+            if (!nhanVien.getTrangThai()) {
+                throw new DisabledException("Tài khoản của bạn đã bị khóa.");
+            }
+
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+                    new SimpleGrantedAuthority(nhanVien.getChucVu().getViTri().trim())
+            );
             return new User(nhanVien.getEmail(), nhanVien.getMatKhau(), authorities);
         }
 
         // Kiểm tra xem email có thuộc về khách hàng không
         Optional<KhachHang> khachHangOpt = khachHangRepository.findByEmail(email);
+
         if (khachHangOpt.isPresent()) {
             KhachHang khachHang = khachHangOpt.get();
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_KHACHHANG"));
+            if (!khachHang.getTrangThai()) {
+                throw new DisabledException("Tài khoản của bạn đã bị khóa.");
+            }
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+                    new SimpleGrantedAuthority("ROLE_KHACHHANG")
+            );
             return new User(khachHang.getEmail(), khachHang.getMatKhau(), authorities);
         }
 

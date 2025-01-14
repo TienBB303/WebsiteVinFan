@@ -37,4 +37,13 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    public void sendEmailDangKiTaiKhoanThanhCong(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("famumintouan@gmail.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
+    }
+
 }
