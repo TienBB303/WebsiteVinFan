@@ -60,31 +60,15 @@
             <section class="row">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <a class="btn btn-outline-success" href="/admin/san-pham/viewAdd" style="width: 70px;">
-                            <i class="bi bi-plus"></i>
-                        </a>
-                        <form method="get" action="/admin/san-pham/excel">
-                            <div class="row mb-0">
-                                <!-- Thêm các tham số tìm kiếm cũ vào form Excel -->
-                                <input type="hidden" name="query" th:value="${param.query}">
-                                <input type="hidden" name="minPrice" th:value="${param.minPrice}">
-                                <input type="hidden" name="maxPrice" th:value="${param.maxPrice}">
-                                <input type="hidden" name="trang_thai" th:value="${param.trang_thai}">
-
-                                <div>
-                                    <button class="btn btn-outline-success" type="submit" style="width: 70px">
-                                        <i class="bi bi-file-earmark-excel"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        <a class="btn btn-outline-primary" href="/admin/list-san-pham" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>
                     </div>
 
                     <div class="card-body">
                         <div class="dataTable-wrapper">
                             <div class="dataTable-top">
-                                <form method="get" action="/admin/san-pham">
+                                <form method="get" action="#" th:action="@{/admin/san-pham/{idSanPham}(idSanPham=${idSanPham})}">
                                     <div class="row">
+                                        <input type="hidden" name="idSanPham" th:value="${idSanPham}" >
                                         <div class="col-4">
                                             <input type="text" id="searchInput" class="form-control" name="query"
                                                    placeholder="Tìm kiếm sản phẩm theo mã và tên" th:value="${param.query}" maxlength="255">
@@ -113,7 +97,7 @@
                                                 </button>
                                             </div>
                                             <div>
-                                                <a class="btn btn-outline-warning" href="/admin/san-pham" style="width: 70px">
+                                                <a class="btn btn-outline-warning" th:href="@{/admin/san-pham/{idSanPham}(idSanPham=${idSanPham})}" style="width: 70px">
                                                     <i class="bi bi-arrow-counterclockwise"></i>
                                                 </a>
                                             </div>
@@ -128,7 +112,10 @@
                                         <th data-sortable="" style="width: 5%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">STT</a>
                                         </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Ảnh</a>
+                                        </th>
+                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Mã sản phẩm</a>
                                         </th>
                                         <th data-sortable="" style="width: 25%; white-space: nowrap;">
@@ -140,7 +127,7 @@
                                         <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Công suất</a>
                                         </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Số lượng</a>
                                         </th>
                                         <th data-sortable="" style="width: 10%; white-space: nowrap;">
@@ -149,7 +136,7 @@
                                         <th data-sortable="" style="width: 10%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Trạng thái</a>
                                         </th>
-                                        <th data-sortable="" style="width: 15%; white-space: nowrap;">
+                                        <th data-sortable="" style="width: 8%; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Hành động</a>
                                         </th>
                                     </tr>
@@ -157,6 +144,7 @@
                                     <tbody>
                                     <tr th:each="sp, iter : ${listSP.content}" th:data-id="${sp.id}">
                                         <td style="text-align: center" th:text="${(listSP.number * listSP.size) + iter.index + 1}"></td>
+                                        <td><img th:src="${sp.hinhAnh.hinh_anh_1}" style="width: 60px" alt=""></td>
                                         <td th:text="${sp.sanPham.ma}"></td>
                                         <td th:text="${sp.sanPham.ten + ' (' + sp.mauSac.ten + ')'}"></td>
                                         <td th:text="${sp.sanPham.kieuQuat.ten}"></td>
@@ -180,14 +168,13 @@
                                     </tbody>
                                 </table>
                             </div>
-
                             <div class="dataTable-bottom">
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination justify-content-center">
                                         <!-- Nút Trang đầu -->
                                         <li class="page-item" th:classappend="${listSP.first ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/san-pham?page=0&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/san-pham/' + ${idSanPham} + '?page=' + ${idSanPham} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
                                                aria-label="Trang đầu">
                                                 <span aria-hidden="true">««</span>
                                                 <span class="sr-only">Trang đầu</span>
@@ -197,7 +184,7 @@
                                         <!-- trang trước -->
                                         <li class="page-item" th:classappend="${listSP.first ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/san-pham?page=' + ${listSP.number - 1} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/san-pham/' + ${idSanPham} + '?page=' + ${listSP.number - 1} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
                                                aria-label="Previous" th:if="${!listSP.first}">
                                                 <span aria-hidden="true">&laquo;</span>
                                                 <span class="sr-only">Trang trước</span>
@@ -207,17 +194,14 @@
                                         <li class="page-item"
                                             th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listSP.number - 2), T(java.lang.Math).min(listSP.totalPages - 1, listSP.number + 2))}"
                                             th:classappend="${i == listSP.number ? 'active' : ''}">
-<!--                                            <a class="page-link"-->
-<!--                                               th:href="@{'/admin/san-pham?page=' + ${i} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"-->
-<!--                                               th:text="${i + 1}"></a>-->
                                             <a class="page-link"
-                                               th:href="@{'/admin/san-pham?page=' + ${i >= 0 ? i : 0} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/san-pham/' + ${idSanPham} + '?page=' + ${i >= 0 ? i : 0} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
                                                th:text="${i + 1}"></a>
                                         </li>
                                         <!-- trang sau -->
                                         <li class="page-item" th:classappend="${listSP.last ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/san-pham?page=' + ${listSP.number + 1} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/san-pham/' + ${idSanPham} + '?page=' + ${listSP.number + 1} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
                                                aria-label="Next" th:if="${!listSP.last}">
                                                 <span aria-hidden="true">&raquo;</span>
                                                 <span class="sr-only">Trang sau</span>
@@ -226,7 +210,7 @@
                                         <!-- Trang cuối -->
                                         <li class="page-item" th:classappend="${listSP.last ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/san-pham?page=' + ${listSP.totalPages - 1} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/san-pham/' + ${idSanPham} + '?page=' + ${listSP.totalPages - 1} + '&query=' + ${query} + '&minPrice=' + ${minPrice} + '&maxPrice=' + ${maxPrice} + '&trang_thai=' + ${trang_thai}}"
                                                aria-label="Trang cuối">
                                                 <span aria-hidden="true">»»</span>
                                                 <span class="sr-only">Trang cuối</span>

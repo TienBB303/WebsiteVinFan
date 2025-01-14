@@ -52,6 +52,11 @@ public class SanPhamImp implements SanPhamService {
     }
 
     @Override
+    public List<SanPhamChiTiet> findByIdSanPham(Long idSanPham) {
+        return spctRepo.timKiemTheoIdSanPham(idSanPham);
+    }
+
+    @Override
     public Boolean update(SanPhamChiTiet sanPhamChiTiet) {
         if (spctRepo.existsById(sanPhamChiTiet.getId())) {
             spctRepo.save(sanPhamChiTiet);
@@ -102,11 +107,11 @@ public class SanPhamImp implements SanPhamService {
 
 
     @Override
-    public Page<SanPhamChiTiet> searchProducts(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai, Pageable pageable) {
+    public Page<SanPhamChiTiet> searchProducts(Long idSanPham,String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean trang_thai, Pageable pageable) {
         if (trang_thai == null) {
-            return spctRepo.searchProductsWithouttrangThai(query, minPrice, maxPrice, pageable);
+            return spctRepo.searchProductsWithouttrangThai(idSanPham, query, minPrice, maxPrice, pageable);
         }
-        return spctRepo.searchProducts(query, minPrice, maxPrice,trang_thai, pageable);
+        return spctRepo.searchProducts(idSanPham, query, minPrice, maxPrice,trang_thai, pageable);
     }
 
     @Override
@@ -184,5 +189,14 @@ public class SanPhamImp implements SanPhamService {
     @Override
     public Page<SanPham> findByMaOrTen(String ten, Pageable pageable) {
         return sanPhamRepo.findByTenOrMa(ten, pageable);
+    }
+
+//   Danh Sach san pham
+    @Override
+    public Page<SanPham> timSanPham(String query, Boolean trang_thai, Pageable pageable) {
+        if (trang_thai == null) {
+            return sanPhamRepo.timSanPhamKhongTrangThai(query, pageable);
+        }
+        return sanPhamRepo.timSanPham(query,trang_thai, pageable);
     }
 }

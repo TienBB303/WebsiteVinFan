@@ -331,34 +331,33 @@
                                 <input type="text" class="form-control" id="searchKH" placeholder="Tìm kiếm theo tên, số điện thoại khách hàng">
                                 <button type="button" class="btn btn-outline-primary" id="searchButtonKH">Tìm kiếm</button>
                             </div>
-
-                            <table class="table table-bordered table-striped mt-3">
-                                <thead class="table-light">
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Tên khách hàng</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Email</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="khachHang, stat : ${listsKhachhang}">
-                                    <td th:text="${stat.index + 1}"></td>
-                                    <td th:text="${khachHang.ten}"></td>
-                                    <td th:text="${khachHang.soDienThoai}"></td>
-                                    <td th:text="${khachHang.email}"></td>
-                                    <td>
-                                        <form method="post" th:action="@{/ban-hang-tai-quay/addKH}" class="d-inline">
-                                            <input type="hidden" name="idHD" th:value="${idHD}">
-                                            <input type="hidden" name="idKH" th:value="${khachHang.id}">
-                                            <button type="submit" class="btn btn-outline-success btn-sm" th:disabled="${khachHang.id == 1}">Chọn</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                <table class="table table-bordered table-striped mt-3">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Email</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="khachHang, stat : ${listsKhachhang}">
+                                        <td th:text="${stat.index + 1}"></td>
+                                        <td th:text="${khachHang.ten}"></td>
+                                        <td th:text="${khachHang.soDienThoai}"></td>
+                                        <td th:text="${khachHang.email}"></td>
+                                        <td>
+                                            <form method="post" th:action="@{/ban-hang-tai-quay/addKH}" class="d-inline">
+                                                <input type="hidden" name="idHD" th:value="${idHD}">
+                                                <input type="hidden" name="idKH" th:value="${khachHang.id}">
+                                                <button type="submit" class="btn btn-outline-success btn-sm">Chọn</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -1038,8 +1037,8 @@
     <script>
         function formatPriceInput(element) {
             let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
-            if (value.length > 10) {
-                value = value.slice(0, 10); // Giới hạn tối đa 9 chữ số
+            if (value.length > 12) {
+                value = value.slice(0, 12); // Giới hạn tối đa 12 chữ số
             }
             if (value) {
                 // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam

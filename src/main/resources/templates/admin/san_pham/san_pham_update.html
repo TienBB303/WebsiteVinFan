@@ -55,16 +55,15 @@
             <section class="row">
                     <div class="card">
                         <div class="card-header">
-                            <a class="btn btn-outline-primary" href="/admin/san-pham" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>
+                            <a class="btn btn-outline-primary" href="/admin/list-san-pham" style="width: 70px"><i class="bi bi-arrow-return-left"></i></a>
                         </div>
                         <div class="card-body">
                             <div class="card p-4">
                                 <form id="updateSanpham" th:action="@{/admin/san-pham/update}" th:object="${spUpdate}" method="POST" enctype="multipart/form-data">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <div class="card" style="width: 300px; height: 300px; margin-top: 20px;">
-                                            <div id="imagePreview" class="card-img-top"
-                                                 style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
-                                                <img th:if="${spUpdate.hinhAnh != null}" th:src="${spUpdate.hinhAnh.hinh_anh_1}" alt="Ảnh Sản phẩm" style="width: 200px; height: 200px; object-fit: contain;">
+                                        <div class="card border-0 shadow" style="background-color: #ffebcc;margin-top: 20px;">
+                                            <div id="imagePreview" class="card-img-top" style="width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; background-color: #f8f9fa;">
+                                                <img th:if="${spUpdate.hinhAnh != null}" th:src="${spUpdate.hinhAnh.hinh_anh_1}" alt="Ảnh nhân viên" style="width: 300px; height: 300px; object-fit: contain;">
                                                 <span th:if="${spUpdate.hinhAnh == null}" style="color: #6c757d; text-align: center;"></span>
                                             </div>
                                             <div class="card-body text-center">
@@ -161,12 +160,9 @@
                                     <div class="text-center" style="color: #F4A460; font-weight: bold; padding-bottom: 15px">Thuộc tính cho phép chỉnh sửa</div>
                                     <div class="row">
                                         <div class="col-sm-6">
-                                            <!-- Phần tên sản phẩm      1-->
-                                            <div class="mb-3">
-                                                <label for="sanPhamName">Tên sản phẩm <b style="color: red">*</b></label>
-                                                <input type="text" class="form-control" id="sanPhamName" th:field="*{sanPham.ten}" placeholder="Nhập tên sản phẩm">
-                                            </div>
-                                            <!-- Phần màu sắc           2-->
+                                            <!-- Phần tên sản phẩm      0-->
+                                            <input type="hidden" class="form-control" id="sanPhamName" th:field="*{sanPham.ten}" placeholder="Nhập tên sản phẩm">
+                                            <!-- Phần màu sắc           1-->
                                             <div class="mb-3">
                                                 <label for="sanPhamMauSac">Màu sắc</label>
                                                 <select class="form-select" id="sanPhamMauSac" th:field="*{mauSac.id}">
@@ -176,24 +172,12 @@
                                                     <option th:each="mauSac : ${listMau}" th:value="${mauSac.id}" th:text="${mauSac.ten}" th:if="${mauSac.trang_thai}"></option>
                                                 </select>
                                             </div>
-                                            <!-- Phần trạng thái        3-->
-                                            <div class="mb-3">
-                                                <label>Trạng thái</label>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" id="trangThaiActive" value="true" th:field="*{trang_thai}">
-                                                    <label class="form-check-label" for="trangThaiActive">Hoạt động</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" id="trangThaiInactive" value="false" th:field="*{trang_thai}">
-                                                    <label class="form-check-label" for="trangThaiInactive">Không hoạt động</label>
-                                                </div>
-                                            </div>
-                                            <!-- Phần giá bán           4-->
+
+                                            <!-- Phần giá bán           2-->
                                             <div class="mb-3">
                                                 <label for="sanPhamPrice">Giá bán <b style="color: red">*</b></label>
                                                 <input type="text" class="form-control" id="sanPhamPrice" th:field="*{gia}"  placeholder="Nhập giá bán" required>
                                             </div>
-
                                         </div>
                                         <div class="col-sm-6">
                                             <!-- Phần công suất         1-->
@@ -209,22 +193,17 @@
                                                 <label for="sanPhamQuantity">Số lượng <b style="color: red">*</b></label>
                                                 <input type="number" class="form-control" id="sanPhamQuantity" th:field="*{so_luong}" placeholder="Nhập số lượng" required>
                                             </div>
-                                            <!-- Phần điều khiển từ xa  3-->
+                                            <!-- Phần trạng thái        3-->
                                             <div class="mb-3">
-                                                <label>Điều khiển từ xa</label>
+                                                <label>Trạng thái</label>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" id="dieuKhienActive" value="true" th:field="*{sanPham.dieu_khien_tu_xa}" name="sanPham.dieu_khien_tu_xa">
-                                                    <label class="form-check-label" for="dieuKhienActive">Có điều khiển</label>
+                                                    <input class="form-check-input" type="radio" id="trangThaiActive" value="true" th:field="*{trang_thai}">
+                                                    <label class="form-check-label" for="trangThaiActive">Hoạt động</label>
                                                 </div>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" id="dieuKhienInactive" value="false" th:field="*{sanPham.dieu_khien_tu_xa}" name="sanPham.dieu_khien_tu_xa">
-                                                    <label class="form-check-label" for="dieuKhienInactive">Không có điều khiển</label>
+                                                    <input class="form-check-input" type="radio" id="trangThaiInactive" value="false" th:field="*{trang_thai}">
+                                                    <label class="form-check-label" for="trangThaiInactive">Không hoạt động</label>
                                                 </div>
-                                            </div>
-                                            <!-- Phần mô tả             4-->
-                                            <div class="mb-3">
-                                                <label for="sanPhamDescription">Mô tả</label>
-                                                <textarea class="form-control" id="sanPhamDescription" th:field="*{sanPham.mo_ta}" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -302,7 +281,7 @@
                         timer: 1000,
                         timerProgressBar: true
                     }).then(() => {
-                        window.location.href = '/admin/san-pham';
+                        window.location.href = '/admin/list-san-pham';
                     });
                 })
                 .catch(error => {
