@@ -249,7 +249,6 @@ public class HoaDonController {
     @PostMapping("/huy")
     public String huy(@ModelAttribute("id") long id) {
         hoaDonService.huyHoaDon(id);
-
         // Chuyển hướng người dùng đến trang chi tiết của HoaDon
         return "redirect:/hoa-don/detail?id=" + id; // Chuyển hướng với tham số id
     }
