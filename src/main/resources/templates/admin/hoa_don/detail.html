@@ -87,8 +87,12 @@
         <main class="page-content">
             <!-- Order Tracking Section -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h2>Theo dõi đơn hàng</h2>
+                    <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal"
+                            data-bs-target="#myModal1">
+                        Lịch sử
+                    </button>
                 </div>
                 <div class="row-ls overflow-x-auto">
                     <div th:each="history : ${listHistory}" class="col-12 col-sm-6 col-md-3 mb-3">
@@ -120,62 +124,55 @@
                 </div>
             </div>
 
-            <div class="card mb-4">
-                <div class="container d-flex justify-content-end">
-                    <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal"
-                            data-bs-target="#myModal1">
-                        Lịch sử
-                    </button>
-                    <div class="modal fade" id="myModal1" tabindex="-1" aria-labelledby="exampleModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel1">Lịch sử thao tác</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <table class="table table-striped dataTable-table mt-3">
-                                            <thead>
-                                            <tr>
-                                                <th>STT</th>
-                                                <th>Trạng thái</th>
-                                                <th>Ngày</th>
-                                                <th>Người xác nhận</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="item, iter : ${listHistory}">
-                                                <td th:text="${iter.count}"></td>
-                                                <td th:switch="${item.trangThai}">
-                                                    <span th:case="0" th:text="'Hóa đơn chờ'"></span>
-                                                    <span th:case="1" th:text="'Đang chờ xác nhận'"></span>
-                                                    <span th:case="2" th:text="'Đã xác nhận'"></span>
-                                                    <span th:case="3" th:text="'Đang giao hàng'"></span>
-                                                    <span th:case="4" th:text="'Hoàn thành'"></span>
-                                                    <span th:case="5" th:text="'Hủy'"></span>
-                                                </td>
-                                                <td th:text="${item.ngayTao}"></td>
-                                                <td th:text="${item.nguoiTao}"></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng
-                                    </button>
-                                </div>
-                            </div>
+
+            <div class="modal fade" id="myModal1" tabindex="-1" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Lịch sử thao tác</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <table class="table table-striped dataTable-table mt-3">
+                                    <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày</th>
+                                        <th>Người xác nhận</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="item, iter : ${listHistory}">
+                                        <td th:text="${iter.count}"></td>
+                                        <td th:switch="${item.trangThai}">
+                                            <span th:case="0" th:text="'Hóa đơn chờ'"></span>
+                                            <span th:case="1" th:text="'Đang chờ xác nhận'"></span>
+                                            <span th:case="2" th:text="'Đã xác nhận'"></span>
+                                            <span th:case="3" th:text="'Đang giao hàng'"></span>
+                                            <span th:case="4" th:text="'Hoàn thành'"></span>
+                                            <span th:case="5" th:text="'Hủy'"></span>
+                                        </td>
+                                        <td th:text="${item.ngayTao}"></td>
+                                        <td th:text="${item.nguoiTao}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="card mb-4">
-                <div class="d-flex mb-3"
+                <div class="d-flex"
                      th:if="${hoaDon.trangThai != 4 && hoaDon.trangThai != 5 }">
 
                     <form method="post" th:action="@{/hoa-don/xac-nhan}"
@@ -205,12 +202,34 @@
                     </form>
 
                     <form method="post" th:action="@{/hoa-don/huy}"
-                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 2}" class="me-2">
+                          th:if="${hoaDon.trangThai != 3 && hoaDon.trangThai != 2}" class="me-2" id="cancelForm">
                         <input type="hidden" name="id" th:value="${hoaDon.id}">
-                        <button type="submit" class="btn btn-outline-danger">
+                        <button type="button" class="btn btn-outline-danger" id="cancelButton">
                             <i class=""></i> Hủy
                         </button>
                     </form>
+                </div>
+                <!-- Modal Popup Xác Nhận Hủy -->
+                <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cancelModalLabel">Xác Nhận Hủy</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Bạn có chắc chắn muốn hủy đơn hàng này không?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" id="confirmCancelButton">Có
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Không
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -262,7 +281,13 @@
             <!-- Order Information Section -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2>Thông tin đơn hàng: <span th:text="${hoaDon.ma}"></span></h2>
+                    <h2>Thông tin đơn hàng: <span class="text-success-emphasis" th:text="${hoaDon.ma}"></span></h2>
+                    <button th:if="${hoaDon.trangThai == 0 && hoaDon.diaChi != null || hoaDon.trangThai == 1 }"
+                            type="button" class="btn btn-outline-warning"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalUpdate">
+                        Sửa hóa đơn
+                    </button>
                 </div>
                 <div class="container text-center">
                     <div class="row">
@@ -276,11 +301,10 @@
                             </p>
                             <p><strong>Tên người nhận: </strong> <span th:text="${hoaDon.tenNguoiNhan}"></span></p>
                             <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi"></span></p>
-                            <!--                            <p><strong>Địa chỉ: </strong> <span th:id="ganDiaChi" th:text="${hoaDon.diaChi}"></span></p>-->
                         </div>
 
                         <div class="col">
-                            <div class="col-md-6">
+                            <div class="col-md-6 text-center">
                                 <p><strong>Loại hóa đơn: </strong><span
                                         th:class="${hoaDon.loaiHoaDon ? 'text-danger' : 'text-primary'}"
                                         th:text="${hoaDon.loaiHoaDon ? 'Tại quầy' : 'Giao hàng'}"></span></p>
@@ -288,99 +312,96 @@
                                 <p><strong>Ngày tạo: </strong><span th:text="${hoaDon.ngayTao}"></span></p>
                             </div>
                         </div>
-                        <div class="text-end mt-3">
-                            <div class="container">
-                                <button th:if="${hoaDon.trangThai == 0 && hoaDon.diaChi != null || hoaDon.trangThai == 1 }"
-                                        type="button" class="btn btn-outline-warning"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalUpdate">
-                                    Sửa hóa đơn
-                                </button>
+                    </div>
+                </div>
+            </div>
 
-                                <div class="modal fade" id="modalUpdate" tabindex="-1"
-                                     aria-labelledby="exampleModalLabel"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog modal-xl">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel2">Thay đổi thông tin</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form method="post" th:action="@{/hoa-don/sua-thong-tin}">
-                                                    <input type="hidden" id="tinhThanhPho" th:value="${tinh}"/>
-                                                    <input type="hidden" id="quanHuyen" th:value="${huyen}"/>
-                                                    <input type="hidden" id="xaPhuong" th:value="${xa}"/>
-                                                    <input type="hidden" name="id" th:value="${hoaDon.id}">
+            <div class="container">
+                <div class="modal fade" id="modalUpdate" tabindex="-1"
+                     aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel2">Thay đổi thông tin</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" th:action="@{/hoa-don/sua-thong-tin}">
+                                    <input type="hidden" id="tinhThanhPho" th:value="${tinh}"/>
+                                    <input type="hidden" id="quanHuyen" th:value="${huyen}"/>
+                                    <input type="hidden" id="xaPhuong" th:value="${xa}"/>
+                                    <input type="hidden" name="id" th:value="${hoaDon.id}">
 
-                                                    <!-- Row 1 -->
-                                                    <div class="row">
-                                                        <div class="col-md-6 mb-3 text-start">
-                                                            <label class="fw-bold mt-2">Tên</label>
-                                                            <input type="text" class="form-control" id="name1"
-                                                                   th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}"
-                                                                   placeholder="Tên người nhận">
-                                                        </div>
-                                                        <div class="col-md-6 mb-3 text-start">
-                                                            <label class="fw-bold mt-2">
-                                                                Số điện thoại
-                                                            </label>
-                                                            <input type="text" class="form-control" id="phoneNumber"
-                                                                   th:value="${hoaDon.sdtNguoiNhan}"
-                                                                   th:name="soDienThoaiMoi" placeholder="Số điện thoại">
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Row 2 -->
-                                                    <div class="row">
-                                                        <div class="col-md-4 mb-3 text-start">
-                                                            <label class="form-label fw-bold">Tỉnh/Thành phố</label>
-                                                            <select class="form-control" id="city" name="tinhThanhPho">
-                                                                <option value="" selected>Chọn tỉnh thành</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3 text-start">
-                                                            <label class="form-label fw-bold">Quận/Huyện</label>
-                                                            <select class="form-control" id="district" name="quanHuyen">
-                                                                <option value="" selected>Chọn quận huyện</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3 text-start ">
-                                                            <label class="form-label fw-bold">Phường/Xã</label>
-                                                            <select class="form-control" id="ward" name="xaPhuong">
-                                                                <option value="" selected>Chọn phường xã</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="mb-3 text-start">
-                                                        <label class="form-label fw-bold">Số nhà/ngõ đường</label>
-                                                        <input type="text" class="form-control" id="street"
-                                                               th:value="${chitietdiachi}" th:name="soNhaNgoDuong">
-                                                    </div>
-
-                                                    <!-- Input ẩn để lưu địa chỉ hoàn chỉnh -->
-                                                    <input type="hidden" id="fullAddress" name="diaChiMoi">
-                                                    <button type="submit" onclick="getCityValue()"
-                                                            class="btn btn-outline-warning">Sửa
-                                                    </button>
-                                                </form>
-                                            </div>
+                                    <!-- Row 1 -->
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3 text-start">
+                                            <label class="fw-bold mt-2">Tên</label>
+                                            <input type="text" class="form-control" id="name1"
+                                                   th:name="tenMoi" th:value="${hoaDon.tenNguoiNhan}"
+                                                   placeholder="Tên người nhận">
+                                        </div>
+                                        <div class="col-md-6 mb-3 text-start">
+                                            <label class="fw-bold mt-2">
+                                                Số điện thoại
+                                            </label>
+                                            <input type="text" class="form-control" id="phoneNumber"
+                                                   th:value="${hoaDon.sdtNguoiNhan}"
+                                                   th:name="soDienThoaiMoi" placeholder="Số điện thoại">
                                         </div>
                                     </div>
-                                </div>
 
+                                    <!-- Row 2 -->
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3 text-start">
+                                            <label class="form-label fw-bold">Tỉnh/Thành phố</label>
+                                            <select class="form-control" id="city" name="tinhThanhPho">
+                                                <option value="" selected>Chọn tỉnh thành</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3 text-start">
+                                            <label class="form-label fw-bold">Quận/Huyện</label>
+                                            <select class="form-control" id="district" name="quanHuyen">
+                                                <option value="" selected>Chọn quận huyện</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3 text-start ">
+                                            <label class="form-label fw-bold">Phường/Xã</label>
+                                            <select class="form-control" id="ward" name="xaPhuong">
+                                                <option value="" selected>Chọn phường xã</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 text-start">
+                                        <label class="form-label fw-bold">Số nhà/ngõ đường</label>
+                                        <input type="text" class="form-control" id="street"
+                                               th:value="${chitietdiachi}" th:name="soNhaNgoDuong">
+                                    </div>
+
+                                    <!-- Input ẩn để lưu địa chỉ hoàn chỉnh -->
+                                    <input type="hidden" id="fullAddress" name="diaChiMoi">
+                                    <div class="text-end">
+                                        <button type="submit" onclick="getCityValue()" class="btn btn-outline-warning">
+                                            Sửa
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h2>Thông tin sản phẩm</h2>
+                    <!-- Button để mở modal -->
+                    <button th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 1}" type="button"
+                            class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#myModal">
+                        Thêm sản phẩm
+                    </button>
                 </div>
 
                 <table class="table table-striped dataTable-table mt-3">
@@ -448,15 +469,8 @@
                     </tbody>
                 </table>
 
-
                 <div class="text-end mt-3">
                     <div class="container">
-                        <!-- Button để mở modal -->
-                        <button th:if="${hoaDon.trangThai == 0 || hoaDon.trangThai == 1}" type="button"
-                                class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#myModal">
-                            Thêm sản phẩm
-                        </button>
-
                         <!-- Modal -->
                         <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                              aria-hidden="true">
@@ -532,7 +546,7 @@
                                                             <input type="number" name="soLuong"
                                                                    class="form-control form-control-sm mx-auto"
                                                                    value="1" min="1"
-                                                                   style="width: 60px" placeholder="Nhập số lượng"
+                                                                   style="width: 80px" placeholder="Nhập số lượng"
                                                                    required>
                                                         </td>
                                                         <td class="text-center align-middle">
@@ -944,7 +958,18 @@
         </script>
 
     </div>
+    <script>
+        document.getElementById('cancelButton').addEventListener('click', function (event) {
+            event.preventDefault();  // Ngừng gửi form ngay lập tức
+            // Hiển thị modal xác nhận
+            new bootstrap.Modal(document.getElementById('cancelModal')).show();
+        });
 
+        document.getElementById('confirmCancelButton').addEventListener('click', function () {
+            // Khi người dùng nhấn "Có", gửi form hủy
+            document.getElementById('cancelForm').submit();
+        });
+    </script>
 
 </div>
 
