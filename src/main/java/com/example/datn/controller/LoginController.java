@@ -47,7 +47,7 @@ public class LoginController {
                         @RequestParam(value = "username", required = false) String username,
                         Model model) {
         if (error != null) {
-            model.addAttribute("error", "Tài khoản đã bị khóa, liên hệ với cửa hàng để được hỗ trợ.");
+            model.addAttribute("error", "Tài khoản nhập sai thông tin hoặc đã bị khóa.");
         }
 
         model.addAttribute("username", username);  // Giữ lại username khi nhập sai
