@@ -42,18 +42,24 @@ public class ThongKeController {
         //Hôm nay :
         List<HoaDon> hoaDonHoanThanhHomNay = thongKeService.timHoaDonHoanThanhHomNay();
         BigDecimal tongTienThuHomnay = thongKeService.tongTienThuDuocHomNay();
+        BigDecimal tongTienThuHomQua = thongKeService.tongTienThuDuocHomQua();
+        BigDecimal tongTienThuDuocTrongKhoang = thongKeService.tinhTongTienThuDuocTrongKhoangThoiGian(tuNgay, denNgay);
+
         model.addAttribute("hoaDonHomNay", hoaDonHoanThanhHomNay);
         model.addAttribute("demSoHoaDonHoanThanhHomnay", hoaDonHoanThanhHomNay.size());
         model.addAttribute("tongTienThuHomnay", tongTienThuHomnay);
+        model.addAttribute("tongTienThuHomQua", tongTienThuHomQua);
+        model.addAttribute("tongTienThuDuocTrongKhoang", tongTienThuDuocTrongKhoang);
 
         //tìm kiếm bán chạy
         List<SanPhamBanChayDTO> listSPBanChay = thongKeService.listBanChay(tuNgay,denNgay);
         List<HoaDonDoanhThuDTO> listHoaDonBanChay = thongKeService.listHoaDonTheoDoanhThu(tuNgay,denNgay);
-        List<DoanhThuThongKeDTO> listDoanhThuThongKe = thongKeService.getDoanhThuTheoThoiGian(thoiGian, tuNgay, denNgay);
+
         System.out.println("listBanchay :" + listSPBanChay.size());
         System.out.println("listHoaDonBanChay :" + listHoaDonBanChay.size());
         model.addAttribute("listSPBanChay", listSPBanChay);
         model.addAttribute("listHoaDonBanChay", listHoaDonBanChay);
+
         model.addAttribute("tuNgay", tuNgay != null ? tuNgay : "");
         model.addAttribute("denNgay", denNgay != null ? denNgay : "");
 
@@ -76,4 +82,11 @@ public class ThongKeController {
         return thongKeService.listHoaDonTheoDoanhThu(tuNgay, denNgay);
     }
 
+    @GetMapping("/doanh-thu-theo-thoi-gian-api")
+    public List<DoanhThuThongKeDTO> getDoanhThuTheoThoiGian(
+            @RequestParam(name = "tuNgay", required = false) LocalDate tuNgay,
+            @RequestParam(name = "denNgay", required = false) LocalDate denNgay) {
+
+        return thongKeService.getDoanhThuTheoThoiGian(tuNgay, denNgay);
+    }
 }
