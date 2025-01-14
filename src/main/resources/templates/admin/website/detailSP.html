@@ -31,8 +31,8 @@
 
     .product-image {
         width: 100%;
-        max-height: 400px;
-        object-fit: cover;
+        height: auto;
+        object-fit: contain;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
@@ -110,11 +110,6 @@
         border-bottom: 3px solid orange; /* Viền cam */
     }
 
-    /* Tùy chỉnh thanh tìm kiếm */
-    .search-bar {
-        width: 100%;
-    }
-
     .search-bar .form-control {
         height: 40px; /* Tăng chiều cao của ô tìm kiếm */
     }
@@ -129,6 +124,7 @@
         object-fit: cover;
     }
 
+
     .old-price {
         color: gray;
         font-size: 0.9rem;
@@ -139,33 +135,20 @@
         font-weight: bold;
         font-size: 1.2rem;
     }
+    /* Đảm bảo các nút trong sản phẩm liên quan căn chỉnh đẹp */
+    .related-buttons {
+        display: flex; /* Hiển thị các nút theo hàng ngang */
+        gap: 10px; /* Khoảng cách giữa các nút */
+        justify-content: center; /* Căn giữa các nút */
+    }
+
+    .related-buttons .btn {
+        flex: 1; /* Các nút có chiều rộng bằng nhau */
+        max-width: 100%;
+    }
 
 </style>
 <body>
-<!-- Navbar -->
-<!--<nav class="navbar navbar-expand-lg navbar-custom py-3">-->
-<!--    <div class="container-fluid">-->
-<!--        <a class="navbar-brand" href="/admin/index">-->
-<!--            <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"-->
-<!--                 alt="Logo">-->
-<!--        </a>-->
-
-<!--        <form th:action="@{/admin/product-catalog}" method="get" class="search-form mb-4">-->
-<!--            <input type="text" name="query" th:value="${query}" placeholder="Tìm kiếm sản phẩm..." class="form-control">-->
-<!--            <button type="submit"><i class="fas fa-search"></i></button>-->
-<!--        </form>-->
-
-<!--        <div class="d-flex align-items-center ms-auto">-->
-<!--            <div class="contact-info me-4">-->
-<!--                <i class="fas fa-phone-alt"></i> Gọi mua hàng: 0977 27 6646-->
-<!--            </div>-->
-<!--            <a href="/cart/view" class="text-decoration-none me-4">-->
-<!--                <i class="fas fa-shopping-cart"></i> Giỏ hàng-->
-<!--            </a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
-<!-- Thanh Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
     <div class="container-fluid">
         <!-- Logo -->
@@ -213,18 +196,16 @@
 <div class="container mt-5">
     <div class="row product-container">
         <!-- Hình ảnh sản phẩm -->
-        <div class="col-md-6 text-center">
+        <div class="col-md-6" >
             <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <!-- Hiển thị danh sách ảnh từ SPCT -->
                     <div th:each="hinhAnh, stat : ${danhSachHinhAnh}" class="carousel-item"
                          th:classappend="${stat.index == 0} ? 'active'">
-                        <img th:src="${hinhAnh.hinh_anh_1}" class="d-block w-100 product-image" alt="Hình ảnh sản phẩm">
+                        <img th:src="${hinhAnh.hinh_anh_1}" class="d-block product-image" alt="Hình ảnh sản phẩm">
                     </div>
                 </div>
             </div>
         </div>
-
 
         <!-- Thông tin sản phẩm -->
         <div class="col-md-6">
@@ -253,7 +234,6 @@
                         <li><strong>Chiều cao:</strong> <span th:text="${sanPhamChiTiet.chieuCao.ten}"></span></li>
                         <li><strong>Đế quạt:</strong> <span th:text="${sanPhamChiTiet.deQuat.ten}"></span></li>
                         <li><strong>Chế độ gió:</strong> <span th:text="${sanPhamChiTiet.cheDoGio.ten}"></span></li>
-                        <li><strong>Số lượng:</strong> <span th:text="${sanPhamChiTiet.so_luong}"></span></li>
                         <li><strong>Mô tả:</strong> <span th:text="${sanPham.mo_ta}"></span></li>
                     </ul>
 
@@ -267,7 +247,7 @@
                                     th:value="${bienThe.id}"
                                     th:data-original-price="${bienThe.gia}"
                                     th:data-discount-price="${giaSauGiamMap[bienThe.id] != null ? giaSauGiamMap[bienThe.id] : bienThe.gia}"
-                                    th:text="'Màu: ' + ${bienThe.mauSac.ten} + ', Công suất: ' + ${bienThe.congSuat.ten}">
+                                    th:text="'Màu: ' + ${bienThe.mauSac.ten} + ', Công suất: ' + ${bienThe.congSuat.ten} + ' (Còn: ' + ${bienThe.so_luong} + ')'">
                             </option>
                         </select>
                     </div>
@@ -319,18 +299,19 @@
                             <span class="giaVND fw-bold"
                                   th:text="${#numbers.formatDecimal(giaSauGiamMap[sanPhamChiTiet.id] != null ? giaSauGiamMap[sanPhamChiTiet.id] : sanPhamChiTiet.gia, 1, 0)}"></span>
                         </p>
-                        <a th:href="@{/vin-fan/detail/{id}(id=${sanPhamChiTiet.id})}"
-                           class="btn btn-primary btn-sm w-100">Xem chi tiết</a>
-                        <!-- Nút Thêm vào Giỏ hàng (nếu cần) -->
-                        <form class="variantForm" onsubmit="addRelatedToCart(event, this)">
-                            <input type="hidden" name="productId" class="relatedProductId" th:value="${sanPhamChiTiet.id}">
-                            <input type="hidden" name="price" class="relatedPrice"
-                                   th:value="${giaSauGiamMap[sanPhamChiTiet.id] != null ? giaSauGiamMap[sanPhamChiTiet.id] : sanPhamChiTiet.gia}">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-outline-dark w-100 fw-bold">
-                                <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
-                            </button>
-                        </form>
+                        <div class="related-buttons mt-3">
+                            <a th:href="@{/vin-fan/detail/{id}(id=${sanPhamChiTiet.id})}"
+                               class="btn btn-primary btn-sm">Xem chi tiết</a>
+                            <form class="variantForm" onsubmit="addRelatedToCart(event, this)">
+                                <input type="hidden" name="productId" class="relatedProductId" th:value="${sanPhamChiTiet.id}">
+                                <input type="hidden" name="price" class="relatedPrice"
+                                       th:value="${giaSauGiamMap[sanPhamChiTiet.id] != null ? giaSauGiamMap[sanPhamChiTiet.id] : sanPhamChiTiet.gia}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-outline-dark btn-sm">
+                                    <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

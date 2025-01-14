@@ -613,6 +613,8 @@
                         <tr>
                             <th>Mã phiếu giảm giá</th>
                             <th>Tên phiếu giảm giá</th>
+                            <th>Tổng tiền hàng</th>
+                            <th>Tổng tiền sau giảm</th>
                             <th>Giá trị giảm</th>
                         </tr>
                         </thead>
@@ -620,6 +622,8 @@
                         <tr>
                             <td th:text="${pggHoaDon.ma}"></td>
                             <td th:text="${pggHoaDon.ten}"></td>
+                            <td class="giaVND" th:text="${tongTien}"></td>
+                            <td class="giaVND" th:text="${tongTienSauGiamGia}"></td>
                             <td class="giaVND" th:text="${pggHoaDon.giaTriGiam}"></td>
                         </tr>
                         </tbody>
