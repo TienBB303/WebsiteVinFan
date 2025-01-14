@@ -481,7 +481,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer mb-3 ">
-                                    <button type="button" class="btn btn-outline-success" onclick="showSuccess()"
+                                    <button type="button" class="btn btn-outline-success" id="btnThanhToan"
                                             th:disabled="${idHD == null || listHDCT == null || #lists.isEmpty(listHDCT)}" style="width: 70px; padding-right: 20px">
                                         <i class="bi bi-check"></i>
                                     </button>
@@ -505,6 +505,109 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalThanhToan = document.getElementById("modalThanhToan");
+
+            if (modalThanhToan) {
+                modalThanhToan.addEventListener("shown.bs.modal", function () {
+                    const btnThanhToan = document.getElementById("btnThanhToan");
+
+                    if (btnThanhToan) {
+                        btnThanhToan.addEventListener("click", function (event) {
+                            event.preventDefault(); // Ngăn form gửi đi ngay lập tức
+
+                            // Kiểm tra tồn kho trước khi gửi form
+                            let isValid = true;
+                            const rows = document.querySelectorAll("#productTable tr");
+
+                            rows.forEach((row) => {
+                                const stockCell = row.querySelector("td:nth-child(6)"); // Cột số lượng tồn
+                                const quantityInput = row.querySelector('input[name="soLuong"]'); // Số lượng nhập
+
+                                if (stockCell && quantityInput) {
+                                    const stock = parseInt(stockCell.textContent.trim()) || 0;
+                                    const quantity = parseInt(quantityInput.value.trim()) || 0;
+
+                                    if (quantity > stock) {
+                                        isValid = false;
+                                        // Hiển thị thông báo lỗi
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Sản phẩm không đủ tồn kho!",
+                                            text: `Sản phẩm: ${
+                                                row.querySelector("td:nth-child(2)").textContent
+                                            }, tồn kho: ${stock}, bạn đã nhập: ${quantity}.`,
+                                            confirmButtonText: "OK",
+                                        });
+                                    }
+                                }
+                            });
+
+                            // Nếu tồn kho không đủ, dừng tiến trình
+                            if (!isValid) {
+                                return; // Dừng lại, không gửi form
+                            }
+
+                            // Tiếp tục gửi yêu cầu nếu tất cả sản phẩm hợp lệ
+                            const form = document.getElementById("thanhToanForm");
+                            if (!form) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Lỗi!",
+                                    text: "Không tìm thấy form thanh toán.",
+                                    confirmButtonText: "OK",
+                                });
+                                return;
+                            }
+
+                            const formData = new FormData(form); // Thu thập dữ liệu từ form
+
+                            // Gửi yêu cầu thanh toán qua Fetch API
+                            fetch(form.action, {
+                                method: "POST",
+                                body: formData,
+                            })
+                                .then((response) => {
+                                    if (!response.ok) {
+                                        // Nếu có lỗi từ backend, đọc thông báo lỗi
+                                        return response.json().then((errorData) => {
+                                            throw new Error(
+                                                errorData.message || "Đã xảy ra lỗi khi thanh toán!"
+                                            );
+                                        });
+                                    }
+                                    return response.json(); // Xử lý phản hồi JSON từ backend
+                                })
+                                .then((data) => {
+                                    // Hiển thị thông báo thành công nếu backend trả về OK
+                                    Swal.fire({
+                                        title: "Thành công!",
+                                        text:
+                                            data.message ||
+                                            "Đơn hàng của bạn đã được đặt thành công!",
+                                        icon: "success",
+                                        confirmButtonText: "OK",
+                                    }).then(() => {
+                                        // Tải lại trang hoặc chuyển hướng
+                                        window.location.reload();
+                                    });
+                                })
+                                .catch((error) => {
+                                    // Hiển thị thông báo lỗi nếu backend phát hiện lỗi
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Lỗi khi thanh toán!",
+                                        text: error.message,
+                                        confirmButtonText: "OK",
+                                    });
+                                });
+                        });
+                    }
+                });
+            }
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const addButtons = document.querySelectorAll('form button[type="submit"]');
@@ -648,20 +751,6 @@
 
             // Cập nhật kết quả với định dạng "000.000 VND"
             document.getElementById('tienThuaTraKhach').value = `${changeToGive.toLocaleString('vi-VN')} VND`;
-        }
-    </script>
-
-    <script>
-        function showSuccess() {
-            Swal.fire({
-                title: 'Thành công!',
-                text: 'Đơn hàng của bạn đã được đặt thành công!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                // Gửi form đặt hàng
-                $('#thanhToanForm').submit();
-            });
         }
     </script>
     <!--    tìm kiếm sản phẩm-->
