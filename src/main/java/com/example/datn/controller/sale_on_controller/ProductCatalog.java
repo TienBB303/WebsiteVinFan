@@ -291,6 +291,7 @@ public class ProductCatalog {
         // Trả về JSON chứa danh sách ảnh
         Map<String, Object> response = new HashMap<>();
         response.put("images", imageUrls);
+        response.put("soLuong", spct.getSo_luong());
         return response;
     }
 
