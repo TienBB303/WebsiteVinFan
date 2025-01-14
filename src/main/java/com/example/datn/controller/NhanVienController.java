@@ -205,7 +205,15 @@ public class NhanVienController {
             }
             nhanVien.setNguoiTao(nv.getTen());
             nhanVienRepository.save(nhanVien);
-
+            emailService.sendEmailDangKiTaiKhoanThanhCong(
+                nhanVien.getEmail(),
+                "Chào mừng " + nhanVien.getTen() + " đến với cửa hàng VinFan.",
+                "Đây là tài khoản và mật khẩu của bạn, vui lòng tránh tiết lộ cho người ngoài:\n" +
+                        "Tên tài khoản: " + nhanVien.getEmail() + "\n" +
+                        "Mật khẩu: " + nhanVien.getMatKhau() + "\n\n" +
+                        "Hãy đổi mật khẩu của bạn để tăng cường bảo mật.\n" +
+                        "Chúc bạn một ngày tốt lành!"
+            );
             response.put("message", "Nhân viên mới đã được thêm thành công.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -454,21 +462,5 @@ public class NhanVienController {
 
         }
     }
-
-
-//    @GetMapping("/thong-tin-tai-khoan-api")
-//    public NhanVien thongTinNhanVien() {
-//        try {
-//            NhanVien nv = nhanVienRepository.profileNhanVien(); // Kiểm tra query này
-//            if (nv == null) {
-//                throw new Exception("Không tìm thấy thông tin nhân viên.");
-//            }
-//            return nv;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException("Lỗi khi truy xuất thông tin nhân viên: " + e.getMessage());
-//        }
-//    }
-
 
 }

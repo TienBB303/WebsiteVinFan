@@ -150,41 +150,41 @@
                                     </tr>
                                     </thead>
                                     <tbody id="productTable">
-                                    <tr th:each="item, iter : ${listSPCTInHDCT}"
-                                        th:if="${item.so_luong > 0}">
-                                        <td th:text="${iter.count}"></td>
-                                        <td th:text="${item.sanPham.ten}"></td>
-                                        <td th:text="${item.mauSac.ten}"></td>
-                                        <td th:text="${item.congSuat.ten}"></td>
-                                        <td class="giaVND" th:text="${item.gia}"></td>
-                                        <td th:text="${item.so_luong}"></td>
-                                        <form method="post" th:action="@{/ban-hang-tai-quay/addSPCT}"
-                                              th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
-                                            <td>
-                                                <!-- CSRF token -->
-                                                <input type="hidden" th:name="${_csrf.parameterName}"
-                                                       th:value="${_csrf.token}"/>
+                                        <tr th:each="item, iter : ${listSPCTInHDCT}"
+                                            th:if="${item.so_luong > 0 && item.trang_thai == true}">
+                                            <td th:text="${iter.count}"></td>
+                                            <td th:text="${item.sanPham.ten}"></td>
+                                            <td th:text="${item.mauSac.ten}"></td>
+                                            <td th:text="${item.congSuat.ten}"></td>
+                                            <td class="giaVND" th:text="${item.gia}"></td>
+                                            <td th:text="${item.so_luong}"></td>
+                                            <form method="post" th:action="@{/ban-hang-tai-quay/addSPCT}"
+                                                  th:object="${addSPToHoaDonChiTietRequest}" class="d-inline">
+                                                <td>
+                                                    <!-- CSRF token -->
+                                                    <input type="hidden" th:name="${_csrf.parameterName}"
+                                                           th:value="${_csrf.token}"/>
 
-                                                <!-- Hidden inputs -->
-                                                <input type="hidden" name="idHD" th:value="${idHD}">
-                                                <input type="hidden" name="idSP" th:value="${item.id}">
-                                                <input class="giaVND" type="hidden" name="gia"
-                                                       th:value="${item.gia}">
+                                                    <!-- Hidden inputs -->
+                                                    <input type="hidden" name="idHD" th:value="${idHD}">
+                                                    <input type="hidden" name="idSP" th:value="${item.id}">
+                                                    <input class="giaVND" type="hidden" name="gia"
+                                                           th:value="${item.gia}">
 
-                                                <!-- Số lượng -->
-                                                <input type="number" name="soLuong"
-                                                       class="form-control form-control-sm" value="1" min="1"
-                                                       style="width: 60px"
-                                                       placeholder="Nhập số lượng" required>
-                                            </td>
-                                            <td>
-                                                <!-- Nút Thêm -->
-                                                <button type="submit" class="btn btn-outline-success btn-sm">
-                                                    Thêm
-                                                </button>
-                                            </td>
-                                        </form>
-                                    </tr>
+                                                    <!-- Số lượng -->
+                                                    <input type="number" name="soLuong"
+                                                           class="form-control form-control-sm" value="1" min="1"
+                                                           style="width: 60px"
+                                                           placeholder="Nhập số lượng" required>
+                                                </td>
+                                                <td>
+                                                    <!-- Nút Thêm -->
+                                                    <button type="submit" class="btn btn-outline-success btn-sm">
+                                                        Thêm
+                                                    </button>
+                                                </td>
+                                            </form>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -352,7 +352,7 @@
                                             <form method="post" th:action="@{/ban-hang-tai-quay/addKH}" class="d-inline">
                                                 <input type="hidden" name="idHD" th:value="${idHD}">
                                                 <input type="hidden" name="idKH" th:value="${khachHang.id}">
-                                                <button type="submit" class="btn btn-outline-success btn-sm" th:disabled="${khachHang.id == 1}">Chọn</button>
+                                                <button type="submit" class="btn btn-outline-success btn-sm">Chọn</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -386,21 +386,22 @@
                     <div class="modal-body">
                         <form th:action="@{/ban-hang-tai-quay/thanh-toan}" method="post" id="thanhToanForm" class="p-4 shadow-lg rounded">
                             <input type="hidden" th:name="idHD" th:value="${idHD}">
+                            <input type="hidden" id="idPhieuGiam" name="idPhieuGiam" value="">
                             <div class="row">
                                 <!-- Thông Tin Khách Hàng -->
                                 <div class="col-md-6" id="deliveryForm" style="visibility: hidden;">
                                     <h5 class="mb-4 text-primary">Thông Tin Khách Hàng</h5>
                                     <div class="form-section mb-3">
-                                        <input type="text" class="form-control" name="tenKhangHang" th:value="${TTkhachHang?.ten ?: ''}" placeholder="Tên khách hàng" required>
+                                        <input type="text" class="form-control" name="tenKhangHang" th:value="${TTkhachHang?.ten ?: ''}" placeholder="Tên khách hàng" >
                                     </div>
                                     <div class="form-section mb-3">
-                                        <input type="text" class="form-control" name="soDienThoaiKhachHang" th:value="${TTkhachHang?.soDienThoai ?: ''}" placeholder="Số điện thoại" required>
+                                        <input type="text" class="form-control" name="soDienThoaiKhachHang" th:value="${TTkhachHang?.soDienThoai ?: ''}" placeholder="Số điện thoại" >
                                     </div>
                                     <div class="form-section mb-3">
-                                        <input type="email" class="form-control" th:value="${TTkhachHang?.email ?: ''}" placeholder="Email" required>
+                                        <input type="email" class="form-control" th:value="${TTkhachHang?.email ?: ''}" placeholder="Email" >
                                     </div>
                                     <div class="form-section mb-3">
-                                        <input type="text" class="form-control" name="chiTietDiaChi" th:value="${diachiMacDinh?.soNhaNgoDuong ?: ''}" placeholder="Địa chỉ giao hàng" required>
+                                        <input type="text" class="form-control" name="chiTietDiaChi" th:value="${diachiMacDinh?.soNhaNgoDuong ?: ''}" placeholder="Địa chỉ giao hàng" >
                                     </div>
                                     <div class="form-section mb-3">
                                         <div class="row mb-4">
@@ -433,14 +434,8 @@
                                 <div class="col-md-6">
                                     <h5 class="mb-4 text-primary">Chi Tiết Thanh Toán</h5>
                                     <div class="form-section d-flex align-items-center mb-3">
-                                        <span class="w-50">Khách thanh toán:</span>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="0 VND" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-section mb-3 d-flex">
-                                        <span style="width: 200px">Chọn mã giảm giá: </span>
-                                        <select id="discountCode" class="form-select" onchange="updatePhieuGiam()">
+                                        <span class="w-100">Chọn mã giảm giá: </span>
+                                        <select id="discountCode" class="form-select" onchange="apDungPhieuGiam()">
                                             <option value="">-- Chọn mã giảm giá --</option>
                                             <option th:each="phieu : ${phieuGiamList}" th:value="${phieu.id}" th:data-value="${phieu.giaTriGiam}" th:text="${phieu.ma + ' - Giảm ' + phieu.giaTriGiam + ' VND'}"></option>
                                         </select>
@@ -459,21 +454,32 @@
                                             <label class="form-check-label" for="toggleForm">Giao hàng</label>
                                         </div>
                                     </div>
-                                    <div class="form-section mb-3 d-flex">
+                                    <div class="form-section mb-3">
                                         <span style="width: 200px">Tổng tiền hàng: </span>
-                                        <span class="total-price text-warning fw-bold" th:text="${tongTien} + ' VND'"></span>
+                                        <input id="tongTienHang" type="text" class="form-control giaVND" th:value="${tongTien}" readonly>
                                     </div>
                                     <div class="form-section mb-3">
-                                        <label class="form-label">Giảm giá:</label>
-                                        <input id="discountValue" type="text" class="form-control" readonly value="0 VND">
+                                        <label class="form-label">Được giảm giá:</label>
+                                        <input id="discountValue" type="text" class="form-control giaVND" readonly value="0">
                                     </div>
                                     <div class="form-section mb-3">
-                                        <label class="form-label">Tổng tiền sau giảm:</label>
-                                        <input type="hidden" id="tongTienSauGiam" name="tongTienSauGiam" value="0">
-                                        <input id="totalAfterDiscount" type="text" class="form-control" readonly value="0 VND">
+                                        <label class="form-label">Tổng tiền khách phải trả:</label>
+                                        <input type="text" class="form-control giaVND" id="tongTienSauGiam" name="tongTienSauGiam" value="0 VND" readonly>
+                                    </div>
+                                    <div class="form-section d-flex align-items-center mb-3">
+                                        <span class="w-100">Khách thanh toán:</span>
+                                        <div class="input-group">
+                                            <input type="text" id="khachThanhToan" class="form-control" placeholder="Nhập số tiền khách trả" oninput="tinhTienThua()">
+                                        </div>
+                                    </div>
+                                    <div class="form-section d-flex align-items-center mb-3">
+                                        <span class="w-100">Tiền thừa trả khách:</span>
+                                        <div class="input-group">
+                                            <input type="text" id="tienThuaTraKhach" class="form-control" readonly placeholder="0 VND">
+                                        </div>
                                     </div>
                                     <div class="modal-footer mb-3 ">
-                                        <button type="button" class="btn btn-outline-success" onclick="showSuccess()"
+                                        <button type="submit" class="btn btn-outline-success"
                                                 th:disabled="${idHD == null || listHDCT == null || #lists.isEmpty(listHDCT)}" style="width: 70px; padding-right: 20px">
                                             <i class="bi bi-check"></i>
                                         </button>
@@ -497,111 +503,174 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <!--giam giá-->
     <script>
-        $(document).ready(function () {
-            $('#discountCode').select2({
-                placeholder: "-- Chọn mã giảm giá --",
-                allowClear: true,
-                width: 'resolve',
-                language: {
-                    noResults: function () {
-                        return "Không tìm thấy mã giảm giá nào phù hợp.";
+        document.addEventListener("DOMContentLoaded", function () {
+            const addButtons = document.querySelectorAll('form button[type="submit"]');
+
+            addButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    const form = this.closest("form");
+                    const quantityInput = form.querySelector('input[name="soLuong"]');
+                    const stockCell = form.closest("tr").querySelector("td:nth-child(6)");
+
+                    if (quantityInput && stockCell) {
+                        const enteredQuantity = parseInt(quantityInput.value) || 0;
+                        const stockQuantity = parseInt(stockCell.textContent) || 0;
+
+                        if (enteredQuantity > stockQuantity) {
+                            event.preventDefault(); // Ngăn gửi form
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Số lượng vượt quá tồn kho!',
+                                text: `Số lượng tồn kho: ${stockQuantity}. Bạn đã nhập: ${enteredQuantity}.`,
+                                confirmButtonText: 'OK'
+                            });
+                        }
                     }
-                },
-                escapeMarkup: function (markup) {
-                    return markup; // Đảm bảo HTML không bị escape
-                }
+                });
             });
-
-            // Gắn sự kiện onchange để xử lý logic giảm giá
-            $('#discountCode').on('change', loadDiscountValue);
-
-            // Thiết lập giá trị mặc định của Tổng tiền sau giảm khi load trang
-            const tongTienText = document.querySelector(".total-price").textContent.trim();
-            const tongTien = parseInt(tongTienText.replace(/\D/g, '')) || 0;
-            document.getElementById("tongTienSauGiam").value = tongTien;
-            document.getElementById("totalAfterDiscount").value = tongTien.toLocaleString('vi-VN') + " VND";
         });
+    </script>
+    <!--giam giá-->
+    <script th:inline="javascript">
+        console.log("Danh sách phiếu giảm giá:", [[${phieuGiamList}]]);
+    </script>
+    <!-- Áp dụng phiếu giảm hoasd dơn-->
+    <script>
+        function apDungPhieuGiam() {
+            // Lấy phần tử select mã giảm giá
+            const discountSelect = document.getElementById('discountCode');
+            const selectedOption = discountSelect ? discountSelect.options[discountSelect.selectedIndex] : null;
 
-        function validateDiscount(tongTien, discountAmount) {
+            // Lấy giá trị giảm giá từ mã giảm giá
+            const discountValueStr = selectedOption ? (selectedOption.dataset.value || "0") : "0";
+            const discountValue = parseInt(discountValueStr.replace(/[^\d]/g, '')) || 0;
+
+            // Lấy tổng tiền hàng
+
+            const tongTienHangHienTai = document.getElementById('tongTienHang').value || "0";
+            const tongTienHienTaiInt = parseInt(tongTienHangHienTai.replace(/[^\d]/g, '')) || 0;
+            const tongTienHangStr = document.getElementById('tongTienHang').value || "0";
+            const tongTienHangInt = parseInt(tongTienHangStr.replace(/[^\d]/g, '')) || 0;
+
+            // Xác định mức giảm giá tối đa dựa vào tổng tiền
             let maxDiscount = 0;
-
-            if (tongTien >= 100000 && tongTien < 200000) {
+            if (tongTienHangInt >= 100000 && tongTienHangInt < 200000) {
                 maxDiscount = 50000;
-            } else if (tongTien >= 200000 && tongTien < 500000) {
+            } else if (tongTienHangInt >= 200000 && tongTienHangInt < 500000) {
                 maxDiscount = 100000;
-            } else if (tongTien >= 500000 && tongTien < 1000000) {
+            } else if (tongTienHangInt >= 500000 && tongTienHangInt < 1000000) {
                 maxDiscount = 250000;
-            } else if (tongTien >= 1000000 && tongTien < 10000000) {
+            } else if (tongTienHangInt >= 1000000 && tongTienHangInt < 10000000) {
                 maxDiscount = 500000;
-            } else if (tongTien >= 10000000) {
+            } else if (tongTienHangInt >= 10000000) {
                 maxDiscount = 1000000;
             }
 
-            if (discountAmount > maxDiscount) {
+            // Kiểm tra xem giá trị giảm giá có hợp lệ không
+            if (discountValue > maxDiscount) {
+                // Hiển thị thông báo lỗi
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Giảm giá không hợp lệ',
-                    text: `Giảm giá tối đa cho tổng tiền ${tongTien.toLocaleString('vi-VN')} là ${maxDiscount.toLocaleString('vi-VN')} VND.`,
-                    confirmButtonText: 'OK'
+                    toast: true,
+                    icon: 'error',
+                    title: `Giảm giá vượt quá mức tối đa cho phép (${maxDiscount.toLocaleString('vi-VN')} VND)!`,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
                 });
-                // Xóa lựa chọn mã giảm giá
-                $('#discountCode').val(null).trigger('change');
 
-                return null; // Giá trị giảm giá không hợp lệ
+                // Đặt giảm giá về 0 và tổng tiền khách phải trả giữ nguyên
+                document.getElementById('discountValue').value = "0 VND";
+                document.getElementById('tongTienSauGiam').value = `${tongTienHangInt.toLocaleString('vi-VN')} VND`;
+                return;
+            }
+            if (discountValue > 0) {
+                Swal.fire({
+                    toast: true,
+                    icon: 'success',
+                    title: `Áp dụng giảm giá thành công và được giảm ${discountValue.toLocaleString('vi-VN')} VND`,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
             }
 
-            return discountAmount;
+            // Tính toán tổng tiền sau giảm giá
+            const tongTienSauGiamGia = Math.max(0, tongTienHangInt - discountValue);
+
+            // Cập nhật hiển thị giá trị đã được định dạng
+            document.getElementById('discountValue').value = `${discountValue.toLocaleString('vi-VN')} VND`;
+            document.getElementById('tongTienHang').value = `${tongTienHienTaiInt.toLocaleString('vi-VN')} VND`;
+            document.getElementById('tongTienSauGiam').value = `${tongTienSauGiamGia.toLocaleString('vi-VN')} VND`;
         }
 
-        function loadDiscountValue() {
-            const selectedOption = $('#discountCode option:selected');
-            const discountValue = selectedOption.data('value') || 0; // Giá trị giảm giá
-            let discountAmount = parseInt(discountValue) || 0;
-
-            const tongTienText = document.querySelector(".total-price").textContent.trim();
-            const tongTien = parseInt(tongTienText.replace(/\D/g, '')) || 0;
-
-            // Xác thực giá trị giảm giá
-            discountAmount = validateDiscount(tongTien, discountAmount);
-
-            // Tính toán tổng tiền sau giảm
-            const totalAfterDiscount = discountAmount !== null && discountAmount > 0
-                ? tongTien - discountAmount
-                : tongTien;
-
-            // Cập nhật giá trị giảm giá và tổng tiền sau giảm vào giao diện
-            document.getElementById("discountValue").value = discountAmount.toLocaleString('vi-VN') + " VND";
-            document.getElementById("totalAfterDiscount").value = totalAfterDiscount.toLocaleString('vi-VN') + " VND";
-            document.getElementById("tongTienSauGiam").value = totalAfterDiscount; // Giá trị thực tế
-        }
-        function showSuccess() {
-            Swal.fire({
-                title: 'Thành công!',
-                text: 'Đơn hàng của bạn đã được đặt thành công!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                // Gửi form đặt hàng
-                document.getElementById('thanhToanForm').submit();
-            });
-        }
-
+        // Gọi hàm áp dụng khi trang được tải
+        window.onload = function () {
+            apDungPhieuGiam();
+        };
     </script>
-    <!--cập nhật phiếu giảm-->
+    <!--Tính tiền thừa-->
     <script>
-        function updatePhieuGiam() {
-            const selectedOption = document.getElementById("discountCode").value;
-            document.getElementById("idPhieuGiam").value = selectedOption; // Gán ID PGG vào input hidden
-        }
+        function tinhTienThua() {
+            // Lấy tổng tiền cần thanh toán từ input
+            const totalToPayStr = document.getElementById('tongTienSauGiam').value || "0";
+            const totalToPay = parseInt(totalToPayStr.replace(/[^\d]/g, '')) || 0;
 
-        document.querySelectorAll('.giaVND').forEach(element => {
-            const originalValue = parseFloat(element.innerText);
-            element.innerText = originalValue.toLocaleString('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+            // Lấy số tiền khách thanh toán từ input
+            const customerPaidStr = document.getElementById('khachThanhToan').value || "0";
+            const customerPaid = parseInt(customerPaidStr.replace(/[^\d]/g, '')) || 0;
+
+            // Tính tiền thừa trả lại cho khách
+            let changeToGive = customerPaid - totalToPay;
+            if (changeToGive < 0) {
+                changeToGive = 0; // Không có tiền thừa khi khách thanh toán chưa đủ
+            }
+
+            // Cập nhật kết quả với định dạng "000.000 VND"
+            document.getElementById('tienThuaTraKhach').value = `${changeToGive.toLocaleString('vi-VN')} VND`;
+        }
+    </script>
+    <!--Thanh toán hiện thông báo (DCM thằng lôz Khôi ngu)-->
+    <script>
+        $(document).ready(function () {
+            // Xử lý sự kiện submit form
+            $('#thanhToanForm').on('submit', function (event) {
+                event.preventDefault();
+
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: 'Mua hàng thành công!.',
+                            // text: response.message,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            window.location.href = '/ban-hang-tai-quay/index';
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: xhr.responseJSON ? xhr.responseJSON.message : 'Đã xảy ra lỗi trong quá trình thanh toán',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 5000,
+                            timerProgressBar: true
+                        });
+                    }
+                });
             });
         });
     </script>
@@ -763,7 +832,7 @@
             }
         });
     </script>
-<!--    địa chỉ-->
+    <!--địa chỉ-->
     <script th:inline="javascript">
 
         var idTinh = document.getElementById("tinhThanhPho").value;
@@ -830,8 +899,7 @@
             };
         }
     </script>
-
-
+    <!--Tìm khách hang-->
     <script>
         document.getElementById('searchButtonKH').addEventListener('click', function () {
             const searchValue = document.getElementById('searchKH').value.toLowerCase();
@@ -849,7 +917,6 @@
                 }
             });
         });
-
     </script>
     <!--Xóa hD-->
     <script>
@@ -874,10 +941,9 @@
             }
         }
     </script>
-    <!--đánh số hóa đơn-->
     <!--format giá-->
     <script>
-        document.querySelectorAll('.total-price').forEach(element => {
+        document.querySelectorAll('.giaVND').forEach(element => {
             const originalValue = parseFloat(element.innerText);
             element.innerText = originalValue.toLocaleString('vi-VN', {
                 style: 'currency',
@@ -886,8 +952,24 @@
             });
         });
     </script>
-
-<!--thông báo-->
+    <!--format giá nhập-->
+    <script>
+        function formatPriceInput(element) {
+            let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
+            if (value.length > 12) {
+                value = value.slice(0, 12); // Giới hạn tối đa 12 chữ số
+            }
+            if (value) {
+                // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            element.value = value ? value : '';
+        }
+        document.getElementById('khachThanhToan').addEventListener('input', function (event) {
+            formatPriceInput(event.target);
+        });
+    </script>
+    <!--thông báo-->
     <script>
         window.addEventListener("DOMContentLoaded", function () {
             const notification = document.getElementById("errorAdd");

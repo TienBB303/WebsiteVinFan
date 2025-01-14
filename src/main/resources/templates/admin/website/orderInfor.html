@@ -273,11 +273,11 @@
         <h2 class="text-dark">Thông tin giao hàng</h2>
         <form th:action="@{/cart/process-payment}" method="post" id="checkout-form">
 
-            <input type="text" name="name"  th:value="${khachHang.ten}">
-            <input type="tel" name="phone"pattern="[0-9]{10}" th:value="${khachHang.soDienThoai}">
-            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho}"/>
-            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen}"/>
-            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong}"/>
+            <input type="text" name="name" th:value="${khachHang.ten ?: ''}">
+            <input type="tel" name="phone" pattern="[0-9]{10}" th:value="${khachHang.soDienThoai ?: ''}">
+            <input type="hidden" id="tinhThanhPho" th:value="${diachiMacDinh.tinhThanhPho ?: ''}">
+            <input type="hidden" id="quanHuyen" th:value="${diachiMacDinh.quanHuyen ?: ''}">
+            <input type="hidden" id="xaPhuong" th:value="${diachiMacDinh.xaPhuong ?: ''}">
             <div class="row">
                 <div class="col-md-12">
                     <label class="form-label">Tỉnh/Thành phố</label>
@@ -317,12 +317,12 @@
             <div class="payment-method">
                 <div class="payment-option" onclick="selectPaymentMethod(this, 'COD')">
                     <input type="radio" id="cod" name="paymentMethod" value="COD" style="display:none;">
-                    <img src="https://via.placeholder.com/40" alt="COD">
+<!--                    <img src="https://via.placeholder.com/40" alt="COD">-->
                     <label for="cod">Thanh toán khi nhận hàng (COD)</label>
                 </div>
                 <div class="payment-option" onclick="selectPaymentMethod(this, 'BANK_TRANSFER')">
                     <input type="radio" id="bank-transfer" name="paymentMethod" value="BANK_TRANSFER" style="display:none;">
-                    <img src="https://via.placeholder.com/40" alt="Bank Transfer">
+<!--                    <img src="https://via.placeholder.com/40" alt="Bank Transfer">-->
                     <label for="bank-transfer">Chuyển khoản</label>
                 </div>
             </div>

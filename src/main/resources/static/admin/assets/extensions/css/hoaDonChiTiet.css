@@ -50,13 +50,63 @@ table thead, table tbody tr {
     overflow-x: auto;          /* Thêm thanh cuộn ngang nếu không vừa màn hình */
 }
 
-.input-group input {
-    margin-right: 10px;
-    width: 22%;
+/*.input-group input {*/
+/*    margin-right: 10px;*/
+/*    width: 22%;*/
+/*}*/
+
+/*.input-group .form-control {*/
+/*    height: 40px;*/
+/*}*/
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: #FFFFFF;
+    color: #1a1a1a;
+    padding: 10px 15px;
+    border: 1px solid #f5f5f5;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none; /* Ẩn mặc định */
+    width: auto; /* Đặt chiều rộng cố định nếu cần */
+    height: 100px;
+    display: flex; /* Kích hoạt flexbox */
+    flex-direction: column; /* Sắp xếp nội dung theo chiều dọc */
+    align-items: center; /* Căn giữa theo chiều ngang */
+    justify-content: center; /* Căn giữa theo chiều dọc */
+    text-align: center; /* Căn giữa văn bản */
+    gap: 10px; /* Khoảng cách giữa các phần tử */
 }
 
-.input-group .form-control {
-    height: 40px;
+.progress-bar {
+    width: 100%;
+    height: 5px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #6e7881; /* Màu đỏ */
+    animation: progress 3s linear forwards;
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0;
+    }
 }
 
 

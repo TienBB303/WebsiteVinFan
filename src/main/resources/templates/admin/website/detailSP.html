@@ -31,8 +31,8 @@
 
     .product-image {
         width: 100%;
-        max-height: 400px;
-        object-fit: cover;
+        height: auto;
+        object-fit: contain;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
@@ -110,11 +110,6 @@
         border-bottom: 3px solid orange; /* Viền cam */
     }
 
-    /* Tùy chỉnh thanh tìm kiếm */
-    .search-bar {
-        width: 100%;
-    }
-
     .search-bar .form-control {
         height: 40px; /* Tăng chiều cao của ô tìm kiếm */
     }
@@ -124,10 +119,11 @@
         color: white; /* Màu chữ trắng */
     }
 
-    .carousel-item img {
-        max-height: 400px;
-        object-fit: cover;
+    .carousel-inner {
+        max-width: 100%;
+        overflow: visible; /* Đảm bảo không che mất phần hình ảnh */
     }
+
 
     .old-price {
         color: gray;
@@ -142,34 +138,10 @@
 
 </style>
 <body>
-<!-- Navbar -->
-<!--<nav class="navbar navbar-expand-lg navbar-custom py-3">-->
-<!--    <div class="container-fluid">-->
-<!--        <a class="navbar-brand" href="/admin/index">-->
-<!--            <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"-->
-<!--                 alt="Logo">-->
-<!--        </a>-->
-
-<!--        <form th:action="@{/admin/product-catalog}" method="get" class="search-form mb-4">-->
-<!--            <input type="text" name="query" th:value="${query}" placeholder="Tìm kiếm sản phẩm..." class="form-control">-->
-<!--            <button type="submit"><i class="fas fa-search"></i></button>-->
-<!--        </form>-->
-
-<!--        <div class="d-flex align-items-center ms-auto">-->
-<!--            <div class="contact-info me-4">-->
-<!--                <i class="fas fa-phone-alt"></i> Gọi mua hàng: 0977 27 6646-->
-<!--            </div>-->
-<!--            <a href="/cart/view" class="text-decoration-none me-4">-->
-<!--                <i class="fas fa-shopping-cart"></i> Giỏ hàng-->
-<!--            </a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
-<!-- Thanh Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
     <div class="container-fluid">
         <!-- Logo -->
-        <a class="navbar-brand" href="/admin/index">
+        <a class="navbar-brand" href="/vin-fan/danh-muc">
             <img th:src="@{/admin/assets/static/images/logo/logoVinFan.png}" style="width: 40px; height: auto;"
                  alt="Logo">
         </a>
@@ -213,18 +185,16 @@
 <div class="container mt-5">
     <div class="row product-container">
         <!-- Hình ảnh sản phẩm -->
-        <div class="col-md-6 text-center">
+        <div class="col-md-6" >
             <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <!-- Hiển thị danh sách ảnh từ SPCT -->
                     <div th:each="hinhAnh, stat : ${danhSachHinhAnh}" class="carousel-item"
                          th:classappend="${stat.index == 0} ? 'active'">
-                        <img th:src="${hinhAnh.hinh_anh_1}" class="d-block w-100 product-image" alt="Hình ảnh sản phẩm">
+                        <img th:src="${hinhAnh.hinh_anh_1}" class="d-block product-image" alt="Hình ảnh sản phẩm">
                     </div>
                 </div>
             </div>
         </div>
-
 
         <!-- Thông tin sản phẩm -->
         <div class="col-md-6">

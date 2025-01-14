@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="/admin/fragments/head :: head"></head>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head th:replace="/admin/fragments/head :: head" xmlns:th="http://www.thymeleaf.org">
+</head>
 <body>
+<!-- Site wrapper -->
 <div class="wrapper">
-    <div>
-        <!-- <header th:replace="/admin/fragments/header :: header"> -->
-    </div>
+    <!-- Sidebar -->
     <div>
         <aside th:replace="/admin/fragments/sidebar :: sidebar"></aside>
     </div>
+
+    <!-- Main-->
     <div id="main">
-        <header class="mb-3">
-            <a href="#" class="burger-btn d-block d-xl-none">
-                <i class="bi bi-justify fs-3"></i>
-            </a>
-        </header>
+        <!--        <header th:replace="/admin/fragments/header :: header">-->
+        <header></header>
         <div class="page-heading">
             <div class="page-title">
                 <div class="row">
                     <div class="col-12 col-md-6 order-md-1 order-last">
-                        <h3>Khách Hàng</h3>
+                        <h3>Sản phẩm</h3>
+                        <p class="text-subtitle text-muted"></p>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <div class="card" style="position: absolute; top: 10px; right: 10px; width: 100px;">
@@ -51,24 +51,43 @@
                 </div>
             </div>
         </div>
+
         <div class="page-content">
             <section class="row">
                 <div class="card">
-                    <div class="card-header">
-                        <a class="btn btn-outline-success" href="/admin/khach-hang/from-them" style="width: 70px"><i class="bi bi-plus"></i></a>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <a class="btn btn-outline-success" href="/admin/san-pham/viewAdd" style="width: 70px;">
+                            <i class="bi bi-plus"></i>
+                        </a>
+                        <form method="get" action="/admin/san-pham/excel">
+                            <div class="row mb-0">
+                                <!-- Thêm các tham số tìm kiếm cũ vào form Excel -->
+                                <input type="hidden" name="query" th:value="${param.query}">
+                                <input type="hidden" name="minPrice" th:value="${param.minPrice}">
+                                <input type="hidden" name="maxPrice" th:value="${param.maxPrice}">
+                                <input type="hidden" name="trang_thai" th:value="${param.trang_thai}">
+
+                                <div>
+                                    <button class="btn btn-outline-success" type="submit" style="width: 70px">
+                                        <i class="bi bi-file-earmark-excel"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
+
                     <div class="card-body">
                         <div class="dataTable-wrapper">
                             <div class="dataTable-top">
-                                <form method="get" action="/admin/khach-hang/index">
+                                <form method="get" action="/admin/list-san-pham">
                                     <div class="row">
                                         <div class="col-8">
-                                            <input id="searchInput" class="form-control mr-sm-12" type="search"
-                                                   placeholder="Tìm kiếm theo mã, tên, email, số điện thoại" name="keyword" th:value="${keyword}">
+                                            <input type="text" id="searchInput" class="form-control" name="query"
+                                                   placeholder="Tìm kiếm sản phẩm theo mã, tên và kiểu quạt" th:value="${param.query}" maxlength="255">
                                         </div>
                                         <div class="col-2">
                                             <select id="trangThai" name="trang_thai" class="form-select">
-                                                <option value="" th:selected="${trang_thai == null || param.trang_thai == ''}">Tất cả trạng thái</option>
+                                                <option value="" th:selected="${trang_thai == null}">Tất cả trạng thái</option>
                                                 <option value="true" th:selected="${trang_thai == true}">Hoạt động</option>
                                                 <option value="false" th:selected="${trang_thai == false}">Không hoạt động</option>
                                             </select>
@@ -80,7 +99,7 @@
                                                 </button>
                                             </div>
                                             <div>
-                                                <a class="btn btn-outline-warning" href="/admin/khach-hang/index" style="width: 70px">
+                                                <a class="btn btn-outline-warning" href="/admin/list-san-pham" style="width: 70px">
                                                     <i class="bi bi-arrow-counterclockwise"></i>
                                                 </a>
                                             </div>
@@ -88,64 +107,54 @@
                                     </div>
                                 </form>
                             </div>
-                            <div th:if="${#lists.isEmpty(listsKhachhang.content)}" class="d-flex flex-column justify-content-center align-items-center" style="height: 400px;">
-                                <img src="https://shop.nebulacare.in/Content/Images/nodata.jpg" style="max-height: 400px;">
-                            </div>
-                            <div th:if="${!#lists.isEmpty(listsKhachhang.content)}" class="dataTable-container" style="padding-top: 10px">
+                            <div class="dataTable-container" style="padding-top: 10px">
                                 <table class="table table-striped table-bordered dataTable-table" id="table1">
                                     <thead>
                                     <tr>
-                                        <th data-sortable="" style="width: 5%; white-space: nowrap;">
+                                        <th data-sortable="" style="width: 5%; text-align: center;white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">STT</a>
                                         </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
-                                            <a href="#" class="dataTable-sorter">Mã khách hàng</a>
+                                        <th data-sortable="" style="width: 15%; text-align: center;white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Mã sản phẩm</a>
                                         </th>
-                                        <th data-sortable="" style="width: 25%; white-space: nowrap;">
-                                            <a href="#" class="dataTable-sorter">Tên khách hàng</a>
+                                        <th data-sortable="" style="width: 25%; text-align: center;white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Tên sản phẩm</a>
                                         </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
-                                            <a href="#" class="dataTable-sorter">Giới tính</a>
+                                        <th data-sortable="" style="width: 10%; text-align: center;white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Kiểu quạt</a>
                                         </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
-                                            <a href="#" class="dataTable-sorter">Số điện thoại</a>
+                                        <th data-sortable="" style="width: 10%; text-align: center;white-space: nowrap;">
+                                            <a href="#" class="dataTable-sorter">Số lượng</a>
                                         </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
-                                            <a href="#" class="dataTable-sorter">Email</a>
-                                        </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
-                                            <a href="#" class="dataTable-sorter">Ngày sinh</a>
-                                        </th>
-                                        <th data-sortable="" style="width: 10%; white-space: nowrap;">
+                                        <th data-sortable="" style="width: 15%; text-align: center;white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Trạng thái</a>
                                         </th>
-                                        <th data-sortable="" style="width: 15%; white-space: nowrap;">
+                                        <th data-sortable="" style="width: 20%; text-align: center; white-space: nowrap;">
                                             <a href="#" class="dataTable-sorter">Hành động</a>
                                         </th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="khachHang, stat : ${listsKhachhang.content}">
-                                        <td th:text="${stat.index + 1}"></td>
-                                        <td th:text="${khachHang.ma ?: 'N/A'}"></td>
-                                        <td th:text="${khachHang.ten ?: 'N/A'}"></td>
-                                        <td th:text="${khachHang.gioiTinh ?: 'N/A'}"></td>
-                                        <td th:text="${khachHang.soDienThoai ?: 'N/A'}"></td>
-                                        <td th:text="${khachHang.email ?: 'N/A'}"></td>
-                                        <td th:text="${khachHang.ngaySinh != null ? #dates.format(khachHang.ngaySinh,'dd/MM/yyyy') : 'N/A'}"></td>
+                                    <tr th:each="sp, iter : ${listSP.content}" th:data-id="${sp.id}">
+                                        <td style="text-align: center" th:text="${(listSP.number * listSP.size) + iter.index + 1}"></td>
+                                        <td th:text="${sp.ma}"></td>
+                                        <td th:text="${sp.ten}"></td>
+                                        <td th:text="${sp.kieuQuat.ten}"></td>
+                                        <td th:text="${tongSoLuongMap[sp.id]}"></td>
                                         <td style="text-align: center">
-                                            <span th:if="${khachHang.trangThai}" class="badge bg-light-success">
-                                               Hoạt động
+                                            <span th:if="${sp.trang_thai}" class="badge bg-light-success">
+                                                Hoạt động
                                             </span>
-                                            <span th:unless="${khachHang.trangThai}" class="badge bg-light-danger">
-                                                Không hoạt động
+                                            <span th:unless="${sp.trang_thai}" class="badge bg-light-danger">
+                                                Không hoạt dộng
                                             </span>
                                         </td>
-                                        <td>
-                                            <a th:href="@{/admin/khach-hang/from-sua/{id}(id=${khachHang.id ?: 0})}"
-                                                class="btn btn-outline-warning" style="width: 60px"
-                                                th:classappend="${khachHang.id == 1 ? 'disabled' : ''}">
+                                        <td style="text-align: center">
+                                            <a class="btn btn-outline-warning" style="width: 70px" th:href="@{/admin/san-pham/viewUpdateSanPhamChung/{id}(id=${sp.id})}">
                                                 <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <a class="btn btn-outline-info" style="width: 70px" th:href="@{/admin/san-pham/{idSanPham}(idSanPham=${sp.id})}" >
+                                                <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -157,44 +166,45 @@
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination justify-content-center">
                                         <!-- Nút Trang đầu -->
-                                        <li class="page-item" th:classappend="${listsKhachhang.first ? 'disabled' : ''}">
+                                        <li class="page-item" th:classappend="${listSP.first ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/khach-hang/index?page=0&keyword=' + ${keyword} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/list-san-pham?page=0&query=' + ${query} + '&trang_thai=' + ${trang_thai}}"
                                                aria-label="Trang đầu">
                                                 <span aria-hidden="true">««</span>
                                                 <span class="sr-only">Trang đầu</span>
                                             </a>
                                         </li>
+
                                         <!-- trang trước -->
-                                        <li class="page-item" th:classappend="${listsKhachhang.first ? 'disabled' : ''}">
+                                        <li class="page-item" th:classappend="${listSP.first ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/khach-hang/index?page=' + ${listsKhachhang.number - 1} + '&keyword=' + ${keyword} + '&trang_thai=' + ${trang_thai}}"
-                                               aria-label="Previous" th:if="${!listsKhachhang.first}">
+                                               th:href="@{'/admin/list-san-pham?page=' + ${listSP.number - 1} + '&query=' + ${query} + '&trang_thai=' + ${trang_thai}}"
+                                               aria-label="Previous" th:if="${!listSP.first}">
                                                 <span aria-hidden="true">&laquo;</span>
                                                 <span class="sr-only">Trang trước</span>
                                             </a>
                                         </li>
                                         <!-- số trang -->
                                         <li class="page-item"
-                                            th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listsKhachhang.number - 2), T(java.lang.Math).min(listsKhachhang.totalPages - 1, listsKhachhang.number + 2))}"
-                                            th:classappend="${i == listsKhachhang.number ? 'active' : ''}">
+                                            th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, listSP.number - 2), T(java.lang.Math).min(listSP.totalPages - 1, listSP.number + 2))}"
+                                            th:classappend="${i == listSP.number ? 'active' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/khach-hang/index?page=' + ${i >= 0 ? i : 0} +  '&keyword=' + ${keyword} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/list-san-pham?page=' + ${i >= 0 ? i : 0} + '&query=' + ${query} + '&trang_thai=' + ${trang_thai}}"
                                                th:text="${i + 1}"></a>
                                         </li>
                                         <!-- trang sau -->
-                                        <li class="page-item" th:classappend="${listsKhachhang.last ? 'disabled' : ''}">
+                                        <li class="page-item" th:classappend="${listSP.last ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/khach-hang/index?page=' + ${listsKhachhang.number + 1} + '&keyword=' + ${keyword} + '&trang_thai=' + ${trang_thai}}"
-                                               aria-label="Next" th:if="${!listsKhachhang.last}">
+                                               th:href="@{'/admin/list-san-pham?page=' + ${listSP.number + 1} + '&query=' + ${query} + '&trang_thai=' + ${trang_thai}}"
+                                               aria-label="Next" th:if="${!listSP.last}">
                                                 <span aria-hidden="true">&raquo;</span>
                                                 <span class="sr-only">Trang sau</span>
                                             </a>
                                         </li>
                                         <!-- Trang cuối -->
-                                        <li class="page-item" th:classappend="${listsKhachhang.last ? 'disabled' : ''}">
+                                        <li class="page-item" th:classappend="${listSP.last ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               th:href="@{'/admin/khach-hang/index?page=' + ${listsKhachhang.totalPages - 1} + '&keyword=' + ${keyword} + '&trang_thai=' + ${trang_thai}}"
+                                               th:href="@{'/admin/list-san-pham?page=' + ${listSP.totalPages - 1} + '&query=' + ${query} + '&trang_thai=' + ${trang_thai}}"
                                                aria-label="Trang cuối">
                                                 <span aria-hidden="true">»»</span>
                                                 <span class="sr-only">Trang cuối</span>
@@ -209,15 +219,45 @@
             </section>
         </div>
     </div>
+    <!-- Footer-->
     <div>
         <footer th:replace="/admin/fragments/footer :: footer"></footer>
     </div>
 </div>
 <div>
     <script th:replace="/admin/fragments/script :: script"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    <!--    format giá-->
+    <script>
+        document.querySelectorAll('.giaVND').forEach(element => {
+            // const originalValue = parseFloat(element.innerText);
+            // element.innerText = originalValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            const originalValue = parseFloat(element.innerText);
+            element.innerText = originalValue.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                currencyDisplay: 'code' // Thay đổi từ 'symbol' thành 'code'
+            });
+        });
+        function formatPriceInput(element) {
+            let value = element.value.replace(/[^\d]/g, ''); // loại bỏ ký tự không phải số
+            if (value.length > 8) {
+                value = value.slice(0, 8); // Giới hạn tối đa 9 chữ số
+            }
+            if (value) {
+                // Thêm dấu phẩy vào các vị trí đúng để định dạng theo kiểu của Việt Nam
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            element.value = value ? value : '';
+        }
+
+        document.getElementById('searchInputMinPrice').addEventListener('input', function (event) {
+            formatPriceInput(event.target);
+        });
+
+        document.getElementById('searchInputMaxPrice').addEventListener('input', function (event) {
+            formatPriceInput(event.target);
+        });
+    </script>
 </div>
 </body>
 </html>

@@ -83,12 +83,47 @@
                                     </div>
                                 </div>
 
+                                <!-- Ngày Tạo -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Ngày Tạo</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control flatpickr" th:field="*{ngayTao}"
+                                               disabled>
+                                    </div>
+                                </div>
+                                <!-- Ngày Sửa -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Ngày Sửa</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control flatpickr" th:field="*{ngaySua}"
+                                               disabled>
+                                    </div>
+                                </div>
+                                <!-- Tên phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Người Sửa</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="ten" class="form-control" th:field="*{nguoiSua}"
+                                               disabled>
+                                    </div>
+                                </div>
+
+                                <!-- Tên phiếu giảm giá -->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Người Tạo</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="ten" class="form-control" th:field="*{nguoiTao}"
+                                               disabled>
+                                    </div>
+                                </div>
+
                                 <!-- Ngày bắt đầu -->
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
                                     <div class="col-sm-8">
-<!--                                        <input type="date" class="form-control" th:field="*{ngayBD}" th:disabled="${!isEditable}" readonly id="ngayBD">-->
-                                        <input type="text" class="form-control flatpickr" th:field="*{ngayBD}" th:disabled="${!isEditable}"  id="ngayBD" readonly>
+                                        <input type="text" class="form-control flatpickr" th:field="*{ngayBD}"
+                                               id="ngayBD"
+                                               disabled>
                                     </div>
                                 </div>
 
@@ -179,7 +214,47 @@
         }
     });
 </script>
+<script>
+    $(document).ready(function() {
+        $("form[name='updateForm']").submit(function(event) {
+            event.preventDefault(); // Ngăn chặn submit mặc định
 
+            // Kiểm tra dữ liệu trước khi submit (nếu cần)
+            if (!validateForm()) {
+                return false;
+            }
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    // Xử lý thành công
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Phiếu giảm giá đã được cập nhật thành công!',
+                        showConfirmButton: false,
+                        timer: 1500 // Thời gian hiển thị thông báo (mili giây)
+                    }).then(() => {
+                        // Chuyển hướng sau khi thông báo đóng
+                        window.location.href = "/admin/phieu-giam/index";
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi trong quá trình lưu dữ liệu.',
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
 <script>
     function validateForm() {
         const form = document.forms["updateForm"];
@@ -286,8 +361,13 @@
         document.addEventListener("DOMContentLoaded", function () {
             flatpickr(".flatpickr", {
                 dateFormat: "Y-m-d", // Định dạng ngày sinh theo yyyy-mm-dd
-                // maxDate: "today", // Ngày chọn không được quá ngày hôm nay
             });
+            // Disable "ngày bắt đầu"
+            const ngayBDField = document.getElementById("ngayBD");
+            if (ngayBDField) {
+                ngayBDField.setAttribute("disabled", "disabled"); // Disable HTML
+                ngayBDField._flatpickr?.destroy(); // Nếu Flatpickr đã khởi tạo, hủy nó
+            }
         });
     </script>
     <!--format giá tối đa theo tiền triệu-->

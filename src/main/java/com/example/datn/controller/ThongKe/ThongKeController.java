@@ -1,5 +1,6 @@
 package com.example.datn.controller.ThongKe;
 
+import com.example.datn.dto.Thongke.DoanhThuThongKeDTO;
 import com.example.datn.dto.Thongke.HoaDonDoanhThuDTO;
 import com.example.datn.dto.Thongke.SanPhamBanChayDTO;
 import com.example.datn.dto.response.ThongKeResponse;
@@ -20,7 +21,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,6 +35,7 @@ public class ThongKeController {
     private final NhanVienRepository nhanVienRepository;
     @GetMapping("/index")
     public String getThongKe(
+            @RequestParam(name = "thoiGian", required = false) String thoiGian,
             @RequestParam(name = "tuNgay", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tuNgay,
             @RequestParam(name = "denNgay", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate denNgay,
             Model model) {
@@ -44,6 +49,7 @@ public class ThongKeController {
         //tìm kiếm bán chạy
         List<SanPhamBanChayDTO> listSPBanChay = thongKeService.listBanChay(tuNgay,denNgay);
         List<HoaDonDoanhThuDTO> listHoaDonBanChay = thongKeService.listHoaDonTheoDoanhThu(tuNgay,denNgay);
+        List<DoanhThuThongKeDTO> listDoanhThuThongKe = thongKeService.getDoanhThuTheoThoiGian(thoiGian, tuNgay, denNgay);
         System.out.println("listBanchay :" + listSPBanChay.size());
         System.out.println("listHoaDonBanChay :" + listHoaDonBanChay.size());
         model.addAttribute("listSPBanChay", listSPBanChay);
@@ -69,4 +75,5 @@ public class ThongKeController {
                                                        @RequestParam(name = "denNgay", required = false) LocalDate denNgay) {
         return thongKeService.listHoaDonTheoDoanhThu(tuNgay, denNgay);
     }
+
 }

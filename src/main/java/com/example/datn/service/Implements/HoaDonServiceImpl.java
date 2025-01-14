@@ -223,7 +223,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDonChiTiet.setHoaDon(hoaDon);
         hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
         hoaDonChiTiet.setGia(request.getGia());
-        hoaDonChiTiet.setSoLuong(request.getSoLuong()); // Số lượng mặc định là 1
+        hoaDonChiTiet.setSoLuong(request.getSoLuong());
         // Tính thành tiền cho sản phẩm
         BigDecimal thanhTien = request.getGia().multiply(BigDecimal.valueOf(request.getSoLuong()));
         hoaDonChiTiet.setThanhTien(thanhTien);
@@ -284,8 +284,11 @@ public class HoaDonServiceImpl implements HoaDonService {
             HoaDon hoaDon = hoaDonOptional.get();
 
             NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-            hoaDon.setNhanVien(nhanVien);
-            hoaDon.setNguoiTao(nhanVien.getTen());
+
+            if (nhanVien != null) {
+                hoaDon.setNhanVien(nhanVien);
+                hoaDon.setNguoiTao(nhanVien.getTen());
+            }
 
             // Cập nhật trạng thái của HoaDon
             hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
@@ -303,7 +306,12 @@ public class HoaDonServiceImpl implements HoaDonService {
             lichSuHoaDon.setHoaDon(hoaDon);
             lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getHuy());
             lichSuHoaDon.setNgayTao(LocalDate.now());
-            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+            // Nếu nhân viên không null, thiết lập người tạo cho lịch sử
+            if (nhanVien != null) {
+                lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+            } else {
+                lichSuHoaDon.setNguoiTao("Khách hàng hủy đơn"); // Giá trị mặc định nếu không có nhân viên
+            }
 
             lichSuHoaDonRepo.save(lichSuHoaDon);
 

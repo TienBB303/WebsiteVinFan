@@ -399,7 +399,6 @@
                         <input type="hidden" th:name="idHD" th:value="${idHD}">
                         <input type="hidden" id="idPhieuGiam" name="idPhieuGiam" value="">
 
-
                         <!-- Khách thanh toán -->
                         <div class="form-section d-flex align-items-center mb-3">
                             <label class="form-label me-2">Khách thanh toán:</label>
@@ -414,7 +413,6 @@
                             <select id="discountCode" class="form-select select2" style="width: 100%;"
                                     onchange="updatePhieuGiam()">
                                 <option value="">-- Chọn mã giảm giá --</option>
-                                <!-- Loop mã giảm giá -->
                                 <option th:each="phieu : ${phieuGiamList}"
                                         th:value="${phieu.id}"
                                         th:data-value="${phieu.giaTriGiam}"
@@ -532,7 +530,7 @@
                 maxDiscount = 250000;
             } else if (tongTien >= 1000000 && tongTien < 10000000) {
                 maxDiscount = 500000;
-            } else if (tongTien >= 10000000) {
+            } else if (tongTien >= 10000000) {z
                 maxDiscount = 1000000;
             }
 

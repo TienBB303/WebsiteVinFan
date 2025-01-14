@@ -103,7 +103,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Ngày bắt đầu</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control flatpickr" name="ngayBD" placeholder="Chọn ngày bắt đầu" required>
+                                        <input type="text" class="form-control flatpickr" name="ngayBD" placeholder="Chọn ngày bắt đầu" disabled>
                                     </div>
                                 </div>
 
@@ -115,7 +115,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Số lượng -->
+                                <!-- giá trị giảm -->
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Giá trị giảm</label>
                                     <div class="col-sm-8">
@@ -137,14 +137,13 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Chọn sản phẩm chi tiết</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" name="sanPhamChiTietId" id="productCodeSelect">
-                                            <option value="" th:selected="${sanPhamChiTietId == null}">Chọn sản phẩm chi tiết</option>
+                                        <select class="form-control" name="sanPhamChiTietId" id="productCodeSelect" required>
+                                            <option value="">Chọn sản phẩm chi tiết</option>
                                             <option th:each="spct : ${sanPhamChiTietList}"
                                                     th:value="${spct.id}"
-                                                    th:selected="${spct.id == sanPhamChiTietId}"
                                                     th:text="${spct.sanPham.ten + ' - ' + spct.mauSac.ten + ' - Công suất: ' + spct.congSuat + 'W - Giá: ' +
-                                                (spct.gia != null ? spct.gia : 'Chưa có giá') +
-                                                (appliedProductMap != null && appliedProductMap.containsKey(spct.id) ? ' - ĐÃ ÁP DỤNG' : '')}">
+            (spct.gia != null ? spct.gia : 'Chưa có giá') +
+            (appliedProductMap != null && appliedProductMap.containsKey(spct.id) ? ' - ĐÃ ÁP DỤNG' : '')}">
                                             </option>
                                         </select>
                                     </div>
@@ -179,21 +178,77 @@
     <!-- Thêm SweetAlert2 CSS và JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $("form[name='addForm']").submit(function(event) {
+                event.preventDefault(); // Ngăn chặn submit mặc định
+
+                // Kiểm tra dữ liệu trước khi submit (nếu cần)
+                if (!validateForm()) {
+                    return false;
+                }
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        const selectedProductId = $("#productCodeSelect").val();
+                        const isProductApplied = $(`#productCodeSelect option[value="${selectedProductId}"]`).text().includes("ĐÃ ÁP DỤNG");
+
+                        if (!isProductApplied) {
+                            // Chưa áp dụng: Hiển thị thông báo thành công và chuyển hướng
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công!',
+                                text: 'Phiếu giảm giá đã được lưu thành công!',
+                                showConfirmButton: false,
+                                timer: 1500 // Thời gian hiển thị thông báo (mili giây)
+                            }).then(() => {
+                                window.location.href = "/admin/phieu-giam/index";
+                            });
+                        } else {
+                            // Đã áp dụng: Hiển thị thông báo sản phẩm đã được áp dụng
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Lưu ý!',
+                                text: 'Sản phẩm này đã được áp dụng giảm giá.',
+                                showConfirmButton: true,
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Xử lý lỗi
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: 'Đã xảy ra lỗi trong quá trình lưu dữ liệu.',
+                            showConfirmButton: true,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
     <script>
-        // Lấy phần tử input
-        const ngayBDInput = document.getElementById('ngayBD');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lấy ngày hiện tại
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // Định dạng YYYY-MM-DD
 
-        // Lấy ngày hiện tại
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-        const dd = String(today.getDate()).padStart(2, '0');
+            // Gán giá trị ngày hiện tại vào input
+            const ngayBDInput = document.querySelector('input[name="ngayBD"]');
+            ngayBDInput.value = formattedDate;
 
-        // Định dạng ngày theo yyyy-MM-dd
-        const formattedDate = `${yyyy}-${mm}-${dd}`;
-
-        // Gán giá trị mặc định cho input
-        ngayBDInput.value = formattedDate;
+            // Khởi tạo flatpickr với ngày mặc định
+            flatpickr(ngayBDInput, {
+                dateFormat: "Y-m-d", // Định dạng ngày hiển thị
+                defaultDate: formattedDate, // Gán ngày hiện tại làm mặc định
+                locale: "vn", // Ngôn ngữ tiếng Việt (nếu cần)
+            });
+        });
     </script>
     <script th:inline="javascript">
         function validateForm() {
@@ -214,18 +269,18 @@
                 return false;
             }
 
-            if (!ngayBD) {
-                showToast("Không để trống ngày bắt đầu.");
-                return false;
-            } else {
-                selectedStartDate.setHours(0, 0, 0, 0);
-                currentDate.setHours(0, 0, 0, 0);
-
-                if (selectedStartDate < currentDate) {
-                    showToast("Ngày bắt đầu không được là ngày quá khứ.");
-                    return false;
-                }
-            }
+            // if (!ngayBD) {
+            //     showToast("Không để trống ngày bắt đầu.");
+            //     return false;
+            // } else {
+            //     selectedStartDate.setHours(0, 0, 0, 0);
+            //     currentDate.setHours(0, 0, 0, 0);
+            //
+            //     if (selectedStartDate < currentDate) {
+            //         showToast("Ngày bắt đầu không được là ngày quá khứ.");
+            //         return false;
+            //     }
+            // }
 
             if (!ngayKT) {
                 showToast("Không để trống ngày kết thúc.");
@@ -236,7 +291,7 @@
             }
 
             if (!giaTriGiam || giaTriGiam <= 10000) {
-                showToast("Giá trị giảm phải lớn hơn 100.00 VND.");
+                showToast("Giá trị giảm phải lớn hơn 10.000 VND.");
                 return false;
             }
             if (!giaTriGiam || giaTriGiam >1000000) {

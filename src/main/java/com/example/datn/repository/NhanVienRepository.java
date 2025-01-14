@@ -64,4 +64,7 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
     @Query("SELECT nv FROM NhanVien nv WHERE nv.chucVu.id = 1 AND nv.trangThai = true")
     List<NhanVien> quanLyHoatDong();
 
+    @Query("SELECT nv FROM NhanVien nv WHERE (LOWER(nv.email) LIKE LOWER(CONCAT('%', :email, '%')))")
+    NhanVien findByEmailNhanVien(String email);
+
 }

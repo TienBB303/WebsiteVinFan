@@ -9,7 +9,9 @@ import com.example.datn.repository.phieu_giam_repo.PhieuGiamRepo;
 import com.example.datn.service.BanHangTaiQuay.BanHangTaiQuayService;
 import com.example.datn.service.HoaDonService;
 import com.example.datn.service.TrangThaiHoaDonService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/ban-hang-tai-quay")
@@ -39,9 +38,7 @@ public class BanHangTaiQuayController {
     private final HoaDonRepo hoaDonRepo;
 
     @GetMapping("/index")
-    public String index(
-            Model model
-    ) {
+    public String index(Model model) {
         //hiển thị danh sách hóa đơn chờ
         List<HoaDon> listHoaDon = banHangTaiQuayService.findHoaDon();
         model.addAttribute("listHoaDon", listHoaDon);
@@ -55,10 +52,7 @@ public class BanHangTaiQuayController {
     }
 
     @GetMapping("/hdct")
-    public String viewHDCT(
-            Model model,
-            @RequestParam("idHD") Long idHD
-    ) {
+    public String viewHDCT(Model model, @RequestParam("idHD") Long idHD) {
         // Lấy danh sách mã giảm giá có loại phiếu là 1
         List<PhieuGiam> phieuGiamList = phieuGiamRepo.findByLoaiPhieuGiam(true); // true = loại phiếu là 1
         model.addAttribute("phieuGiamList", phieuGiamList);
@@ -120,13 +114,26 @@ public class BanHangTaiQuayController {
     @PostMapping("/addSPCT")
     public String addSPToHoaDonChiTiet(
             @ModelAttribute AddSPToHoaDonChiTietRequest request,
-            RedirectAttributes redirectAttributes
-    ) {
+            RedirectAttributes redirectAttributes) {
         try {
-            hoaDonService.addSpToHoaDonChiTietRequestList(request); // Gọi service để thêm sản phẩm vào hóa đơn
+            // Lấy thông tin sản phẩm từ cơ sở dữ liệu
+            SanPhamChiTiet sanPhamChiTiet = spctRepo.findById(request.getIdSP())
+                    .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại với ID: " + request.getIdSP()));
+
+            // Kiểm tra số lượng tồn kho
+            if (sanPhamChiTiet.getSo_luong() < request.getSoLuong()) {
+                redirectAttributes.addFlashAttribute("errorAdd", "Số lượng tồn kho không đủ cho sản phẩm: " + sanPhamChiTiet.getSanPham().getTen());
+                return "redirect:/ban-hang-tai-quay/hdct?idHD=" + request.getIdHD();
+            }
+
+            // Thêm sản phẩm vào hóa đơn nếu số lượng hợp lệ
+            hoaDonService.addSpToHoaDonChiTietRequestList(request);
             hoaDonService.timSanPhamChiTietTheoHoaDon(request.getIdHD());
             hoaDonService.updateTongTienHoaDon(request.getIdHD());
-        } catch (IllegalArgumentException e) {
+
+            // Thêm thông báo thành công
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm thành công!");
+        } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorAdd", e.getMessage());
             System.out.println(e.getMessage());
         }
@@ -134,10 +141,11 @@ public class BanHangTaiQuayController {
     }
 
     @PostMapping("/thanh-toan")
-    public String thanhToan(
+    @Transactional
+    public ResponseEntity<?> thanhToan(
             @RequestParam("idHD") Long idhd,
-            @RequestParam("tongTienSauGiam") BigDecimal tongTienSauGiam,
-            @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam, // Thêm ID phiếu giảm giá
+            @RequestParam("tongTienSauGiam") String tongTienSauGiamStr,
+            @RequestParam(value = "idPhieuGiam", required = false) Integer idPhieuGiam,
             @RequestParam("phuongThucThanhToanKhiNhan") String phuongThucThanhToan,
             @RequestParam("tinhThanhPho") String tinhThanhPho,
             @RequestParam("soDienThoaiKhachHang") String soDienThoaiKhachHang,
@@ -145,54 +153,69 @@ public class BanHangTaiQuayController {
             @RequestParam("xaPhuong") String xaPhuong,
             @RequestParam("chiTietDiaChi") String chitiet,
             @RequestParam("ghichu") String ghiChu,
-            @RequestParam("tenKhangHang") String tenKhangHang
-    ) {
+            @RequestParam("tenKhangHang") String tenKhangHang) {
 
-        HoaDon hoaDon = hoaDonService.findById(idhd)
-                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
-        NhanVien nhanVien = nhanVienRepository.profileNhanVien();
-        hoaDon.setNhanVien(nhanVien);
+        try {
+            // Kiểm tra hóa đơn
+            HoaDon hoaDon = hoaDonService.findById(idhd)
+                    .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + idhd));
 
-        // Cập nhật thông tin thanh toán
-        String diaChiNguoiNhan = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + chitiet;
+            for (HoaDonChiTiet hdct : hoaDon.getHoaDonChiTietList()) {
+                SanPhamChiTiet sp = hdct.getSanPhamChiTiet();
+                if (hdct.getSoLuong() > sp.getSo_luong()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("message", "Không đủ số lượng sản phẩm: " + sp.getSanPham().getTen()));
+                }
+            }
 
-        hoaDon.setTenNguoiNhan(tenKhangHang);
-        hoaDon.setDiaChi(diaChiNguoiNhan);
-        hoaDon.setSdtNguoiNhan(soDienThoaiKhachHang);
-        hoaDon.setGhiChu(ghiChu);
-        hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-        hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
-        hoaDon.setNguoiTao(nhanVien.getTen());
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            hoaDon.setNhanVien(nhanVien);
 
-        // Lưu tổng tiền sau giảm
-        hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+            // Cập nhật thông tin thanh toán
+            String diaChiNguoiNhan = tinhThanhPho + "," + quanHuyen + "," + xaPhuong + "," + chitiet;
 
-        // Lưu ID phiếu giảm giá nếu có
-        if (idPhieuGiam != null) {
-            PhieuGiam phieuGiam = phieuGiamRepo.findById(idPhieuGiam)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu giảm giá với ID: " + idPhieuGiam));
-            hoaDon.setPhieuGiamGia(phieuGiam); // Liên kết phiếu giảm giá với hóa đơn
+            hoaDon.setTenNguoiNhan(tenKhangHang);
+            hoaDon.setDiaChi(diaChiNguoiNhan);
+            hoaDon.setSdtNguoiNhan(soDienThoaiKhachHang);
+            hoaDon.setGhiChu(ghiChu);
+            hoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+            hoaDon.setHinhThucThanhToan(phuongThucThanhToan);
+            hoaDon.setNguoiTao(nhanVien.getTen());
+
+            // Lưu tổng tiền sau giảm
+            String formatGiaTien = tongTienSauGiamStr.replaceAll("[^\\d]", "");
+            BigDecimal tongTienSauGiam = new BigDecimal(formatGiaTien);
+            hoaDon.setTongTienSauGiamGia(tongTienSauGiam);
+
+            // Lưu ID phiếu giảm giá nếu có
+            if (idPhieuGiam != null) {
+                PhieuGiam phieuGiam = phieuGiamRepo.findById(idPhieuGiam)
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu giảm giá với ID: " + idPhieuGiam));
+                hoaDon.setPhieuGiamGia(phieuGiam);
+            }
+
+            // Kiểm tra và trừ số lượng sản phẩm trong hóa đơn
+            hoaDonService.truSoLuongSanPham(idhd);
+
+            // Lưu hóa đơn vào cơ sở dữ liệu
+            hoaDonService.save(hoaDon);
+
+            // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(hoaDon);
+            lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
+            lichSuHoaDon.setNgayTao(LocalDate.now());
+            lichSuHoaDon.setNguoiTao(nhanVien.getTen());
+            lichSuHoaDonRepo.save(lichSuHoaDon);
+
+            return ResponseEntity.ok(Map.of("message", "Thanh toán thành công!"));
+
+        } catch (RuntimeException e) {
+            // Rollback sẽ xảy ra tự động nhờ @Transactional
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
-
-        // Lưu hóa đơn vào cơ sở dữ liệu
-        hoaDonService.save(hoaDon);
-
-
-        // Tạo một bản ghi lịch sử cho HoaDon đã được xác nhận
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setHoaDon(hoaDon);
-        lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getDaGiaoHang());
-        lichSuHoaDon.setNgayTao(LocalDate.now());
-        lichSuHoaDon.setNguoiTao(nhanVien.getTen());
-
-        // Lưu lịch sử hóa đơn
-        lichSuHoaDonRepo.save(lichSuHoaDon);
-
-        // Trừ số lượng sản phẩm trong hóa đơn
-        hoaDonService.truSoLuongSanPham(idhd);
-
-        return "redirect:/ban-hang-tai-quay/index";
     }
+
 
     @PostMapping("/addKH")
     public String addKHToHoaDonChiTiet(
@@ -208,11 +231,17 @@ public class BanHangTaiQuayController {
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại với ID: " + idKh));
 
         DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(Math.toIntExact(idKh));
-        String diaChiHoaDon = diaChi.getTinhThanhPho() +
-                "," + diaChi.getQuanHuyen() + ","
-                + diaChi.getXaPhuong() + ","
-                + diaChi.getSoNhaNgoDuong();
-        System.out.println("dia chi nhan la:" + diaChiHoaDon);
+        String diaChiHoaDon = "";
+        if (diaChi != null) {
+            diaChiHoaDon = diaChi.getTinhThanhPho() +
+                    "," + diaChi.getQuanHuyen() + ","
+                    + diaChi.getXaPhuong() + ","
+                    + diaChi.getSoNhaNgoDuong();
+        } else {
+            System.out.println("Không tìm thấy địa chỉ mặc định. Sử dụng địa chỉ trống.");
+            diaChiHoaDon = "Địa chỉ không xác định"; // Giá trị mặc định (hoặc để trống "")
+        }
+        System.out.println("Địa chỉ nhận là: " + diaChiHoaDon);
 
         hoaDon.setDiaChi(diaChiHoaDon);
 
@@ -352,6 +381,5 @@ public class BanHangTaiQuayController {
         }
         return "redirect:/ban-hang-tai-quay/index";
     }
-
 
 }

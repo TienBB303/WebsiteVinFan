@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,7 @@ public class CartController {
 
     @Autowired
     private KhachHangRepo khachHangRepo;
+
     @Autowired
     private DiaChiRepository diaChiRepository;
 
@@ -65,6 +67,7 @@ public class CartController {
     private EntityManager entityManager;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
 
     @PostMapping("/add")
     public String addToCart(@RequestParam Long productId,
@@ -259,9 +262,13 @@ public class CartController {
             // Nếu là khách hàng, thêm thông tin khách hàng vào model
             model.addAttribute("khachHang", khachHang);
 
+            // Lấy địa chỉ mặc định của khách hàng
             DiaChi diaChi = diaChiRepository.DiaChimacDinhvsfindByKhachHangId(khachHang.getId());
-            model.addAttribute("diachiMacDinh", diaChi);
+
+            // Nếu địa chỉ là null, thêm vào model một giá trị rỗng hoặc đối tượng trống
+            model.addAttribute("diachiMacDinh", diaChi != null ? diaChi : new DiaChi());
         }
+
 
         List<CartItem> cartItems = getCartFromSession(session);
 
@@ -397,15 +404,16 @@ public class CartController {
                 ? BigDecimal.ZERO
                 : BigDecimal.valueOf(40000);
         hoaDon.setPhiVanChuyen(shippingFee);
-
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setHoaDon(hoaDon);
         lichSuHoaDon.setTrangThai(trangThaiHoaDonService.getTrangThaiHoaDonRequest().getChoXacNhan());
         lichSuHoaDon.setNgayTao(LocalDate.now());
+        lichSuHoaDon.setNguoiTao("Tên khách hàng: " + khachHang.getTen());
         lichSuHoaDonRepo.save(lichSuHoaDon);
 
         total = total.add(shippingFee);
         hoaDon.setTongTien(total);
+        hoaDon.setNguoiTao("Tên khách hàng: " + khachHang.getTen());
         hoaDon.setTongTienSauGiamGia(total);
         hoaDonService.save(hoaDon);
 

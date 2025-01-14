@@ -37,9 +37,6 @@ public class PhieuGiam {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date ngayKT;
 
-    @Column(name = "so_luong")
-    private Integer soLuong;
-
     @Column(name = "loai_phieu_giam_gia")
     private boolean loaiPhieuGiam;
 
@@ -63,7 +60,7 @@ public class PhieuGiam {
     @Column(name = "trang_thai")
     private boolean trangThai ;
 
-    @ManyToOne(optional = true)
+    @OneToOne(optional = true)
     @JoinColumn(name = "id_san_pham_chi_tiet", referencedColumnName = "id", nullable = true)
     private SanPhamChiTiet spct;
 

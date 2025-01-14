@@ -127,8 +127,34 @@ public class SanPhamController {
         return chatLieuKhungRepo.findAll();
     }
 
-    @GetMapping("/san-pham")
-    public String searchProducts(@RequestParam(value = "query", defaultValue = "") String query,
+    //dánh sách sản phẩm theo mã
+    @GetMapping("/list-san-pham")
+    public String sanPham(@RequestParam(value = "query", defaultValue = "") String query,
+                                 @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "5") int size,
+                                 Model model) {
+        Page<SanPham> searchPage = sanPhamService.timSanPham(query.trim(), trang_thai, PageRequest.of(page, size));
+        Map<Long, Long> tongSoLuongMap = new HashMap<>();
+        for (SanPham sp : searchPage.getContent()) {
+            Long tongSoLuong = sanPhamRepo.tongSoLuongSanPhamChiTiet(sp.getId());
+            tongSoLuongMap.put(sp.getId(), tongSoLuong != null ? tongSoLuong : 0L);
+        }
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
+
+        model.addAttribute("listSP", searchPage);
+        model.addAttribute("query", query);
+        model.addAttribute("tongSoLuongMap", tongSoLuongMap);
+        model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
+        return "admin/san_pham/list_san_pham";
+    }
+
+    //dánh sách sản phẩm chi tiết theo mã
+    @GetMapping("/san-pham/{idSanPham}")
+    public String searchProducts(
+                                 @PathVariable("idSanPham") Long idSanPham,
+                                 @RequestParam(value = "query", defaultValue = "") String query,
                                  @RequestParam(value = "minPrice", defaultValue = "0") String minPriceStr,
                                  @RequestParam(value = "maxPrice", defaultValue = "0") String maxPriceStr,
                                  @RequestParam(value = "trang_thai", defaultValue = "") Boolean trang_thai,
@@ -140,9 +166,10 @@ public class SanPhamController {
         if (maxPrice.compareTo(BigDecimal.ZERO) == 0) {
             maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
-        Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(query.trim(), minPrice, maxPrice, trang_thai, PageRequest.of(page, size));
+        Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(idSanPham, query.trim(), minPrice, maxPrice, trang_thai, PageRequest.of(page, size));
         NhanVien nv = nhanVienRepository.profileNhanVien();
         model.addAttribute("nhanVienInfo", nv);
+        model.addAttribute("idSanPham", idSanPham);
         model.addAttribute("listSP", searchPage);
         model.addAttribute("query", query);
         model.addAttribute("minPrice", minPrice);
@@ -150,21 +177,9 @@ public class SanPhamController {
         model.addAttribute("trang_thai", trang_thai != null ? trang_thai : "");
         return "admin/san_pham/san_pham_index";
     }
-    private BigDecimal epKieuDecimal(String priceStr) {
-        if (priceStr.trim() == null || priceStr.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        String xoaString = priceStr.replaceAll(",", "");  // Loại bỏ dấu phẩy trong giá trị đầu vào
-        try {
-            return new BigDecimal(xoaString);
-        } catch (NumberFormatException e) {
-            return BigDecimal.ZERO; // Trả về 0 nếu không thể chuyển đổi
-        }
-    }
-
 
     @GetMapping("/san-pham/viewAdd")
-    public String viewAddProduct(Model model) {
+    public String viewAdd(Model model) {
         NhanVien nv = nhanVienRepository.profileNhanVien();
         model.addAttribute("nhanVienInfo", nv);
         return "admin/san_pham/san_pham_add";
@@ -318,21 +333,9 @@ public class SanPhamController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("lỗi");
         }
-
-
-//        Map<String, List<SanPhamChiTietTam>> productsByColor = new HashMap<>();
-//        for (SanPhamChiTietTam product : listSPCTTam) {
-//            String color = product.getMauSac().getTen();
-//            productsByColor.putIfAbsent(color, new ArrayList<>());
-//            productsByColor.get(color).add(product);
-//        }
-//
-//        session.setAttribute("listSPCTTam", listSPCTTam);
-//        session.setAttribute("productsByColor", productsByColor);
-//        model.addAttribute("productsByColor", productsByColor);
-
     }
-    // Nhận giá trị từ sản phẩm tạm
+
+    // Nhận giá trị từ sản phẩm tạm để xác nhận lưu vào DB
     @PostMapping("/san-pham/confirm")
     public ResponseEntity<String> confirmProducts(
             @RequestParam(value = "gia") List<String> giasStr,
@@ -465,13 +468,103 @@ public class SanPhamController {
         }
     }
 
+    //    Chuyển trang update cho 1 mã sản phẩm
+    @GetMapping("/san-pham/viewUpdateSanPhamChung/{id}")
+    public String chuyenTrangUpdateSPChung(@PathVariable("id") Long id, Model model) {
+        SanPham sanPham = sanPhamRepo.findById(id).orElse(null);
+        if (sanPham == null) {
+            return "redirect:/admin/list-san-pham";
+        }
+        NhanVien nv = nhanVienRepository.profileNhanVien();
+        model.addAttribute("nhanVienInfo", nv);
+        model.addAttribute("spUpdateAll", sanPham);
+        return "admin/san_pham/san_pham_update_chung";
+    }
 
-    //    Chuyển trang update
+    //update cho 1 mã sản phẩm
+    @PostMapping("/san-pham/update-chung")
+    public ResponseEntity<?> updateChung(
+            @RequestParam("id") Long sanPhamId,
+            @RequestParam("ma") String inputMa,
+            @RequestParam("ten") String ten,
+            @RequestParam("mo_ta") String moTa,
+            @RequestParam("dieu_khien_tu_xa") Boolean dieuKhienTuXa,
+            @RequestParam("trang_thai") Boolean trangThai) {
+        try {
+            // Lấy thông tin chi tiết sản phẩm
+            SanPham sanPham = sanPhamRepo.findById(sanPhamId).orElse(null);
+            if (sanPham == null) {
+                return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
+            }
+            if (inputMa != null && inputMa.length() > 7) {
+                return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
+            }
+            String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
+            SanPham spma = sanPhamRepo.findByMa(ma);
+            if (spma != null) {
+                // Tên và kiểu quạt phải trùng
+                if (!spma.getTen().trim().equalsIgnoreCase(ten.trim())) {
+                    return ResponseEntity.badRequest().body(
+                            "Mã " + ma + " đã tồn tại, với tên: " + spma.getTen()
+                    );
+                }
+            }
+            if (ten == null || ten.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Tên sản phẩm không được để trống");
+            }
+            boolean isNameChanged = !sanPham.getTen().equals(ten);
+            if (isNameChanged) {
+                List<SanPham> sanPhamTheoTen = sanPhamRepo.findByTenIgnoreCase(ten.trim());
+                for (SanPham sp : sanPhamTheoTen) {
+                    if (!sp.getId().equals(sanPham.getId())) { // Chỉ kiểm tra trùng nếu khác ID
+                        return ResponseEntity.badRequest().body(
+                                "Tên sản phẩm '" + ten + "' đã tồn tại trong hệ thống với mã là " + sp.getMa() + "."
+                        );
+                    }
+                }
+            }
+
+            // Cập nhật thông tin sản phẩm chính
+            sanPham.setTen(ten.trim());
+            sanPham.setMa(ma.trim());
+            sanPham.setMo_ta(moTa);
+            sanPham.setNgay_sua(new Date());
+            sanPham.setDieu_khien_tu_xa(dieuKhienTuXa);
+
+            // Cập nhật chi tiết sản phẩm
+            sanPham.setNgay_sua(new Date());
+
+            // Lấy thông tin người cập nhật
+            NhanVien nhanVien = nhanVienRepository.profileNhanVien();
+            if (nhanVien == null) {
+                return ResponseEntity.badRequest().body("Không tìm thấy thông tin nhân viên cập nhật");
+            }
+            if (!trangThai) {
+                // Tắt tất cả các chi tiết sản phẩm
+                List<SanPhamChiTiet> chiTietSanPhamList = sanPhamService.findByIdSanPham(sanPhamId);
+                for (SanPhamChiTiet spct : chiTietSanPhamList) {
+                    spct.setTrang_thai(false);
+                    spctRepo.save(spct);
+                }
+            }
+            sanPham.setTrang_thai(trangThai);
+
+            sanPhamService.update(sanPham);
+
+            // Cập nhật thành công, trả về thông báo trực tiếp là chuỗi thay vì Map
+            return ResponseEntity.ok().body("Cập nhật sản phẩm thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Cập nhật sản phẩm không thành công!");
+        }
+    }
+
+    //    Chuyển trang update SPCT
     @GetMapping("/san-pham/viewUpdate/{id}")
     public String viewUpdateProduct(@PathVariable("id") Long id, Model model) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamService.findById(id);
         if (sanPhamChiTiet == null) {
-            return "redirect:/admin/san-pham";
+            return "redirect:/admin/list-san-pham";
         }
         NhanVien nv = nhanVienRepository.profileNhanVien();
         model.addAttribute("nhanVienInfo", nv);
@@ -479,13 +572,11 @@ public class SanPhamController {
         return "admin/san_pham/san_pham_update";
     }
 
-    //  Cập nhật sản phẩm
+    //  Cập nhật 1 sản phẩm chỉ tiết
     @PostMapping("/san-pham/update")
     public ResponseEntity<?> updateProduct(
             @RequestParam("id") Long sanPhamId,
             @RequestParam("sanPham.ten") String ten,
-            @RequestParam("sanPham.mo_ta") String moTa,
-            @RequestParam("sanPham.dieu_khien_tu_xa") Boolean dieuKhienTuXa,
             @RequestParam("gia") String giaStr,
             @RequestParam("so_luong") Integer soLuong,
             @RequestParam("trang_thai") Boolean trangThai,
@@ -505,9 +596,6 @@ public class SanPhamController {
             MauSac mauSacCheck = mauSacRepo.findById(mauSacId).orElse(null);
             if (congSuatCheck == null || mauSacCheck == null) {
                 return ResponseEntity.badRequest().body("Công suất hoặc màu sắc không hợp lệ");
-            }
-            if(ten.trim().isEmpty() || ten.trim() == null){
-                return ResponseEntity.badRequest().body("Tên không được để trống");
             }
             boolean isNameChanged = !sanPhamChiTiet.getSanPham().getTen().equals(ten);
             boolean isCongSuatChanged = !sanPhamChiTiet.getCongSuat().getId().equals(congSuatId);
@@ -533,11 +621,7 @@ public class SanPhamController {
                     }
                 }
             }
-            // Cập nhật thông tin sản phẩm chính
-            sanPham.setTen(ten.trim());
-            sanPham.setMo_ta(moTa);
-            sanPham.setNgay_sua(new Date());
-            sanPham.setDieu_khien_tu_xa(dieuKhienTuXa);
+            // Cập nhật thông tin sản phẩm
 
             // Cập nhật chi tiết sản phẩm
             sanPhamChiTiet.setMauSac(new MauSac(mauSacId));
@@ -548,9 +632,12 @@ public class SanPhamController {
                 Map<String, String> uploadAnh = cloudinaryService.upload(file);
                 String imageUrl = uploadAnh.get("url");
 
-                HinhAnh hinhAnh = sanPhamChiTiet.getHinhAnh();
-                hinhAnh.setHinh_anh_1(imageUrl);
-                HinhAnh savedHinhAnh = hinhAnhRepo.save(hinhAnh);
+                // Tạo đối tượng HinhAnh mới
+                HinhAnh hinhAnhMoi = new HinhAnh();
+                hinhAnhMoi.setHinh_anh_1(imageUrl);
+
+                // Lưu đối tượng mới
+                HinhAnh savedHinhAnh = hinhAnhRepo.save(hinhAnhMoi);
                 sanPhamChiTiet.setHinhAnh(savedHinhAnh);
             }
             BigDecimal gia = epKieuDecimal(giaStr.trim());
@@ -579,17 +666,12 @@ public class SanPhamController {
             }
             sanPhamChiTiet.setNguoi_sua(nhanVien.getTen());
             sanPhamChiTiet.setTrang_thai(trangThai);
-            // Kiểm tra trạng thái
-//            if (soLuong == 0) {
-//                sanPhamChiTiet.setTrang_thai(false);
-//            } else {
-//                sanPhamChiTiet.setTrang_thai(trangThai);
-//            }
             if (sanPhamService.motSanPhamTrangThaiOn(sanPham.getId())) {
                 sanPham.setTrang_thai(true);
-            } else {
-                sanPham.setTrang_thai(false);
             }
+//            else {
+//                sanPham.setTrang_thai(false);
+//            }
 
             sanPhamService.update(sanPham);
             sanPhamService.update(sanPhamChiTiet);
@@ -647,8 +729,19 @@ public class SanPhamController {
 
         // Tạo response để xuất file Excel
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=san_pham_detailed.xlsx");
+        response.setHeader("Content-Disposition", "attachment; filename=thong_tin_san_pham_quat.xlsx");
         workbook.write(response.getOutputStream());
         workbook.close();
+    }
+    private BigDecimal epKieuDecimal(String priceStr) {
+        if (priceStr.trim() == null || priceStr.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        String xoaString = priceStr.replaceAll(",", "");  // Loại bỏ dấu phẩy trong giá trị đầu vào
+        try {
+            return new BigDecimal(xoaString);
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO; // Trả về 0 nếu không thể chuyển đổi
+        }
     }
 }
