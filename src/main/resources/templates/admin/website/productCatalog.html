@@ -299,13 +299,6 @@
                     </a>
                 </li>
                 <li class="nav-item mx-3">
-                    <!-- Khi khách hàng đã đăng nhập -->
-                    <div th:if="${khachHang} != null">
-                        <a class="nav-link d-flex align-items-center"
-                           th:href="@{/vin-fan/sua-thong-tin/{id}(id=${khachHang.id})}">
-                            <i class="fas fa-user"></i>
-                        </a>
-                    </div>
 
                     <!-- Khi khách hàng chưa đăng nhập -->
                     <div th:if="${khachHang} == null">
@@ -542,6 +535,8 @@
                                         th:text="${phieuGiamGia.spct.sanPham.ten + ' - ' + phieuGiamGia.spct.mauSac.ten + ' - ' + phieuGiamGia.spct.congSuat.ten}"></h5>
                                     <h6 class="card-title product-title" th:text="'Hãng: ' + ${phieuGiamGia.spct.hang.ten}">
                                     </h6>
+                                    <h7 class="card-title product-title text-danger" th:text="${phieuGiamGia.ten}">
+                                    </h7>
 <!--                                    <h6 class="card-title product-title" th:if="${phieuGiamGia.spct.so_luong > 0}"-->
 <!--                                        th:text="'Còn: ' + ${phieuGiamGia.spct.so_luong}">-->
 <!--                                    </h6>-->

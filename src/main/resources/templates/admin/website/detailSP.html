@@ -247,7 +247,7 @@
                                     th:value="${bienThe.id}"
                                     th:data-original-price="${bienThe.gia}"
                                     th:data-discount-price="${giaSauGiamMap[bienThe.id] != null ? giaSauGiamMap[bienThe.id] : bienThe.gia}"
-                                    th:text="'Màu: ' + ${bienThe.mauSac.ten} + ', Công suất: ' + ${bienThe.congSuat.ten} + ' (Còn: ' + ${bienThe.so_luong} + ')'">
+                                    th:text="'Màu: ' + ${bienThe.mauSac.ten} + ', Công suất: ' + ${bienThe.congSuat.ten} + ' (Còn: ' + ${bienThe.so_luong} + ')' + ' - mã: ' + ${bienThe.sanPham.ma}">
                             </option>
                         </select>
                     </div>
