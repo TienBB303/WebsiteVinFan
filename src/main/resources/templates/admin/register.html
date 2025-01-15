@@ -172,6 +172,10 @@
             showToast("Mật khẩu không được để trống!", "error");
             return;
         }
+        if (matKhau == null && matKhau.length < 6) {
+            showToast("Mật khẩu không nhỏ hơn 6 ký tự", "error");
+            return;
+        }
         if (!noSpecialCharRegex.test(matKhau)) {
             showToast("Mật khẩu không được chứa ký tự đặc biệt!", "error");
             return;
@@ -198,8 +202,8 @@
             }
         });
 
+        // Gửi biểu mẫu sau thông báo
         setTimeout(() => {
-            // Gửi biểu mẫu khi hợp lệ
             event.target.submit();
         }, 1500);
     });
