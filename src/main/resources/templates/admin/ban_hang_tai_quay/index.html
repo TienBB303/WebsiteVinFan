@@ -439,6 +439,14 @@
                                 <!-- Chi Tiết Thanh Toán -->
                                 <div class="col-md-6">
                                     <h5 class="mb-4 text-primary">Chi Tiết Thanh Toán</h5>
+<!--                                    <div class="form-section d-flex align-items-center mb-3">-->
+<!--                                        <span class="w-100">Chọn mã giảm giá: </span>-->
+<!--                                        <select id="discountCode" class="form-select" onchange="apDungPhieuGiam()">-->
+<!--                                            <option value="">&#45;&#45; Chọn mã giảm giá &#45;&#45;</option>-->
+<!--                                            <option th:each="phieu : ${phieuGiamList}" th:value="${phieu.id}" th:data-value="${phieu.giaTriGiam}" th:text="${phieu.ma + ' - Giảm ' + phieu.giaTriGiam + ' VND'}"></option>-->
+<!--                                        </select>-->
+<!--                                    </div>-->
+<!--                                    sadsad-->
                                     <div class="form-section d-flex align-items-center mb-3">
                                         <label for="discountCode" class="form-label me-3">Chọn mã giảm giá:</label>
                                         <select id="discountCode" class="form-select" style="width: 100%;" onchange="apDungPhieuGiam()">
@@ -1143,6 +1151,16 @@
                 input.value = input.value.slice(0, maxLength);
             }
         }
+    </script>
+<!--    giam gia-->
+    <script>
+        $(document).ready(function () {
+            $('#discountCode').select2({
+                allowClear: true,
+                dropdownParent: $('#modalThanhToan'), // Gắn dropdown vào modal
+                width: 'resolve'
+            });
+        });
     </script>
 </div>
 </body>
