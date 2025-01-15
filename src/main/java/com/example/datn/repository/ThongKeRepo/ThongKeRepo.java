@@ -22,6 +22,14 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query("SELECT SUM(h.tongTienSauGiamGia) FROM HoaDon h WHERE h.trangThai = 4 AND CAST(h.ngayTao AS date) = CAST(GETDATE() AS date)")
     BigDecimal tinhTongTienThuDuocHomNay();
 
+    @Query("SELECT SUM(h.tongTienSauGiamGia) FROM HoaDon h WHERE h.trangThai = 4 AND CAST(h.ngayTao AS date) = :yesterday")
+    BigDecimal tinhTongTienThuDuocHomQua(@Param("yesterday") LocalDate yesterday);
+
+    @Query("SELECT SUM(h.tongTienSauGiamGia) FROM HoaDon h " +
+            "WHERE h.trangThai = 4 " +
+            "AND (:tuNgay IS NULL OR h.ngayTao >= :tuNgay) " +
+            "AND (:denNgay IS NULL OR h.ngayTao <= :denNgay)")
+    BigDecimal timTongTienThuDuocTrongKhoangThoiGian( LocalDate tuNgay, LocalDate denNgay);
 
     @Query("SELECT hdct.sanPhamChiTiet.sanPham.ten AS tenSanPham, SUM(hdct.soLuong) AS soLuong " +
             "FROM HoaDonChiTiet hdct " +
@@ -33,15 +41,22 @@ public interface ThongKeRepo extends JpaRepository<HoaDonChiTiet, Integer> {
             "ORDER BY SUM(hdct.soLuong) DESC")
     List<Object[]> timSanPhamBanChay(LocalDate tuNgay, LocalDate denNgay);
 
-    @Query("SELECT hd.id AS hoaDonId, SUM(hdct.soLuong * hdct.sanPhamChiTiet.gia) AS tongDoanhThu " +
-            "FROM HoaDonChiTiet hdct " +
-            "JOIN hdct.hoaDon hd " +
+    @Query("SELECT hd.id AS hoaDonId, hd.tongTienSauGiamGia AS tongDoanhThu " +
+            "FROM HoaDon hd " +
             "WHERE hd.trangThai = 4 " +
             "AND (:tuNgay IS NULL OR hd.ngayTao >= :tuNgay) " +
             "AND (:denNgay IS NULL OR hd.ngayTao <= :denNgay) " +
-            "GROUP BY hd.id " +
-            "ORDER BY tongDoanhThu DESC")
+            "ORDER BY hd.tongTienSauGiamGia DESC")
     List<Object[]> timHoaDonTheoDoanhThu(LocalDate tuNgay, LocalDate denNgay);
+
+    @Query("SELECT CAST(h.ngayTao AS date) AS ngay, SUM(h.tongTienSauGiamGia) AS tongThu " +
+            "FROM HoaDon h " +
+            "WHERE h.trangThai = 4 " +
+            "AND (:tuNgay IS NULL OR h.ngayTao >= :tuNgay) " +
+            "AND (:denNgay IS NULL OR h.ngayTao <= :denNgay) " +
+            "GROUP BY CAST(h.ngayTao AS date) " +
+            "ORDER BY CAST(h.ngayTao AS date)")
+    List<Object[]> timDoanhThuTheoNgay(@Param("tuNgay") LocalDate tuNgay, @Param("denNgay") LocalDate denNgay);
 
     @Query("SELECT hd.ngayTao AS ngay, SUM(hdct.soLuong * hdct.sanPhamChiTiet.gia) AS doanhThu " +
             "FROM HoaDonChiTiet hdct " +

@@ -92,7 +92,7 @@
                 </div>
                 <!-- Nút Thêm Hóa Đơn -->
                 <form method="post" th:action="@{/ban-hang-tai-quay/tao-hoa-don}">
-                    <button type="submit" class="btn btn-outline-primary" style="width: 70px; text-align: center">
+                    <button type="submit" class="btn btn-outline-primary" style="width: 70px; text-align: center" >
                         <i class="bi bi-plus-circle-fill me-2"></i>
                     </button>
                 </form>
@@ -101,8 +101,8 @@
         <!-- Nút Thêm sản phẩm -->
         <div class="container">
 
-            <!-- Modal -->
-            <div class="modal fade" id="modalAddSP" tabindex="-1" aria-labelledby="exampleModalLabel"
+        <!-- Modal -->
+        <div class="modal fade" id="modalAddSP" tabindex="-1" aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
@@ -286,6 +286,7 @@
                     </div>
                 </div>
             </div>
+            <!--chức năng bên phải-->
             <div class="col-3">
                 <!-- Nút thêm vào giỏ -->
                 <div class="card" style="border: none">
@@ -344,11 +345,12 @@
                                     </thead>
                                     <tbody>
                                     <tr th:each="khachHang, stat : ${listsKhachhang}">
-                                        <td th:text="${stat.index + 1}"></td>
-                                        <td th:text="${khachHang.ten}"></td>
-                                        <td th:text="${khachHang.soDienThoai}"></td>
-                                        <td th:text="${khachHang.email}"></td>
-                                        <td>
+                                        <!-- Kiểm tra nếu khách hàng chưa bị khóa, chỉ hiển thị khách hàng có trạng thái là true -->
+                                        <td th:if="${khachHang.trangThai == true}" th:text="${stat.index + 1}"></td>
+                                        <td th:if="${khachHang.trangThai == true}" th:text="${khachHang.ten}"></td>
+                                        <td th:if="${khachHang.trangThai == true}" th:text="${khachHang.soDienThoai}"></td>
+                                        <td th:if="${khachHang.trangThai == true}" th:text="${khachHang.email}"></td>
+                                        <td th:if="${khachHang.trangThai == true}">
                                             <form method="post" th:action="@{/ban-hang-tai-quay/addKH}" class="d-inline">
                                                 <input type="hidden" name="idHD" th:value="${idHD}">
                                                 <input type="hidden" name="idKH" th:value="${khachHang.id}">
@@ -376,6 +378,7 @@
                 </div>
             </div>
         </div>
+        <!--Modal thanh toán-->
         <div class="modal fade" id="modalThanhToan" tabindex="-1" aria-labelledby="modalThanhToanLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -395,7 +398,7 @@
                                         <input type="text" class="form-control" name="tenKhangHang" th:value="${TTkhachHang?.ten ?: ''}" placeholder="Tên khách hàng" >
                                     </div>
                                     <div class="form-section mb-3">
-                                        <input type="text" class="form-control" name="soDienThoaiKhachHang" th:value="${TTkhachHang?.soDienThoai ?: ''}" placeholder="Số điện thoại" >
+                                        <input type="text" class="form-control" name="soDienThoaiKhachHang" th:value="${TTkhachHang?.soDienThoai ?: ''}" placeholder="Số điện thoại" oninput="validateInputLength(this, 10)">
                                     </div>
                                     <div class="form-section mb-3">
                                         <input type="email" class="form-control" th:value="${TTkhachHang?.email ?: ''}" placeholder="Email" >
@@ -424,6 +427,10 @@
                                                 </select>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="form-section mb-3">
+                                        <label for="tienShip" class="form-label">Phí ship</label>
+                                        <input id="tienShip" type="text" name="tienShip" class="form-control" readonly>
                                     </div>
                                     <div class="form-section mb-3">
                                         <textarea class="form-control" rows="3" name="ghichu" placeholder="Ghi chú" style="height: 150px"></textarea>
@@ -537,23 +544,51 @@
     </script>
     <!-- Áp dụng phiếu giảm hoasd dơn-->
     <script>
-        function apDungPhieuGiam() {
-            // Lấy phần tử select mã giảm giá
-            const discountSelect = document.getElementById('discountCode');
-            const selectedOption = discountSelect ? discountSelect.options[discountSelect.selectedIndex] : null;
+        document.getElementById('toggleForm').addEventListener('change', function () {
+            const form = document.getElementById('deliveryForm');
+            const tienShipInput = document.getElementById('tienShip');
+            const tongTienSauGiamInput = document.getElementById('tongTienSauGiam');
+            const discountValueInput = document.getElementById('discountValue');
+            const tongTienHangInput = document.getElementById('tongTienHang');
 
-            // Lấy giá trị giảm giá từ mã giảm giá
+            const tongTienHang = parseInt(tongTienHangInput.value.replace(/[^\d]/g, '')) || 0;
+            const discountValue = parseInt(discountValueInput.value.replace(/[^\d]/g, '')) || 0;
+            let tongTienSauGiam = Math.max(0, tongTienHang - discountValue);
+
+            if (this.checked) {
+                form.style.visibility = 'visible';
+                if (!validateCustomerInfo()) {
+                    this.checked = false; // Bỏ chọn nếu thông tin không hợp lệ
+                    return;
+                }
+                // Cộng thêm phí ship nếu không đủ điều kiện miễn phí
+                const phiShip = tongTienSauGiam >= 1000000 ? 0 : 40000;
+                tongTienSauGiam += phiShip;
+
+                // Cập nhật vào giao diện
+                tienShipInput.value = `${phiShip.toLocaleString('vi-VN')} VND`;
+                tongTienSauGiamInput.value = `${tongTienSauGiam.toLocaleString('vi-VN')} VND`;
+            } else {
+                form.style.visibility = 'hidden';
+
+                // Bỏ phí ship
+                tienShipInput.value = "Free ship";
+                tongTienSauGiamInput.value = `${tongTienSauGiam.toLocaleString('vi-VN')} VND`;
+            }
+        });
+
+        function apDungPhieuGiam() {
+            const discountSelect = document.getElementById('discountCode');
+            const selectedOption = discountSelect.options[discountSelect.selectedIndex];
+            const discountId = selectedOption ? selectedOption.value : "";
+            document.getElementById('idPhieuGiam').value = discountId;
+
             const discountValueStr = selectedOption ? (selectedOption.dataset.value || "0") : "0";
             const discountValue = parseInt(discountValueStr.replace(/[^\d]/g, '')) || 0;
 
-            // Lấy tổng tiền hàng
-
-            const tongTienHangHienTai = document.getElementById('tongTienHang').value || "0";
-            const tongTienHienTaiInt = parseInt(tongTienHangHienTai.replace(/[^\d]/g, '')) || 0;
             const tongTienHangStr = document.getElementById('tongTienHang').value || "0";
             const tongTienHangInt = parseInt(tongTienHangStr.replace(/[^\d]/g, '')) || 0;
 
-            // Xác định mức giảm giá tối đa dựa vào tổng tiền
             let maxDiscount = 0;
             if (tongTienHangInt >= 100000 && tongTienHangInt < 200000) {
                 maxDiscount = 50000;
@@ -567,24 +602,37 @@
                 maxDiscount = 1000000;
             }
 
-            // Kiểm tra xem giá trị giảm giá có hợp lệ không
+            // Kiểm tra xem giảm giá có hợp lệ hay không dựa vào tổng tiền hàng
             if (discountValue > maxDiscount) {
-                // Hiển thị thông báo lỗi
                 Swal.fire({
                     toast: true,
                     icon: 'error',
-                    title: `Giảm giá vượt quá mức tối đa cho phép (${maxDiscount.toLocaleString('vi-VN')} VND)!`,
+                    title: `Đơn hàng chưa đạt đủ điều kiện để áp dụng mã giảm giá!`,
                     position: 'top-end',
                     showConfirmButton: false,
                     timer: 3000,
                     timerProgressBar: true
                 });
-
-                // Đặt giảm giá về 0 và tổng tiền khách phải trả giữ nguyên
-                document.getElementById('discountValue').value = "0 VND";
-                document.getElementById('tongTienSauGiam').value = `${tongTienHangInt.toLocaleString('vi-VN')} VND`;
-                return;
+                return;  // Dừng lại nếu giảm giá không hợp lệ
             }
+
+            let tongTienSauGiam = Math.max(0, tongTienHangInt - discountValue);
+            document.getElementById('discountValue').value = `${discountValue.toLocaleString('vi-VN')} VND`;
+
+            const toggleForm = document.getElementById('toggleForm');
+            if (toggleForm.checked) {
+                const phiShip = tongTienSauGiam >= 1000000 ? 0 : 40000;
+                tongTienSauGiam += phiShip;
+
+                if (phiShip == 0) {
+                    document.getElementById('tienShip').value = "Free ship";
+                } else {
+                    document.getElementById('tienShip').value = `${phiShip.toLocaleString('vi-VN')} VND`;
+                }
+            }
+
+            document.getElementById('tongTienSauGiam').value = `${tongTienSauGiam.toLocaleString('vi-VN')} VND`;
+
             if (discountValue > 0) {
                 Swal.fire({
                     toast: true,
@@ -596,20 +644,85 @@
                     timerProgressBar: true
                 });
             }
-
-            // Tính toán tổng tiền sau giảm giá
-            const tongTienSauGiamGia = Math.max(0, tongTienHangInt - discountValue);
-
-            // Cập nhật hiển thị giá trị đã được định dạng
-            document.getElementById('discountValue').value = `${discountValue.toLocaleString('vi-VN')} VND`;
-            document.getElementById('tongTienHang').value = `${tongTienHienTaiInt.toLocaleString('vi-VN')} VND`;
-            document.getElementById('tongTienSauGiam').value = `${tongTienSauGiamGia.toLocaleString('vi-VN')} VND`;
         }
 
-        // Gọi hàm áp dụng khi trang được tải
+
         window.onload = function () {
             apDungPhieuGiam();
         };
+
+    </script>
+    <!--nếu chọn giao hnagf thì validate thông tin-->
+    <script>
+        function validateCustomerInfo() {
+            const name = document.querySelector('input[name="tenKhangHang"]').value.trim();
+            const phone = document.querySelector('input[name="soDienThoaiKhachHang"]').value.trim();
+            const email = document.querySelector('input[type="email"]').value.trim();
+            const address = document.querySelector('input[name="chiTietDiaChi"]').value.trim();
+
+            const city = document.querySelector('select[name="tinhThanhPho"]').value.trim();
+            const district = document.querySelector('select[name="quanHuyen"]').value.trim();
+            const ward = document.querySelector('select[name="xaPhuong"]').value.trim();
+
+            let isValid = true;
+            let errorMessages = [];
+
+            if (!name) {
+                isValid = false;
+                errorMessages.push('Tên khách hàng không được để trống.');
+            }
+
+            // Validate số điện thoại
+            const phonePattern = /^[0-9]{10,11}$/;
+            if (!phone || !phone.match(phonePattern)) {
+                isValid = false;
+                errorMessages.push('Số điện thoại không hợp lệ.');
+            }
+
+            // Validate email
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!email || !email.match(emailPattern)) {
+                isValid = false;
+                errorMessages.push('Email không hợp lệ.');
+            }
+
+            if (!address) {
+                isValid = false;
+                errorMessages.push('Địa chỉ giao hàng không được để trống.');
+            }
+
+            const giaoHangChecked = document.getElementById("toggleForm").checked;  // Kiểm tra xem "Giao hàng" có được chọn không
+            if (giaoHangChecked) {
+                if (!city || city === "Chọn tỉnh thành") {
+                    isValid = false;
+                    errorMessages.push('Vui lòng chọn tỉnh thành.');
+                }
+                if (!district || district === "Chọn quận huyện") {
+                    isValid = false;
+                    errorMessages.push('Vui lòng chọn quận huyện.');
+                }
+                if (!ward || ward === "Chọn phường xã") {
+                    isValid = false;
+                    errorMessages.push('Vui lòng chọn phường xã.');
+                }
+            }
+
+            if (!isValid) {
+                let errorHtml = errorMessages.map(msg => `<li>${msg}</li>`).join(''); // Tạo danh sách lỗi dạng HTML
+                Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: 'Cần nhập đủ thông tin để tiến hành giao hàng',
+                    html: `<ul>${errorHtml}</ul>`, // Hiển thị lỗi theo từng dòng
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 7000,
+                    timerProgressBar: true
+                });
+            }
+
+            return isValid;
+        }
     </script>
     <!--Tính tiền thừa-->
     <script>
@@ -822,16 +935,16 @@
         document.getElementById('filterPrice').addEventListener('input', filterProducts);
     </script>
     <!--ẩn form thông tin giao hàng-->
-    <script>
-        document.getElementById('toggleForm').addEventListener('change', function () {
-            const form = document.getElementById('deliveryForm');
-            if (this.checked) {
-                form.style.visibility = 'visible';
-            } else {
-                form.style.visibility = 'hidden';
-            }
-        });
-    </script>
+<!--    <script>-->
+<!--        document.getElementById('toggleForm').addEventListener('change', function () {-->
+<!--            const form = document.getElementById('deliveryForm');-->
+<!--            if (this.checked) {-->
+<!--                form.style.visibility = 'visible';-->
+<!--            } else {-->
+<!--                form.style.visibility = 'hidden';-->
+<!--            }-->
+<!--        });-->
+<!--    </script>-->
     <!--địa chỉ-->
     <script th:inline="javascript">
 
@@ -1014,7 +1127,14 @@
             }
         });
     </script>
-
+    <!--    max ký tự-->
+    <script>
+        function validateInputLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.value = input.value.slice(0, maxLength);
+            }
+        }
+    </script>
 </div>
 </body>
 </html>
