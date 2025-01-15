@@ -20,11 +20,13 @@ public interface ThongKeService {
 
     BigDecimal tongTienThuDuocHomNay();
 
+    BigDecimal tongTienThuDuocHomQua();
+
+    BigDecimal tinhTongTienThuDuocTrongKhoangThoiGian(LocalDate tuNgay, LocalDate denNgay);
+
     List<SanPhamBanChayDTO>listBanChay(LocalDate tuNgay, LocalDate denNgay);
 
     List<HoaDonDoanhThuDTO> listHoaDonTheoDoanhThu(LocalDate tuNgay, LocalDate denNgay);
 
-    List<DoanhThuThongKeDTO> getDoanhThuTheoThoiGian(String thoiGian, LocalDate tuNgay, LocalDate denNgay);
-
-//    List<DoanhThuThongKeDTO> thongKeDoanhThu(String loaiThongKe, LocalDate tuNgay, LocalDate denNgay);
+    List<DoanhThuThongKeDTO> getDoanhThuTheoThoiGian(LocalDate tuNgay, LocalDate denNgay);
 }

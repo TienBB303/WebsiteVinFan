@@ -166,10 +166,12 @@ public class SanPhamController {
         if (maxPrice.compareTo(BigDecimal.ZERO) == 0) {
             maxPrice = sanPhamService.getSanPhamGiaLonNhat();
         }
+        SanPham sp = sanPhamRepo.findById(idSanPham).orElse(null);
         Page<SanPhamChiTiet> searchPage = sanPhamService.searchProducts(idSanPham, query.trim(), minPrice, maxPrice, trang_thai, PageRequest.of(page, size));
         NhanVien nv = nhanVienRepository.profileNhanVien();
         model.addAttribute("nhanVienInfo", nv);
         model.addAttribute("idSanPham", idSanPham);
+        model.addAttribute("sp", sp);
         model.addAttribute("listSP", searchPage);
         model.addAttribute("query", query);
         model.addAttribute("minPrice", minPrice);
@@ -496,19 +498,23 @@ public class SanPhamController {
             if (sanPham == null) {
                 return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
             }
-            if (inputMa != null && inputMa.length() > 7) {
-                return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
-            }
-            String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
-            SanPham spma = sanPhamRepo.findByMa(ma);
-            if (spma != null) {
-                // Tên và kiểu quạt phải trùng
-                if (!spma.getTen().trim().equalsIgnoreCase(ten.trim())) {
-                    return ResponseEntity.badRequest().body(
-                            "Mã " + ma + " đã tồn tại, với tên: " + spma.getTen()
-                    );
+            if (inputMa != null && !inputMa.trim().isEmpty() && !inputMa.trim().equals(sanPham.getMa())) {
+                if (inputMa != null && inputMa.length() > 7) {
+                    return ResponseEntity.badRequest().body("Mã sản phẩm không được vượt quá 7 ký tự.");
                 }
+                String ma = (inputMa == null || inputMa.trim().isEmpty()) ? sanPhamService.taoMaTuDong() : inputMa.trim();
+                SanPham spma = sanPhamRepo.findByMa(ma);
+                if (spma != null) {
+                    // Tên và kiểu quạt phải trùng
+                    if (!spma.getTen().trim().equalsIgnoreCase(ten.trim())) {
+                        return ResponseEntity.badRequest().body(
+                                "Mã " + ma + " đã tồn tại, với tên: " + spma.getTen()
+                        );
+                    }
+                }
+                sanPham.setMa(ma.trim());
             }
+
             if (ten == null || ten.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Tên sản phẩm không được để trống");
             }
@@ -526,7 +532,7 @@ public class SanPhamController {
 
             // Cập nhật thông tin sản phẩm chính
             sanPham.setTen(ten.trim());
-            sanPham.setMa(ma.trim());
+
             sanPham.setMo_ta(moTa);
             sanPham.setNgay_sua(new Date());
             sanPham.setDieu_khien_tu_xa(dieuKhienTuXa);
